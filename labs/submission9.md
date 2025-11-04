@@ -16,7 +16,7 @@
 Most issues found are related to missing or misconfigured security headers. Without them, the app is vulnerable to script injection and unauthorized data access.
 
 ### Screenshot
-
+![Result](1.png)
 
 
 ## Task 2 — Container Vulnerability Scanning with Trivy
@@ -37,7 +37,7 @@ Based on the provided Trivy output:
 - Reduces the attack surface of deployed applications
 
 ### Screenshot
-
+![Result](2.png)
 
 ### Reflection
 Those tools help with security when creating app, they help to see security problems and fix them.
