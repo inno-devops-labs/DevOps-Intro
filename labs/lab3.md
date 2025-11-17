@@ -4,8 +4,8 @@
 ![topic](https://img.shields.io/badge/topic-GitHub%20Actions%20%26%20CI%2FCD-blue)
 ![points](https://img.shields.io/badge/points-10-orange)
 
-> Goal: Build foundational CI/CD workflows in GitHub Actions: quickstart, triggers, logs, and system information.  
-> Deliverable: A PR from `feature/lab3` with `labs/submission3.md` containing run links/log snippets, workflow YAML, and brief explanations for each task.
+> **Goal:** Build foundational CI/CD workflows in GitHub Actions: quickstart, triggers, logs, and system information.  
+> **Deliverable:** A PR from `feature/lab3` to the course repo with `labs/submission3.md` containing run links/log snippets, workflow YAML, and brief explanations for each task. Submit the PR link via Moodle.
 
 ---
 
@@ -22,51 +22,102 @@ In this lab you will practice:
 
 ## Tasks
 
-### Task 1 — First GitHub Actions Workflow (4 pts)
+### Task 1 — First GitHub Actions Workflow (6 pts)
 
-**Objective**: Set up a basic workflow that runs on push and prints basic info.
+**Objective:** Set up a basic workflow that runs on push and prints basic info.
 
-1. Read and follow the GitHub Actions [quickstart](https://docs.github.com/en/actions/quickstart).
-2. Document all your observations, key concepts, and steps you followed in the `submission3.md` file.
-3. Push a commit to trigger the workflow. Observe the run details and logs.
-4. In `labs/submission3.md`, include:
+#### 1.1: Follow GitHub Actions Quickstart
+
+1. **Read and Implement Quickstart:**
+
+   - Read and follow the GitHub Actions [quickstart](https://docs.github.com/en/actions/quickstart).
+   - Document all your observations, key concepts, and steps you followed.
+
+#### 1.2: Test Workflow Trigger
+
+1. **Push Commit and Monitor:**
+
+   - Push a commit to trigger the workflow.
+   - Observe the run details and logs in the Actions tab.
+
+In `labs/submission3.md`, document:
 - Link to the successful run (or screenshots).
 - Key concepts learned (jobs, steps, runners, triggers).
 - A short note on what caused the run to trigger.
+- Analysis of workflow execution process.
 
 ---
 
 ### Task 2 — Manual Trigger + System Information (4 pts)
 
-**Objective**: Add a manual trigger and capture system details from the runner.
+**Objective:** Add a manual trigger and capture system details from the runner.
 
-1. Extend your existing GitHub Actions workflow to include a [manual trigger](https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#defining-inputs-for-manually-triggered-workflows). Inputs for manually triggered workflows are not needed, so you can skip them.
-2. Dispatch the workflow manually from the GitHub UI (Actions → your workflow → Run workflow).
-3. Modify your workflow to include an additional step for gathering system information.
-4. Use the appropriate actions and steps to collect information about the runner, hardware specifications, and operating system details.
-5. Document the changes made to the workflow file and the gathered system information in the same `submission3.md` file.
+#### 2.1: Add Manual Trigger
 
----
+1. **Extend Workflow with Manual Trigger:**
 
-## Acceptance Criteria
+   <details>
+   <summary>📚 Where to find manual trigger documentation</summary>
 
-- Branch `feature/lab3` exists with the workflow file present.  
-- File `labs/submission3.md` contains the required outputs/explanations for Tasks 1–2.  
-- Workflow runs successfully on `push` and via `workflow_dispatch`.  
-- PR from `feature/lab3` → `main` is open in your fork.
+   - [Triggering a workflow - GitHub Docs](https://docs.github.com/en/actions/using-workflows/triggering-a-workflow#defining-inputs-for-manually-triggered-workflows)
+   - Look for `workflow_dispatch` event in the documentation
+   - Inputs for manually triggered workflows are not needed, so you can skip them
+
+   </details>
+
+#### 2.2: Test Manual Dispatch
+
+1. **Dispatch Workflow Manually:**
+
+   - Dispatch the workflow manually from the GitHub UI (Actions → your workflow → Run workflow).
+
+#### 2.3: Gather System Information
+
+1. **Add System Information Collection:**
+
+   - Modify your workflow to include an additional step for gathering system information.
+   - Use the appropriate actions and steps to collect information about the runner, hardware specifications, and operating system details.
+
+In `labs/submission3.md`, document:
+- Changes made to the workflow file.
+- The gathered system information from runner.
+- Comparison of manual vs automatic workflow triggers.
+- Analysis of runner environment and capabilities.
 
 ---
 
 ## How to Submit
 
-1. Create a branch for this lab and push it.
-2. Open a PR from `feature/lab3` → `main` in your fork.  
+1. Create a branch for this lab and push it to your fork:
+
+   ```bash
+   git switch -c feature/lab3
+   # create labs/submission3.md with your findings
+   git add labs/submission3.md
+   git commit -m "docs: add lab3 submission"
+   git push -u origin feature/lab3
+   ```
+
+2. Open a PR from your fork's `feature/lab3` branch → **course repository's main branch**.
+
 3. In the PR description, include:
 
-    ```text
-    - [x] Task 1 done
-    - [x] Task 2 done
-    ```
+   ```text
+   - [x] Task 1 done
+   - [x] Task 2 done
+   ```
+
+4. **Copy the PR URL** and submit it via **Moodle before the deadline**.
+
+---
+
+## Acceptance Criteria
+
+- ✅ Branch `feature/lab3` exists with commits for each task.
+- ✅ File `labs/submission3.md` contains required outputs and analysis for Tasks 1-2.
+- ✅ Workflow runs successfully on `push` and via `workflow_dispatch`.
+- ✅ PR from `feature/lab3` → **course repo main branch** is open.
+- ✅ PR link submitted via Moodle before the deadline.
 
 ---
 
@@ -77,3 +128,31 @@ In this lab you will practice:
 | Task 1 — First workflow setup + run            |   **6**|
 | Task 2 — Manual trigger + system information   |   **4**|
 | **Total**                                      |  **10**|
+
+---
+
+## Guidelines
+
+- Use clear Markdown headers to organize sections in `submission3.md`.
+- Include both command outputs and written analysis for each task.
+- Document workflow setup process and system information gathering.
+- Include links to successful workflow runs or screenshots as evidence.
+
+<details>
+<summary>📚 Helpful Resources</summary>
+
+- [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [Workflow Syntax Reference](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions)
+- [Understanding GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions)
+
+</details>
+
+<details>
+<summary>💡 GitHub Actions Tips</summary>
+
+1. Ensure workflow files are placed in `.github/workflows/` directory.
+2. Verify workflow syntax using GitHub's built-in validator.
+3. Monitor workflow runs in the Actions tab for debugging.
+4. Check the Actions tab immediately after pushing to see if the workflow triggered.
+
+</details>

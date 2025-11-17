@@ -1,0 +1,4 @@
+FROM scratch
+COPY main.wasm /main.wasm
+EXPOSE 8080
+ENTRYPOINT ["/main.wasm"]
