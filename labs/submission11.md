@@ -22,17 +22,16 @@ Command:
 
 ```bash
 docker exec ipfs_node ipfs swarm peers
+> /ip4/X.X.X.X/udp/4001/quic-v1/p2p/**
+> /ip4/X.X.X.X/tcp/4001/p2p/**
+> /ip4/X.X.X.X/tcp/4001/p2p/**
+> ...
 ```
 
 
 **Access IPFS Web UI:**
 
 Opened my browser and navigated to: `http://127.0.0.1:5001/webui/`
-
-Explored:
-   - Connected peers count
-   - Network bandwidth statistics
-   - Node status
 
 Observed 304 peers
 
@@ -70,14 +69,14 @@ docker exec ipfs_node ipfs add /export/testfile.txt
 
 **Via Local Gateway:**
 
-Opened in browser: `http://localhost:8080/ipfs/QmUFJmQRosK4Amzcjwbip8kV3gkJ8jqCURjCNxuv3bWYS1`
+Opened in browser: (http://localhost:8080/ipfs/QmUFJmQRosK4Amzcjwbip8kV3gkJ8jqCURjCNxuv3bWYS1)
 
 ![Local Gateway Visit](./screenshots_lab11/ipfs_localhost.png)
 
 **Via Public Gateways:**
 
-   - `https://ipfs.io/ipfs/QmUFJmQRosK4Amzcjwbip8kV3gkJ8jqCURjCNxuv3bWYS1`
-   - `https://cloudflare-ipfs.com/ipfs/QmUFJmQRosK4Amzcjwbip8kV3gkJ8jqCURjCNxuv3bWYS1`
+   - (https://ipfs.io/ipfs/QmUFJmQRosK4Amzcjwbip8kV3gkJ8jqCURjCNxuv3bWYS1)
+   - (https://cloudflare-ipfs.com/ipfs/QmUFJmQRosK4Amzcjwbip8kV3gkJ8jqCURjCNxuv3bWYS1)
 
 **Result:**
 
@@ -112,6 +111,8 @@ IPFS's content addressing fundamentally differs from traditional URLs in several
 3. **Decentralization**: IPFS doesn't rely on a single server; content can be served from any peer in the network
 4. **Verification**: CIDs allow automatic verification that you received the exact content you requested
 5. **Permanence**: Traditional URLs can break when servers move; IPFS content persists as long as nodes pin it
+
+
 
 ### Task 1 Reflection: What are the advantages and disadvantages of decentralized storage?
 
