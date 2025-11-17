@@ -6,7 +6,7 @@
 
 274 peers
 
-![alt text](screenshots-lab11/image-16.png)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/main/labs/screenshots-lab11/image-16.png)
 
 ---
 **Network bandwidth statistics**
