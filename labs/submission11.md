@@ -11,7 +11,7 @@
 ---
 **Network bandwidth statistics**
 
-![alt text](screenshots-lab11/image-17.png)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/main/labs/screenshots-lab11/image-17.png)
 ---
 **Test file CID**
 ```bash
@@ -29,7 +29,7 @@ QmNyiQsY3bKDLinnBWghYS6xz1gTV3W1hYiJ5j4CDfkBSw
 
 `http://localhost:8080/ipfs/QmNyiQsY3bKDLinnBWghYS6xz1gTV3W1hYiJ5j4CDfkBSw`
 
-![alt text](screenshots-lab11/image.png)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/main/labs/screenshots-lab11/image.png)
 
 ---
 **Public gateway URLs**
@@ -92,21 +92,21 @@ During deployment, 4EVERLAND generated and pinned the following IPFS CID for the
 
 4EVERLAND deployment dashboard
 
-![alt text](screenshots-lab11/image2.png)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/main/labs/screenshots-lab11/image2.png)
 
-![alt text](screenshots-lab11/image3.png)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/main/labs/screenshots-lab11/image3.png)
 
 
 Site accessed through 4EVERLAND domain
 
-![alt text](screenshots-lab11/image4.png)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/main/labs/screenshots-lab11/image4.png)
 
 
 Site accessed through public IPFS gateway
 
 `https://ipfs.io/ipfs/bafybeif6x7euc4xr4ztnlzo2eecpuqep4yupk6a27ym7ylekr7jkbwffye/`
 
-![alt text](screenshots-lab11/image5.png)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/main/labs/screenshots-lab11/image5.png)
 
 ---
 **How does 4EVERLAND simplify IPFS deployment compared to manual methods?**
