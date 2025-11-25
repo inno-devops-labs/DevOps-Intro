@@ -8,7 +8,7 @@
 ```bash
 docker run --rm -v ${PWD}:/app -w /app -e MODE=once golang:1.21-alpine go run main.go
 ```
-![alt text](<lab12/img/Снимок экрана 2025-11-25 154747.png>)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/feature/lab12/labs/lab12/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202025-11-25%20154747.png)
 
 ### Server Mode Test
 
@@ -17,9 +17,9 @@ docker run --rm -v ${PWD}:/app -w /app -p 8080:8080 golang:1.21-alpine go run ma
 ```
 on http://localhost:8080
 
-![alt text](<lab12/img/Снимок экрана 2025-11-25 155044.png>)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/feature/lab12/labs/lab12/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202025-11-25%20155044.png)
 
-![alt text](<lab12/img/Снимок экрана 2025-11-25 155057.png>)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/feature/lab12/labs/lab12/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202025-11-25%20155057.png)
 
 ### Explanation of how works `main.go`
 One `main.go` file works in three modes because it checks environment variables:
@@ -40,12 +40,12 @@ One `main.go` file works in three modes because it checks environment variables:
 docker run --rm -e MODE=once moscow-time-traditional
 ```
 
-![alt text](<lab12/img/Снимок экрана 2025-11-25 160516.png>)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/feature/lab12/labs/lab12/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202025-11-25%20160516.png)
 
 
 ### Test Server Mode
 
-![alt text](<lab12/img/Снимок экрана 2025-11-25 161104.png>)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/feature/lab12/labs/lab12/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202025-11-25%20161104.png)
 
 ### Check Binary Size
 
@@ -57,7 +57,7 @@ docker rm temp-traditional
 ls moscow-time-traditional
 ```
 
-![alt text](<lab12/img/Снимок экрана 2025-11-25 160705.png>)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/feature/lab12/labs/lab12/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202025-11-25%20160705.png)
 
 Result: 4.48 MB
 
@@ -67,7 +67,7 @@ Result: 4.48 MB
 docker images moscow-time-traditional
 ```
 
-![alt text](<lab12/img/Снимок экрана 2025-11-25 161156.png>)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/feature/lab12/labs/lab12/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202025-11-25%20161156.png)
 
 Result: 6.79 MB
 
@@ -79,7 +79,7 @@ Result: 6.79 MB
 } | Measure-Object -Average | Select-Object -ExpandProperty Average
 ```
 
-![alt text](<lab12/img/Снимок экрана 2025-11-25 161520.png>)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/feature/lab12/labs/lab12/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202025-11-25%20161520.png)
 
 Average: 0.69972248 seconds
 
@@ -89,7 +89,7 @@ Average: 0.69972248 seconds
 docker stats test-traditional --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}"
 ```
 
-![alt text](<lab12/img/Снимок экрана 2025-11-25 161823.png>)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/feature/lab12/labs/lab12/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202025-11-25%20161823.png)
 
 Result: 1.16MiB
 
@@ -105,7 +105,7 @@ Result: 1.16MiB
 ls main.wasm
 ```
 
-![alt text](<lab12/img/Снимок экрана 2025-11-25 163038.png>)
+![alt text](https://github.com/Aleliya/F25-DevOps-Intro/blob/feature/lab12/labs/lab12/img/%D0%A1%D0%BD%D0%B8%D0%BC%D0%BE%D0%BA%20%D1%8D%D0%BA%D1%80%D0%B0%D0%BD%D0%B0%202025-11-25%20163038.png)
 
 Result: 2.34 MB
 
