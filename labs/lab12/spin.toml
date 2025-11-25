@@ -1,0 +1,14 @@
+spin_manifest_version = 2
+
+[application]
+name = "moscow-time"
+version = "1.0.0"
+description = "Same main.go everywhere"
+
+[[trigger.http]]
+route = "/..."
+component = "moscow-time"
+executor = { type = "wagi" }   # <— key line: use WAGI executor
+
+[component.moscow-time]
+source = "main.wasm"
