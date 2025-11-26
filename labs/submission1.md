@@ -1,0 +1,1 @@
+Signed commits help to verify that the changes were made by the developer and not someone else. This protects the project from code substitution and increases trust within the team. On GitHub, such commits are marked as Verified, and anyone can verify their authenticity. You can use SSH or GPG keys for signing, SSH is most often used, as it is easier to set up.
