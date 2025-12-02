@@ -1,10 +1,5 @@
 # Lab 6 — Submission: Container Fundamentals with Docker
 
-**Student Name:** [Your Name]  
-**Date:** December 2, 2025
-
----
-
 ## Task 1 — Container Lifecycle & Image Management (3 pts)
 
 ### 1.1 Basic Container Operations
@@ -366,29 +361,3 @@ Volumes provide a mechanism to separate data lifecycle from container lifecycle,
 - Use **container storage** only for temporary data that will be discarded with the container.
 - Never rely on container storage for important data.
 - Consider using named volumes for production to allow easy backup and migration.
-
----
-
-## Cleanup Commands (Optional)
-
-```sh
-# Stop and remove all lab containers
-docker stop container1 container2 webnew 2>/dev/null
-docker rm container1 container2 webnew 2>/dev/null
-
-# Remove custom images
-docker rmi mywebsite:latest 2>/dev/null
-
-# Remove network and volume
-docker network rm labnetwork 2>/dev/null
-docker volume rm appdata 2>/dev/null
-```
-
----
-
-## Checklist
-
-- [x] Task 1 — Container Lifecycle & Image Management completed
-- [x] Task 2 — Custom Image Creation & Analysis completed
-- [x] Task 3 — Container Networking & Service Discovery completed
-- [x] Task 4 — Data Persistence with Volumes completed
