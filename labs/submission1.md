@@ -13,3 +13,10 @@ Commit signing is helpful for DevOps workflows because it ensures that code that
 
 ## 2. PR Template & Checklist
 ### 1. Screenshot of PR template auto-filling the description.
+- ![Template](template.png)
+### 2. Evidence that `.github/pull_request_template.md` exists on main branch.
+- ![Template evidence](template_evidence.png)
+### 3. Analysis of how PR templates improve collaboration.
+**PR template improve collaboration by making pull request more consistent and complete. It enforces different different contributors to use the same structure. This leads to higher-quality contributions and fewer errors.**
+### 4. Note any challenges encountered during setup.
+- **Mistakenly putting `.github/pull_request_template` in lab1 branch instead of main**
