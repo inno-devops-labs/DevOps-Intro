@@ -9,3 +9,4 @@
 ### 3. Answer: "Why is commit signing important in DevOps workflows?"
 Commit signing is helpful for DevOps workflows because it ensures that code that goes through CI/CD pipeline is written by trusted and verified author. It also adds to accountability, so teams can track who made what change and confirm conde hasn't been altered.
 ### 4. Screenshots or verification of the "Verified" badge on GitHub.
+
