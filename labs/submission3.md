@@ -26,3 +26,57 @@ jobs:
 - **`ls ${{ github.workspace }}` listed the files in the repo.**
 
 ## 2. Manual Trigger + System Information
+
+### 1. Changes made to the workflow file.
+```bash
+name: GitHub Actions Demo
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: 
+  push:
+    branches:
+      - main
+      - feature/lab3
+  workflow_dispatch:
+
+jobs:
+  basic-info:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Print greeting
+        run: echo "Hello from GitHub Actions!"
+
+      - name: Gather system information
+        run: |
+          echo "### SYSTEM INFORMATION START ###"
+          echo "CPU Info:"
+          lscpu
+          echo
+          echo "Memory Info:"
+          free -h
+          echo
+          echo "Disk Info:"
+          df -h
+          echo
+          echo "Environment Variables:"
+          env
+          echo "### SYSTEM INFORMATION END ###"
+```
+
+### 2. The gathered system information from runner.
+- CPU info:
+    - Architecture: x86_64
+    - CPU(s): 4
+    - Model name: AMD EPYC 7763 64-Core Processor
+- Memory info:
+    - total: 15 Gi
+    - free: 9.6 Gi
+- Disk info:
+    - root filesystem size: 72Gb
+    - root filesystem available: 19Gb
+
+### 3. Comparison of manual vs automatic workflow triggers.
+**Both triggers run the exact same workflow, but the initiation method is different. Manual workflow is trigerred via Github UI.**
