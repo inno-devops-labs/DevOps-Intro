@@ -112,3 +112,45 @@ git checkout feature/lab2
 M       labs/submission2.md
 Switched to branch 'feature/lab2'
 ```
+
+### 3. `git restore`
+**Command:**
+```bash
+echo "initial text" > sample.txt
+git add sample.txt
+git commit -m "Add sample.txt"
+```
+
+```bash
+echo "new change" >> sample.txt
+git status
+```
+
+**Output:**
+```bash
+On branch demo-switch
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   sample.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+```
+**Commands:**
+```bash
+git restore sample.txt
+git status
+```
+
+**Output:**
+```bash
+On branch demo-switch
+nothing to commit, working tree clean
+```
+
+### 4. 2–3 sentences on when to use each command.
+- **`git switch` is a modern command for switching branches or creating new ones. It is safer and easier because it only handles branch operations.**
+
+- **`git checkout` is older and overloaded—it can switch branches and modify files, which makes it confusing and error-prone.**
+
+- **`git restore` is the modern command to undo changes in the working directory or staging area, replacing actions that used to be done with git checkout -- file.**
