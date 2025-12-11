@@ -44,3 +44,71 @@ gpgsig -----BEGIN SSH SIGNATURE-----
 
 Add test file
 ```
+
+## 2. Reset and Reflog Recovery
+### Commands that were run, why and what they do.
+1. Set Up Practice Environment:
+- ![setup](setup_env.png)
+2. Initial `git log --oneline` to see current state of HEAD
+- ![git log](git_log_initial.png)
+3. Soft reset: `git reset --soft HEAD~1`
+- It moves HEAD back one commit
+- Index still contains the changes from Third commit, but they are staged.
+- Working directory doesn't change.
+- ![git reset soft](reset_soft.png)
+4. Hard reset: `git reset --hard HEAD~1`
+- It moves HEAD back one commit
+- Index is reset.
+- Working directory is changed to last commit's state, meaning file contents are reverted.
+- ![git reset hard](reset_hard.png)
+5. `git reflog` to see how HEAD moved and `git reset hard ...` to move back to Third commit.
+- ![git_reflog](git_reflog.png)
+
+## 3. Visualize Commit History
+### 1. A snippet/screenshot of the graph.
+- ![graph](branch_graph.png)
+### 2. Commit messages list
+- Side branch commit (side-branch)
+- Third commit, Second commit, First commit (git-reset-practice)
+- feat: added template (main)
+
+### 3. A 1–2 sentence reflection on how the graph aids understanding.
+The graph visualization makes it easy to see where branches diverge and merge, showing the structure of the repository's history.
+
+## 4. Tagging Commits
+### 1. Tag names and commands used.
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+### 2. Associated commit hashes.
+**Output from `git show-ref --tags`. First one is commit hash.**
+```bash
+f85a151e6790fc54e7cfc1594faa0b0e414896e8 refs/tags/v1.0.0
+```
+
+### 3. A short note on why tags matter (versioning, CI/CD triggers, release notes).
+**Tags provide fixed, human-readable identifiers for specific commits, making it easy to mark releases, generate release notes, and trigger CI/CD pipelines.**
+
+## 5. `git switch` vs `git checkout` vs `git restore`
+### 1. `git switch`
+**Command:**
+```bash
+git switch -c demo-switch
+```
+**Output:**
+```bash
+Switched to a new branch 'demo-switch'
+```
+### 2. `git checkout`
+**Command:**
+```bash
+git checkout feature/lab2
+```
+**Output:**
+```bash
+M       labs/submission2.md
+Switched to branch 'feature/lab2'
+```
