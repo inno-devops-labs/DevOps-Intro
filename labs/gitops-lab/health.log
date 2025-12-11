@@ -1,0 +1,31 @@
+Чт 11 дек 2025 08:28:02 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:28:48 MSK - ❌ CRITICAL: State mismatch detected!
+  Desired MD5: a15a1a4f965ecd8f9e23a33a6b543155
+  Current MD5: 48168ff3ab5ffc0214e81c7e2ee356f5
+Чт 11 дек 2025 08:29:17 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:29:56 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:29:59 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:30:02 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:30:05 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:30:09 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:30:12 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:30:15 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:30:18 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:30:21 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:30:24 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:30:45 MSK - ❌ CRITICAL: State mismatch detected!
+  Desired MD5: a15a1a4f965ecd8f9e23a33a6b543155
+  Current MD5: 48168ff3ab5ffc0214e81c7e2ee356f5
+Чт 11 дек 2025 08:30:48 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:30:51 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:30:54 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:30:57 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:31:00 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:31:03 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:31:06 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:31:09 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:31:12 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:31:54 MSK - ✅ OK: States synchronized
+Чт 11 дек 2025 08:32:34 MSK - ❌ CRITICAL: State mismatch detected!
+  Desired MD5: a15a1a4f965ecd8f9e23a33a6b543155
+  Current MD5: 48168ff3ab5ffc0214e81c7e2ee356f5

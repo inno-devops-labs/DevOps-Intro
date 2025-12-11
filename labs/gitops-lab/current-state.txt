@@ -1,0 +1,4 @@
+version: 1.0
+app: myapp
+replicas: 3
+unapproved-change: true
