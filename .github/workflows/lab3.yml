@@ -1,0 +1,79 @@
+name: Lab 3 — CI/CD Quickstart + System Info
+
+on:
+  push:
+    branches:
+      - '**'          # run on any branch push (including feature/lab3)
+  workflow_dispatch:   # manual trigger from the Actions tab
+
+jobs:
+  quickstart:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Hello from GitHub Actions
+        run: |
+          echo "👋 Hello from ${{ github.workflow }}!"
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Branch/Ref: ${{ github.ref }}"
+          echo "Commit SHA: ${{ github.sha }}"
+
+      - name: Print environment summary
+        run: |
+          echo "Runner OS: ${{ runner.os }}"
+          echo "Job: ${{ github.job }}"
+          echo "Workflow run number: ${{ github.run_number }}"
+          echo "Workflow run ID: ${{ github.run_id }}"
+
+      - name: Gather system information
+        id: sysinfo
+        shell: bash
+        run: |
+          set -euxo pipefail
+          {
+            echo "# Runner system information"
+            date -u +"Collected at (UTC): %Y-%m-%dT%H:%M:%SZ"
+            echo "Runner.OS: ${{ runner.os }}"
+            echo "Runner.Name: ${{ runner.name }}"
+            echo "Runner.Arch: $(uname -m)"
+            echo
+
+            echo "## OS release"
+            if [ -f /etc/os-release ]; then cat /etc/os-release; else sw_vers || systeminfo || ver || true; fi
+            echo
+
+            echo "## Kernel"
+            uname -a || true
+            echo
+
+            echo "## CPU"
+            (command -v lscpu >/dev/null && lscpu) || (sysctl -a 2>/dev/null | grep -iE 'brand|cpu\.(core|thread)|machdep.cpu' || true) || (wmic cpu get name,NumberOfCores,NumberOfLogicalProcessors || true)
+            echo
+
+            echo "## Memory"
+            (free -h || vm_stat || (systeminfo | findstr /C:"Total Physical Memory") || true)
+            echo
+
+            echo "## Disk usage"
+            df -h || true
+
+            echo
+            echo "## Tools"
+            bash --version | head -n 1 || true
+            python3 --version || true
+            node --version || true
+            npm --version || true
+          } > system-info.txt
+          echo "file=system-info.txt" >> "$GITHUB_OUTPUT"
+
+      - name: Upload system-info artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: system-info
+          path: system-info.txt
+          if-no-files-found: error
+          retention-days: 7
