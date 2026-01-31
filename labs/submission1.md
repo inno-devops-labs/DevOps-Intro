@@ -28,3 +28,28 @@ Commit signing is important in DevOps because:
 - It improves security and auditability of the Git history;
 - Branch protection rules can enforce signed commits automatically;
 - It helps maintain a secure and trustworthy software supply chain.
+
+
+## Task 2 — PR Template & Checklist
+
+### Screenshot Evidence
+
+![PR Template Auto-fill](img/filled_in_template.png)  
+The PR template auto-filled correctly in the PR description.
+
+![PR Template File on Main](img/template.png)  
+The file `.github/pull_request_template.md` exists on the main branch.
+
+### Analysis
+
+Using PR templates improves collaboration because:
+- All PRs follow a consistent structure, making it easier for reviewers to find information.
+- Reduces human error and missing details in PRs.
+- Saves time by providing a ready-to-fill description.
+- Helps enforce best practices (e.g., testing, documentation) automatically.
+
+### Challenges Encountered
+
+- Initially, the template did not appear because it was only added in the feature branch.  
+- GitHub requires the template to exist on the default branch (`main`) for auto-fill.  
+- Opening a new PR after adding the template solved the issue.
