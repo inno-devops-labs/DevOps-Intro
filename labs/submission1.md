@@ -27,3 +27,10 @@ platon@arch ~> ls .ssh/id_*
 
 Templates help maintain a consistent PR structure so that everyone working on the project can easily analyze any PR, and PR is probably a kind of documentation.
 Also, checklists help, typical human errors are corrected even before merging.
+
+## Proofs
+
+<img alt="Proof_3" src="../images/screenshots/screenshot3.png">
+
+
+<img alt="Proof_4" src="../images/screenshots/screenshot4.png">
