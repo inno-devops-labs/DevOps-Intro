@@ -1,14 +1,17 @@
 # Pull Request
 
-## Description
-Short summary of the changes and related issue(s).
+## Goal
+Short summary of the goal of changes.
+
+## Changes
+Short summary of what was changed in code/documentation.
 
 ## Type of change
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Documentation update
 
-## Type of testing
+## Testing
 Explain how you tested your changes.
 
 ## Checklist
