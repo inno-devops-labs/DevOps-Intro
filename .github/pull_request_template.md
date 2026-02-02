@@ -11,6 +11,6 @@
 <!-- Comments -->
 
 ## Checklist
-- [ ] PR has a clear and descriptive title
-- [ ] Documentation has been updated if necessary
-- [ ] No sensitive data or large temporary files have been committed
+- [ ] Clear, descriptive PR title
+- [ ] Documentation/README updated (if needed)
+- [ ] No secrets or large temporary files committed
