@@ -19,3 +19,4 @@ Signed commits add a cryptographic signature to the commit hash.
 - Enables enforcement via branch protection rules: “require signed commits”.
 - Helps auditing and incident response: who signed + when + what exact content.
 
+## Task 2
