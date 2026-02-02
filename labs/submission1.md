@@ -21,3 +21,4 @@ Pull Request templates improve collaboration by standardizing the information sh
 ### 2.2: Implementation Notes
 - Created `.github/pull_request_template.md` on the main branch for bootstrapping.
 - Verified that the template auto-fills the description field when opening a new Pull Request.
+![PR Template](https://i.postimg.cc/dQ7GMqKK/image.png)
