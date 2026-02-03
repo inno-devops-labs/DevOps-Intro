@@ -9,3 +9,8 @@ One-line summary: what this PR aims to accomplish
 
 ## Testing
 Steps to reproduce / commands run to verify changes, e.g.
+
+## Checklist
+- [ ] Clear, descriptive PR title
+- [ ] Documentation/README updated (if needed)
+- [ ] No secrets or large temporary files committed
