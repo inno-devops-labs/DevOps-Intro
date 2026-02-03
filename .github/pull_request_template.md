@@ -1,5 +1,8 @@
-Goal: Make lab
-Changes: Made lab
-Testing: :/
+# Goal 
+Make the lab
+# Changes
+Made lab
+# Testing: 
+:/
 
 
