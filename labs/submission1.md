@@ -26,7 +26,7 @@ risk of malicious code injection and help teams maintain secure and
 auditable development practices.
 
 ### Verification
-.....
+![alt text](Screenshot_20260203_163117.png)
 
 ---
 
