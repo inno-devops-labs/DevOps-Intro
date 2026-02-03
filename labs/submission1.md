@@ -1,6 +1,6 @@
 # Lab 1
 
-## Task 1
+## Task 1: SSH Commit Signature Verification
 
 * A short summary explaining the benefits of signing commits.
 
@@ -37,3 +37,26 @@ It moves the project from "this commit claims to be from person X" to "this comm
 * Screenshots or verification of the "Verified" badge on GitHub.
 
   ![Verified Badge](screenshots/img.png)
+
+
+## Task 2: PR Template & Checklist
+
+* Screenshot of PR template auto-filling the description.
+  
+  ![PR Template Logic](screenshots/img_4.png)
+
+* Evidence that .github/pull_request_template.md exists on main branch.
+  
+  The file exists at `.github/pull_request_template.md` in the repository root.
+  ![File in .github folder](screenshots/img_3.png)
+
+* Analysis of how PR templates improve collaboration.
+  
+  PR templates standardize the code review process. 
+  1. **Clarity:** They ensure every PR has a clear goal and description of changes, so reviewers don't have to guess.
+  2. **Consistency:** All developers follow the same format.
+  3. **Quality Assurance:** The checklist reminds the author to perform essential checks (like testing or documentation) before requesting a review, reducing back-and-forth communication.
+
+* Note any challenges encountered during setup.
+  
+  The main challenge was the order of operations: the template file must be pushed to the `main` branch *before* creating the Pull Request, otherwise GitHub does not load it automatically.
