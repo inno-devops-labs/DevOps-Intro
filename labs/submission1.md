@@ -9,6 +9,14 @@
 
 ### Доказательства настройки SSH
 
+- SSH ключ был создан и добавлен в GitHub как Authentication key. После этого был выполнен коммит и пуш, однако данный коммит помечался как Not Verified. После добавления GPG key я смогла одновременно выполнять pull/push и подписывать коммиты.
+- Git настроен на автоматическую подпись коммитов через SSH:
+- - git config --global --list
+- - - user.signingkey=53E7C733DCFFA...
+- - - commit.gpgsign=true
+- - - gpg.format=openpgp
+- Коммиты в ветке feature/lab1 отображаются на GitHub как Verified
+
 ## Task 2 - PR Template & Checklist
 
 ### Описание PR-шаблона
