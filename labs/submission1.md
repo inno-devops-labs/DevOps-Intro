@@ -2,14 +2,17 @@
 
 ## Task 1 - SSH Commit Signature Verification
 
-### What is commit signing and why is it important?
+### Что такое подписание commit и почему это важно?
 
-### SSH setup evidence
+Подпись коммитов нужна для подтверждения того, что изменения действительно
+сделаны мной (автором) и не были подделаны. Без этого понижается безопасность работы в команде.
+
+### Доказательства настройки SSH
 
 ## Task 2 - PR Template & Checklist
 
-### PR template description
+### Описание PR-шаблона
 
-### How PR templates improve collaboration
+### Как PR-шаблоны улучшают сотрудничество
 
-## Challenges
+## Трудности
