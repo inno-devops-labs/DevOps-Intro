@@ -32,3 +32,4 @@ Templates standardize the review process by reminding developers of necessary ch
 **ALL SCREENSHOTS:** `DevOps-Intro/labs/images`
 ![Verified.png](Verified.png)
 ![template_exists.png](template_exists.png)
+![pr_autofill.png](pr_autofill.png)
