@@ -5,6 +5,6 @@
 ## Testing
 
 ## Checklist
-[ ] Clear PR title
-[ ] README updated
-[ ] No secrets and temp. files
+- [ ] Clear PR title
+- [ ] README updated
+- [ ] No secrets and temp. files
