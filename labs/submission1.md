@@ -1,4 +1,4 @@
-Signed commits are used to confirm that a commit was created by a specific developer and was not modified later. This helps protect the repository from fake or substituted commits and increases trust between team members.
+Signed commits are used to make sure that a commit was created by a specific developer and has not been changed afterwards. This allows other contributors to trust that the commit is authentic and really belongs to the stated author, reducing the risk of fake or replaced commits in the repository.
 
 In GitHub, signed commits are marked as **Verified**, so anyone reviewing the code can immediately see that the author is trusted. SSH keys can be used for commit signing, which is easier to set up than classic GPG keys.
 
