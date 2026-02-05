@@ -1,12 +1,11 @@
 ## Goal
-[Provide a clear the goal of PR]
+- What does this PR accomplish?
 
 ## Changes
-- [List the key changes or modifications made in the code.]
-- [Highlight any significant refactoring or architectural decisions.]
+- What was modified?
 
 ## Testing
-[Provide clear instructions on how to test the changes locally.]
+- What was modified?
 
 ### Checklist:
 - [ ] Clear title and description.
