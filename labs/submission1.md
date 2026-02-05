@@ -1,0 +1,11 @@
+# Lab 1 submission
+
+## Task 1: SSH Commit Signature Verification
+
+### Benefits of Commit Signing
+Commit signing is a critical practice in modern software development that provides cryptographic verification of authorship and integrity for code changes. By using GPG or SSH keys to sign commits, developers can cryptographically prove that a particular change was made by them and not an impersonator. This creates an unforgeable audit trail that directly ties each commit to a verified identity, which is especially crucial in distributed environments like open-source projects where contributors may never meet in person. Without signing, anyone with access to a repository could claim to be any author, creating significant security and accountability gaps.
+
+The importance of commit signing becomes particularly evident in high-stakes scenarios involving supply chain security and regulatory compliance. Signed commits prevent malicious actors from injecting unauthorized code while masquerading as trusted team members—a tactic used in sophisticated software supply chain attacks. Furthermore, many organizations operating under regulatory frameworks like SOC 2 or those in regulated industries require verifiable audit trails for code changes, which signing reliably provides. Platforms like GitHub prominently display verified badges for signed commits, giving immediate visual assurance to code reviewers and downstream users about the change's authenticity.
+
+Beyond security, commit signing fosters trust within development ecosystems and enhances project governance. When repositories require signed commits via protected branches, they establish a higher standard of contribution integrity that deters casual tampering and reinforces professional development practices. This practice also mitigates risks associated with compromised credentials; even if someone gains access to a developer's account, they cannot forge properly signed commits without the private key. As software becomes increasingly interconnected and foundational to infrastructure, commit signing transitions from a best practice to an essential component of responsible software stewardship, ensuring that the history of a codebase remains authentic and trustworthy.
+### SSH Key Setup Evidence
