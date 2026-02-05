@@ -11,4 +11,6 @@ It establishes a chain of trust in automated pipelines, preventing malicious cod
 
 ## 4. Verification of the "Verified" badge on GitHub
 ![Verified Badge](./images/Proof%20that%20my%20commits%20are%20signed%20with%20SSH%20signature.png)
-The green 'Verified' badge is visible on GitHub for commit, confirming the SSH signature is valid and linked to my account.
+
+## 5. Verification of PR Template
+![PR Template](./images/Proof%20that%20Pull%20Request%20Description%20Auto-Prefill%20works.zip.mp4.png)
