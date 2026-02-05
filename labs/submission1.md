@@ -1,0 +1,3 @@
+# Lab 1 Submission
+## Task 1: SSH Commit Signature Verification
+The signature of commits provides a cryptographic guarantee of authorship and code integrity, preventing forgery of commits and protecting against the introduction of malicious changes on someone else's behalf. In DevOps practices, this is critically important, since CI/CD systems trust only verified commits for automatic builds and deployments, which creates an additional level of security in the software supply chain. Signed commits also ensure compliance with security standards, provide an auditable trace of changes, and are displayed on platforms like GitHub with the "Verified" label, increasing trust in the code in team and open-source development.
