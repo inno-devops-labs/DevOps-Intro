@@ -1,4 +1,4 @@
-# Lab 1 — Introduction to DevOps & Git Workflow
+git config --global gpg.format ssh# Lab 1 — Introduction to DevOps & Git Workflow
 
 ![difficulty](https://img.shields.io/badge/difficulty-beginner-success)
 ![topic](https://img.shields.io/badge/topic-DevOps%20Basics-blue)
