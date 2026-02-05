@@ -2,6 +2,6 @@ Signed commits are used to confirm that a commit was created by a specific devel
 
 In GitHub, signed commits are marked as **Verified**, so anyone reviewing the code can immediately see that the author is trusted. SSH keys can be used for commit signing, which is easier to set up than classic GPG keys.
 
-The SSH key was already present on the local machine and was added to the GitHub account. After that, Git was configured to use SSH for commit signing. As a result, a signed commit was created and successfully verified on GitHub
+The SSH key was already present on the local machine and was added to the GitHub account. After that, Git was configured to use SSH for commit signing. As a result, a signed commit was created and successfully verified on GitHub.
 
 Commit signing is especially important in DevOps workflows, where code often passes through automated pipelines and multiple stages before deployment. Verifying the author of each commit helps maintain accountability and reduces the risk of untrusted changes entering the delivery process.
