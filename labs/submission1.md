@@ -10,3 +10,4 @@ PR templates standardize the code review process, forcing developers to describe
 
 Challenges emerged during setup. I have some problem, while do Signing keys.
 #### Screenshots for Task 2:
+![PR template auto-filling the description.](screenshot/img2.png)
