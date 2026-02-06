@@ -42,13 +42,13 @@ Result:
 
 ## Task 2 — PR Template & Checklist
 
-[X] Screenshot of PR template auto-filling the description.
+- [x] Screenshot of PR template auto-filling the description.
 
-[X] Evidence that .github/pull_request_template.md exists on main branch.
+- [x] Evidence that .github/pull_request_template.md exists on main branch.
 
-[X] Analysis of how PR templates improve collaboration.
+- [x] Analysis of how PR templates improve collaboration.
 
-[X] Note any challenges encountered during setup.
+- [x] Note any challenges encountered during setup.
 
 ### 2.1 Create PR Template
 
