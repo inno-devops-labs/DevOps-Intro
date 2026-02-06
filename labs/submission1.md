@@ -18,6 +18,7 @@ SSH ключ был создан и добавлен в GitHub как Authentica
 - - git config --global commit.gpgsign true
 
 ### Скриншот Verified статуса коммитов
+![Task 1 verified commits](task_1_verified_commits.jpg)
 
 ## Task 2 - PR Template & Checklist
 
