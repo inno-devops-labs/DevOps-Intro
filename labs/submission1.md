@@ -67,6 +67,11 @@ In DevOps, commit signing is important because:
 - Take a screenshot showing the **Verified** badge next to that commit.
 - Paste or attach it here (or describe where you uploaded it if you submit screenshots separately).
 
+**Screenshot (Verified badge):**
+
+![Verified badge on GitHub](verified-badge.png)
+
+
 ---
 
 ## Task 2 — PR Template & Checklist
@@ -80,6 +85,8 @@ The PR template is located at:
 ```
 
 It is present on the **main** branch of the fork so that when opening a PR (e.g. `feature/lab1` → `main`), GitHub auto-fills the description with the template.
+
+![Autofill Template](autofill-template.png)
 
 
 ### 2.3 How PR Templates Improve Collaboration
