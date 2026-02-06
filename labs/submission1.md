@@ -36,3 +36,15 @@ Verified on Feb 6, 2026, 04:17 PM
 ```
 
 ## Task 2
+
+### Screenshot of PR template auto-filling the description
+![](../screenshots/lab1/pr_template_autofill.png)
+
+### Evidence that `.github/pull_request_template.md` exists on main branch.
+![](../screenshots/lab1/pr_template_exists.png)
+
+### Analysis of how PR templates improve collaboration.
+PR templates standardize how changes are presented and reviewed, which helps teams to quickly focus on main changes and scope of new code. Also that helps to develop automated instruments, for example PR messages parser. Moreover, checklists help catch common issues early, e.g missing docs. 
+
+### Challenges encountered during setup.
+Uploading screenshots)
