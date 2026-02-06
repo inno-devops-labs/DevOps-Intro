@@ -1,0 +1,2 @@
+1. Signing commits allows others to confidently trust that changes come from a verified source, as GitHub marks them with a "Verified" status. It provides persistent cryptographic verification of a commit's origin within the repository's network.
+2. I've lost the logs of setuping the ssh key, but I wouldn't be able to clone the repository without it. 
