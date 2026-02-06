@@ -273,3 +273,79 @@ dminnakhmetova@MacBook-Air-Diana-3 DevOps-Intro % git log --oneline -3
 
 Git's reflog keeps a record of HEAD movements for ~90 days. Even after `git reset --hard`, commits aren't deleted immediately—they become orphaned (unreachable from any branch). Reflog lets you recover them by resetting to their hash. This is why reflog is essential: it's your safety net for accidental history rewrites. Always check reflog before panicking!
 
+
+## Task 3 — Visualize Commit History
+
+[X] A snippet of the graph.
+
+[X] Commit messages list.
+
+[X] A 1–2 sentence reflection on how the graph aids understanding.
+
+### 3.1 Graph Creation
+
+Created a short-lived branch with a commit:
+
+```bash
+dminnakhmetova@MacBook-Air-Diana-3 DevOps-Intro % git switch -c side-branch
+Переключились на новую ветку «side-branch»
+dminnakhmetova@MacBook-Air-Diana-3 DevOps-Intro % echo "Branch commit" >> history.txt
+dminnakhmetova@MacBook-Air-Diana-3 DevOps-Intro % git branch
+  feature/lab1
+  feature/lab2
+  git-reset-practice
+  main
+* side-branch
+dminnakhmetova@MacBook-Air-Diana-3 DevOps-Intro % git add history.txt && git commit -m "Side branch commit"
+[side-branch 0923100] Side branch commit
+ 1 file changed, 1 insertion(+)
+ create mode 100644 history.txt
+dminnakhmetova@MacBook-Air-Diana-3 DevOps-Intro % git switch -
+Переключились на ветку «feature/lab2»
+dminnakhmetova@MacBook-Air-Diana-3 DevOps-Intro % git branch
+  feature/lab1
+* feature/lab2
+  git-reset-practice
+  main
+  side-branch
+```
+
+### 3.2 Graph Output
+
+```
+dminnakhmetova@MacBook-Air-Diana-3 DevOps-Intro % git log --oneline --graph --all
+* 0923100 (side-branch) Side branch commit
+* 79342bb (HEAD -> feature/lab2) docs: task 2 - reset and reflog recovery
+| * 9a547b4 (git-reset-practice) Third commit
+| * 0d0d8cf Second commit
+| * 8ba871d First commit
+|/  
+* 08eabbe docs: task 1 - git object model exploration
+* 91caa5f Add test file
+* 97fa04a (origin/main, origin/HEAD, main) feat: add PR template
+| * e02372e (origin/feature/lab1, feature/lab1) docs: add lab1 submission
+| * 43d9753 docs: add lab1 submission stub
+| * 206c1df docs: add commit signing summary
+| * 0a558e3 docs: add commit signing summary
+|/  
+* d6b6a03 Update lab2
+* 87810a0 feat: remove old Exam Exemption Policy
+* 1e1c32b feat: update structure
+* 6c27ee7 feat: publish lecs 9 & 10
+* 1826c36 feat: update lab7
+* 3049f08 feat: publish lec8
+* da8f635 feat: introduce all labs and revised structure
+* 04b174e feat: publish lab and lec #5
+* 67f12f1 feat: publish labs 4&5, revise others
+* 82d1989 feat: publish lab3 and lec3
+* 3f80c83 feat: publish lec2
+* 499f2ba feat: publish lab2
+* af0da89 feat: update lab1
+* 74a8c27 Publish lab1
+* f0485c0 Publish lec1
+* 31dd11b Publish README.md
+```
+
+### 3.3 Reflection
+
+The `--graph` flag visually represents the branching structure as ASCII art. Each `*` is a commit, `|` represents a branch line, and `/` or `\` show divergence and convergence points. This makes it immediately clear which commits belong to which branches and where they split/merge. Far better than a linear list for understanding the repository's structure and development history.
