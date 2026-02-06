@@ -1,0 +1,82 @@
+[0;32mStep 1: Downloading: https://github.com/spinframework/spin/releases/download/v3.6.3/spin-v3.6.3-linux-amd64.tar.gz[0m
+[0;32mDone...
+[0m
+[0;32mStep 2: Decompressing: spin-v3.6.3-linux-amd64.tar.gz[0m
+crt.pem
+spin.sig
+README.md
+LICENSE
+spin
+spin 3.6.3 (88d51cf 2026-04-09)
+[0;32mDone...
+[0m
+[0;32mStep 3: Removing the downloaded tarball[0m
+[0;32mDone...
+[0m
+[0;32mStep 4: Installing default templates[0m
+Copying remote template source
+Installing template http-zig...
+Installing template static-fileserver...
+Installing template redis-rust...
+Installing template http-rust-wasip3-unstable...
+Installing template redirect...
+Installing template http-empty...
+Installing template http-php...
+Installing template http-rust...
+Installing template redis-go...
+Installing template http-grain...
+Installing template http-go...
+Installing template http-c...
+Installed 12 template(s)
+
++------------------------------------------------------------------------------------------+
+| Name                        Description                                                  |
++==========================================================================================+
+| http-c                      HTTP request handler using C and the Zig toolchain           |
+| http-empty                  HTTP application with no components                          |
+| http-go                     HTTP request handler using (Tiny)Go                          |
+| http-grain                  HTTP request handler using Grain                             |
+| http-php                    HTTP request handler using PHP                               |
+| http-rust                   HTTP request handler using Rust                              |
+| http-rust-wasip3-unstable   WASIp3 HTTP request handler using Rust (0.3.0-rc-2025-09-16) |
+| http-zig                    HTTP request handler using Zig                               |
+| redirect                    Redirects a HTTP route                                       |
+| redis-go                    Redis message handler using (Tiny)Go                         |
+| redis-rust                  Redis message handler using Rust                             |
+| static-fileserver           Serves static files from an asset directory                  |
++------------------------------------------------------------------------------------------+
+Copying remote template source
+Installing template http-py...
+Installed 1 template(s)
+
++---------------------------------------------+
+| Name      Description                       |
++=============================================+
+| http-py   HTTP request handler using Python |
++---------------------------------------------+
+Copying remote template source
+Installing template http-ts...
+Installing template http-js...
+Installing template redis-ts...
+Installing template redis-js...
+Installed 4 template(s)
+
++---------------------------------------------------+
+| Name       Description                            |
++===================================================+
+| http-js    HTTP request handler using JavaScript  |
+| http-ts    HTTP request handler using TypeScript  |
+| redis-js   Redis message handler using JavaScript |
+| redis-ts   Redis message handler using TypeScript |
++---------------------------------------------------+
+[0;32mStep 5: Installing default plugins[0m
+Plugin information updated successfully
+Plugin 'cloud' was installed successfully!
+
+Description:
+	Commands for publishing applications to the Fermyon Cloud.
+
+Homepage:
+	https://github.com/fermyon/cloud-plugin
+[0;32mYou're good to go. Check here for the next steps: https://spinframework.dev/quickstart[0m
+[0;32mRun './spin' to get started[0m

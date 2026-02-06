@@ -1,0 +1,7 @@
+Logging component stdio to ".spin/logs/"
+Preparing Wasm modules is taking a few seconds...
+
+
+Serving http://127.0.0.1:13000
+Available Routes:
+  moscow-time: http://127.0.0.1:13000 (wildcard)
