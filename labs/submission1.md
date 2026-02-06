@@ -1,6 +1,6 @@
 # Lab 1 — Submission: Introduction to DevOps & Git Workflow
 
-**Author:** [Your Name]
+**Author:** Alexandra Starikova-Nasibullina
 **Branch:** `feature/lab1`
 
 ---
