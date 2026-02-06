@@ -12,8 +12,8 @@ Signed commits have the following advantages:
 
 ### 1.2 — Evidence of Successful SSH Key Setup and Signed Commit
 
-![](../images/lab_1_0.png)
-![](../images/lab_1_1.png)
+![](./images/lab_1_0.png)
+![](./images/lab_1_1.png)
 
 ### 1.3 — Importance in DevOps Workflows
 
@@ -23,6 +23,6 @@ Signed commits have the following advantages:
 
 ## Task 2
 
-![](../images/lab_1_2.png)
+![](./images/lab_1_2.png)
 
 PR templates allow faster and standardized description of a contribution
