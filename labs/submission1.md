@@ -32,3 +32,4 @@ The template file exists on the main branch:
 
 ### Challenges Encounters
 *Setup and verification of the template application was straightforward. Enforcing the template requires contributors to use the web interface or specific tools that respect these templates.*
+
