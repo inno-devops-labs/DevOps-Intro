@@ -107,3 +107,49 @@ Result: HEAD is now at `892a0e2` (Add test file) — successfully recovered to f
 
 Key takeaway: `git reflog` is a safety net that tracks all HEAD movements, allowing recovery even after destructive operations like `git reset --hard`.
 
+## Task 3
+
+I created a short-lived branch, made a commit, and then visualized the graph:
+
+![Git log graph showing branch structure](img/graph.png)
+
+### Commit Messages
+
+| Hash | Branch | Message |
+|------|--------|---------|
+| `d1d8916` | side-branch | Side branch commit |
+| `7328901` | feature/lab2 (HEAD) | Add task 2 |
+| `ff06357` | feature/lab2 | Add task 1 |
+| `892a0e2` | git-reset-practice | Add test file |
+| `b2db823` | origin/main, main | Change PR template |
+| `6396630` | feature/lab1 | docs: add lab1 submission |
+
+### Reflection
+
+The `git log --graph --all` visualization clearly shows how branches diverge and where they originate. The asterisks (`*`) represent commits, and the lines show parent-child relationships. This view is invaluable for understanding parallel development, identifying merge points, and tracking which commits belong to which branch — especially in collaborative projects with multiple contributors.
+
+## Task 4
+
+I have created a tag and pushed it to the remote repository:
+
+![Creating and pushing tag v1.0.0](img/tagging.png)
+
+### Tag Details
+
+| Tag | Commit Hash | Command |
+|-----|-------------|---------|
+| `v1.0.0` | HEAD (current commit) | `git tag v1.0.0` |
+
+The tag was successfully pushed to `https://github.com/KosmonikOS/DevOps-Intro.git`.
+
+![Tag details](img/tag.png)
+
+### Why Tags Matter
+
+Tags provide stable, human-readable references to specific commits. They are essential for:
+
+- Versioning: Marking release points (v1.0.0, v2.1.3) following semantic versioning
+- CI/CD triggers: Pipelines can trigger deployments when tags matching patterns (e.g., `v*`) are pushed
+- Release notes: GitHub automatically creates release pages from tags, making it easy to document changes
+- Reproducibility: Teams can always check out exact release versions for debugging or rollbacks
+
