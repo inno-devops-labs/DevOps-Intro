@@ -9,6 +9,9 @@ Signed commits provide cryptographic proof that a commit was created by a truste
 - Screenshot showing the “Verified” badge on a signed commit in GitHub.
 - SSH-based commit signing is configured using an ed25519 SSH key. Commits are created with `git commit -S`, and GitHub successfully verifies them as signed.
 
+  <img width="1470" height="830" alt="image" src="https://github.com/user-attachments/assets/15af71a5-7781-4b44-96cc-d1adec6e61ec" />
+
+
 ### Why is commit signing important in DevOps workflows?
 In DevOps workflows, commit signing is important because it ensures that only authenticated and trusted changes enter the codebase. It helps teams maintain a secure and auditable development process, especially when multiple contributors and automated systems are involved. Signed commits integrate well with CI/CD pipelines by adding an additional layer of trust before builds and deployments. This practice reduces the risk of unauthorized code changes and improves overall security posture.
 
