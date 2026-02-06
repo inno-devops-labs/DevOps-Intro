@@ -11,6 +11,9 @@ and trust in collaborative environments.
 
 ### Proof of SSH signing
 
+The commit "docs: explain importance of signed commits" was created
+using SSH commit signing. On GitHub, this commit is marked with
+a green "Verified" badge, confirming the authenticity of the author.
 
 ---
 
@@ -18,5 +21,13 @@ and trust in collaborative environments.
 
 ### PR template description
 
+A pull request template was added to the main branch of the repository.
+It includes sections for Goal, Changes, and Testing, as well as a
+checklist to ensure clear PR titles, updated documentation, and
+absence of sensitive data.
 
 ### Proof of PR template usage
+
+A pull request from `feature/lab1` to `main` was created in my fork.
+The PR description was automatically populated using the pull request template.
+The checklist items were completed, demonstrating standardized PR workflow.
