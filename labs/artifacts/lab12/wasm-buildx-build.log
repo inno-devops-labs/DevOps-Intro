@@ -1,0 +1,26 @@
+#0 building with "wasm-builder" instance using docker-container driver
+
+#1 [internal] load build definition from Dockerfile.wasm
+#1 transferring dockerfile:
+#1 transferring dockerfile: 118B 0.1s done
+#1 DONE 0.3s
+
+#2 [internal] load .dockerignore
+#2 transferring context:
+#2 transferring context: 2B 0.0s done
+#2 DONE 0.1s
+
+#3 [internal] load build context
+#3 transferring context: 2.45MB 0.4s done
+#3 DONE 0.5s
+
+#4 [1/1] COPY main.wasm /main.wasm
+#4 DONE 0.1s
+
+#5 exporting to oci image format
+#5 exporting layers
+#5 exporting layers 0.4s done
+#5 exporting manifest sha256:56dc049faa63f08544f1c41fcec82b83060b08f77b691dc3fc9f1477428d330f 0.1s done
+#5 exporting config sha256:ea8bebf53afcfe985476f9a67ab48bfe1c157fb5d5a73caf865cfb18c95bcd95 0.1s done
+#5 sending tarball 0.1s done
+#5 DONE 0.7s

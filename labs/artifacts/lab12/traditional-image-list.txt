@@ -1,0 +1,2 @@
+IMAGE                            ID             DISK USAGE   CONTENT SIZE   EXTRA
+moscow-time-traditional:latest   d0650b90e633        4.7MB             0B        

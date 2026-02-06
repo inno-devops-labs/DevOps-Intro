@@ -1,0 +1,1 @@
+docker.io/library/moscow-time-wasm:latest application/vnd.oci.image.manifest.v1+json sha256:56dc049faa63f08544f1c41fcec82b83060b08f77b691dc3fc9f1477428d330f 819.9 KiB wasi/wasm -      

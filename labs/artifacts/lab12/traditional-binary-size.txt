@@ -1,0 +1,1 @@
+-rwxr-xr-x 1 andrey andrey 4.5M May 12 20:38 /home/andrey/DevOps-Intro/DevOps-Intro/labs/artifacts/lab12/moscow-time-traditional

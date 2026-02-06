@@ -1,0 +1,1 @@
+-rwxr-xr-x 1 root root 32329576 May 12 21:47 /usr/local/bin/containerd-shim-wasmtime-v1

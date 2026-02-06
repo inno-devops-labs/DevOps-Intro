@@ -1,0 +1,1 @@
+tinygo version 0.39.0 linux/amd64 (using go version go1.25.0 and LLVM version 19.1.2)

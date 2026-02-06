@@ -1,0 +1,5 @@
+timestamp=2026-05-12T20:35:46+03:00
+branch=feature/lab9
+host=andrey-VirtualBox
+go_test_port=18080
+traditional_test_port=18081

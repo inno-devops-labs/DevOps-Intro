@@ -1,0 +1,1 @@
+main.wasm: WebAssembly (wasm) binary module version 0x1 (MVP)

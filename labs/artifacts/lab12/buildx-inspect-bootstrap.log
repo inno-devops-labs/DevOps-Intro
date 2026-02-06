@@ -1,0 +1,14 @@
+#1 [internal] booting buildkit
+#1 pulling image moby/buildkit:buildx-stable-1
+#1 pulling image moby/buildkit:buildx-stable-1 96.1s done
+#1 creating container buildx_buildkit_wasm-builder0
+#1 creating container buildx_buildkit_wasm-builder0 7.9s done
+#1 DONE 104.0s
+Name:          wasm-builder
+Driver:        docker-container
+Last Activity: 2026-05-12 18:52:45 +0000 UTC
+
+Nodes:
+Name:     wasm-builder0
+Endpoint: unix:///var/run/docker.sock
+Error:    Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.51/containers/buildx_buildkit_wasm-builder0/json": context deadline exceeded

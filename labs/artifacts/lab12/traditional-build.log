@@ -1,0 +1,35 @@
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  8.192kB
+Step 1/9 : FROM golang:1.21-alpine AS builder
+ ---> c2321c7cf721
+Step 2/9 : WORKDIR /app
+ ---> Running in 50b930581f17
+ ---> Removed intermediate container 50b930581f17
+ ---> 804e03c6f7eb
+Step 3/9 : COPY main.go .
+ ---> 3d1327fa1729
+Step 4/9 : RUN CGO_ENABLED=0 GOOS=linux     go build -tags netgo -trimpath     -ldflags="-s -w -extldflags=-static"     -o moscow-time main.go
+ ---> Running in 75c14260085a
+ ---> Removed intermediate container 75c14260085a
+ ---> e2b974a9cf82
+Step 5/9 : FROM scratch
+ ---> 
+Step 6/9 : WORKDIR /app
+ ---> Running in 325498b7eb7f
+ ---> Removed intermediate container 325498b7eb7f
+ ---> 642113d3c09c
+Step 7/9 : COPY --from=builder /app/moscow-time .
+ ---> 31fd2e3d8292
+Step 8/9 : EXPOSE 8080
+ ---> Running in 57cd424d871c
+ ---> Removed intermediate container 57cd424d871c
+ ---> 5247bd40a88e
+Step 9/9 : ENTRYPOINT ["/app/moscow-time"]
+ ---> Running in 52bff617765b
+ ---> Removed intermediate container 52bff617765b
+ ---> d0650b90e633
+Successfully built d0650b90e633
+Successfully tagged moscow-time-traditional:latest

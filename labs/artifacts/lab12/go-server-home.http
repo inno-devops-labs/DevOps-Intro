@@ -1,0 +1,37 @@
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+Date: Tue, 12 May 2026 17:37:30 GMT
+Content-Length: 1221
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Moscow Time</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 100px;
+           background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); color: white; }
+    .container { background: rgba(255,255,255,.1); padding: 40px; border-radius: 10px;
+                 backdrop-filter: blur(10px); max-width: 600px; margin: 0 auto; }
+    h1 { margin-bottom: 30px; }
+    #time { font-size: 3em; font-weight: bold; margin: 20px 0; text-shadow: 2px 2px 4px rgba(0,0,0,.3); }
+    a { color:#ffd700; text-decoration:none; font-size:1.2em; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🕰️ Current Time in Moscow</h1>
+    <div id="time">Loading...</div>
+    <p><a href="/api/time">📊 View JSON API</a></p>
+  </div>
+  <script>
+    async function updateTime(){
+      try{
+        const r=await fetch('/api/time'); const d=await r.json();
+        document.getElementById('time').textContent=d.moscow_time;
+      }catch(e){ console.error(e); document.getElementById('time').textContent='Error loading time'; }
+    }
+    updateTime(); setInterval(updateTime,1000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Tue, 12 May 2026 17:38:30 GMT
+Content-Length: 65
+
+{"moscow_time":"2026-05-12 20:38:30 MSK","timestamp":1778607510}

@@ -1,0 +1,1 @@
+-rwxr-xr-x 1 andrey andrey 2.4M May 12 21:04 main.wasm
