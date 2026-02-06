@@ -349,3 +349,55 @@ dminnakhmetova@MacBook-Air-Diana-3 DevOps-Intro % git log --oneline --graph --al
 ### 3.3 Reflection
 
 The `--graph` flag visually represents the branching structure as ASCII art. Each `*` is a commit, `|` represents a branch line, and `/` or `\` show divergence and convergence points. This makes it immediately clear which commits belong to which branches and where they split/merge. Far better than a linear list for understanding the repository's structure and development history.
+
+
+## Task 4 — Tagging Commits
+
+[X] Tag names and commands used.
+
+[X] Associated commit hashes.
+
+[X] A short note on why tags matter (versioning, CI/CD triggers, release notes).
+
+### 4.1 Tags Created
+
+```bash
+dminnakhmetova@MacBook-Air-Diana-3 DevOps-Intro % git tag v1.0.0
+dminnakhmetova@MacBook-Air-Diana-3 DevOps-Intro % git tag
+v1.0.0
+```
+
+### 4.2 Tag Information
+
+**v1.0.0:** Points to commit `c5a1625` (docs: task 3 - visualize commit history)
+
+Verified with:
+```bash
+dminnakhmetova@MacBook-Air-Diana-3 DevOps-Intro % git show v1.0.0
+commit c5a16250fa7ff393af59b1ca97c2bd3f51dc3af0 (HEAD -> feature/lab2, tag: v1.0.0)
+Author: d.minnakhmetova <d.minnakhmetova@innopolis.university>
+Date:   Fri Feb 6 23:42:55 2026 +0300
+
+    docs: task 3 - visualize commit history
+
+diff --git a/labs/submission2.md b/labs/submission2.md
+index 7c24b8a..7005b2d 100644
+--- a/labs/submission2.md
++++ b/labs/submission2.md
+dminnakhmetova@MacBook-Air-Diana-3 DevOps-Intro % git rev-parse v1.0.0
+c5a16250fa7ff393af59b1ca97c2bd3f51dc3af0
+dminnakhmetova@MacBook-Air-Diana-3 DevOps-Intro % git push origin v1.0.0
+Перечисление объектов: 21, готово.
+Подсчет объектов: 100% (21/21), готово.
+При сжатии изменений используется до 8 потоков
+Сжатие объектов: 100% (18/18), готово.
+Запись объектов: 100% (19/19), 6.55 КиБ | 6.55 МиБ/с, готово.
+Total 19 (delta 13), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (13/13), completed with 1 local object.
+To https://github.com/mnkhmtv/DevOps-Intro.git
+ * [new tag]         v1.0.0 -> v1.0.0
+```
+
+### 4.3 Why Tags Matter
+
+Tags mark specific points in history for releases and versioning. CI/CD pipelines often trigger builds on new tags, automating deployment workflows. Tags make it easy to find release versions without scrolling through hundreds of commits. They also improve discoverability on GitHub—each release gets its own "Release" page with downloads and release notes. Tags are essential for semantic versioning (v1.0.0, v1.1.0, etc.) and help teams quickly identify which code corresponds to which production version.
