@@ -26,3 +26,6 @@ The template includes:
 4. **Documentation**: PR description serves as change documentation
 5. **Onboarding**: New team members understand expectations
 
+
+Template pull request:
+![template](./screenshots/template.png)
