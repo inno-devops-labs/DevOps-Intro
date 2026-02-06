@@ -46,4 +46,54 @@ gpg.format=ssh
 git commit -S -m "docs: add commit signing summary"
 ```
 
+```
+1 file changed, 49 insertions(+)
+create mode 100644 labs/submission1.md
+```
+
+### 1.3 Why is commit signing important in DevOps workflows?
+
+In DevOps, commit signing is important because:
+
+1. **Pipeline trust** — CI/CD runs code from commits. Signed commits ensure the code that is built, tested, and deployed really comes from an allowed identity, reducing supply-chain and impersonation risks.
+2. **Collaboration at scale** — With many contributors and forks, the "Verified" badge (and optional branch protection requiring signed commits) gives reviewers and maintainers a clear signal that the author is who they claim to be.
+3. **Traceability** — Incidents and audits often require knowing exactly who changed what. Signatures provide cryptographic evidence of authorship that cannot be forged.
+4. **Policy enforcement** — Organizations can require signed commits on critical branches, so only verified changes can be merged. This supports both security and compliance.
+
+### 1.4 Verification on GitHub
+
+- After pushing your branch, open your PR or the commit history on GitHub.
+- Find the commit you made with `git commit -S -m "..."`.
+- Take a screenshot showing the **Verified** badge next to that commit.
+- Paste or attach it here (or describe where you uploaded it if you submit screenshots separately).
+
+---
+
+## Task 2 — PR Template & Checklist
+
+### 2.1 PR Template Location
+
+The PR template is located at:
+
+```
+.github/pull_request_template.md
+```
+
+It is present on the **main** branch of the fork so that when opening a PR (e.g. `feature/lab1` → `main`), GitHub auto-fills the description with the template.
+
+
+### 2.3 How PR Templates Improve Collaboration
+
+- **Consistency** — Every PR has the same structure (e.g. Goal, Changes, Testing), so reviewers know where to find intent, scope, and how to verify. This reduces back-and-forth and speeds up review.
+- **Checklists** — A short checklist (e.g. title, docs, no secrets) reminds authors of common requirements and gives reviewers a quick way to confirm basics are done. It also helps with self-review before requesting review.
+- **Context** — Clear "Goal" and "Changes" sections make it easier for future readers (and tools) to understand why the PR exists and what was modified, improving documentation and onboarding.
+- **Process** — In DevOps, PRs are the gate before merge. Standardized templates make the process repeatable and easier to automate or integrate with other tools (e.g. release notes, changelogs).
+
+
+---
+
+## Checklist (for PR description)
+
+- [x] Task 1 done
+- [x] Task 2 done
 
