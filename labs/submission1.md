@@ -14,16 +14,15 @@ Repository and branch
 - Trust signal for reviews and automation: helps reduce impersonation and tampering risk in team workflows.
 
 ### Why commit signing is important in DevOps workflows
-DevOps relies on fast collaboration and automated pipelines. Signed commits add cryptographic provenance for changes, improving auditability and reducing the risk of accepting spoofed or modified commits during code review, CI, and release processes.
+DevOps relies on fast collaboration and automated pipelines. Signed commits add cryptographic provenance for changes, improving auditability and reducing the risk of accepting spoofed or modified commits in code review and CI.
 
 ### Evidence of setup and signed commit
 
-Git configuration
+Commands
 ```bash
 git --version
 git config --global --get gpg.format
 git config --global --get user.signingkey
 git config --global --get commit.gpgsign
+git log --show-signature -1
 
-![alt text](image.png)
-https://github.com/inno-devops-labs/DevOps-Intro/pull/278
