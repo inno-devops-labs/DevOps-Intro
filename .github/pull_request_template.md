@@ -11,7 +11,7 @@ How was this verified?
 
 ## Checklist
 - [ ] Clear, descriptive PR title
-- [ ] Documentation/README updated (if needed)
+- [ ] Documentation updated (if needed)
 - [ ] No secrets or large temporary files committed
 - [ ] Code follows project conventions
 - [ ] All tests pass (if applicable)
