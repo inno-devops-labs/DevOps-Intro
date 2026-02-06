@@ -7,13 +7,13 @@
 
 ## Task 1 — SSH Commit Signature Verification
 
-[X] A short summary explaining the benefits of signing commits.
+- [x] A short summary explaining the benefits of signing commits.
 
-[X] Evidence of successful SSH key setup and signed commit.
+- [x] Evidence of successful SSH key setup and signed commit.
 
-[X] Answer: "Why is commit signing important in DevOps workflows?"
+- [x] Answer: "Why is commit signing important in DevOps workflows?"
 
-[X] Screenshots or verification of the "Verified" badge on GitHub.
+- [x] Screenshots or verification of the "Verified" badge on GitHub.
 
 ### 1.1 Summary of Commit Signing Benefits
 
