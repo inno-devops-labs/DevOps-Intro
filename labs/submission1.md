@@ -13,3 +13,4 @@ Commit signing helps to verify identity of developer who made the commit and ens
 ### Why is commit signing important in DevOps workflows?
 
 Commit signing guarantees authenticity and integrity of code changes. It prevents malicious contributions, ensures accountability, and helps teams to trust source of every commit in the repository.
+![alt text](image.png)
