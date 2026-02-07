@@ -209,21 +209,75 @@ By selecting the appropriate reflog entry, the lost commit history can be fully 
 ![Task 1 — git reflog](./screenshots/lab_2_5.png)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Task 3 — Visualize Commit History
+
+
+### Commands
+
+```bash
+git switch feature/lab2
+git switch -c side-branch
+echo "Branch commit" >> history.txt
+git add history.txt
+git commit -m "Side branch commit"
+git switch -
+git log --oneline --graph --all --decorate
+```
+
+### Graph snippet
+
+```text
+(.venv) PS D:\PyCharmProjects\DevOps_Inno> git log --oneline --graph --all --decorate
+* 3d98f3e (side-branch) Side branch commit
+* 5f97d04 (HEAD -> feature/lab2, origin/feature/lab2) finish 2 task
+| * 4930492 (git-reset-practice) Third commit
+| * 18c9b06 Second commit
+| * 7cb6166 First commit
+|/  
+* 5c85ae7 finish 1 task
+* a0a4e17 finish 1 task
+* fff44e8 rename 1 lab screenshots
+* 31c58a9 Add test file
+* 95510e1 prepare lab 2
+* 657b71a (origin/feature/lab1, feature/lab1) finish 2 task with screenshot
+* a08b92f docs: add task 2 report
+* 10e8ae5 complete task 1
+* d9ea462 docs: add commit signing summary
+| * 49c941b (origin/main, main) chore: add PR template
+|/  
+* d6b6a03 Update lab2
+* 87810a0 feat: remove old Exam Exemption Policy
+* 1e1c32b feat: update structure
+* 6c27ee7 feat: publish lecs 9 & 10
+* 1826c36 feat: update lab7
+* 3049f08 feat: publish lec8
+* da8f635 feat: introduce all labs and revised structure
+* 04b174e feat: publish lab and lec #5
+* 67f12f1 feat: publish labs 4&5, revise others
+* 82d1989 feat: publish lab3 and lec3
+* 3f80c83 feat: publish lec2
+* 499f2ba feat: publish lab2
+* af0da89 feat: update lab1
+* 74a8c27 Publish lab1
+* f0485c0 Publish lec1
+* 31dd11b Publish README.md
+```
+
+### Reflection
+
+The `--graph --all` view makes branch divergence and branch pointers visible at a glance, so it’s easier to understand which commits belong to which branch and how HEAD moved during branching/merging.
+
+### Screenshot
+
+![Task 3 — git log graph](./screenshots/lab_2_6.png)
+
+
+
+
+
+
+
+
 
 ## Task 4 — Tagging Commits
 
