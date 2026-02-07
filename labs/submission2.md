@@ -157,6 +157,40 @@ c7cf749 HEAD@{6}: commit: First commit
 The `reflog` records every HEAD movement. Even after a destructive `--hard` reset, the "lost" commit remains in reflog with a reference like HEAD@{1}. By using `git reset --hard HEAD@{1}`, it's possible to completely restore the repository to that earlier state, recovering both the commit history and all associated file changes.
 
 ## Task 3: Visualize Commit History
+### Graph Output
+```
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git log --oneline --graph --all
+* 44a6364 (side-branch) Side branch commit
+* 736f6df (HEAD -> feature/lab2, origin/feature/lab2) task 2
+* bcf2426 task 1
+* 5a2f7d3 lab 2, task 1
+* 74c38e3 Add test file
+* fcfd20b (origin/feature/lab1, feature/lab1) feat: task 2 added
+* 6b3604a feat: SSH screenshots added
+* 3c838d9 remove .DS_Store file
+* e7d91e0 remove screenshots folder
+* d6b77e7 feat: SSH screenshots added
+* 63466e5 feat: SSH screenshots added
+* 71b5840 feat: SSH screenshots added
+* 3cb6e7e verified commit
+* b9a96c1 verified commit
+* 0f2867f verified commit
+```
+
+***Commit messages list:*** 
+- verified commit, 
+- feat: SSH screenshots added, 
+- remove screenshots folder, 
+- remove .DS_Store file, 
+- feat: task 2 added, 
+- Add test file, 
+- lab 2, task 1, 
+- task 1, 
+- task 2,
+- Side branch commit
+
+**Reflection:** the graph visualization provides insight into branch relationships and development flow. It clearly shows where branches diverge (at commit 736f6df for side-branch) and reveals that feature/lab1 stopped development while feature/lab2 continued, helping understand the project's evolution at a glance.
+
 ## Task 4: Tagging Commits
 ## Task 5: git switch vs git checkout vs git restore
 ## Task 6: GitHub Community Engagement
