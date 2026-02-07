@@ -247,5 +247,107 @@ Date:   Sat Feb 7 15:07:34 2026 +0300
 3. Release Management: Tags create GitHub releases with downloadable source code, changelogs, and binary assets, facilitating organized software distribution.
 
 ## Task 5: git switch vs git checkout vs git restore
+### Commands & Outputs:
+```
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git switch -c test-command-comparison
+Switched to a new branch 'test-command-comparison'
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git branch
+  feature/lab1
+  feature/lab2
+  main
+* test-command-comparison
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git switch -c cmd-compare
+Switched to a new branch 'cmd-compare'
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git switch -
+Switched to branch 'test-command-comparison'
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git checkout -b cmd-compare-2
+Switched to a new branch 'cmd-compare-2'
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git checkout test-command-comparison
+Switched to branch 'test-command-comparison'
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % echo "original content" > demo.txt
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git add demo.txt
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git commit -m "Add demo.txt"
+[test-command-comparison c4505a0] Add demo.txt
+ 1 file changed, 1 insertion(+)
+ create mode 100644 demo.txt
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git status
+On branch test-command-comparison
+nothing to commit, working tree clean
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % echo "scratch changes" >> demo.txt
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git status
+On branch test-command-comparison
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   demo.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git restore demo.txt
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git status
+On branch test-command-comparison
+nothing to commit, working tree clean
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % echo "new content" > demo.txt
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git add demo.txt
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git status
+On branch test-command-comparison
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        modified:   demo.txt
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git restore --staged demo.txt
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git status
+On branch test-command-comparison
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   demo.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git restore --source=HEAD~1 demo.txt
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git status
+On branch test-command-comparison
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        deleted:    demo.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git checkout -- demo.txt
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git status
+On branch test-command-comparison
+nothing to commit, working tree clean
+```
+
+**Conclusion:** 
+- Use `git restore` when discarding uncommitted changes in the working directory (unstaged changes) or unstaging files (staged changes)
+- Use `git checkout` when wanting to switch branches, create new branches, or restore files to their committed state (older syntax)
+- Use `git switch` specifically for switching between branches in a cleaner, more intuitive way, as it's designed only for branch operations unlike checkout which has multiple functions.
 
 ## Task 6: GitHub Community Engagement
+### Challenges & Solutions:
+The main challenges I faced were related to understanding the Git Object Model and commands I hadn't used before (reset, reflog, restore). After reading the theory, I understood how they work.
+
+### GitHub Community:
+Starring repositories matters in open source because it shows appreciation to maintainers, helps projects gain visibility in rankings, and serves as a bookmark to revisit useful code later.
+
+Following developers helps in team projects by keeping you updated on their contributions, and supports professional growth by exposing you to their techniques, projects, and community insights.
