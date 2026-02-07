@@ -144,4 +144,140 @@ PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git log --oneline --graph --all
 Граф помогает понять историю коммитов последовательно.
 
 4) Task 4
-for 4 task
+![alt text](image-4.png)
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git add .\labs\submission2.md .\labs\image-3.png
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git commit -m "Add new subm and screenshot"
+[feature/lab2 b0cde89] Add new subm and screenshot
+ 2 files changed, 144 insertions(+)
+ create mode 100644 labs/image-3.png
+ create mode 100644 labs/submission2.md
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git tag v1.0.0
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git push origin v1.0.0
+Enumerating objects: 10, done.
+Counting objects: 100% (10/10), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (7/7), done.
+Writing objects: 100% (8/8), 73.07 KiB | 9.13 MiB/s, done.
+Total 8 (delta 4), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (4/4), completed with 2 local objects.
+To https://github.com/somepatt/DevOps-Intro.git
+ * [new tag]         v1.0.0 -> v1.0.0
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git add .\labs\submission2.md
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git commit -m 'for test new tag'
+[feature/lab2 34033b5] for test new tag
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git tag v1.1.0                  
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git push origin v1.1.0          
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 620 bytes | 620.00 KiB/s, done.
+Total 4 (delta 3), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (3/3), completed with 3 local objects.
+To https://github.com/somepatt/DevOps-Intro.git
+ * [new tag]         v1.1.0 -> v1.1.0
+
+Hash: 34033b5
+
+С помощью тегов запускаются CD процессы.
+
+5) Task 5
+
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git switch -c cmd-compare
+Switched to a new branch 'cmd-compare'
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git switch -
+M       labs/submission2.md
+Switched to branch 'feature/lab2'
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git checkout -b cmd-compare-2
+Switched to a new branch 'cmd-compare-2'
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git switch
+fatal: missing branch or commit argument
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git checkout
+M       labs/submission2.md
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git branch
+  cmd-compare
+* cmd-compare-2
+  feature/lab1
+  feature/lab2
+  get-reset-practice
+  main
+  side-branch
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git switch -
+M       labs/submission2.md
+Switched to branch 'feature/lab2'
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git switch cmd-compare
+M       labs/submission2.md
+Switched to branch 'cmd-compare'
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> echo "scratch" >> demo.txt
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git restore demo.txt     
+error: pathspec 'demo.txt' did not match any file(s) known to git
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git restore demo.txt     
+error: pathspec 'demo.txt' did not match any file(s) known to git
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git restore demo.txt
+error: pathspec 'demo.txt' did not match any file(s) known to git
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git restore demo.txt
+error: pathspec 'demo.txt' did not match any file(s) known to git
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git restore --staged demo.txt
+error: pathspec 'demo.txt' did not match any file(s) known to git
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git restore --source=HEAD~1 demo.txt
+error: pathspec 'demo.txt' did not match any file(s) known to git
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git add .\demo.txt
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git restore demo.txt                
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git add .\demo.txt  
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git status
+On branch cmd-compare
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        new file:   demo.txt
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   labs/submission2.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        labs/image-4.png
+
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git resore .\demo.txt
+git: 'resore' is not a git command. See 'git --help'.
+
+The most similar command is
+        restore
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git restore .\demo.txt
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git status            
+On branch cmd-compare
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        new file:   demo.txt
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   labs/submission2.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        labs/image-4.png
+
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git restore --staged demo.txt       
+PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git status
+On branch cmd-compare
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   labs/submission2.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        demo.txt
+        labs/image-4.png
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+
+git switch удобно для переключения, git checkout для переключения на коммит/тег или работу с файлами, git restore только для отмены изменений в файлах.
+
+# GitHub Community
+Stars помогают развивать open-source проекты, так как они создают связи между разработчиками, которые уже в дальнейшем могут давать фидбек, придумывать идеи вместе и в целом создавать сильные комьюнити.
