@@ -142,3 +142,6 @@ PS C:\Users\Mi\Desktop\projects\DevOps-Intro> git log --oneline --graph --all
 ![alt text](image-3.png)
 
 Граф помогает понять историю коммитов последовательно.
+
+4) Task 4
+for 4 task
