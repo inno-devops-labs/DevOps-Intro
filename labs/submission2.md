@@ -2,51 +2,40 @@
 ## Task 1: Git Object Model Exploration
 ### Command outputs for object inspection:
 #### 1. Commit Object
+```
 arinapetuhova@192 DevOps-Intro % git log --oneline -1
-
 74c38e3 (HEAD -> feature/lab2) Add test file
 
 arinapetuhova@192 DevOps-Intro % git cat-file -p 74c38e3
-
 tree b660713fc594e96a202a3eb9a00bfdceee997270
-
 parent fcfd20b880bf4ce1ea665b92c0f087db645d79c4
-
 author Arina Petuhova <119685834+arinapetukhova@users.noreply.github.com> 1770370868 +0300
-
 committer Arina Petuhova <119685834+arinapetukhova@users.noreply.github.com> 1770370868 +0300
-
 gpgsig -----BEGIN SSH SIGNATURE-----
-
  U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgUDPLkiD0daseOoV9XP0Y0kgQg1
-
  G2jn3Herr0uZ2bnroAAAADZ2l0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5
-
  AAAAQEE3uLqt0EDdiEL5Pz0DKJhHTAF9m3fNsvV1cNAq9d2OdA8ckqtH+KPp7kUrBnBfUV
-
  lG3dPPezDBMLQ3hTj1lQs=
-
  -----END SSH SIGNATURE-----
 
 Add test file
+```
 
 #### 2. Tree Object
+```
 arinapetuhova@192 DevOps-Intro % git cat-file -p b660713fc594e96a202a3eb9a00bfdceee997270
-
 100644 blob 6e60bebec0724892a7c82c52183d0a7b467cb6bb    README.md
-
 040000 tree a1061247fd38ef2a568735939f86af7b1000f83c    app
-
 040000 tree f0fbfea6739bbc15d0f4a5408cdb109a9c6cbb4f    labs
-
 040000 tree d3fb3722b7a867a83efde73c57c49b5ab3e62c63    lectures
-
 100644 blob 2eec599a1130d2ff231309bb776d1989b97c6ab2    test.txt
+```
 
 #### 3. Blob Object
+```
 arinapetuhova@192 DevOps-Intro % git cat-file -p 2eec599a1130d2ff231309bb776d1989b97c6ab2
-
 Test content
+```
 
 ### Object Type Explanations
 
@@ -66,6 +55,106 @@ Git stores repository data as a directed acyclic graph of objects where commits 
 **Commit Example**: `74c38e3` contains metadata including parent commit `fcfd20b`, author information, timestamp, GPG signature, and commit message "Add test file".
 
 ## Task 2: Reset and Reflog Recovery
+### Testing git reset --soft HEAD~1:
+``` 
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git log --oneline
+6eec726 (HEAD -> git-reset-practice) Third commit
+a7dbccb Second commit
+c7cf749 First commit
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git reflog
+6eec726 (HEAD -> git-reset-practice) HEAD@{0}: commit: Third commit
+a7dbccb HEAD@{1}: commit: Second commit
+c7cf749 HEAD@{2}: commit: First commit
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git reset --soft HEAD~1
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git log --oneline
+a7dbccb (HEAD -> git-reset-practice) Second commit
+c7cf749 First commit
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git reflog
+a7dbccb (HEAD -> git-reset-practice) HEAD@{0}: reset: moving to HEAD~1
+6eec726 HEAD@{1}: commit: Third commit
+a7dbccb (HEAD -> git-reset-practice) HEAD@{2}: commit: Second commit
+c7cf749 HEAD@{3}: commit: First commit
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git status
+On branch git-reset-practice
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        modified:   file.txt
+```
+
+**Explanation:** here, I ran commands `git log --oneline` and `git reflog` to see the last commits and HEAD position. After running `git reset --soft HEAD~1` to reset the last commit while keeping index & working tree, I verified with `git log --oneline` (shows only 2 commits), `git reflog` (shows reset action), and `git status` (shows changes are staged). 
+
+### Testing git reset --hard HEAD@{1}:
+```
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git reset --hard HEAD@{1}
+HEAD is now at 6eec726 Third commit
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git log --oneline
+6eec726 (HEAD -> git-reset-practice) Third commit
+a7dbccb Second commit
+c7cf749 First commit
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git reflog
+6eec726 (HEAD -> git-reset-practice) HEAD@{0}: reset: moving to HEAD@{1}
+a7dbccb HEAD@{1}: reset: moving to HEAD~1
+6eec726 (HEAD -> git-reset-practice) HEAD@{2}: commit: Third commit
+a7dbccb HEAD@{3}: commit: Second commit
+c7cf749 HEAD@{4}: commit: First commit
+```
+**Explanation:** here, I ran command `git reset --hard HEAD@{1}` recovered the repository to the state it was in before the previous `git reset --soft HEAD~1`.
+I verified it with `git log --oneline` (shows all 3 commits) and `git reflog` (shows reset to previous HEAD@{1} action). 
+
+### Testing git reset --hard HEAD~1:
+```
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git reset --hard HEAD~1 
+HEAD is now at a7dbccb Second commit
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git log --oneline
+a7dbccb (HEAD -> git-reset-practice) Second commit
+c7cf749 First commit
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git reflog
+a7dbccb (HEAD -> git-reset-practice) HEAD@{0}: reset: moving to HEAD~1
+6eec726 HEAD@{1}: reset: moving to HEAD@{1}
+a7dbccb (HEAD -> git-reset-practice) HEAD@{2}: reset: moving to HEAD~1
+6eec726 HEAD@{3}: commit: Third commit
+a7dbccb (HEAD -> git-reset-practice) HEAD@{4}: commit: Second commit
+c7cf749 HEAD@{5}: commit: First commit
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro %  git status
+On branch git-reset-practice
+nothing to commit, working tree clean
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git reset --hard HEAD@{1} 
+HEAD is now at 6eec726 Third commit
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git log --oneline
+6eec726 (HEAD -> git-reset-practice) Third commit
+a7dbccb Second commit
+c7cf749 First commit
+
+arinapetuhova@MacBook-Air-Arina DevOps-Intro % git reflog  
+6eec726 (HEAD -> git-reset-practice) HEAD@{0}: reset: moving to HEAD@{1}
+a7dbccb HEAD@{1}: reset: moving to HEAD~1
+6eec726 (HEAD -> git-reset-practice) HEAD@{2}: reset: moving to HEAD@{1}
+a7dbccb HEAD@{3}: reset: moving to HEAD~1
+6eec726 (HEAD -> git-reset-practice) HEAD@{4}: commit: Third commit
+a7dbccb HEAD@{5}: commit: Second commit
+c7cf749 HEAD@{6}: commit: First commit
+```
+
+**Explanation:** here, I ran command `git reset --hard HEAD~1` to reset the last commit without keeping index & working tree. I verified it with `git log --oneline` (shows only 2 commits), `git reflog` (shows reset action), and `git status` (shows that no changes are staged). Then everything is again recovered with `git reset --hard HEAD@{1}` nad checked with `git log --oneline` and `git reflog`.
+
+### Reset Changes:
+- `git reset --soft HEAD~1` moves HEAD back one commit while keeping both the index and working tree unchanged. The commit disappears from history, but all its changes remain staged.
+- `git reset --hard HEAD~1` also moves HEAD back but discards everything, both the index and working tree revert to the previous commit's state, making changes permanently lost from the current branch.
+
+### Recovery via Reflog:
+The `reflog` records every HEAD movement. Even after a destructive `--hard` reset, the "lost" commit remains in reflog with a reference like HEAD@{1}. By using `git reset --hard HEAD@{1}`, it's possible to completely restore the repository to that earlier state, recovering both the commit history and all associated file changes.
 
 ## Task 3: Visualize Commit History
 ## Task 4: Tagging Commits
