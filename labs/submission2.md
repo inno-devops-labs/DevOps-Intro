@@ -272,14 +272,40 @@ The `--graph --all` view makes branch divergence and branch pointers visible at 
 ![Task 3 — git log graph](./screenshots/lab_2_6.png)
 
 
-
-
-
-
-
-
-
 ## Task 4 — Tagging Commits
+
+### Commands
+
+```bash
+git switch feature/lab2
+git log --oneline -1
+git tag v1.0.0
+git show v1.0.0 --oneline --no-patch
+git push origin v1.0.0
+```
+
+```bash
+echo "Release note for v1.1.0" >> release.txt
+git add release.txt
+git commit -m "chore: prepare v1.1.0"
+git tag v1.1.0
+git show v1.1.0 --oneline --no-patch
+git push origin v1.1.0
+```
+
+### Tags and associated commits
+
+* **v1.0.0** → commit `54c12fc` (`finish task 3`)
+* **v1.1.0** → commit `de664a0` (`chore: prepare v1.1.0`)
+
+### Why tags matter
+
+Tags mark specific commits as release points. They are used for semantic versioning, generating release notes, and often serve as triggers for CI/CD pipelines to build and deploy a specific version of the project.
+
+
+### Screenshot
+![Task 4 — tags](./screenshots/lab_2_7.png)
+
 
 ## Task 5 — git switch vs git checkout vs git restore
 
