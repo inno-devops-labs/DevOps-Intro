@@ -113,6 +113,23 @@ Recovery consists of locating the desired past HEAD position in the reflog and m
 The commit graph makes the project history easier to understand by visually showing how commits relate through branching and merging, rather than as a flat list. This helps quickly identify where changes originated, diverged, and were integrated back together.
 
 
+# Task 4: Tagging Commits
+
+## Tag names and commands
+For the tag name I choose 'v1.0.0'. For creating a tag I use these commands:
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+This tag points to my commit "18c079e task 2 complete".
+
+
+## Why tags matter?
+Tags matter because they mark stable, meaningful points in history—such as releases—making versioning explicit and reproducible. They are commonly used to trigger CI/CD pipelines and to anchor release notes, ensuring builds, deployments, and documentation all reference the same immutable commit.
+
+
+
 # Task 6: GitHub Community
 
 Starring repositories on GitHub signals appreciation to maintainers, increases project visibility, and helps others discover high-quality open-source work. Following developers makes it easier to track relevant projects, learn best practices from peers, and build professional connections that support effective teamwork and long-term career growth.
