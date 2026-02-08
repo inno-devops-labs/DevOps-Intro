@@ -129,6 +129,38 @@ This tag points to my commit "18c079e task 2 complete".
 Tags matter because they mark stable, meaningful points in history—such as releases—making versioning explicit and reproducible. They are commonly used to trigger CI/CD pipelines and to anchor release notes, ensuring builds, deployments, and documentation all reference the same immutable commit.
 
 
+# Task 5: git switch vs git checkout vs git restore
+
+## Commands
+I ran the following commands and get following outputs:
+```bash
+pixel@pixelbook:~/DevOps-Intro$ git switch -c cmd-compare
+Switched to a new branch 'cmd-compare'
+pixel@pixelbook:~/DevOps-Intro$ git switch - 
+M       labs/submission2.md
+Switched to branch 'feature/lab2'
+```
+
+I used the "switch" command instead of "checkout" because switch is limited to branch operations, whereas "checkout" can also modify files and the working tree.
+
+## Git branch / Git status
+### Git branch output
+![](images/branch.png)
+
+### Git status output
+![](images/status.png)
+
+## When to use each command
+
+### git switch
+Should be used when you only need to change branches or create new ones. It is safer and clearer than checkout because it cannot modify files, reducing the risk of accidental data loss.
+
+### git checkout
+Appropriate when working with older Git versions or when you intentionally need a single command that can switch branches, detach HEAD, or check out specific files.
+
+### git restore
+Should be used to discard changes in the working tree or staging area and restore files to a known state. It cleanly separates file restoration from branch navigation, improving clarity and intent in commands.
+
 
 # Task 6: GitHub Community
 
