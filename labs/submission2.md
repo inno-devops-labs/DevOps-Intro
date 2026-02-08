@@ -104,6 +104,15 @@ In Git, reflog records every position HEAD has pointed to, even after history-re
 Recovery consists of locating the desired past HEAD position in the reflog and moving the branch pointer back to it. This works as long as the commits have not yet been garbage-collected, making reflog a temporary safety net for undoing destructive changes.
 
 
+# Task 3: Visualize Commit History
+
+## Graph and commit messages
+![](images/graph.png)
+
+## Reflection on graphs
+The commit graph makes the project history easier to understand by visually showing how commits relate through branching and merging, rather than as a flat list. This helps quickly identify where changes originated, diverged, and were integrated back together.
+
+
 # Task 6: GitHub Community
 
 Starring repositories on GitHub signals appreciation to maintainers, increases project visibility, and helps others discover high-quality open-source work. Following developers makes it easier to track relevant projects, learn best practices from peers, and build professional connections that support effective teamwork and long-term career growth.
