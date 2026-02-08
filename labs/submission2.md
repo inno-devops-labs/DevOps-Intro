@@ -46,6 +46,64 @@ This design enables fast operations: checking out a commit is just reading a tre
 Screenshots were attached in the first subparagraph.
 
 
+# Task 2 — Reset and Reflog Recovery
+
+## What commmand I ran
+According to the task I ran these commands:
+```bash
+git switch -c git-reset-practice
+echo "First commit" > file.txt && git add file.txt && git commit -m "First commit"
+echo "Second commit" >> file.txt && git add file.txt && git commit -m "Second commit"
+echo "Third commit"  >> file.txt && git add file.txt && git commit -m "Third commit"
+
+git reset --soft HEAD~1
+git reset --hard HEAD~1
+git reflog
+git reset --hard b9ac827
+
+git log --oneline
+```
+
+## Snippets of log and reflog
+### Reflog
+![alt text](images/reflog.png)
+
+### Log --oneline
+![alt text](images/log.png)
+
+
+## Changes in working tree, index, and history for each reset
+
+### git reset --soft HEAD~1
+- **History (HEAD / branch):** Moves HEAD back by one commit.
+- **Index (staging area):** Unchanged; still reflects the newer commit.
+- **Working tree:** Unchanged.
+
+**Effect:** The last commit is undone, but its changes remain staged. We now at commit "commit: Second commit".
+
+
+### git reset --hard HEAD~1
+- **History (HEAD / branch):** Moves HEAD back by one commit.
+- **Index (staging area):** Reset to match the target commit.
+- **Working tree:** Reset to match the target commit.
+
+**Effect:** The last commit and all associated changes are permanently discarded from the working tree and index. We now at commit #commit: First commit#
+
+
+### git reset --hard b9ac827
+- **History (HEAD / branch):** Moves HEAD directly to commit `b9ac827`.
+- **Index (staging area):** Reset to exactly match `b9ac827`.
+- **Working tree:** Reset to exactly match `b9ac827`.
+
+**Effect:** The branch, staging area, and working directory are all restored to the state of commit `b9ac827`; later commits are removed from the branch (recoverable via reflog if needed). We now at commit "b9ac827 (HEAD -> git-reset-practice, origin/feature/lab2, feature/lab2) task 1 and 6 done" 
+
+
+## Analysis on recovery via reflog
+In Git, reflog records every position HEAD has pointed to, even after history-rewriting operations like reset. When commits are removed from a branch, they are not deleted immediately; reflog preserves references to them so they can be restored.
+
+Recovery consists of locating the desired past HEAD position in the reflog and moving the branch pointer back to it. This works as long as the commits have not yet been garbage-collected, making reflog a temporary safety net for undoing destructive changes.
+
+
 # Task 6: GitHub Community
 
 Starring repositories on GitHub signals appreciation to maintainers, increases project visibility, and helps others discover high-quality open-source work. Following developers makes it easier to track relevant projects, learn best practices from peers, and build professional connections that support effective teamwork and long-term career growth.
