@@ -4,9 +4,11 @@
 
 
 $ git log --oneline -1
+
+
 25e5541 (HEAD -> feature/lab2) Add test file
 
-
+```
 $ git cat-file -p 25e5541
 tree abe22c39e214852ffa286a0d9d5bfdb1dc4eb999
 parent 5f704ed3fc31d9f4e03b8133ea3d4779d4a9b577
@@ -18,19 +20,22 @@ gpgsig -----BEGIN SSH SIGNATURE-----
  AAAAQPF71FN4al9yvZaKoPmFDGs+CWhgAFn5SrSiY2oyyTA5TY+XsDeiYQqa5tAZ3hhgRi
  9TBlWAEKXKpiRkuV28HAA=
  -----END SSH SIGNATURE-----
+```
 
-Add test file
 
-
+```
 $ git cat-file -p abe22c39e214852ffa286a0d9d5bfdb1dc4eb999
 040000 tree b2efec4d0a10c0632fb5f32d67f7be429f5c2dd8    .github
 100644 blob 6e60bebec0724892a7c82c52183d0a7b467cb6bb    README.md
 040000 tree a1061247fd38ef2a568735939f86af7b1000f83c    app
 040000 tree 81100a3c9af72daeedbf951ee0c5e6b4e5635866    labs
 040000 tree d3fb3722b7a867a83efde73c57c49b5ab3e62c63    lectures
+```
 
 
 $ git cat-file -p 6e60bebec0724892a7c82c52183d0a7b467cb6bb
+
+
 # 🚀 DevOps Introduction Course: Principles, Practices & Tooling
 
 [![Labs](https://img.shields.io/badge/Labs-80%25-blue)](#-lab-based-learning-experience)
@@ -74,6 +79,7 @@ Blob: plain text or binary file data
 Tree: list of filenames with their blob or tree hashes
 
 Commit: tree hash, parent commit hash(es), author/committer info, and commit message
+
 
 ## Task 2: Reset and Reflog
 
