@@ -1,3 +1,4 @@
 First commit
 Second commit
 Third commit
+v1.1.0
