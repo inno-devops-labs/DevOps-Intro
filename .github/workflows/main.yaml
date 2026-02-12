@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "feature/lab3"
+  workflow_dispatch:
+
+jobs:
+  basic:
+    name: Basic CI info + system details
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Print workflow/run context
+        run: |
+          echo "Event: ${{ github.event_name }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Ref: ${{ github.ref }}"
+          echo "SHA: ${{ github.sha }}"
+          echo "Run ID: ${{ github.run_id }}"
+          echo "Run number: ${{ github.run_number }}"
+          echo "Runner OS: ${{ runner.os }}"
+          echo "Runner Arch: ${{ runner.arch }}"
+          echo "Runner Name: ${{ runner.name }}"
+
+      - name: System information (OS/CPU/RAM/Disk)
+        shell: bash
+        run: |
+          set -euxo pipefail
+          echo "=== OS Release ==="
+          cat /etc/os-release || true
+
+          echo "=== Kernel ==="
+          uname -a
+
+          echo "=== CPU ==="
+          lscpu || true
+
+          echo "=== Memory ==="
+          free -h || true
+
+          echo "=== Disk ==="
+          df -h || true
+
+          echo "=== Top processes (optional) ==="
+          ps aux --sort=-%mem | head -n 10 || true
