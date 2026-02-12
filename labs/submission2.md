@@ -146,4 +146,61 @@ Commit messages list can be viewed in branches graph after branch name:
 The `--graph` view visually shows how commits diverge and relate, making branch structure and parallel histories immediately clear. It helps you see where side-branch split from the main line and how development progressed independently.
 
 # Task 4
+## Tag names and commands used
+Tag: v1.0.0, command `git tag v1.0.0`
 
+## Associated commit hashes
+`835a9a4 (HEAD -> feature/lab2, tag: v1.0.0, origin/feature/lab2) Task 3 completed`
+Hash: `835a9a4`
+
+## A short note on why tags matter (versioning, CI/CD triggers, release notes)
+Tags matter because they provide stable, human-readable markers for important commits (e.g., releases like v1.0.0), making versioning explicit and reproducible. They are commonly used in CI/CD pipelines to trigger release builds and deployments, and they serve as fixed reference points for generating release notes and tracking shipped features
+
+# Task 5
+## Commands you ran and their outputs
+`git switch -c cmd-compare`
+Output:
+`Switched to a new branch 'cmd-compare'`
+
+`git switch -`
+Output:
+```
+M       labs/submission2.md
+Switched to branch 'feature/lab2'
+Your branch is up to date with 'origin/feature/lab2'.
+```
+
+`git checkout -b cmd-compare-2`
+Output:
+`Switched to a new branch 'cmd-compare-2'`
+
+```
+git restore demo.txt                 # discard working tree changes
+git restore --staged demo.txt        # unstage (keep working tree)
+git restore --source=HEAD~1 demo.txt # restore from another commit
+```
+No output
+
+## git status/git branch outputs showing state changes
+Initial git status:
+```
+On branch feature/lab2
+Your branch is up to date with 'origin/feature/lab2'.
+```
+
+After switch: `On branch cmd-compare`
+
+After checkout: `On branch cmd-compare-2`
+
+## 2–3 sentences on when to use each command
+Use git switch when working with branches—switching between them, creating a new branch, or detaching HEAD—since it’s purpose-built and safer for branch operations.
+
+Use git restore when you want to discard changes or restore specific files from the index or a commit without affecting branch history.
+
+Use git checkout mainly for backward compatibility or in older workflows, as it combines both behaviors but is more ambiguous and easier to misuse.
+
+# Task 6
+## GitHub Community
+Starring repositories signals appreciation, helps track projects of interest, and can boost a project’s visibility in the open-source community.
+
+Following developers lets you stay updated on their work, learn best practices, and facilitates collaboration, mentorship, and professional networking.
