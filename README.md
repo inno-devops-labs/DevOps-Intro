@@ -28,7 +28,7 @@ Through **hands-on labs and lectures**, you'll explore version control, software
 | 8    | 8   | **SRE & Monitoring**                | System metrics, SLAs, website monitoring (Checkly), alerting, reliability engineering                                    |
 | 9    | 9   | **DevSecOps Tools**                 | OWASP ZAP, Trivy scanning, vulnerability analysis, security integration                                                  |
 | 10   | 10  | **Cloud Computing Fundamentals**    | Artifact registries (AWS/GCP/Azure), serverless platforms comparison                                                     |
-| —    | 11  | **🎁 Bonus: Web3 Infrastructure**   | IPFS node setup, decentralized storage, 4EVERLAND deployment, content addressing                                         |
+| —    | 11  | **🎁 Bonus: Reproducible Builds**   | Nix package manager, reproducible derivations, Docker images with Nix, Flakes                                           |
 | —    | 12  | **🎁 Bonus: WASM Containers**       | WebAssembly containers, performance comparison, Spin framework, edge computing                                           |
 
 > **Note:** Labs 11-12 are **optional bonus labs** for extra credit. Complete them to boost your grade or explore cutting-edge technologies!
@@ -427,7 +427,7 @@ graph TB
     
     %% Bonus Branch
     ROOT --- BONUS[⭐ Bonus Labs]
-    BONUS --- K[🌐 Lab 11: IPFS/4EVERLAND<br/>• Decentralized Storage<br/>• Web3 Hosting<br/>• Content Addressing]
+    BONUS --- K[🔧 Lab 11: Nix & Reproducibility<br/>• Reproducible Builds<br/>• Nix Derivations<br/>• Content-Addressable]
     BONUS --- L[⚡ Lab 12: WASM Containers<br/>• WebAssembly<br/>• Performance<br/>• Edge Computing]
     
     %% Styling
@@ -465,7 +465,7 @@ flowchart LR
     
     subgraph "⭐ Bonus: Cutting Edge"
         direction LR
-        K[🌐 IPFS/4EVERLAND<br/>Decentralized Web]
+        K[🔧 Nix & Reproducibility<br/>Deterministic Builds]
         L[⚡ WASM Containers<br/>Performance & Edge]
     end
     
@@ -565,7 +565,7 @@ flowchart LR
 
 **Bonus Labs (Optional):**
 
-11. **🎁 IPFS & 4EVERLAND** — Decentralized storage, Web3 hosting, content addressing
+11. **🎁 Reproducible Builds with Nix** — Nix derivations, reproducible Docker images, Flakes, deterministic builds
 12. **🎁 WASM Containers** — WebAssembly performance, Spin framework, edge computing
 
 > **Bonus Lab Benefits:**
@@ -832,7 +832,7 @@ Total: 122 points → capped at 100/100 = A+ with buffer
 - **Day 7:** Review, polish submission, submit PR
 
 **After Week 10 (Bonus Labs - Optional):**
-- **Week 11 equivalent:** Lab 11 - IPFS/4EVERLAND
+- **Week 11 equivalent:** Lab 11 - Reproducible Builds with Nix
 - **Week 12 equivalent:** Lab 12 - WASM Containers
 - Can be done during/after exam prep period
 
@@ -892,8 +892,9 @@ Total: 122 points → capped at 100/100 = A+ with buffer
 - [Azure Documentation](https://docs.microsoft.com/azure/)
 
 **Bonus Lab Technologies:**
-- [IPFS Documentation](https://docs.ipfs.tech/)
-- [4EVERLAND Docs](https://docs.4everland.org/)
+- [Nix Package Manager](https://nixos.org/)
+- [Zero to Nix](https://zero-to-nix.com/)
+- [nix.dev Documentation](https://nix.dev/)
 - [WebAssembly Official Site](https://webassembly.org/)
 - [Spin Framework](https://spin.fermyon.dev/)
 
@@ -915,11 +916,11 @@ Total: 122 points → capped at 100/100 = A+ with buffer
 - **Linux:** Native terminal, package manager (apt/yum)
 
 **Lab-Specific Tools (install as needed):**
-- **Lab 3:** GitHub account
+- **Lab 3:** GitHub/GitLab account
 - **Lab 5:** VirtualBox
 - **Lab 8:** Checkly account (free tier)
 - **Lab 9:** OWASP ZAP, Trivy
-- **Lab 11 (Bonus):** 4EVERLAND account
+- **Lab 11 (Bonus):** Nix package manager
 - **Lab 12 (Bonus):** WasmEdge runtime
 
 **Installation Guides:**
@@ -967,8 +968,9 @@ Total: 122 points → capped at 100/100 = A+ with buffer
 - [GCP Free Tier](https://cloud.google.com/free)
 - [Azure Free Account](https://azure.microsoft.com/free/)
 
-**Bonus: Web3 & WASM**
-- [IPFS Concepts](https://docs.ipfs.tech/concepts/)
+**Bonus: Nix & WASM**
+- [Nix Pills](https://nixos.org/guides/nix-pills/)
+- [Nix Flakes](https://wiki.nixos.org/wiki/Flakes)
 - [WebAssembly Concepts](https://webassembly.org/docs/high-level-goals/)
 
 </details>
@@ -988,6 +990,6 @@ Upon successful completion of this course, you will have:
 ✅ **Security Awareness** — DevSecOps practices and vulnerability management  
 ✅ **SRE Principles** — Monitoring, reliability, and incident management skills  
 
-**Bonus Achievements (if completed):**  
-⭐ **Web3 Experience** — Decentralized storage and hosting knowledge  
+**Bonus Achievements (if completed):**
+⭐ **Reproducible Build Expertise** — Nix package management and deterministic builds
 ⭐ **Edge Computing Skills** — WebAssembly and next-gen container technology  
