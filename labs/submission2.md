@@ -123,3 +123,25 @@ git log --oneline --graph --all --decorate
 Commit messages (from the graph): `Side branch commit`, `docs: add task2`, `Third commit`, `Second commit`, `First commit`, `docs: add task1`, `Add test file`.
 
 Reflection: `--graph --all` makes it clear where branches diverge and which commits belong to each branch.
+
+
+
+
+
+
+## Task 4 — Tagging Commits
+
+Commands:
+```sh
+git tag v1.0.0
+git show --oneline --no-patch v1.0.0
+git push origin v1.0.0
+````
+
+Tag info:
+
+```
+e7e523d docs: add task3
+```
+
+Why tags matter: tags mark release points, enable versioning, and are commonly used by CI/CD pipelines and release notes.
