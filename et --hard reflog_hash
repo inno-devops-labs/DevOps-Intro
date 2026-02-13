@@ -1,0 +1,31 @@
+[33mce9989d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mgit-reset-practice[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33m8128d3b[m HEAD@{1}: reset: moving to HEAD~1
+[33m1cb2fc9[m HEAD@{2}: commit: Third commit
+[33m8128d3b[m HEAD@{3}: commit: Second commit
+[33mce9989d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mgit-reset-practice[m[33m)[m HEAD@{4}: commit: First commit
+[33m27583ba[m[33m ([m[1;32mfeature/lab2[m[33m)[m HEAD@{5}: checkout: moving from feature/lab2 to git-reset-practice
+[33m27583ba[m[33m ([m[1;32mfeature/lab2[m[33m)[m HEAD@{6}: commit: Add test file
+[33mc225d7b[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/feature/lab2[m[33m, [m[1;31morigin/feature/lab1[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m, [m[1;32mfeature/lab1[m[33m)[m HEAD@{7}: checkout: moving from main to feature/lab2
+[33mc225d7b[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/feature/lab2[m[33m, [m[1;31morigin/feature/lab1[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m, [m[1;32mfeature/lab1[m[33m)[m HEAD@{8}: checkout: moving from feature/lab1 to main
+[33mc225d7b[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/feature/lab2[m[33m, [m[1;31morigin/feature/lab1[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m, [m[1;32mfeature/lab1[m[33m)[m HEAD@{9}: merge main: Fast-forward
+[33m82626d8[m HEAD@{10}: checkout: moving from main to feature/lab1
+[33mc225d7b[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/feature/lab2[m[33m, [m[1;31morigin/feature/lab1[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m, [m[1;32mfeature/lab1[m[33m)[m HEAD@{11}: checkout: moving from feature/lab1 to main
+[33m82626d8[m HEAD@{12}: checkout: moving from main to feature/lab1
+[33mc225d7b[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/feature/lab2[m[33m, [m[1;31morigin/feature/lab1[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m, [m[1;32mfeature/lab1[m[33m)[m HEAD@{13}: commit: add: task 2 report for lab 1
+[33ma64a660[m HEAD@{14}: checkout: moving from main to main
+[33ma64a660[m HEAD@{15}: checkout: moving from feature/lab1 to main
+[33m82626d8[m HEAD@{16}: checkout: moving from main to feature/lab1
+[33ma64a660[m HEAD@{17}: commit: chore: add pull request template
+[33m82626d8[m HEAD@{18}: pull origin main: Fast-forward
+[33m5c069ba[m HEAD@{19}: checkout: moving from feature/lab1 to main
+[33m82626d8[m HEAD@{20}: commit: docs: update lab1 submission - verified pic
+[33mb45f0c7[m HEAD@{21}: commit: docs: update lab1 submission - verified
+[33mb8d0b87[m HEAD@{22}: commit: docs: update lab1 submission - verified
+[33mb4bb9b1[m HEAD@{23}: commit: docs: update lab1 submission
+[33m3980705[m HEAD@{24}: commit: docs: update submission
+[33m1b33d01[m HEAD@{25}: commit: docs: add commit signing summary
+[33m09754c3[m HEAD@{26}: commit: docs: add lab1 submission
+[33m5c069ba[m HEAD@{27}: checkout: moving from main to feature/lab1
+[33m5c069ba[m HEAD@{28}: commit: docs: add commit signing summary
+[33md6b6a03[m HEAD@{29}: checkout: moving from main to main
+[33md6b6a03[m HEAD@{30}: clone: from https://github.com/creatlan/DevOps-Intro.git
