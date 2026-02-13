@@ -14,4 +14,6 @@ ssh-keygen -t ed25519 -C "rolanmuliukin@innopolis.university"
 
 ![](attachments/pic1-1-2.png)
 
-- After I create this file, and make the commit
+- After I create this file, and make the commit and get `Verified`
+
+
