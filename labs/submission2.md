@@ -333,7 +333,7 @@ Tags matter because they create **immutable, human-readable snapshots** of the c
 ### Task 5 — git switch vs git checkout vs git restore
 
 - [x] Commands you ran and their outputs.
-- [] `git status`/`git branch` outputs showing state changes.
+- [x] `git status`/`git branch` outputs showing state changes.
 - [x] 2–3 sentences on when to use each command.
 
 **Option A: git switch (Modern - Recommended)**
