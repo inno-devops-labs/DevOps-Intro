@@ -289,21 +289,155 @@ The `--graph` flag visually represents the branching structure as ASCII art. Eac
 ---
 
 ### Task 4 — Tagging Commits (1 pt)
-- [] Tag names and commands used.
-- [] Associated commit hashes.
-- [] A short note on why tags matter (versioning, CI/CD triggers, release notes).
+- [x] Tag names and commands used.
+- [x] Associated commit hashes.
+- [x] A short note on why tags matter (versioning, CI/CD triggers, release notes).
+
+``` sh
+PS D:\Programs\DevOps-Intro> git tag v1.0.0
+PS D:\Programs\DevOps-Intro> git tag
+v1.0.0
+PS D:\Programs\DevOps-Intro> git push origin v1.0.0
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To https://github.com/Kamilya05/DevOps-Intro.git
+ * [new tag]         v1.0.0 -> v1.0.0
+PS D:\Programs\DevOps-Intro> git show v1.0.0       
+commit 39eb0326793f74fa2fab14929b1bf21a33c6bb41 (HEAD -> feature/lab2, tag:
+ v1.0.0, origin/feature/lab2)
+Author: Kamilya Shakirova <94891282+Kamilya05@users.noreply.github.com>    
+Date:   Fri Feb 13 23:56:06 2026 +0300
+
+    docs: add task2&3
+
+diff --git a/labs/submission2.md b/labs/submission2.md
+index 2c772d3..ac2a939 100644
+--- a/labs/submission2.md
++++ b/labs/submission2.md
+@@ -8,8 +8,8 @@
+ ## Task 1 — Git Object Model Exploration
+
+ - [x] All command outputs for object inspection.
+-- [] A 1–2 sentence explanation of what each object type represents.      
+-- [] Analysis of how Git stores repository data.
++- [x] A 1–2 sentence explanation of what each object type represents.     
++- [x] Analysis of how Git stores repository data.
+ - [x] Example of blob, tree, and commit object content.
+```
+
+**v1.0.0:** Points to commit `39eb032`
+
+Tags matter because they create **immutable, human-readable snapshots** of the codebase at significant points (e.g., `v1.2.0`). They enable precise **versioning** for dependency management, trigger automated **CI/CD pipelines** for deployment, and provide a stable anchor for generating **release notes** and rollbacks.
 
 ---
 
 ### Task 5 — git switch vs git checkout vs git restore
 
-- [] Commands you ran and their outputs.
+- [x] Commands you ran and their outputs.
 - [] `git status`/`git branch` outputs showing state changes.
-- [] 2–3 sentences on when to use each command.
+- [x] 2–3 sentences on when to use each command.
+
+**Option A: git switch (Modern - Recommended)**
+``` sh
+PS D:\Programs\DevOps-Intro> git switch -c cmd-compare
+Switched to a new branch 'cmd-compare'
+PS D:\Programs\DevOps-Intro> git switch - 
+M       labs/submission2.md
+Switched to branch 'feature/lab2'
+Your branch is up to date with 'origin/feature/lab2'.
+
+PS D:\Programs\DevOps-Intro> git branch
+  cmd-compare
+  feature/lab1
+* feature/lab2
+  git-reset-practice
+  main
+  side-branch
+```
+**Purpose:** Branch switching only (clear and focused)
+
+**Option B: git checkout (Legacy - Overloaded)**
+``` sh
+PS D:\Programs\DevOps-Intro> git checkout -b cmd-compare-2 
+Switched to a new branch 'cmd-compare-2'
+
+PS D:\Programs\DevOps-Intro> git branch
+  cmd-compare
+* cmd-compare-2
+  feature/lab1
+  feature/lab2
+  git-reset-practice
+  main
+  side-branch
+```
+**Problem:** Does too many things - branches AND files
+
+`git checkout` can also be used for file operations (`git checkout -- <file>`), which makes it confusing. Modern Git separates concerns with `git switch` (branches) and `git restore` (files).
+
+**git restore (Modern - File Operations)**
+Discard working tree changes:
+``` sh
+PS D:\Programs\DevOps-Intro> echo "scratch" >> demo.txt
+PS D:\Programs\DevOps-Intro> cat demo.txt
+scratch
+PS D:\Programs\DevOps-Intro> git status
+On branch feature/lab2
+Your branch is up to date with 'origin/feature/lab2'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)    
+        modified:   labs/submission2.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        demo.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+PS D:\Programs\DevOps-Intro> git restore demo.txt
+error: pathspec 'demo.txt' did not match any file(s) known to git
+PS D:\Programs\DevOps-Intro> cat demo.txt
+scratch
+PS D:\Programs\DevOps-Intro> git status
+On branch feature/lab2
+Your branch is up to date with 'origin/feature/lab2'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)    
+        modified:   labs/submission2.md
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        demo.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+PS D:\Programs\DevOps-Intro> 
+```
+
+**Using commands**
+**`git switch`:** Use for **branch operations only**. Modern, clear, and focused. Replaces `git checkout <branch>`. Examples: switching branches, creating new branches, toggling between two branches with `git switch -`.
+
+**`git checkout`:** Legacy command that does too many things (branches AND files). Still works, but avoid in new workflows. Only use if you're working with older team standards. The confusion between branch and file operations was why Git split this into `switch` and `restore`.
+
+**`git restore`:** Use for **file operations only**. Modern replacement for `git checkout -- <file>`. Three main uses:
+1) Discard working tree changes: `git restore <file>`
+2) Unstage without losing changes: `git restore --staged <file>`
+3) Restore from a specific commit: `git restore --source=<commit> <file>`
+
+**Best Practice:** Use `git switch` for branches and `git restore` for files. Avoid `git checkout` in new code—it's confusing and outdated.
 
 ---
 
 ### Task 6 — GitHub Community Engagement
-Add a "GitHub Community" section (after Challenges & Solutions) with 1-2 sentences explaining:
-- Why starring repositories matters in open source
-- How following developers helps in team projects and professional growth
+
+- [x] Starred [course repository](https://github.com/inno-devops-labs/DevOps-Intro), [simple-container-com/api](https://github.com/simple-container-com/api)
+
+- [x] Followed [@Cre-eD](https://github.com/Cre-eD), [@marat-biriushev](https://github.com/marat-biriushev), [@pierrepicaud](https://github.com/pierrepicaud)
+
+- [x] Followed 3 classmates on GitHub: [Danis](https://github.com/DanisSharafiev), [Diana](https://github.com/mnkhmtv), [Arina](https://github.com/arinapetukhova)
+
+**GitHub Community Section**
+
+**Why Starring Repositories Matters:** Starring bookmarks useful projects for future reference and signals appreciation to maintainers, while the star count helps you discover popular, community-trusted tools and showcases your professional interests on your profile.
+
+**Why Following Developers Helps:** Following experienced developers exposes you to new projects and coding patterns for continuous learning, while keeping you updated on classmates' work to build a stronger, more connected team environment.
