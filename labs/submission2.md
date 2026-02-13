@@ -145,3 +145,50 @@ e7e523d docs: add task3
 ```
 
 Why tags matter: tags mark release points, enable versioning, and are commonly used by CI/CD pipelines and release notes.
+
+
+
+
+## Task 5 — switch vs checkout vs restore
+
+### git switch (modern branch switching)
+```sh
+git switch -c cmd-compare
+git switch -
+````
+
+Switch cleanly toggles between branches.
+
+### git checkout (legacy)
+
+```sh
+git checkout -b cmd-compare-2
+git switch -
+```
+
+Checkout can create/switch branches but is overloaded.
+
+### git restore (file operations)
+
+Working tree restore attempt:
+
+```sh
+echo "scratch" >> demo.txt
+git restore demo.txt
+```
+
+Result: failed because the file was untracked.
+
+Index restore:
+
+```sh
+echo "scratch2" >> demo.txt
+git add demo.txt
+git restore --staged demo.txt
+```
+
+### When to use each
+
+* `git switch` — switching branches (clear intent).
+* `git restore` — restoring files or index state.
+* `git checkout` — legacy multi-purpose command.
