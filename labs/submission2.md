@@ -192,3 +192,12 @@ git restore --staged demo.txt
 * `git switch` — switching branches (clear intent).
 * `git restore` — restoring files or index state.
 * `git checkout` — legacy multi-purpose command.
+
+
+
+
+
+## GitHub Community
+
+Starring repositories helps bookmark useful projects and signals community trust and popularity.  
+Following developers supports networking, learning from others, and professional growth.
