@@ -100,3 +100,26 @@ da62d38 First commit
 * `git reset --soft`: история (HEAD) откатывается, но изменения остаются в **index (staged)** и рабочей директории.
 * `git reset --hard`: история откатывается и изменения удаляются из **index** и **working tree**.
 * `git reflog` показывает прошлые положения HEAD, поэтому можно восстановиться, сделав `git reset --hard <hash>` на нужное состояние.
+
+
+
+
+
+## Task 3 — Visualize Commit History
+
+Graph:
+```sh
+git log --oneline --graph --all --decorate
+* dae0f56 (side-branch) Side branch commit
+* d580171 (HEAD -> feature/lab2) docs: add task2
+| * c92cc02 (git-reset-practice) Third commit
+| * 6b137ff Second commit
+| * da62d38 First commit
+|/  
+* 0bb29fa docs: add task1
+* ed0929f Add test file
+````
+
+Commit messages (from the graph): `Side branch commit`, `docs: add task2`, `Third commit`, `Second commit`, `First commit`, `docs: add task1`, `Add test file`.
+
+Reflection: `--graph --all` makes it clear where branches diverge and which commits belong to each branch.
