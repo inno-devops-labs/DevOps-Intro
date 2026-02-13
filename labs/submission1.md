@@ -24,3 +24,20 @@ ssh-keygen -t ed25519 -C "rolanmuliukin@innopolis.university"
 
 ## Task 2
 
+- I create file `.github/pull_request_template.md` on my `main` brunch
+
+![](attachments/pic1-2-1.png)
+
+- And add this template 
+
+![](attachments/pic1-2-2.png)
+
+- Now I check It is apply to my PR
+
+![](attachments/pic1-2-3.png)
+
+And how you can see this template apply to my PR
+
+PR templates standardize PR descriptions so reviewers always receive the same key information (goal, changes, testing). This reduces back-and-forth questions, speeds up reviews, and improves consistency across the team. A checklist also prevents missing steps (e.g., testing, security checks, documentation).
+
+
