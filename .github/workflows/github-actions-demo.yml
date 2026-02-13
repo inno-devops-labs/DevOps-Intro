@@ -1,0 +1,20 @@
+name: GitHub Actions Demo
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: 
+  push:
+  workflow_dispatch:
+
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: System info
+        run: |
+          echo "OS Info"
+          uname -a
+          echo "Disk Info"
+          df
+          echo "RAM Info"
+          free
+          echo "CPU Info"
+          lscpu
