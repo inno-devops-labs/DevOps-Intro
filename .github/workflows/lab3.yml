@@ -1,0 +1,17 @@
+name: Lab3 - GitHub Actions
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print basic info
+        run: |
+          echo "event: ${{ github.event_name }}"
+          echo "repo:  ${{ github.repository }}"
+          echo "ref:   ${{ github.ref }}"
+          echo "sha:   ${{ github.sha }}"
+          echo "actor: ${{ github.actor }}"
