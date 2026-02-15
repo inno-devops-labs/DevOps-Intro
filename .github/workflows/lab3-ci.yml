@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - "**"
-  workflow_dispatch:  
+  workflow_dispatch:
 
 jobs:
   system-info-job:
