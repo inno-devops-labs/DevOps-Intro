@@ -3,18 +3,29 @@ name: Lab 3 CI
 on:
   push:
     branches:
-      - "**"  
+      - "**"
+  
+  workflow_dispatch:
 
 jobs:
-
-  hello-job:
-
+  system-info-job:
     runs-on: ubuntu-latest
     
     steps:
 
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Say Hello
-        run: echo "Hello, GitHub Actions! This is my first step."
-      
-      - name: Show Date
-        run: date
+        run: echo "Starting the Lab 3 pipeline..."
+
+      - name: Gather System Info
+        run: |
+          echo "--- OS Info ---"
+          cat /etc/os-release
+          echo "--- Kernel ---"
+          uname -a
+          echo "--- CPU Info ---"
+          lscpu
+          echo "--- Memory Info ---"
+          free -h
