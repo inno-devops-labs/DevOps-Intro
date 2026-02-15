@@ -4,15 +4,13 @@ on:
   push:
     branches:
       - "**"
-  
-  workflow_dispatch:
+  workflow_dispatch:  
 
 jobs:
   system-info-job:
     runs-on: ubuntu-latest
     
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v4
 
