@@ -15,3 +15,21 @@ jobs:
           echo "ref:   ${{ github.ref }}"
           echo "sha:   ${{ github.sha }}"
           echo "actor: ${{ github.actor }}"
+      - name: Gather runner system info
+        run: |
+          echo "uname:"
+          uname -a
+          echo ""
+          echo "os release:"
+          cat /etc/os-release || true
+          echo ""
+          echo "cpu:"
+          nproc
+          lscpu || true
+          echo ""
+          echo "memory:"
+          free -h || true
+          echo ""
+          echo "disk:"
+          df -h
+
