@@ -1,0 +1,20 @@
+name: Lab 3 CI
+
+on:
+  push:
+    branches:
+      - "**"  
+
+jobs:
+
+  hello-job:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+
+      - name: Say Hello
+        run: echo "Hello, GitHub Actions! This is my first step."
+      
+      - name: Show Date
+        run: date
