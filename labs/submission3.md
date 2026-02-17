@@ -91,7 +91,7 @@ jobs:
           free -h
 ```
 
-
+![alt text](image-6.png)
 
 **Comparison of Manual vs Automatic Triggers:**
 - Automatic (`push`): Runs on every commit/push; useful for CI (e.g., auto-test code). Event: "push".
