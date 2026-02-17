@@ -4,11 +4,36 @@ on:
   push:
     branches:
       - feature/lab3
+  workflow_dispatch:
 
 jobs:
   hello-ci:
     runs-on: ubuntu-latest
     steps:
+      - name: Print hello and context
+        run: |
+          echo "Hello from GitHub Actions!"
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Branch/ref: $GITHUB_REF"
+          echo "Actor: $GITHUB_ACTOR"
+
+      - name: Gather system information
+        run: |
+          echo "=== OS ==="
+          uname -a
+          echo
+          echo "=== Distro ==="
+          cat /etc/os-release || true
+          echo
+          echo "=== CPU ==="
+          lscpu
+          echo
+          echo "=== Memory ==="
+          free -h
+          echo
+          echo "=== Disk ==="
+          df -h
+
       - name: Print hello and context
         run: |
           echo "Hello from GitHub Actions!"
