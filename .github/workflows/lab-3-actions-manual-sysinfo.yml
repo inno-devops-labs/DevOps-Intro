@@ -1,8 +1,0 @@
-name: Manual sysinfo collection
-run-name: Manual run
-on: workflow_dispatch
-jobs:
-  collect-system-info:
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
