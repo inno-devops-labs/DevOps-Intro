@@ -1,42 +1,18 @@
 name: GitHub Actions Demo
-
-on: workflow_dispatch
-
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [push]
 jobs:
-  collect-system-info:
+  Explore-GitHub-Actions:
     runs-on: ubuntu-latest
     steps:
-      - name: system information
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v5
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
         run: |
-          echo "=== Runner environment variables ==="
-          echo "RUNNER_NAME: $RUNNER_NAME"
-          echo "RUNNER_OS: $RUNNER_OS"
-          echo "RUNNER_TOOL_CACHE: $RUNNER_TOOL_CACHE"
-          echo "RUNNER_TEMP: $RUNNER_TEMP"
-          echo "RUNNER_WORKSPACE: $RUNNER_WORKSPACE"
-
-          echo -e "\n=== uname -a ==="
-          uname -a
-
-          echo -e "\n=== /etc/os-release ==="
-          if [ -f /etc/os-release ]; then cat /etc/os-release; else echo "no /etc/os-release"; fi
-
-          echo -e "\n=== lscpu (CPU info) ==="
-          if command -v lscpu >/dev/null 2>&1; then lscpu; else
-            echo "lscpu not available; showing /proc/cpuinfo summary"
-            awk -F: '/model name/ {print "Model:" $2; exit}' /proc/cpuinfo
-            awk -F: '/cpu cores/ {print "Cores per CPU:" $2; exit}' /proc/cpuinfo
-            echo "Logical CPUs: $(nproc)"
-          fi
-
-          echo -e "\n=== Memory ==="
-          if command -v free >/dev/null 2>&1; then free -h; else grep MemTotal /proc/meminfo || true; fi
-
-          echo -e "\n=== Block devices (lsblk) ==="
-          if command -v lsblk >/dev/null 2>&1; then lsblk -o NAME,SIZE,TYPE,MOUNTPOINT; else echo "lsblk not available"; fi
-
-          echo -e "\n=== Disk usage (root) ==="
-          df -h / || true
-
-          echo -e "\n=== PCI devices (lspci) ==="
-          if command -v lspci >/dev/null 2>&1; then lspci | head -n 20; else echo "lspci not available"; fi
+          ls ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
