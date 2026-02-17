@@ -1,0 +1,52 @@
+name: GitHub Actions Demo
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: 
+  push:
+  workflow_dispatch:
+
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display Runner Information
+        run: |
+          echo "=== Runner Information ==="
+          echo "Runner OS: ${{ runner.os }}"
+          echo "Runner Architecture: ${{ runner.arch }}"
+          echo "Runner Name: ${{ runner.name }}"
+          echo "Runner Tool Cache: ${{ runner.tool_cache }}"
+      
+      - name: Display Hardware Specifications
+        run: |
+          echo "=== Hardware Specifications ==="
+          echo "CPU Information:"
+          lscpu
+          echo ""
+          echo "Memory Information:"
+          free -h
+          echo ""
+          echo "Disk Space:"
+          df -h
+          echo ""
+          echo "Number of CPU cores:"
+          nproc
+      
+      - name: Display Operating System Information
+        run: |
+          echo "=== Operating System Information ==="
+          echo "OS Release:"
+          cat /etc/os-release
+          echo ""
+          echo "Kernel Version:"
+          uname -a
+          echo ""
+          echo "Hostname:"
+          hostname
+      
+      - name: Display Environment Variables
+        run: |
+          echo "=== Environment Variables ==="
+          echo "HOME: $HOME"
+          echo "USER: $USER"
+          echo "SHELL: $SHELL"
+          echo "PATH: $PATH"
