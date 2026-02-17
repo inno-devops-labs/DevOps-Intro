@@ -33,10 +33,3 @@ jobs:
           echo
           echo "=== Disk ==="
           df -h
-
-      - name: Print hello and context
-        run: |
-          echo "Hello from GitHub Actions!"
-          echo "Repository: $GITHUB_REPOSITORY"
-          echo "Branch/ref: $GITHUB_REF"
-          echo "Actor: $GITHUB_ACTOR"
