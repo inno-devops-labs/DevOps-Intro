@@ -1,0 +1,26 @@
+name: Manual action try
+run-name: ${{ github.actor }} is trying a manual action!
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Greeting for'
+        type: string
+        required: true
+        default: 'world'
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Greeting"
+        run: echo Hello, ${{ inputs.name }}!
+      - name: Collect System Info
+        run: |
+          echo "--- OS info ---"
+          lsb_release -a || uname -a
+          echo "--- CPU info ---"
+          lscpu | grep "Model name"
+          echo "--- Memory info ---"
+          free -h
+          echo "--- Disk info ---"
+          df -h /
