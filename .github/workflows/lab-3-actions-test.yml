@@ -1,4 +1,4 @@
-name: Manual System Info Collection
+name: GitHub Actions Demo
 
 on: workflow_dispatch
 
