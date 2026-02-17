@@ -1,0 +1,17 @@
+name: Lab3 Task1 - First Workflow
+
+on:
+  push:
+    branches:
+      - feature/lab3
+
+jobs:
+  hello-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print hello and context
+        run: |
+          echo "Hello from GitHub Actions!"
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Branch/ref: $GITHUB_REF"
+          echo "Actor: $GITHUB_ACTOR"
