@@ -1,0 +1,28 @@
+name: Lab 3 - CI/CD Pipeline
+
+# Trigger on push to any branch
+on:
+  push:
+    branches:
+      - '**'  # This means any branch
+  workflow_dispatch:  # Enable manual trigger 
+
+jobs:
+  basic-info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Print basic information
+        run: |
+          echo "Job triggered by: ${{ github.actor }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Current time: $(date)"
+          echo "Commit message: ${{ github.event.head_commit.message }}"
+      
+      - name: List repository files
+        run: |
+          echo "Repository contents:"
+          ls -la
