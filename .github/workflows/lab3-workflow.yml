@@ -1,13 +1,19 @@
 name: Lab 3 - CI/CD Pipeline
 
-# Trigger on push to any branch
+# Trigger on push and manual dispatch
 on:
   push:
     branches:
-      - '**'  # This means any branch
-  workflow_dispatch:  # Enable manual trigger 
+      - '**'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual trigger'
+        required: false
+        default: 'Manual execution'
 
 jobs:
+  # Job 1: Basic Information (from Task 1)
   basic-info:
     runs-on: ubuntu-latest
     steps:
@@ -21,8 +27,97 @@ jobs:
           echo "Repository: ${{ github.repository }}"
           echo "Current time: $(date)"
           echo "Commit message: ${{ github.event.head_commit.message }}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "🔧 Trigger reason: ${{ github.event.inputs.reason }}"
+          fi
       
       - name: List repository files
         run: |
           echo "Repository contents:"
           ls -la
+
+  system-info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Display Runner Information
+        run: |
+          echo "GitHub Actions Runner Information"
+          echo "=================================="
+          echo "Runner OS: ${{ runner.os }}"
+          echo "Runner Name: ${{ runner.name }}"
+          echo "Runner Architecture: ${{ runner.arch }}"
+          echo "Workspace: ${{ github.workspace }}"
+      
+      - name: Display Operating System Details
+        run: |
+          echo "Operating System Details"
+          echo "==========================="
+          echo "OS Release:"
+          cat /etc/os-release
+          echo ""
+          echo "Kernel Version:"
+          uname -a
+          echo ""
+          echo "Hostname: $(hostname)"
+      
+      - name: Display CPU Information
+        run: |
+          echo "CPU Information"
+          echo "================="
+          echo "CPU Model:"
+          grep "model name" /proc/cpuinfo | head -n1
+          echo "Number of CPU cores: $(nproc)"
+          echo ""
+          echo "CPU Architecture:"
+          lscpu | grep "Architecture"
+          echo ""
+          echo "CPU Details:"
+          lscpu | grep -E "Model name|CPU\(s\)|Thread|Core|Socket"
+      
+      - name: Display Memory Information
+        run: |
+          echo "Memory Information"
+          echo "====================="
+          echo "Memory Usage:"
+          free -h
+          echo ""
+          echo "Detailed Memory Info:"
+          cat /proc/meminfo | head -n5
+      
+      - name: Display Disk Information
+        run: |
+          echo "Disk Information"
+          echo "==================="
+          echo "Disk Usage:"
+          df -h
+          echo ""
+          echo "Inode Usage:"
+          df -i
+      
+      - name: Display Network Information
+        run: |
+          echo "Network Information"
+          echo "======================"
+          echo "Network Interfaces:"
+          ip addr show
+          echo ""
+          echo "Network Stats:"
+          netstat -i
+      
+      - name: Display Environment Variables
+        run: |
+          echo "GitHub Actions Environment Variables"
+          echo "======================================="
+          echo "GitHub Runner Version: ${{ runner.version }}"
+          echo "GitHub Repository: ${{ github.repository }}"
+          echo "GitHub Workflow: ${{ github.workflow }}"
+          echo "GitHub Job: ${{ github.job }}"
+          echo "GitHub Run ID: ${{ github.run_id }}"
+          echo "GitHub Run Number: ${{ github.run_number }}"
+          echo "GitHub SHA: ${{ github.sha }}"
+          echo ""
+          echo "All Environment Variables (first 20):"
+          env | sort | head -n20
