@@ -2,17 +2,39 @@ name: Basic CI
 
 on:
   push:
+  workflow_dispatch:
 
 jobs:
-  build:
+  info:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Print basic info
+      - name: System information
         run: |
-          echo "Hello CI"
+          echo "=== GitHub Context ==="
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Branch: $GITHUB_REF_NAME"
+          echo "Commit: $GITHUB_SHA"
+          echo "Actor: $GITHUB_ACTOR"
+          echo "Runner OS: $RUNNER_OS"
+
+          echo "=== OS ==="
           uname -a
-          date
+          cat /etc/os-release || true
+
+          echo "=== CPU ==="
+          lscpu || true
+
+          echo "=== Memory ==="
+          free -h || true
+
+          echo "=== Disk ==="
+          df -h
+
+          echo "=== Tools ==="
+          git --version
+          python3 --version || true
+          node --version || true
+
