@@ -53,7 +53,7 @@ jobs:
           lscpu
           echo "=== free -h ==="
           free -h
-
+```
 https://github.com/z0sh22/DevOps-Intro/actions/runs/22188124141/job/64167696797
 
 
