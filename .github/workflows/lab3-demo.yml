@@ -1,0 +1,10 @@
+name: Lab3 GitHub Actions Demo
+
+on:
+  push:
+
+jobs:
+  example:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Hello from lab3-demo"
