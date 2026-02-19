@@ -1,19 +1,18 @@
-Название: Демонстрация GitHub Actions
-run-name: ${{ github.actor }} тестирует GitHub Actions 🚀
-включено: [нажать]
-вакансии:
+name: GitHub Actions Demo
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: [push]
+jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
-    шаги:
-      - run: echo "🎉 Задание было автоматически запущено событием ${{ github.event_name }}."
-      - run: echo "🐧 Эта задача выполняется на сервере ${{ runner.os }}, размещенном на GitHub!"
-      - run: echo "🔎 Название вашей ветки — ${{ github.ref }}, а вашего репозитория — ${{ github.repository }}."
-      - имя: Проверить код репозитория
-        используется: actions/checkout@v5
-      - run: echo "💡 Репозиторий ${{ github.repository }} клонирован в исполняемый файл."
-      - run: echo "🖥️ Рабочий процесс готов к тестированию вашего кода на исполнителе."
-      - name: Список файлов в репозитории
-        выполнить: |
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v5
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
+        run: |
           ls ${{ github.workspace }}
-      - выполнить: echo "🍏 Статус этой задачи: ${{ job.status }}."
-
+      - run: echo "🍏 This job's status is ${{ job.status }}."
