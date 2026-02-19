@@ -47,6 +47,7 @@ jobs:
       - name: Check runner capabilities
         run: |
           echo "⚡=== RUNNER CAPABILITIES ==="
+          echo "Environment: ${{ runner.environment }}"
           echo "Architecture: $(uname -m)"
           echo "Kernel version: $(uname -r)"
           echo "Hostname: $(hostname)"
