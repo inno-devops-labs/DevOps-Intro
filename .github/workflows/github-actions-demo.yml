@@ -25,4 +25,14 @@ jobs:
           lsb_release -a
           echo "### Disk Information"
           df -h
+      - name: Gather System Information
+        run: |
+          echo "### Hardware Information"
+          lscpu | grep -E 'Model name|CPU\(s\)|Thread\(s\) per core|Core\(s\) per socket'
+          echo "### Memory Information"
+          free -h
+          echo "### OS Information"
+          lsb_release -a
+          echo "### Disk Information"
+          df -h
       - run: echo "🍏 This job's status is ${{ job.status }}."
