@@ -2,6 +2,7 @@ name: Lab3 CI
 
 on:
   push:
+  workflow_dispatch:
 
 jobs:
   basic-info:
@@ -14,3 +15,25 @@ jobs:
           echo "Branch/Ref: $GITHUB_REF"
           echo "Actor: $GITHUB_ACTOR"
           echo "SHA: $GITHUB_SHA"
+
+      - name: System information (OS/CPU/RAM/Disk)
+        run: |
+          echo "=== OS ==="
+          uname -a || true
+          cat /etc/os-release || true
+
+          echo "=== CPU ==="
+          lscpu || true
+
+          echo "=== Memory ==="
+          free -h || true
+
+          echo "=== Disk ==="
+          df -h || true
+
+          echo "=== Runner env ==="
+          echo "RUNNER_OS=$RUNNER_OS"
+          echo "RUNNER_ARCH=$RUNNER_ARCH"
+          echo "RUNNER_NAME=$RUNNER_NAME"
+          echo "RUNNER_TEMP=$RUNNER_TEMP"
+          echo "RUNNER_TOOL_CACHE=$RUNNER_TOOL_CACHE"
