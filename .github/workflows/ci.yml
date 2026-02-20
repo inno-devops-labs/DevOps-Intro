@@ -2,7 +2,7 @@ name: basic CI for lab 3
 
 on:
   push:
-    branches: [ feature/lab3 ]
+    branches: [ Feature/lab3 ]
   workflow_dispatch:
 
 jobs:
