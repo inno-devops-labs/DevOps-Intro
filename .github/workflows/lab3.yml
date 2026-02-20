@@ -1,0 +1,30 @@
+name: Lab 3 CI
+
+on:
+  push:
+    branches: [ "feature/lab3" ]
+  workflow_dispatch:
+
+jobs:
+  basic-info:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Basic info
+        run: |
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
+          date
+          pwd
+          ls -la
+
+  system-info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: System info
+        run: |
+          uname -a
+          nproc
+          free -h
+          df -h
