@@ -35,3 +35,7 @@ Disk space
 This shows that the runner is a Linux-based VM with predefined resources provided by GitHub.
 
 Manual trigger gives more control, while push trigger runs automatically after code changes.
+
+Below is a screenshot of the GitHub Actions page showing two successful workflow runs (initial workflow and extended version with manual trigger and system info)
+
+![alt text](screenshots/3.png)
