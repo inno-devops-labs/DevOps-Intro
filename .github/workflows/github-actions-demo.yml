@@ -2,6 +2,7 @@ name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions
 on:
   push:
+  workflow_dispatch:
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
@@ -16,4 +17,13 @@ jobs:
       - name: List files in the repository
         run: |
           ls "${{ github.workspace }}"
+      - name: Gather runner system information
+        run: |
+          echo "Runner name: $RUNNER_NAME"
+          echo "Runner OS: $RUNNER_OS"
+          echo "Runner architecture: $RUNNER_ARCH"
+          echo "Kernel: $(uname -sr)"
+          lscpu
+          free -h
+          df -h /
       - run: echo "This job's status is ${{ job.status }}."
