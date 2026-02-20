@@ -1,0 +1,27 @@
+name: basic CI for lab 3
+
+on:
+  push:
+    branches: [ Feature/lab3 ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Hello World
+        run: echo "Hello, GitHub Actions!"
+      
+      - name: System Information
+        run: |
+          echo "OS Info:"
+          uname -a
+          cat /etc/os-release
+          echo "CPU Info:"
+          lscpu
+          echo "Memory Info:"
+          free -h
+          echo "Disk Info:"
+          df -h
