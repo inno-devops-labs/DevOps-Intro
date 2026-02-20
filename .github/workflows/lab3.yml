@@ -1,0 +1,21 @@
+name: Lab 3 CI
+
+on:
+  push:
+    branches:
+      - feature/lab3
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Print basic info
+        run: |
+          echo "Triggered by: $GITHUB_EVENT_NAME"
+          echo "Branch: $GITHUB_REF"
+          echo "Commit: $GITHUB_SHA"
+          date
+          ls -la
