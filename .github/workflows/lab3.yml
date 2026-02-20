@@ -2,17 +2,19 @@ name: Lab3 Workflow
 
 on:
   push:
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Print hello
-        run: echo "Hello from CI!"
+      - run: echo "Hello from CI!"
 
-      - name: Print date
-        run: date
+      - run: uname -a
+
+      - run: nproc
+
+      - run: free -h
