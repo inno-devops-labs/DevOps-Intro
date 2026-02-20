@@ -1,0 +1,16 @@
+name: Lab3 CI
+
+on:
+  push:
+
+jobs:
+  basic-info:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print hello and context
+        run: |
+          echo "Hello from GitHub Actions!"
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Branch/Ref: $GITHUB_REF"
+          echo "Actor: $GITHUB_ACTOR"
+          echo "SHA: $GITHUB_SHA"
