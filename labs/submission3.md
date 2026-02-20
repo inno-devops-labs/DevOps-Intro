@@ -72,9 +72,7 @@ A push event to the repository triggered the workflow because I specified `on: [
 To `github-actions-demo.yml` added:
 
 ```yaml
-on:
-  push:
-  workflow_dispatch:
+on: [push, workflow_dispatch]
 ```
 
 ```yaml
@@ -121,6 +119,23 @@ efivarfs        128M   26K  128M   1% /sys/firmware/efi/efivars
 tmpfs           1.6G   12K  1.6G   1% /run/user/1001
 ```
 
-### Links
+### Comparison: Manual vs Automatic Workflow Triggers
 
-[Link to manual workflow run](https://https://github.com/thallars/DevOps-Intro/actions/runs/22237502793)
+| Aspect | Automatic (push) | Manual (workflow_dispatch) |
+|--------|-------------------|---------------------------|
+| **Trigger Method** | Code push to repository | User clicks "Run workflow" in UI |
+| **Use Case** | CI/CD on code changes | On-demand testing, manual deployments |
+| **Branch Selection** | Uses branch of the push | User can select any branch |
+| **Frequency** | Every push to configured branches | As needed by developer |
+| **User Control** | No user intervention required | Full user control over when to run |
+| **Audit Trail** | Tied to specific commits | Tied to manual trigger by user |
+| **Parameters** | Uses commit context | Can accept input parameters (if configured) |
+
+### Analysis of Runner Environment and Capabilities
+
+1. Each run gets a fresh VM, ensuring isolation between workflows
+2. Ubuntu runners come with many tools pre-installed (git, curl, docker, etc.)
+3. Full outbound internet access (useful for fetching dependencies)
+4. No data persists between runs (ephemeral environment)
+5. 2 CPU cores and 8GB RAM sufficient for most build/test operations
+
