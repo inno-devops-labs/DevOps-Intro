@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/lab3
+  workflow_dispatch:
 
 jobs:
   hello:
@@ -19,3 +20,18 @@ jobs:
           echo "Commit: $GITHUB_SHA"
           date
           ls -la
+
+      - name: System information
+        run: |
+          echo "=== OS / Kernel ==="
+          uname -a
+          echo
+          echo "=== CPU ==="
+          nproc
+          lscpu | head -n 30 || true
+          echo
+          echo "=== Memory ==="
+          free -h || true
+          echo
+          echo "=== Disk ==="
+          df -h
