@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/lab3
+  workflow_dispatch:
 
 jobs:
   hello:
@@ -16,3 +17,17 @@ jobs:
           echo "Branch: $GITHUB_REF"
           echo "Commit: $GITHUB_SHA"
           date
+
+      - name: System information
+        run: |
+          echo "OS:"
+          uname -a
+          echo ""
+          echo "CPU cores:"
+          nproc
+          echo ""
+          echo "Memory:"
+          free -h
+          echo ""
+          echo "Disk:"
+          df -h
