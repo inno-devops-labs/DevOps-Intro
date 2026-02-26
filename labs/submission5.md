@@ -119,4 +119,4 @@ The most useful tools were `lscpu`, `free -h`, `ip a`, `df -h`, `lsb_release -a`
 - `ip a` is essential for checking network interfaces and assigned IP addresses
 - `df -h` clearly displays disk usage and filesystem information
 - `lsb_release` - a was very useful because it clearly shows the Ubuntu distribution version, release number, and codename. This is important for verifying that the correct OS version is installed
-- `systemd-detect-virt` was especially useful to confirm that the system is running inside a VirtualBox virtual machine
+- `systemd-detect-virt` was especially useful to confirm that the system is running inside  a VirtualBox virtual machine
