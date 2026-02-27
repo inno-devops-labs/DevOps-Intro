@@ -6,7 +6,7 @@ Host operating system: macOS Sonoma 14.4
 VirtualBox version: Version 7.2.6 r172322
 
 Below you could see image that proves that VirtualBox with specified version is installed:
-![VirtualBox Installation](/img/vm_box.png)
+![VirtualBox Installation](img/vm_box.png)
 
 No issues were encountered during installation.
 
@@ -29,7 +29,7 @@ Result:
 - Vendor ID: `Apple`  
 - Threads per core: `1`, cores per cluster: `2`  
 - Confirms ARM-based virtual machine CPU characteristics.  
-![CPU Details](/img/cpu.png)
+![CPU Details](img/cpu.png)
 
 ### 2.2 Memory information
 Command used: `free -h`  
@@ -40,7 +40,7 @@ Result:
 - Free RAM: `81Mi`  
 - Available RAM: `1.7Gi`  
 - Swap: `0B`  
-![Memory Information](/img/ram.png)
+![Memory Information](img/ram.png)
 
 ### 2.3 Network configuration
 Commands used: `ip a`, `ip route`  
@@ -52,8 +52,8 @@ Result:
 - IPv4 address: `10.0.2.15/24`  
 - Loopback interface `lo` is present  
 - Default gateway: `10.0.2.2` via `enp0s8`  
-![Network Interfaces](/img/network.png)
-![Routing Table](/img/route.png)
+![Network Interfaces](img/network.png)
+![Routing Table](img/route.png)
 
 ### 2.4 Storage information
 Command used: `df -hT`  
@@ -62,7 +62,7 @@ Result:
 - Main root filesystem: `/dev/sda2` (`ext4`)  
 - Root size: `24G`, used: `6.2G`, available: `17G` (`28%` used)  
 - EFI partition: `/dev/sda1` (`vfat`) mounted on `/boot/efi`  
-![Storage Information](/img/disk.png)
+![Storage Information](img/disk.png)
 
 ### 2.5 Operating system
 Commands used: `cat /etc/os-release`, `uname -r`, `uname -a`  
@@ -74,8 +74,8 @@ Result:
 - Distribution: `Ubuntu 25.10 (Questing Quokka)`  
 - Kernel version: `6.17.0-14-generic`  
 - Architecture in kernel output: `aarch64` / `arm64`  
-![OS Release](/img/os.png)
-![Kernel Information](/img/kernel.png)
+![OS Release](img/os.png)
+![Kernel Information](img/kernel.png)
 
 ### 2.6 Virtualization detection
 Commands used: `systemd-detect-virt`, `hostnamectl`  
@@ -86,7 +86,7 @@ Result:
 - `systemd-detect-virt` returned `none`.  
 - `hostnamectl` showed OS/kernel/architecture, but no explicit virtualization field in this output.  
 
-![Virtualization Detection](/img/virtualization.png)
+![Virtualization Detection](img/virtualization.png)
 
 Why virtualization was not detected in this VM:  
 1. ARM64 vs x86_64 discovery path  
