@@ -78,23 +78,26 @@ Result:
 ![Kernel Information](img/kernel.png)
 
 ### 2.6 Virtualization detection
-Commands used: `systemd-detect-virt`, `hostnamectl`  
+Commands used: `systemd-detect-virt`, `hostnamectl`, `dmesg | grep -i virtual`
 Why:  
 - `systemd-detect-virt` attempts to detect known virtualization providers.  
 - `hostnamectl` can show virtualization information on many setups.  
+- `dmesg | grep -i virtual` searches kernel boot/runtime logs for virtualization-related drivers and device names.
 Result:  
 - `systemd-detect-virt` returned `none`.  
 - `hostnamectl` showed OS/kernel/architecture, but no explicit virtualization field in this output.  
+- `dmesg | grep -i virtual` returned multiple entries containing `VirtualBox` (USB keyboard, USB tablet, mouse integration), which confirms VirtualBox virtual hardware is present.
 
 ![Virtualization Detection](img/virtualization.png)
+![Virtualization Device Evidence](img/virtualization_device.png)
 
-Why virtualization was not detected in this VM:  
+Why we got such results:  
 1. ARM64 vs x86_64 discovery path  
    Traditional VM detection tools often depend on DMI/SMBIOS metadata commonly available on x86_64 platforms. On ARM64 systems (like Apple Silicon), hardware discovery is often exposed differently, so those legacy identifiers may be absent.  
 2. VirtualBox behavior on Apple Silicon  
    On M1/M2 Macs, VirtualBox integrates with Apple’s hypervisor stack and may not expose the same classic VirtualBox signatures (for example, `VBOX` DMI strings) that Linux detection tools commonly match.
-
-The only evidence of virtualization that I could present is that Vendor ID of CPU is `Apple`. And as Apple hardware is proprietary, the only way to observe such Vendor ID on Ubuntu is via virtualization.
+3. Why `dmesg` was successful  
+   `dmesg` reads kernel messages directly, including driver and device initialization logs. Even when high-level virtualization metadata is missing, kernel logs still recorded attached virtual devices labeled as `VirtualBox`, which provided direct practical evidence of virtualization.
 
 ### 2.7 Reflection
 The most useful tools in this lab were:
@@ -105,4 +108,4 @@ The most useful tools in this lab were:
 - `df -hT` — very useful for storage checks because it combines capacity, usage, filesystem type, and mount point in one output.
 - `/etc/os-release` + `uname` — reliable combination to separate distribution-level information from kernel-level details.
 
-For virtualization detection in this specific ARM VirtualBox-on-macOS setup, `systemd-detect-virt` was still useful even though it returned `none`, because it confirmed that standard Linux detection signatures were not exposed and required architecture/platform-specific interpretation.
+For virtualization detection in this specific ARM VirtualBox-on-macOS setup, the most useful final proof was `dmesg | grep -i virtual`, because kernel logs exposed `VirtualBox` device strings even when high-level detection commands returned no explicit virtualization status.
