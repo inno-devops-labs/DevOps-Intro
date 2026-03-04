@@ -24,6 +24,8 @@ Commands used: `free -h`, `cat /proc/meminfo`
 
 Both commands were useful because they gave different type of information about memory.
 
+(I did not gave Ubuntu storage of 25GB because I did not have enough memory on my machine)
+
 3. **Network Configuration**: 
 Commands used: `ip addr show`, `ip link show`
 ![5.7](https://github.com/sarrtr/DevOps-Intro/blob/main/labs/assets/screenshots/lab5.7.jpg?raw=true)
