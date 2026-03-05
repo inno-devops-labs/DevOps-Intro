@@ -34,6 +34,7 @@ Command:
 lscpu
 ```
 Output:
+
 ![5_img_1.png](screenshots%2F5_img_1.png)
 ![5_img_2.png](screenshots%2F5_img_2.png)
 
@@ -45,6 +46,7 @@ Command:
 free -h
 ```
 Output:
+
 ![5_img_3.png](screenshots%2F5_img_3.png)
 
 ### Network Configuration
@@ -55,6 +57,7 @@ Command:
 ip a
 ```
 Output:
+
 ![5_img_4.png](screenshots%2F5_img_4.png)
 
 ### Storage Information
@@ -67,6 +70,7 @@ lsblk
 ```
 
 Output:
+
 ![5_img_5.png](screenshots%2F5_img_5.png)
 ![5_img_6.png](screenshots%2F5_img_6.png)
 
@@ -80,6 +84,7 @@ lsb_release -a
 uname -a
 ```
 Output:
+
 ![5_img_7.png](screenshots%2F5_img_7.png)
 ![5_img_8.png](screenshots%2F5_img_8.png)
 
