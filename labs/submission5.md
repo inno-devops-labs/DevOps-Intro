@@ -124,3 +124,4 @@ innotek GmbH
 
 ### Reflection
 The most useful tools were lscpu for structured CPU information, free -h for quick memory overview in human-readable format, and df -h for disk usage analysis. The systemd-detect-virt command concisely confirmed the virtualized environment by returning "oracle" for VirtualBox.
+![VM proof](screenshot\img3.png)
