@@ -1,0 +1,3 @@
+FROM scratch
+COPY --from=golang:1.22 /result/bin/hello.info /app
+ENTRYPOINT ["/app"]
