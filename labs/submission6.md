@@ -222,13 +222,13 @@ The most important change (our custom `index.html`) appears as a **modification*
 **Reflection: Advantages and disadvantages of `docker commit` vs Dockerfile**
 
 **`docker commit` advantages:**
-- Very fast and simple — great for quick experiments and debugging
+- Very fast and simple - great for quick experiments and debugging
 - No need to write or maintain build instructions
 - Captures exact runtime state (including manual changes, installed packages, logs, etc.)
 
 **`docker commit` disadvantages:**
-- Opaque — no history of what changes were made or why
-- Not reproducible — you can't easily recreate the same image later
+- Opaque - no history of what changes were made or why
+- Not reproducible - you can't easily recreate the same image later
 - Creates inefficient images (no layer optimization, includes unnecessary runtime artifacts)
 - Poor auditability and versioning
 - Harder to collaborate or CI/CD integrate
@@ -331,13 +331,13 @@ Address: 172.18.0.3
 Docker runs an embedded DNS server inside each container on user-defined networks (at IP `127.0.0.11`). When a container starts and joins a user-defined network, Docker automatically registers its name and assigned IP in this DNS resolver. Containers on the same network can then resolve each other by name (e.g., `container2`) instead of hard-coding IPs. This provides automatic service discovery without external tools.
 
 **Comparison: Advantages of user-defined bridge networks over the default bridge network**  
-- **Built-in DNS name resolution** — containers can communicate using names (default bridge only supports IP addresses)  
-- **Better isolation** — each user-defined network gets its own subnet; containers on different user networks cannot communicate unless explicitly connected  
-- **Cleaner architecture** — easier to group related services (e.g., frontend + backend + db) in one network  
-- **Customizable** — supports options like custom subnets, gateways, MTU, etc.  
-- **Avoids port conflicts** — default bridge shares the host's network namespace more directly, which can cause port binding issues  
+- **Built-in DNS name resolution** - containers can communicate using names (default bridge only supports IP addresses)  
+- **Better isolation** - each user-defined network gets its own subnet; containers on different user networks cannot communicate unless explicitly connected  
+- **Cleaner architecture** - easier to group related services (e.g., frontend + backend + db) in one network  
+- **Customizable** - supports options like custom subnets, gateways, MTU, etc.  
+- **Avoids port conflicts** - default bridge shares the host's network namespace more directly, which can cause port binding issues  
 
-Default bridge is simpler for quick single-container tests but lacks DNS and strong isolation — user-defined networks are the recommended choice for multi-container applications.
+Default bridge is simpler for quick single-container tests but lacks DNS and strong isolation - user-defined networks are the recommended choice for multi-container applications.
 
 ---
 
@@ -425,7 +425,7 @@ Containers are designed to be ephemeral (short-lived and disposable). Any data w
 
 | Type                  | Description                                      | Persistence | Use Case                              | Pros                              | Cons                              |
 |-----------------------|--------------------------------------------------|-------------|---------------------------------------|-----------------------------------|-----------------------------------|
-| **Volumes** (recommended) | Docker-managed directories on host               | Yes         | Production databases, shared data     | Portable, backed up, remote drivers (cloud), secure | Slightly slower than bind mounts |
+| **Volumes** | Docker-managed directories on host               | Yes         | Production databases, shared data     | Portable, backed up, remote drivers (cloud), secure | Slightly slower than bind mounts |
 | **Bind Mounts**       | Direct mapping of host directory/path            | Yes         | Development (hot-reload), config files| Instant sync, easy editing on host| Host OS dependent, security risks |
 | **Container Storage** (ephemeral) | Inside container filesystem                   | No          | Temporary caches, logs, scratch space | Fastest access                    | Data lost on `docker rm`          |
 
