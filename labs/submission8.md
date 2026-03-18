@@ -111,13 +111,9 @@ arina_os@arinaos:~$
 ```
 
 #### Analysis:
-The most notable pattern is that system update processes (unattended-upgrade) are the primary consumers of both CPU and memory resources, using a combined 44% of CPU and nearly 10% of available memory. Meanwhile, the GNOME Shell desktop environment consistently maintains steady memory usage around 10% through multiple threads. The spice-vdagent shows unusually high CPU usage at 101.3%, indicating the virtual machine integration is placing significant load on the system. For disk resources, the largest files are all related to system packages and applications, with the Linux firmware package taking 515M and Snap packages occupying substantial space in `/var/lib/snapd`.
-
-#### Reflection:
-## Analysis: What patterns do you observe in resource utilization?
 The automatic update process `unattended-upgrade` is using the most CPU and memory. Together, its two processes are taking up 44% of the CPU and about 10% of memory. The `GNOME desktop` is using a steady 10% of memory through its many threads. The `spice-vdagent` (which helps to run Linux VM on Mac) is using over 100% CPU, which means it's using more than one full CPU core, which seems really high. When it comes to disk space, the biggest files are all system packages and applications, with a Linux firmware file taking up 515MB and Snap packages filling up space in `/var/lib/snapd`.
 
-## Reflection: How would you optimize resource usage based on your findings?
+#### Reflection:
 To optimize resource usage, I would first look into why `spice-vdagent` is using so much CPU and maybe turn off some features that I don't need. I would also schedule system updates to run at night when I'm not using the computer, so they don't slow things down during the day. To free up disk space, I would run `sudo apt clean` to delete the 1.2GB of old package files sitting in the cache. I would also set up automatic log cleanup so logs in `/var/log` don't keep growing forever, and put a size limit on Snap package cache so it doesn't fill up with big files I don't need.
 
 ## Task 2: Practical Website Monitoring Setup
