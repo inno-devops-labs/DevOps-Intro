@@ -15,8 +15,7 @@ Thu Mar 19 11:58:37 PM MSK 2026 - ⚠  DRIFT DETECTED!
 Reconciling current state with desired state...
 Thu Mar 19 11:58:37 PM MSK 2026 - ✅ Reconciliation complete
 
-3. 
-
+3.
 А этот вывод уже из auto-healing:
 
 Fri Mar 20 12:00:10 AM MSK 2026 - ⚠  DRIFT DETECTED!
