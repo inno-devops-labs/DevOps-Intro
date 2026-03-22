@@ -36,7 +36,6 @@
 2. **contactsd** — 38.0% ЦП (32:32:39 uptime)
 3. **WindowServer** — 31.0% ЦП (18:17:26,13 uptime)
 
-💾 **Screenshot:** [Memory Tab - CPU Consumers]
 ![CPU Monitoring](https://github.com/user-attachments/assets/7435efa5-a319-4b77-8c56-3ab4a38f34d2)
 
 ---
@@ -49,7 +48,6 @@
 2. **WindowServer** — 1.22 ГБ
 3. **Google Chrome Helper** — 1.05 ГБ
 
-💾 **Screenshot:** [Memory Tab - Memory Consumers]
 ![Memory Monitoring](https://github.com/user-attachments/assets/cd512258-eeb2-4ed5-873e-e39e5b2ba407)
 
 ---
