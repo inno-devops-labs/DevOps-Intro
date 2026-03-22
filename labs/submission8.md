@@ -286,7 +286,8 @@ test('SkillGrade homepage loads correctly', async ({ page }) => {
 | API Check #1 | 100% | 1.32 s |
 | SG browser check | 50%* | 12.53 s |
 
-*50% due to debugging runs during setup, final check passes consistently.
+**50% due to initial configuration runs: the check was first tested on `goldapple.ru`, which blocks external monitoring bots and returned 
+hidden elements, causing multiple failures. After switching the target to `skillgrade.pw`, the check passes consistently. The red bar on the  graph reflects those early failed attempts, not production issues.
 
 ![dashboard](https://github.com/user-attachments/assets/865ce6ca-ebe3-4e76-a16f-c286c29f420c)
 
