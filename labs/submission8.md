@@ -123,13 +123,19 @@ This knowledge is essential for troubleshooting performance issues and maintaini
 - Assertion: Status code equals 200
 - Frequency: Every 1 minute
 
+![8_img_9.png](screenshots%2F8_img_9.png)
+
+API check was successfully configured.
+The endpoint returned status code 200 and passed all assertions.
+The response time was within acceptable limits.
+
 ---
 
 ### Browser Check
 
 - What is being checked: Page load and main content visibility
 - Expected result: Page loads successfully and main elements are visible
-
+![8_img_10.png](screenshots%2F8_img_10.png)
 ---
 
 ### Alerts
@@ -138,6 +144,9 @@ This knowledge is essential for troubleshooting performance issues and maintaini
 - Threshold: Failure of 2 consecutive checks
 - Notification method: Email
 
+![8_img_11.png](screenshots%2F8_img_11.png)
+![8_img_12.png](screenshots%2F8_img_12.png)
+![8_img_13.png](screenshots%2F8_img_13.png)
 ---
 
 ### Screenshots
@@ -146,6 +155,8 @@ This knowledge is essential for troubleshooting performance issues and maintaini
 - Successful check result
 - Alert settings
 - Dashboard overview
+
+![8_img_14.png](screenshots%2F8_img_14.png)
 
 ---
 
@@ -156,6 +167,12 @@ Website monitoring ensures service availability and helps detect outages early.
 API checks verify basic availability, while browser checks simulate real user interactions and ensure that the website works correctly from the user's perspective.
 
 Alerts allow quick reaction to incidents and reduce downtime.
+
+I chose API check with status 200 because it verifies basic availability.
+
+Browser check was selected to simulate real user interaction and ensure content visibility.
+
+Threshold: Default alert settings (global configuration). This threshold helps avoid alert noise caused by temporary network issues.
 
 ---
 
