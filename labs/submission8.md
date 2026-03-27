@@ -15,7 +15,7 @@
 ```bash
 htop
 ```
-![](images/lab8_0.png)
+![](images/lab_8_0.png)
 
 ```bash
 iostat -x 1 5
@@ -62,15 +62,15 @@ For example, we can use `sudo snap clean` to delete older versions and cached fi
 
 ### **Configuration**
 
-![](images/lab8_1.png)
+![](images/lab_8_1.png)
 
 ### **Successful check results**
 
-![](images/lab8_3.png)
+![](images/lab_8_3.png)
 
 ### **Alert settings**
 
-![](images/lab8_2.png)
+![](images/lab_8_2.png)
 
 ### **Analysis**
 
