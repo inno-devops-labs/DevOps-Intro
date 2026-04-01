@@ -1,0 +1,26 @@
+env:
+  contexts:
+    - name: juice
+      urls:
+        - "http://172.17.0.1:3000"
+  parameters:
+    failOnError: false
+    failOnWarning: false
+
+jobs:
+  - type: spider
+    parameters:
+      context: juice
+      url: "http://172.17.0.1:3000"
+      maxDuration: 1
+
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 5
+
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: /zap/wrk
+      reportFile: zap-report.html
+      reportTitle: "Juice Shop ZAP Report"
