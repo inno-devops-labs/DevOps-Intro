@@ -8,14 +8,14 @@
 
 ## Task 1 — Web Application Scanning with OWASP ZAP
 
-- [] Number of Medium risk vulnerabilities found
-- [] Description of the 2 most interesting vulnerabilities
-- [] Security headers status (which are present/missing and why they matter)
-- [] Screenshot of ZAP HTML report overview
-- [] Analysis: What type of vulnerabilities are most common in web applications?
+- [x] Number of Medium risk vulnerabilities found
+- [x] Description of the 2 most interesting vulnerabilities
+- [x] Security headers status (which are present/missing and why they matter)
+- [x] Screenshot of ZAP HTML report overview
+- [x] Analysis: What type of vulnerabilities are most common in web applications?
 
 
-### 1.1: Start the Vulnerable Target Application
+### 1.1 Start the Vulnerable Target Application
 
 1. **Deploy Juice Shop (Intentionally Vulnerable Application):**
 
@@ -55,9 +55,9 @@ e7c92d738fe65eba7069c3aecaba150ce2fd5b34d58246bcd47c4331c4e11aee
 2. **Verify It's Running:**
 
 Open your browser and navigate to `http://localhost:3000`
-![alt text](image.png)
+![alt text](screenshots/image.png)
 
-### 1.2: Scan with OWASP ZAP
+### 1.2 Scan with OWASP ZAP
 
 1. **Run ZAP Baseline Scan:**
 
@@ -199,38 +199,66 @@ FAIL-NEW: 0     FAIL-INPROG: 0  WARN-NEW: 6     WARN-INPROG: 0  INFO: 0 IGNORE: 
 
    > Mac/Windows users: Use `host.docker.internal` as shown above
 
-### 1.3: Analyze Results
+### 1.3 Analyze Results
 
 1. **Open the Report:**
 
    - Find `zap-report.html` in your current directory
    - Open it in a browser
+![alt text](screenshots/image-1.png)
+
 
 2. **Identify Vulnerabilities:**
 
    - Find at least 2 Medium risk vulnerabilities
+        ![alt text](screenshots/image-2.png)
+
+        ### Medium Risk Vulnerabilities Found (2)
+
+        **Content Security Policy (CSP) Header Not Set** (Plugin ID: 10038)
+        - The application doesn't set the CSP header, making it vulnerable to XSS and data injection attacks
+        - Affects: Multiple URLs including root, `/ftp/coupons_2013.md.bak`, `/ftp/encrypt.pyc`, `/sitemap.xml`
+
+        **Cross-Domain Misconfiguration** (Plugin ID: 10098)
+        - CORS misconfiguration with `Access-Control-Allow-Origin: *`
+        - Allows arbitrary third-party domains to read unauthenticated API responses
+        - Affects: Root, `favicon_js.ico`, multiple chunk.js files, `robots.txt`
+
    - Check security headers status (which headers are present/missing?)
+        **Missing Headers (Issues Found):**
+        - ❌ `Content-Security-Policy` - **MISSING** (Medium risk)
+        - ❌ `Cross-Origin-Embedder-Policy` - **MISSING** (Low risk)
+        - ❌ `Cross-Origin-Opener-Policy` - **MISSING** (Low risk)
+        - ⚠️ `Feature-Policy` - **DEPRECATED** (Should use Permissions-Policy instead)
+
+        **Present but Problematic:**
+        - `Access-Control-Allow-Origin: *` - Too permissive (Medium risk)
+
    - Note the most interesting vulnerability found
 
-### 1.4: Clean Up
+        The **Cross-Domain Misconfiguration** with `Access-Control-Allow-Origin: *` is particularly concerning because:
 
-   ```bash
-   docker stop juice-shop && docker rm juice-shop
-   ```
-
-
-
+        - It allows **any website** to make cross-origin requests to your application
+        - Attackers could host a malicious site that reads sensitive data from your app
+        - Evidence found in multiple locations including root path, JavaScript chunks, and `robots.txt`
+        - While unauthenticated APIs have somewhat reduced risk, this could still expose sensitive data or be used for reconnaissance
 
 
+### 1.4 Clean Up
 
+```bash
+PS D:\Programs\DevOps-Intro> docker stop juice-shop                        
+juice-shop
+PS D:\Programs\DevOps-Intro> docker rm juice-shop                          
+juice-shop
+```
 
-
-
-
-
-
-
-
+### 1.5 What type of vulnerabilities are most common in web applications?
+1. **Injection** (SQL, NoSQL, Command)
+2. **Broken Authentication**
+3. **XSS** (Cross-Site Scripting)
+4. **Security Misconfiguration**
+5. **Sensitive Data Exposure**
 
 
 
@@ -247,21 +275,13 @@ FAIL-NEW: 0     FAIL-INPROG: 0  WARN-NEW: 6     WARN-INPROG: 0  INFO: 0 IGNORE: 
 - [] Analysis: Why is container image scanning important before deploying to production?
 - [] Reflection: How would you integrate these scans into a CI/CD pipeline?
 
-
-**Objective:** Identify vulnerabilities in container images using Trivy, focusing on intentionally vulnerable images for educational purposes.
-
-**Why This Matters:** Container scanning detects OS/library vulnerabilities in images before deployment. Trivy is the industry's most comprehensive open-source scanner.
-
 ### 2.1: Scan Container Image
 
 1. **Run Trivy Scan:**
 
-   ```bash
-   docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-   aquasec/trivy:latest image \
-   --severity HIGH,CRITICAL \
-   bkimminich/juice-shop
-   ```
+```bash
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.62.0 image --severity HIGH,CRITICAL bkimminich/juice-shop
+```
 
    <details>
    <summary>🔍 Understanding Trivy flags</summary>
@@ -282,9 +302,61 @@ FAIL-NEW: 0     FAIL-INPROG: 0  WARN-NEW: 6     WARN-INPROG: 0  INFO: 0 IGNORE: 
    - At least 2 vulnerable package names
    - The most common vulnerability type (CVE category)
 
+
+**CRITICAL Vulnerabilities: 10** 
+
+**HIGH Vulnerabilities: 42** (1 from OS + 41 from Node.js)
+
+
+### **Vulnerable Packages (at least 2):**
+1. **crypto-js** (v3.3.0) - CRITICAL
+2. **vm2** (v3.9.17) - CRITICAL
+3. **handlebars** (v4.7.7) - CRITICAL
+4. **lodash** (v2.4.2) - CRITICAL
+5. **jsonwebtoken** (v0.1.0) - CRITICAL
+
+
+**Most Common Vulnerability Type:**
+
+**Remote Code Execution (RCE) / Sandbox Escape**
+
+Multiple CVEs allow attackers to escape sandboxes or execute arbitrary code:
+- `vm2` - Sandbox escape (CVE-2023-32314, CVE-2023-37466)
+- `handlebars` - RCE via crafted AST (CVE-2026-33937)
+- `lodash` - Command injection via template (CVE-2021-23337)
+- `marsdb` - Command injection (GHSA-5mrr-rgp6-x4gr)
+
+---
+
+**Critical Findings (10):**
+
+| Package | Vulnerability | Severity |
+|---------|--------------|----------|
+| crypto-js | CVE-2023-46233 (PBKDF2 weakness) | CRITICAL |
+| handlebars | CVE-2026-33937 (RCE) | CRITICAL |
+| jsonwebtoken | CVE-2015-9235 (verification bypass) | CRITICAL |
+| lodash | CVE-2019-10744 (prototype pollution) | CRITICAL |
+| marsdb | GHSA-5mrr-rgp6-x4gr (command injection) | CRITICAL |
+| vm2 | CVE-2023-32314 (sandbox escape) | CRITICAL |
+| vm2 | CVE-2023-37466 (sandbox escape) | CRITICAL |
+
+---
+
+**Additional Security Issue:**
+
+**Hardcoded RSA Private Key** found in:
+- `/juice-shop/build/lib/insecurity.js:47`
+- `/juice-shop/lib/insecurity.ts:23`
+
+This is a **HIGH** severity secret exposure issue.
+
+---
+
+**OS Level Vulnerability:**
+- **libc6** (CVE-2026-4046) - HIGH - DoS via iconv() function
+
 ### 2.3: Clean Up
 
-   ```bash
-   docker rmi bkimminich/juice-shop
-   ```
-
+```bash
+PS D:\Programs\DevOps-Intro> docker rmi bkimminich/juice-shop 
+```
