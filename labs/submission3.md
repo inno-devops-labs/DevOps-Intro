@@ -21,7 +21,7 @@ Workflow запустился автоматически после push в ве
 https://github.com/ImilB/Baltaniazov/actions/runs/23961020670
 
 ### Analysis of workflow execution process:
-При push в репозиторий GitHub автоматически запускает workflow. Runner (ubuntu-latest) скачивает код, выполняет каждый шаг по очереди. Если какой-то шаг пад>
+При push в репозиторий GitHub автоматически запускает workflow. Runner (ubuntu-latest) скачивает код, выполняет каждый шаг по очереди. Если какой-то шаг падает (exit code не 0), workflow останавливается и помечается как failed.
 
 ## Task 2 — Manual Trigger + System Information (4 pts)
 
@@ -29,6 +29,7 @@ https://github.com/ImilB/Baltaniazov/actions/runs/23961020670
 Добавлен `workflow_dispatch:` под секцией `on:`. Это позволяет запускать workflow вручную из UI GitHub.
 
 ### How to trigger manually:
+
 1. Зайти в Actions → Выбрать workflow "Learn GitHub Actions"
 2. Нажать "Run workflow" → Выбрать ветку → Нажать "Run workflow"
 
@@ -39,7 +40,7 @@ Operating System: Linux runnervm727z3 6.17.0-1008-azure #8~24.04.1-Ubuntu SMP Mo
 Current user: runner
 Current directory: /home/runner/work/Baltaniazov/Baltaniazov
 CPU info:
-model name      : AMD EPYC 7763 64-Core Processor
+model name	: AMD EPYC 7763 64-Core Processor
 Memory info:
                total        used        free      shared  buff/cache   available
 Mem:            15Gi       1.3Gi        12Gi        39Mi       2.5Gi        14Gi
@@ -57,8 +58,8 @@ tmpfs           1.6G   12K  1.6G   1% /run/user/1001
 Git version:
 git version 2.53.0
 
-### Comparison of manual vs automatic triggers:
-При ручном запуске (`workflow_dispatch`) вы контролируете процесс, но нужно не забыть его активировать, а при автоматическом (`push`) он срабатывает при каж>
-### Analysis of runner environment:
-GitHub Actions runner на ubuntu-latest предоставляет: 2-core CPU, 7GB RAM, 14GB SSD. Включает предустановленные инструменты: Git, Docker, Node.js, Python и >
 
+### Comparison of manual vs automatic triggers:
+При ручном запуске (`workflow_dispatch`) вы контролируете процесс, но нужно не забыть его активировать, а при автоматическом (`push`) он срабатывает при каждом пуше, но может запускаться слишком часто.
+### Analysis of runner environment:
+GitHub Actions runner на ubuntu-latest предоставляет: 2-core CPU, 7GB RAM, 14GB SSD. Включает предустановленные инструменты: Git, Docker, Node.js, Python и др.
