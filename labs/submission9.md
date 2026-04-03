@@ -268,14 +268,14 @@ juice-shop
 
 ## Task 2 — Container Vulnerability Scanning with Trivy
 
-- [] Total count of CRITICAL and HIGH vulnerabilities
-- [] List of 2 vulnerable packages with their CVE IDs
-- [] Most common vulnerability type found
-- [] Screenshot of Trivy terminal output showing critical findings
-- [] Analysis: Why is container image scanning important before deploying to production?
-- [] Reflection: How would you integrate these scans into a CI/CD pipeline?
+- [x] Total count of CRITICAL and HIGH vulnerabilities
+- [x] List of 2 vulnerable packages with their CVE IDs
+- [x] Most common vulnerability type found
+- [x] Screenshot of Trivy terminal output showing critical findings
+- [x] Analysis: Why is container image scanning important before deploying to production?
+- [x] Reflection: How would you integrate these scans into a CI/CD pipeline?
 
-### 2.1: Scan Container Image
+### 2.1 Scan Container Image
 
 1. **Run Trivy Scan:**
 
@@ -292,7 +292,7 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.62.
 
    </details>
 
-### 2.2: Analyze Results
+### 2.2 Analyze Results
 
 1. **Identify Key Findings:**
 
@@ -355,8 +355,24 @@ This is a **HIGH** severity secret exposure issue.
 **OS Level Vulnerability:**
 - **libc6** (CVE-2026-4046) - HIGH - DoS via iconv() function
 
-### 2.3: Clean Up
+### 2.3 Clean Up
 
 ```bash
 PS D:\Programs\DevOps-Intro> docker rmi bkimminich/juice-shop 
 ```
+
+### 2.4 Why is container image scanning important before deploying to production?
+1. **Prevents known vulnerabilities** from reaching production (CVEs in OS packages, app dependencies)
+2. **Reduces attack surface** by catching exposed secrets, malware, and misconfigurations early
+3. **Ensures compliance** with security standards (SOC2, HIPAA, PCI-DSS)
+4. **Shifts security left** - cheaper to fix in CI/CD than after deployment
+5. **Protects supply chain** from compromised base images or malicious dependencies
+
+### 2.5 How would you integrate these scans into a CI/CD pipeline?
+**Best Practices:**
+- Scan **before** pushing to registry
+- **Fail builds** on HIGH/CRITICAL findings
+- **Cache layers** for faster scans
+- **Sign images** after passing scan (Cosign)
+- **Continuously scan** running containers in production
+
