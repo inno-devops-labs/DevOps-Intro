@@ -1,0 +1,37 @@
+name: Learn GitHub Actions
+
+on:
+  push:
+    branches: [ "main", "feature/lab3" ]
+  workflow_dispatch:
+
+jobs:
+  explore-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Print greeting
+        run: echo "Hello, DevOps! This is my first GitHub Action"
+      
+      - name: Print current date and time
+        run: date
+      
+      - name: List files in repository
+        run: ls -la
+      
+      - name: Gather system information
+        run: |
+          echo "=== System Information ==="
+          echo "Operating System: $(uname -a)"
+          echo "Current user: $(whoami)"
+          echo "Current directory: $(pwd)"
+          echo "CPU info:"
+          cat /proc/cpuinfo | grep "model name" | head -1
+          echo "Memory info:"
+          free -h
+          echo "Disk space:"
+          df -h
+          echo "Git version:"
+          git --version
