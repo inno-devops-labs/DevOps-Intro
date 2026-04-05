@@ -159,7 +159,6 @@ nix-build docker.nix
 shasum -a 256 result
 
 Результат: хэш совпадает с предыдущим
-
 ## 6. Вывод
 - Docker-образ, собранный через Nix, воспроизводим
 - повторная сборка даёт одинаковый результат
@@ -169,3 +168,96 @@ Nix гарантирует:
 - фиксированные зависимости
 - одинаковые хэши
 - одинаковый результат на любой машине
+
+# Bonus Task — Modern Nix with Flakes
+
+Создан файл flake.nix:
+
+{
+  description = "Go app with flakes";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+  };
+
+  outputs = { self, nixpkgs }:
+    let
+      systems = [ "aarch64-darwin" "x86_64-linux" ];
+      forAllSystems = f:
+        nixpkgs.lib.genAttrs systems (system:
+          f {
+            pkgs = import nixpkgs { inherit system; };
+          });
+    in {
+      packages = forAllSystems ({ pkgs }: {
+        default = pkgs.buildGoModule {
+          pname = "app";
+          version = "1.0.0";
+          src = ./.;
+          vendorHash = null;
+        };
+      });
+
+      devShells = forAllSystems ({ pkgs }: {
+        default = pkgs.mkShell {
+          packages = with pkgs; [
+            go
+            gopls
+          ];
+        };
+      });
+    };
+}
+
+Сгенерирован lock-файл:
+
+nix flake update
+
+warning: updating lock file "/Users/lubaschetinnikova/labs/lab11/app/flake.lock"
+
+• Updated input 'nixpkgs':
+  'github:NixOS/nixpkgs/2948837' (2026-04-05)
+→ 'github:NixOS/nixpkgs/6201e20' (2026-04-01)
+
+Фрагмент flake.lock:
+
+{
+  "nodes": {
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1775036866,
+        "narHash": "sha256-ZojAnPuCdy657PbTq5V0Y+AHKhZAIwSIT2cb8UgAz/U=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "6201e203d09599479a3b3450ed24fa81537ebc4e",
+        "type": "github"
+      }
+    }
+  }
+}
+
+Сборка проекта:
+
+nix build
+
+Результат:
+
+lrwxr-xr-x 1 lubaschetinnikova staff 53 апр  5 14:11 result -> /nix/store/x2hxvs8li0cdx2psfzn0lqwv6xwrh3yj-app-1.0.0
+
+Путь в store:
+
+/nix/store/x2hxvs8li0cdx2psfzn0lqwv6xwrh3yj-app-1.0.0
+
+Это подтверждает успешную сборку и воспроизводимость (одинаковый результат при фиксированных зависимостях)
+
+Dev shell:
+
+nix develop
+
+(nix:nix-shell-env) MacBook-Air-Luba-2:app lubaschetinnikova$
+
+Dev environment создаётся автоматически и содержит все необходимые инструменты (go, gopls), что избавляет от ручной установки и обеспечивает одинаковое окружение на разных машинах.
+
+Вывод:
+
+Flakes позволяют фиксировать зависимости, обеспечивают воспроизводимые сборки, дают стандартную структуру проекта и упрощают разработку за счёт встроенного dev-окружения.
