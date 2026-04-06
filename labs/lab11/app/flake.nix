@@ -29,4 +29,8 @@
       packages.${system}.default = app;
       dockerImages.${system}.default = dockerImage;
     };
+
+  devShells.x86_64-linux.default = pkgs.mkShell {
+     buildInputs = [ pkgs.go pkgs.gopls ];
+  };
 }
