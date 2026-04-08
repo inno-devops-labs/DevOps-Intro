@@ -3,6 +3,7 @@ name: Lab3 CI
 on:
   push:
     branches: [ "main", "feature/lab3" ]
+  workflow_dispatch:
 
 jobs:
   explore-github-actions:
@@ -19,3 +20,14 @@ jobs:
 
       - name: List files
         run: ls -la
+
+      - name: Collect system information
+        run: |
+          echo "Operating System:"
+          cat /etc/os-release
+          echo "Kernel version:"
+          uname -a
+          echo "CPU information:"
+          lscpu | grep "Model name" || cat /proc/cpuinfo | grep "model name" | head -1
+          echo "Memory information:"
+          free -h
