@@ -67,7 +67,6 @@
   - Tier-based pricing (Basic, Standard, Premium)
 
 ## Comparison Table
-
 | Feature                | AWS ECR              | GCP Artifact Registry     | Azure ACR              |
 |-----------------------|----------------------|----------------------------|------------------------|
 | Artifact types        | Docker only          | Multi-format               | Docker + Helm          |
@@ -88,7 +87,6 @@ For a multi-cloud strategy, GCP Artifact Registry is the most flexible choice be
 
 ## Task 2 — Serverless Computing Platform Research
 ### AWS Serverless
-
 - Service name: AWS Lambda
 
 - Supported runtimes:
@@ -167,7 +165,6 @@ For a multi-cloud strategy, GCP Artifact Registry is the most flexible choice be
   - Up to 60 minutes (depending on plan)
 
 ## Comparison Table
-
 | Feature            | AWS Lambda        | GCP (Cloud Run / Functions) | Azure Functions     |
 |--------------------|------------------|------------------------------|---------------------|
 | Model              | Functions        | Functions + Containers       | Functions           |
