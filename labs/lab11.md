@@ -629,4 +629,82 @@ nix-build       # Same inputs = bit-for-bit identical output
 - `pkgs.pkgsCross.aarch64-multiplatform.hello`
 - Same reproducibility guarantees across architectures
 
+**If flakes don't work:**
+- Ensure experimental features are enabled in `~/.config/nix/nix.conf`
+- Run `nix flake check` to validate flake syntax
+- Make sure your flake is in a git repository
+
+**If cross-machine builds differ:**
+- Check nixpkgs input is locked in `flake.lock`
+- Verify both machines use same Nix version
+- Ensure no `created = "now"` or timestamps in image builds
+
+</details>
+
+<details>
+<summary>🎯 Understanding Reproducibility</summary>
+
+**What makes a build reproducible?**
+- ✅ Deterministic inputs (exact versions, hashes)
+- ✅ Isolated environment (no system dependencies)
+- ✅ No timestamps or random values
+- ✅ Same compiler, same flags, same libraries
+- ✅ Content-addressable storage
+
+**Why traditional tools fail:**
+```bash
+# Docker - timestamps in layers
+docker build .  # Different timestamp = different image hash
+
+# npm - lockfiles help but aren't perfect
+npm install     # Still uses local cache, system libraries
+
+# apt/yum - version drift
+apt-get install nodejs  # Gets different version next week
+```
+
+**How Nix succeeds:**
+```bash
+# Nix - pure, sandboxed, content-addressed
+nix-build       # Same inputs = bit-for-bit identical output
+                # Today, tomorrow, on any machine
+```
+
+**Real-world impact:**
+- **CI/CD:** No more "works on my machine"
+- **Security:** Audit exact dependency tree
+- **Rollback:** Atomic updates with perfect rollbacks
+- **Collaboration:** Everyone gets identical environment
+
+</details>
+
+<details>
+<summary>🌟 Advanced Concepts (Optional Reading)</summary>
+
+**Content-Addressable Store:**
+- Every package has a unique hash based on its inputs
+- `/nix/store/abc123...` where `abc123` = hash of inputs
+- Same inputs = same hash = reuse existing build
+
+**Sandboxing:**
+- Builds run in isolated namespaces
+- No network access (except for fixed-output derivations)
+- No access to `/home`, `/tmp`, or system paths
+- Only declared dependencies are available
+
+**Lazy Evaluation:**
+- Nix expressions are lazily evaluated
+- Only builds what's actually needed
+- Enables massive codebase (all of nixpkgs) without performance issues
+
+**Binary Cache:**
+- cache.nixos.org provides pre-built binaries
+- If your build matches a cached hash, download instead of rebuild
+- Set up private caches for your team
+
+**Cross-Compilation:**
+- Nix makes cross-compilation trivial
+- `pkgs.pkgsCross.aarch64-multiplatform.hello`
+- Same reproducibility guarantees across architectures
+
 </details>
