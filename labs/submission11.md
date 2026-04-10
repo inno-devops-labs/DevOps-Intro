@@ -150,7 +150,7 @@ Example store path from my build:
 - **`3fqmys6y4n1sbzrm513ckbvvcx74imj8`**: a hash derived from the *full dependency graph and build recipe inputs* (the derivation + exact versions/paths of dependencies). If any input changes, this hash changes.
 - **`lab11-app-0.1.0`**: the human-readable name portion, built from `pname` and `version` in `default.nix`.
 
-### Evidence of building and running the app
+### Building and running the app
 
 This screenshot shows the build and a successful run of the produced binary:
 
@@ -226,7 +226,7 @@ pkgs.dockerTools.buildLayeredImage {
 }
 ```
 
-**Build, load, and run (evidence):**
+**Build, load, and run:**
 
 I ran `nix-build docker.nix`, then loaded the tarball into Docker. The build log shows the image config (OS `linux`, arch `arm64`, fixed `created`, `repo_tag` `lab11-app:nix`, and store layers):
 
@@ -324,3 +324,174 @@ c7bfb4d2f3a2f41b3d367854b502d3763a13a7c3d1c588385fb32ae7a723a0b4  result
 - **Caching:** Identical store paths **reuse layers** across projects that share dependencies.
 - **CI trust:** Same `sha256sum` on `result` (tarball) gives a **strong artifact identity** independent of “it built on my laptop yesterday”.
 - **Less tag drift:** You are not relying on a moving `FROM` tag for the *contents* of the Nix closure the way a long-lived `FROM debian:bookworm` line might drift over months.
+
+---
+
+## Bonus — Modern Nix with Flakes
+
+### `flake.nix` (complete, with explanations)
+
+File: `labs/lab11/app/flake.nix`
+
+**Purpose:** Flakes pin **inputs** (here: `nixpkgs`) in `flake.lock`, expose **outputs** per system (`packages`, `devShells`), and make `nix build` / `nix develop` work without ad‑hoc `NIX_PATH`.
+
+**Structure:**
+
+- **`inputs.nixpkgs`**: Flake input; exact revision is recorded in `flake.lock` after `nix flake update`.
+- **`outputs` / `eachSystem`**: Builds `packages` and `devShells` for `aarch64-darwin`, `x86_64-darwin`, `aarch64-linux`, `x86_64-linux`.
+- **`packages.<system>.default`**: `callPackage ./default.nix { }` — same Go app as Task 1.
+- **`packages.<system>.docker`**: Linux `GOOS`/`GOARCH` matches the host (amd64 vs arm64), then `dockerTools.buildLayeredImage` with fixed `created` (Task 2 style).
+- **`devShells`**: Default shell on most systems uses `mkShell` with `packages = [ go gopls ]`. Per the lab, **`devShells.x86_64-linux.default`** overrides with `buildInputs = [ go gopls ]` exactly as in `lab11.md`.
+
+```nix
+{
+  description = "DevOps-Intro Lab 11 — reproducible Go app and Nix-built Docker image";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+  };
+
+  outputs =
+    { self, nixpkgs }:
+    let
+      inherit (nixpkgs) lib;
+      systems = [
+        "aarch64-darwin"
+        "x86_64-darwin"
+        "aarch64-linux"
+        "x86_64-linux"
+      ];
+      eachSystem = f: lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
+    in
+    {
+      packages = eachSystem (
+        pkgs:
+        let
+          default = pkgs.callPackage ./default.nix { };
+          linuxGoArch = if pkgs.stdenv.hostPlatform.isx86_64 then "amd64" else "arm64";
+          appLinux = pkgs.stdenv.mkDerivation rec {
+            pname = "lab11-app";
+            version = "0.1.0";
+            src = ./.;
+            nativeBuildInputs = [ pkgs.go ];
+            buildPhase = ''
+              runHook preBuild
+              export CGO_ENABLED=0
+              export GOOS=linux
+              export GOARCH=${linuxGoArch}
+              export HOME="$TMPDIR"
+              export GOCACHE="$TMPDIR/go-build"
+              go build -trimpath -ldflags="-s -w" -o lab11-app .
+              runHook postBuild
+            '';
+            installPhase = ''
+              runHook preInstall
+              install -D -m 0755 lab11-app "$out/bin/lab11-app"
+              runHook postInstall
+            '';
+          };
+          docker = pkgs.dockerTools.buildLayeredImage {
+            name = "lab11-app";
+            tag = "nix";
+            contents = [ appLinux ];
+            created = "1970-01-01T00:00:00Z";
+            config = { Cmd = [ "${appLinux}/bin/lab11-app" ]; };
+          };
+        in
+        { inherit default docker; }
+      );
+
+      devShells =
+        eachSystem (pkgs: {
+          default = pkgs.mkShell {
+            packages = [ pkgs.go pkgs.gopls ];
+          };
+        })
+        // {
+          x86_64-linux.default =
+            let pkgs = nixpkgs.legacyPackages.x86_64-linux;
+            in pkgs.mkShell {
+              buildInputs = [ pkgs.go pkgs.gopls ];
+            };
+        };
+    };
+}
+```
+
+### `flake.lock` snippet (locked dependencies)
+
+After `nix flake update`, `nixpkgs` is pinned to an exact `rev` and `narHash`:
+
+```json
+{
+  "nodes": {
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1751274312,
+        "narHash": "sha256-/bVBlRpECLVzjV19t5KMdMFWSwKLtb5RyXdjz3LJT+g=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "50ab793786d9de88ee30ec4e4c24fb4236fc2674",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-24.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    }
+  }
+}
+```
+
+(Full file: `labs/lab11/app/flake.lock`.)
+
+### Lock file workflow (`nix flake update`)
+
+Nix only sees **Git-tracked** files in a flake repo; the screenshot shows staging `flake.nix`, then updating the lockfile and recording the `nixpkgs` input:
+
+![](img/flake_update.png)
+
+### Build outputs from `nix build`
+
+With a clean, committed tree and the same `flake.lock`, `nix build --print-out-paths` prints the output store path for `packages.<system>.default`.
+
+**Local (macOS host):**
+
+![](img/flake_local_path.png)
+
+**“Remote” environment:** I reproduced the lab’s portability check using a **Docker container with Ubuntu** (Nix installed inside the container), building the same flake at the same git revision so inputs match the Mac build.
+
+![](img/flake_remote_path.png)
+
+### Proof: identical store paths across environments
+
+Both runs report the **same** output path:
+
+```text
+/nix/store/gfx2sbdbxcgkn6j88csc1gjm1z826p9j-lab11-app-0.1.0
+```
+
+That is what we want for portability: **same locked `nixpkgs` + same flake source + same system type** ⇒ **same `/nix/store/...` hash** for the package. (If host OS/arch differ—e.g. `aarch64-darwin` vs `x86_64-linux`—you must compare `packages.<that-system>.default` or use matching hardware/VM.)
+
+### Dev shell experience (`nix develop`)
+
+**What I get:** Entering the flake directory and running `nix develop` drops into a shell with **Go** and **gopls** provided by Nix, matching what `flake.nix` declares—no manual `brew install go`, no IDE-specific SDK paths, and no drift between teammates if everyone uses the same `flake.lock`.
+
+**Why this beats a traditional setup:**
+
+- **Declarative:** Tool versions come from `nixpkgs` pinned in `flake.lock`, not “whatever was on PATH last month”.
+- **Isolated:** The dev shell doesn’t permanently mutate the host OS; leaving the shell leaves the system clean.
+- **Reproducible:** Same flake inputs ⇒ same tool versions ⇒ fewer “works on my machine” issues.
+
+### Reflection: Flakes vs classic `default.nix`
+
+| Topic | Classic `default.nix` + `<nixpkgs>` | Flakes |
+|--------|-------------------------------------|--------|
+| Dependency pinning | Implicit / channel-based unless you pin manually | **`flake.lock`** pins `nixpkgs` rev + hash |
+| Entrypoints | `nix-build`, `nix-shell -p` | **`nix build`**, **`nix develop`**, remote `github:...#attr` |
+| Project layout | Informal | **`flake.nix`** + lockfile as a standard interface |
+| Remote builds | Harder to share exact pins | **`nix build github:User/Repo?ref=…&dir=…#default`** with lockfile |
+
+Overall, Flakes add a small amount of ceremony but give **explicit inputs** and **easy sharing**—which is exactly what the lab’s portability exercise is meant to demonstrate.
