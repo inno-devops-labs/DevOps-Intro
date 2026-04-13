@@ -55,7 +55,7 @@ loop1            0.00      0.05     0.00   0.00   11.55    19.32    0.00      0.
 # Задание 2
 
 Я создал аккаунт и проверил url https://api.checklyhq.com. Провел API Check:
-![api check](check_1.png)
+![api check](check1.png)
 Установил стандартные настройки:
 
 - Частота 10 минут
@@ -65,16 +65,16 @@ loop1            0.00      0.05     0.00   0.00   11.55    19.32    0.00      0.
 
 Далее я провел Browser Check для сайта https://example.com на предмет видимости ссылки `Learn more`. Запустилось успешно:
 
-![element visible](check_2.png)
+![element visible](check2.png)
 
 Настроил правила оповещений:
 
-![alert](check_3.png)
+![alert](check3.png)
 
 У меня настройка на пересылку на мой email.
 
 Все проверки заработали успешно. Мой дашборд выглядит так:
-![dashboard](check_4.png)
+![dashboard](check4.png)
 
 ## Ответы
 
