@@ -48,14 +48,10 @@ http://127.0.0.1:5001/webui/
 
 **Node Information:**
 
-* Peer count: multiple peers connected (see screenshot)
-* Network bandwidth statistics: 
-```
-TotalIn: 36 MB
-TotalOut: 8 MB
-RateIn: 0 B/s
-RateOut: 0 B/s
-```
+* Peer count: `247`
+* Network bandwidth statistics:
+  - Incoming traffic: `8 KiB/s`
+  - Outgoing traffic: `2 KiB/s`
 
 ### 3. Add File to IPFS
 
@@ -138,13 +134,9 @@ A new project was created with the following configuration:
 
 * Platform: IPFS/Filecoin
 * Framework: Other
-* Repository: *<your GitHub repository>*
-* Branch: *<your branch>*
+* Repository: *Relator-001/DevOps-Intro*
+* Branch: *feature/lab11*
 * Publish directory: *labs/lab11/app*
-
-![11\_img\_7.png](screenshots/11_img_7.png)
-
----
 
 ### 2. Deployment Verification
 
@@ -153,49 +145,42 @@ After deployment completed successfully, the following information was obtained:
 * **Project URL:**
 
   ```
-  https://<your-project>.4everland.app
+  https://devops-intro-3-tzsk.ipfs.4everland.app
   ```
 
 * **IPFS CID (from 4EVERLAND dashboard):**
 
   ```
-  <CID_from_4everland>
+  bafybeihvufmo3q6tn6iuqtauei2isrpzjsw5xp3oheocxwpzlyqgdyxlwa
   ```
 
-![11\_img\_8.png](screenshots/11_img_8.png)
-
----
+![11_img_7.png](screenshots%2F11_img_7.png)
 
 ### 3. Access via 4EVERLAND Domain
 
 The deployed website is accessible via:
 
 ```
-https://<your-project>.4everland.app
+https://devops-intro-3-tzsk.ipfs.4everland.app
 ```
 
-![11\_img\_9.png](screenshots/11_img_9.png)
-
----
+![11_img_8.png](screenshots%2F11_img_8.png)
 
 ### 4. Access via Public IPFS Gateway
 
 The same content is accessible through a public IPFS gateway:
 
 ```
-https://ipfs.io/ipfs/<CID_from_4everland>
+https://ipfs.io/ipfs/bafybeihvufmo3q6tn6iuqtauei2isrpzjsw5xp3oheocxwpzlyqgdyxlwa
 ```
 
-![11\_img\_10.png](screenshots/11_img_10.png)
-
----
+![11_img_9.png](screenshots%2F11_img_9.png)
 
 ### Analysis
 
 4EVERLAND simplifies IPFS deployment by automating the process of uploading, pinning, and distributing content across the IPFS network.
 Unlike manual IPFS usage, where users must manage nodes, pinning, and content propagation, 4EVERLAND provides a CI/CD-like workflow with automatic deployment from GitHub repositories.
 
----
 
 ### Comparison
 
