@@ -1,0 +1,7 @@
+{ pkgs ? import <nixpkgs> {} }:
+pkgs.buildGoModule {
+  pname = "nix-go-app";
+  version = "1.0.0";
+  src = ./.;
+  vendorHash = null; 
+}
