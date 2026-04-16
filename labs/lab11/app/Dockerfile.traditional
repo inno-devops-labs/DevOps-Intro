@@ -1,0 +1,8 @@
+FROM golang:1.26 AS builder
+WORKDIR /app
+COPY main.go go.mod ./
+RUN go build -o /path/to/binary main.go
+
+FROM scratch
+COPY --from=builder /path/to/binary /app
+ENTRYPOINT ["/app"]
