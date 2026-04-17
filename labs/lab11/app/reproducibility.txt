@@ -1,0 +1,2 @@
+/nix/store/hfph9hzalcf1vh5m0bywysksddmvnssl-app-1.0.0
+c23e322f57ce8b283897c081504a66136fa2fa322cfed04ba4f98fb10f2e0bdb  ./result/bin/app
