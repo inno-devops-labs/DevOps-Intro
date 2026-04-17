@@ -1,0 +1,4 @@
+IMAGE          CREATED   CREATED BY   SIZE      COMMENT
+a96c0245ca0f   N/A                    61B       store paths: ['/nix/store/xq9gslvg12b31harl8ajscppsnj0yy9k-lab11-app-customisation-layer']
+<missing>      N/A                    1.65MB    store paths: ['/nix/store/zs1a5qvwq44g57azz4fs7qsqn05i0a8i-app-1.0.0']
+<missing>      N/A                    1.9MB     store paths: ['/nix/store/h15ranlgwagilr6ajd7ich6d896kf9zd-tzdata-2026a']

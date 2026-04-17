@@ -1,0 +1,1 @@
+lrwxrwxrwx 1 valeria valeria 60 Apr 17 22:57 result -> /nix/store/jvp69h2nvrg1cq9kaivxidhvm8x079fi-lab11-app.tar.gz

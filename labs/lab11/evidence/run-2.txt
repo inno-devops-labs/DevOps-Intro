@@ -1,0 +1,2 @@
+Built reproducibly with Nix
+Running at: 2026-04-17T19:54:03Z

@@ -1,0 +1,1 @@
+/nix/store/65cxqi7y7yq8aw0vslr8ff16lbx01zsd-app-1.0.0

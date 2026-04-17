@@ -1,0 +1,3 @@
+IMAGE          CREATED                  CREATED BY                      SIZE      COMMENT
+5a5bd461c76f   Less than a second ago   ENTRYPOINT ["/app"]             0B        buildkit.dockerfile.v0
+<missing>      Less than a second ago   COPY /out/app /app # buildkit   1.31MB    buildkit.dockerfile.v0

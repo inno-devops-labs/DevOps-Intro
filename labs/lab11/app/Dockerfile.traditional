@@ -1,0 +1,8 @@
+FROM golang:1.22 AS builder
+WORKDIR /src
+COPY go.mod main.go ./
+RUN CGO_ENABLED=0 go build -trimpath -buildvcs=false -ldflags="-s -w" -o /out/app .
+
+FROM scratch
+COPY --from=builder /out/app /app
+ENTRYPOINT ["/app"]
