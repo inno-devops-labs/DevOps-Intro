@@ -65,22 +65,26 @@ Disadvantages:
 
 ### Task 2
 
-- 4EVERLAND project URL: `https://prodsaj-5lr4.ipfs.4everland.app/`
-- Additional public domain: `https://bafybeicxy6vpbtcngpgtcmpy642uql2h7kbrpystrpivqwdztblpioz5fy.ipfs.dweb.link/`
+- 4EVERLAND project URL: `https://devops-intro-5-0fqn.ipfs.4everland.app/`
 - GitHub repository used: current course repository
-- IPFS CID from 4EVERLAND dashboard: `QmUFJmQRosK4Amzcjwbip8kV3gkJ8jqCURjCNxuv3bWYS1`
+- IPFS CID from 4EVERLAND dashboard: `bafybeifhpby7u3zpsa2ywhwh5ckn2gsdsniygytew6jxok3nvkiq5t3v3e`
+- Public IPFS gateway URL: `https://ipfs.io/ipfs/bafybeifhpby7u3zpsa2ywhwh5ckn2gsdsniygytew6jxok3nvkiq5t3v3e`
 
 #### 4EVERLAND deployment dashboard
 
-![4everland dashboard](images/4everland.png)
+![4everland dashboard](images/4everland_dashboard.png)
+
+#### Site accessed through 4EVERLAND domain
+
+![4everland app domain](images/4everland_app_domain.png)
+
+#### Site accessed through public IPFS gateway
+
+![4everland app ipfs](images/4everland_app_ipfs.png)
 
 ### Observations and Analysis
 
 4EVERLAND simplifies IPFS deployment because it gives a dashboard, deployment status, generated domain, and published IPFS CID without needing to pin and manage everything manually from the command line. It is more convenient than manual IPFS publishing, especially for repeated deployments.
 
 Compared to traditional hosting, IPFS hosting is more content-oriented and decentralized, but it is less straightforward when you want a normal website workflow. Traditional hosting is simpler for fixed domains, updates, and standard web deployment. IPFS hosting is useful when content integrity and decentralized distribution matter more.
-
-#### Note
-
-In my case, 4EVERLAND asked for a repository but then also accepted a CID. I used the CID generated in Task 1, so the deployment currently points to the small published IPFS content rather than a full static site. This still shows that deployment through 4EVERLAND works, but for a more complete website deployment it would be better to publish a folder with an `index.html` file instead of a single text file CID.
 
