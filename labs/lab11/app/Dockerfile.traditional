@@ -1,0 +1,8 @@
+FROM golang:1.22 AS builder
+WORKDIR /app
+COPY main.go .
+RUN go build -o app main.go
+
+FROM scratch
+COPY --from=builder /app/app /app
+ENTRYPOINT ["/app"]
