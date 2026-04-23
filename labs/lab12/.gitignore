@@ -1,0 +1,4 @@
+containerd-shim-wasmtime-v1
+main.wasm
+moscow-time-traditional
+moscow-time-wasm.oci
