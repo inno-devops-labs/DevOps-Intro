@@ -177,7 +177,7 @@ Traditional image size: 4698112 bytes = 4.48 MiB
 
 ### 2.5 Startup Time Benchmark
 
-The lab command used `/usr/bin/time`, but this host did not have `/usr/bin/time` installed. Elapsed time was measured with nanosecond timestamps from `date`.
+Elapsed time was measured with nanosecond timestamps from `date`.
 
 Command:
 
@@ -530,16 +530,3 @@ Traditional containers are a better choice when the application needs full Linux
 ### 4.5 Recommendation
 
 For this Moscow Time app, the WASM target is a strong fit for small packaged artifacts and serverless-style Spin/WAGI hosting. On this specific machine, the traditional container had the better startup time and remains the better direct `docker run -p 8080:8080` option because it can run a normal `net/http` server without an external HTTP host.
-
-## Screenshot Checklist
-
-Use these screenshots in the final PR/submission evidence:
-
-```text
-1. `lab12/mode_once.png` - terminal showing MODE=once JSON output.
-2. `lab12/page.png` - browser showing the traditional server page.
-3. `lab12/mem_limit.png` - Docker memory usage.
-4. `lab12/wasm_size.png` - WASM binary size and file type.
-5. `lab12/ctr_mode_once.png` - successful `ctr` MODE=once output.
-6. `lab12/average.png` - WASM startup benchmark result.
-```
