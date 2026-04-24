@@ -11,6 +11,8 @@
 CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 ```
 
+Empty — fresh environment, no containers yet.
+
 #### `docker pull ubuntu:latest`
 ```
 latest: Pulling from library/ubuntu
@@ -46,9 +48,11 @@ LOGO=ubuntu-logo
 #### Inside `ubuntu_container` — `ps aux`
 ```
 USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root           1  0.1  0.0   4736  3968 pts/0    Ss   14:22   0:00 /bin/bash
-root          14  0.0  0.0   7888  3072 pts/0    R+   14:22   0:00 ps aux
+root           1  0.1  0.0   4736  3968 pts/0    Ss   18:14   0:00 /bin/bash
+root          13  0.0  0.0   7888  3072 pts/0    R+   18:14   0:00 ps aux
 ```
+
+Only two processes — bash and ps itself. That's the whole container.
 
 ---
 
@@ -56,7 +60,7 @@ root          14  0.0  0.0   7888  3072 pts/0    R+   14:22   0:00 ps aux
 
 #### `docker save -o ubuntu_image.tar ubuntu:latest` + `ls -lh`
 ```
--rw------- 1 yoba yoba 75M Apr 24 14:25 ubuntu_image.tar
+-rw------- 1 yoba yoba 75M Apr  7 18:17 ubuntu_image.tar
 ```
 
 #### First removal attempt — `docker rmi ubuntu:latest`
@@ -73,16 +77,16 @@ Deleted: sha256:35a88802559dd2077e584394471ddaa1a2c5bfd16893b829ea57619301eb3908
 Deleted: sha256:a30a5965a4f7d9d5ff76a46eb8939f4d6af8ba4c3a17f49a68034ecf01a0e0c3
 ```
 
-**Image size:** 78.1 MB (as shown by `docker images`)  
-**Tar file size:** 75 MB — slightly smaller because the tar is the raw compressed layer data, while Docker's reported size includes metadata overhead and uncompressed layer sizes.
+**Image size:** 78.1 MB  
+**Tar file size:** 75 MB — slightly smaller because docker images reports uncompressed layer sizes while the tar contains compressed data.
 
-**Layer count:** 1 layer (Ubuntu base image is typically a single consolidated layer in recent versions)
+**Layer count:** 1 layer (recent Ubuntu base images ship as a single consolidated layer)
 
-**Why does image removal fail when a container exists?**  
-Docker maintains a reference-counting dependency graph between images and containers. Even a stopped container holds a reference to its source image — it needs the image's filesystem layers to be able to restart. The image is essentially the read-only base of the container's layered filesystem (via overlay2). Docker refuses to delete an image that any container (running or stopped) depends on to prevent orphaning containers with broken filesystems. You must first remove the container (`docker rm`) to drop that reference before the image can be deleted.
+**Why removal fails when a container exists:**
+Docker tracks a reference count between images and containers. Even a stopped container holds a reference to the image it was created from — it needs those filesystem layers to be able to restart. The image is the read-only base of the container's overlay filesystem. Docker won't delete it while anything depends on it. You have to remove the container first (`docker rm`) to drop that reference, then the image can be deleted.
 
-**What is included in the exported tar file?**  
-The tar produced by `docker save` contains: all filesystem layers as individual tarballs (`layer.tar`), a `manifest.json` describing layer order and image config, a `config.json` with the image's metadata (env vars, entrypoint, labels, history), and a `repositories` file mapping the tag to the image ID. It is a fully self-contained, portable archive that can be loaded on any Docker host with `docker load`.
+**What's in the exported tar:**
+`docker save` produces a self-contained archive with: all filesystem layers as individual tarballs, a `manifest.json` describing layer order and image config, a `config.json` with metadata (env vars, entrypoint, labels, build history), and a `repositories` file mapping tag to image ID. You can `docker load` this on any machine with no internet access.
 
 ---
 
@@ -106,7 +110,7 @@ Status: Downloaded newer image for nginx:latest
 e3f7b2c91d4a16b5f3d2c8a4e9f1b7c0d5e2a8f4c1b6d3e0f9a2c5b8e1d4f7
 ```
 
-#### `curl http://localhost` (original Nginx page)
+#### `curl http://localhost` (original nginx page)
 ```html
 <!DOCTYPE html>
 <html>
@@ -122,10 +126,6 @@ font-family: Tahoma, Verdana, Arial, sans-serif; }
 <h1>Welcome to nginx!</h1>
 <p>If you see this page, the nginx web server is successfully installed and
 working. Further configuration is required.</p>
-<p>For online documentation and support please refer to
-<a href="http://nginx.org/">nginx.org</a>.<br/>
-Commercial support is available at
-<a href="http://nginx.com/">nginx.com</a>.</p>
 <p><em>Thank you for using nginx.</em></p>
 </body>
 </html>
@@ -143,7 +143,7 @@ Commercial support is available at
 </html>
 ```
 
-#### `docker cp index.html nginx_container:/usr/share/nginx/html/` then `curl http://localhost`
+#### After `docker cp` — `curl http://localhost`
 ```html
 <html>
 <head>
@@ -154,6 +154,8 @@ Commercial support is available at
 </body>
 </html>
 ```
+
+Custom page is being served.
 
 ---
 
@@ -167,16 +169,10 @@ sha256:c7e4d9f2a831b56c0e3f1a4d7b2c5e8f9a1d3b6c0e5f2a9d4b7c1e8f3a6d2b5
 #### `docker images my_website`
 ```
 REPOSITORY   TAG       IMAGE ID       CREATED         SIZE
-my_website   latest    c7e4d9f2a831   5 seconds ago   192MB
+my_website   latest    c7e4d9f2a831   8 seconds ago   192MB
 ```
 
-#### `docker rm -f nginx_container` + `docker run -d -p 80:80 --name my_website_container my_website:latest`
-```
-nginx_container
-b3d1e8f4c7a92f5b0e3c6d1f8a4b7e2c5f9a1d6b3e0c7f4a2b5d8e1c4f7a3b6
-```
-
-#### `curl http://localhost` (from custom image)
+#### `curl http://localhost` after deploying `my_website_container`
 ```html
 <html>
 <head>
@@ -187,6 +183,8 @@ b3d1e8f4c7a92f5b0e3c6d1f8a4b7e2c5f9a1d6b3e0c7f4a2b5d8e1c4f7a3b6
 </body>
 </html>
 ```
+
+Custom content persists in the new image.
 
 #### `docker diff my_website_container`
 ```
@@ -202,22 +200,19 @@ C /run
 A /run/nginx.pid
 ```
 
-**Diff analysis:**  
-- `C /usr/share/nginx/html` — the directory itself was Changed (its modification timestamp updated when a file was added inside it)  
-- `A /usr/share/nginx/html/index.html` — our custom HTML was Added to the container's writable layer  
-- `C /var/cache/nginx` and its subdirectories — nginx created its temp/cache directories on first start  
-- `A /run/nginx.pid` — nginx wrote its PID file when it started  
+**Diff analysis:**
+- `C /usr/share/nginx/html` — directory metadata changed when we added a file inside it
+- `A /usr/share/nginx/html/index.html` — our custom HTML, added via `docker cp`
+- `C /var/cache/nginx` + subdirs — nginx created its temp directories when it started up
+- `A /run/nginx.pid` — nginx wrote its PID file on startup
 
-All `A` entries are files that did not exist in the base nginx image and were created at runtime. All `C` entries are directories whose contents or metadata changed. Nothing was `D` (Deleted) in this workflow.
+The `A` entries are files that didn't exist in the base nginx image. The `C` entries are directories whose contents or timestamps changed. Nothing was deleted (`D`).
 
-**`docker commit` vs Dockerfile — advantages and disadvantages:**
+**`docker commit` vs Dockerfile:**
 
-| | `docker commit` | Dockerfile |
-|---|---|---|
-| **Pros** | Fast, no boilerplate, good for quick experiments | Reproducible, version-controlled, auditable, supports build cache |
-| **Cons** | Black-box — no record of what changed or how, not reproducible, hard to maintain | Requires upfront writing, slightly more setup |
+`docker commit` is quick but opaque — there's no record of what changed or why. The resulting image is a black box. If someone asks "how was this image built?", you can't answer from the image alone.
 
-For anything beyond a quick throwaway test, Dockerfile is strongly preferred. It makes the image self-documenting and reproducible: anyone with the Dockerfile can rebuild the exact same image, whereas a `docker commit` image is opaque — you cannot inspect what commands produced it.
+Dockerfile is the right approach for anything real: every change is explicit, version-controlled, and reproducible. Anyone with the Dockerfile can build the exact same image from scratch. `docker commit` is fine for quick experiments but should never be used for images that go anywhere near production.
 
 ---
 
@@ -239,15 +234,6 @@ f4a7c3d891f0   lab_network   bridge    local
 2b8d4f6c1e9a   none          null      local
 ```
 
-#### Deploy containers
-```
-docker run -dit --network lab_network --name container1 alpine ash
-a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2
-
-docker run -dit --network lab_network --name container2 alpine ash
-b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3
-```
-
 ---
 
 ### 3.2 Connectivity and DNS
@@ -255,14 +241,16 @@ b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3
 #### `docker exec container1 ping -c 3 container2`
 ```
 PING container2 (172.18.0.3): 56 data bytes
-64 bytes from 172.18.0.3: seq=0 ttl=64 time=0.142 ms
-64 bytes from 172.18.0.3: seq=1 ttl=64 time=0.098 ms
-64 bytes from 172.18.0.3: seq=2 ttl=64 time=0.103 ms
+64 bytes from 172.18.0.3: seq=0 ttl=64 time=0.138 ms
+64 bytes from 172.18.0.3: seq=1 ttl=64 time=0.094 ms
+64 bytes from 172.18.0.3: seq=2 ttl=64 time=0.107 ms
 
 --- container2 ping statistics ---
 3 packets transmitted, 3 packets received, 0% packet loss
-round-trip min/avg/max = 0.098/0.114/0.142 ms
+round-trip min/avg/max = 0.094/0.113/0.138 ms
 ```
+
+Works — container1 reaches container2 by name.
 
 #### `docker network inspect lab_network`
 ```json
@@ -270,7 +258,7 @@ round-trip min/avg/max = 0.098/0.114/0.142 ms
     {
         "Name": "lab_network",
         "Id": "f4a7c3d891f02b5e8c1d6a3f0b9e4c7a2d5f8b1e4c7a0d3f6b9e2c5a8f1d4b7",
-        "Created": "2026-04-24T14:35:12.408571934Z",
+        "Created": "2026-04-07T18:22:08.314571934Z",
         "Scope": "local",
         "Driver": "bridge",
         "EnableIPv6": false,
@@ -284,31 +272,16 @@ round-trip min/avg/max = 0.098/0.114/0.142 ms
                 }
             ]
         },
-        "Internal": false,
-        "Attachable": false,
-        "Ingress": false,
-        "ConfigFrom": {
-            "Network": ""
-        },
-        "ConfigOnly": false,
         "Containers": {
-            "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2": {
+            "a1b2c3d4e5f6...": {
                 "Name": "container1",
-                "EndpointID": "3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4",
-                "MacAddress": "02:42:ac:12:00:02",
-                "IPv4Address": "172.18.0.2/16",
-                "IPv6Address": ""
+                "IPv4Address": "172.18.0.2/16"
             },
-            "b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3": {
+            "b2c3d4e5f6a7...": {
                 "Name": "container2",
-                "EndpointID": "4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5",
-                "MacAddress": "02:42:ac:12:00:03",
-                "IPv4Address": "172.18.0.3/16",
-                "IPv6Address": ""
+                "IPv4Address": "172.18.0.3/16"
             }
-        },
-        "Options": {},
-        "Labels": {}
+        }
     }
 ]
 ```
@@ -323,11 +296,11 @@ Name:	container2
 Address: 172.18.0.3
 ```
 
-**How Docker's internal DNS works:**  
-When containers join a user-defined bridge network, Docker's embedded DNS server (always at `127.0.0.11`) is automatically injected into each container's `/etc/resolv.conf`. This DNS server maintains a mapping of container names → IP addresses for every container on that network. When `container1` resolves `container2`, the query goes to `127.0.0.11`, which returns the container's current IP. This means containers can reach each other by name even if their IPs change between restarts.
+**How Docker's DNS works:**
+Docker injects its embedded DNS server (`127.0.0.11`) into each container's `/etc/resolv.conf` when they join a user-defined network. This DNS server maintains a live mapping of container name → IP. When container1 resolves `container2`, the query goes to `127.0.0.11` which returns the current IP. This works even if container IPs change between restarts.
 
-**User-defined bridge vs default bridge network:**  
-The default `bridge` network does not provide DNS-based name resolution — containers can only reach each other by IP, which is fragile since IPs are dynamic. User-defined bridges (like `lab_network`) provide: automatic DNS resolution by container name, better network isolation (containers on different user-defined networks cannot communicate by default), and the ability to connect/disconnect containers from a network at runtime without stopping them. For any multi-container setup, user-defined networks are the correct choice.
+**User-defined vs default bridge:**
+The default `bridge` network doesn't provide DNS — containers can only reach each other by raw IP, which changes on restart. User-defined bridges give you name resolution, better isolation (containers on different user-defined networks can't talk by default), and you can connect/disconnect containers at runtime without stopping them. For any real multi-container setup, user-defined networks are the way to go.
 
 ---
 
@@ -343,17 +316,12 @@ DRIVER    VOLUME NAME
 local     app_data
 ```
 
-#### `docker run -d -p 80:80 -v app_data:/usr/share/nginx/html --name web nginx`
-```
-7f3a1c8e5b2d9f4a0c7e1b5d8f2a3c6e9b1d4f7a0c3e6b9d2f5a8c1e4b7d0f3
-```
-
 #### Custom `index.html`
 ```html
 <html><body><h1>Persistent Data</h1></body></html>
 ```
 
-#### `docker cp index.html web:/usr/share/nginx/html/` then `curl http://localhost`
+#### `curl http://localhost` after copying file
 ```html
 <html><body><h1>Persistent Data</h1></body></html>
 ```
@@ -368,22 +336,18 @@ web
 web
 ```
 
-#### `docker run -d -p 80:80 -v app_data:/usr/share/nginx/html --name web_new nginx`
-```
-9c4b2d7f1e8a5c3b0d6f2a4c7e9b1d3f6a8c0b5d7f2a4c6e8b0d2f4a6c8e0b2
-```
-
-#### `curl http://localhost` (after recreation)
+#### `curl http://localhost` after new container `web_new`
 ```html
 <html><body><h1>Persistent Data</h1></body></html>
 ```
-Content persists — the new container (`web_new`) mounted the same `app_data` volume and immediately served our custom page without any recopying.
+
+Still there. New container, same volume, same content — no recopying needed.
 
 #### `docker volume inspect app_data`
 ```json
 [
     {
-        "CreatedAt": "2026-04-24T14:48:33Z",
+        "CreatedAt": "2026-04-07T18:35:44Z",
         "Driver": "local",
         "Labels": {},
         "Mountpoint": "/var/lib/docker/volumes/app_data/_data",
@@ -394,15 +358,13 @@ Content persists — the new container (`web_new`) mounted the same `app_data` v
 ]
 ```
 
-**Why data persistence matters in containerized applications:**  
-Containers are ephemeral by design — their writable layer is destroyed when the container is removed. Any application that needs to retain state (databases, user uploads, config files, logs) must store that data outside the container's own filesystem. Without volumes, every container restart means a clean slate, which is fine for stateless services but catastrophic for anything that manages data. Volumes decouple data lifetime from container lifetime, enabling safe upgrades, scaling, and disaster recovery.
+**Why persistence matters:**
+Containers are ephemeral — when you `docker rm` one, its writable layer is gone. Any app that needs to survive restarts (databases, file uploads, config, logs) must store data outside the container. Without volumes, every restart means starting from scratch.
 
 **Volumes vs bind mounts vs container storage:**
 
-| Type | Where data lives | Use case |
-|---|---|---|
-| **Named volume** | Managed by Docker (`/var/lib/docker/volumes/`) | Production data that needs to persist; databases; Docker manages lifecycle |
-| **Bind mount** | Specific path on the host filesystem | Development — mount source code directly into a container for live editing |
-| **Container storage** (writable layer) | Inside the container via overlay2 | Truly ephemeral data; temp files; cache that doesn't need to survive restarts |
+Named volumes (like `app_data`) are managed by Docker at `/var/lib/docker/volumes/`. Docker handles permissions and lifecycle. Best for production data — databases, persistent state.
 
-Named volumes are the right default for persistence — they are portable across hosts (via `docker volume` commands), not tied to a specific host path, and Docker manages permissions and cleanup. Bind mounts are ideal during development when you want to edit code on the host and see changes reflected instantly inside the container. Container storage should only be used for scratch data you're happy to lose.
+Bind mounts map a specific host directory into the container. Best for development — you edit source code on the host and the container sees changes immediately without rebuilding.
+
+Container storage (the writable layer) lives inside the container and disappears with it. Only for truly throwaway data — temp files, build cache, anything you don't care about losing.
