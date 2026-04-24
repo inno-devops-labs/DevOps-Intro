@@ -1,18 +1,5 @@
 # Lab 12 Submission - WebAssembly Containers vs Traditional Containers
 
-## Environment
-
-- Working directory: `labs/lab12`
-- Date of measurements: `2026-04-24`
-- Host environment: Windows + Docker Desktop 4.40.0
-- Docker Engine: `28.0.4`
-- containerd: `1.7.26`
-- Buildx: `v0.22.0-desktop.1`
-- Note: after the initial container-based verification, Go was also installed locally and the application was additionally tested with `go run main.go`.
-- Note: browser screenshots were collected for the local HTTP server and API endpoints.
-
----
-
 ## Task 1 - Moscow Time Application
 
 I worked directly inside `labs/lab12/`, where the provided files `main.go`, `Dockerfile`, `Dockerfile.wasm`, and `spin.toml` already existed.
@@ -22,18 +9,6 @@ The same `main.go` supports three execution contexts:
 1. `MODE=once` enables CLI mode and prints a single JSON payload, then exits.
 2. `REQUEST_METHOD` enables WAGI mode for Spin, where the program writes HTTP headers and body to `stdout`.
 3. If neither of the above is set, the application starts a normal `net/http` server on port `8080`.
-
-### Local server startup screenshot
-
-After installing Go locally, I also verified that the same application starts directly on the host with:
-
-```bash
-go run main.go
-```
-
-The screenshot below shows the local server starting successfully on port `8080`.
-
-![Local server startup](image-2.png)
 
 ### CLI mode output
 
@@ -59,10 +34,6 @@ Response:
 ```json
 {"moscow_time":"2026-04-24 18:00:17 MSK","timestamp":1777042817}
 ```
-
-The API endpoint was also checked in the browser. The screenshot below shows `http://localhost:8080/api/time` returning the JSON response correctly.
-
-![API endpoint in browser](image-3.png)
 
 ---
 
@@ -119,10 +90,6 @@ HTTP API response from the running container:
 ```json
 {"moscow_time":"2026-04-24 18:00:17 MSK","timestamp":1777042817}
 ```
-
-The main page was also verified in the browser. The screenshot below shows the application UI loaded successfully at `http://localhost:8080/`.
-
-![Main page in browser](image-4.png)
 
 ---
 
@@ -236,19 +203,3 @@ I would stick with traditional containers when I need:
 - standard Linux tooling and debugging workflows
 - broader ecosystem support with fewer platform constraints
 
-### Recommendation
-
-For this application, the best split is:
-
-- use a traditional container when running the full HTTP server with `net/http`
-- use WASM when the workload is short-lived, sandboxed, or deployed on a platform such as Spin that provides HTTP support without direct socket access
-
----
-
-## Final Notes
-
-- The lab goal of using the **same source code** for different targets was achieved.
-- Traditional Docker execution was fully reproduced.
-- WASM compilation, OCI packaging, and `ctr` image import were reproduced.
-- Full `ctr run` benchmarking could not be completed on this host due to the missing usable WASM runtime shim in Docker Desktop.
-- If this lab is re-run on a native Linux machine with `containerd`, `ctr`, and `containerd-shim-wasmtime-v1` properly installed, the missing WASM startup benchmark can be added directly into this submission.
