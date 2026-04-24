@@ -38,14 +38,19 @@ CLI mode screenshot:
 Command:
 
 ```bash
-docker run -d --name test-traditional -p 8080:8080 moscow-time-traditional
-curl http://localhost:8080/api/time
+docker run -d --rm --name lab12-source-server \
+  -v "$PWD:/src" \
+  -w /src \
+  -p 8081:8080 \
+  golang:1.21-alpine \
+  go run main.go
+curl http://localhost:8081/api/time
 ```
 
 Output:
 
 ```json
-{"moscow_time":"2026-04-25 00:40:04 MSK","timestamp":1777066804}
+{"moscow_time":"2026-04-25 01:12:22 MSK","timestamp":1777068742}
 ```
 
 Browser screenshot:
