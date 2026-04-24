@@ -4,6 +4,12 @@
 
 I worked directly inside `labs/lab12/`, where the provided files `main.go`, `Dockerfile`, `Dockerfile.wasm`, and `spin.toml` already existed.
 
+### Working environment
+
+The screenshot below shows the local PowerShell session in the repository workspace from which the lab steps were executed. It provides context for the environment used during the verification process.
+
+![PowerShell session in the project workspace](image-2.png)
+
 The same `main.go` supports three execution contexts:
 
 1. `MODE=once` enables CLI mode and prints a single JSON payload, then exits.
@@ -34,6 +40,22 @@ Response:
 ```json
 {"moscow_time":"2026-04-24 18:00:17 MSK","timestamp":1777042817}
 ```
+
+The screenshot below shows `http://localhost:8080/api/time` opened in the browser. It confirms that the application exposes a working HTTP JSON endpoint that returns both the formatted Moscow time and the Unix timestamp.
+
+![Browser view of the `/api/time` JSON response](image-3.png)
+
+### Root page verification
+
+I also verified the root route in a browser:
+
+```bash
+http://localhost:8080/
+```
+
+The screenshot below shows the rendered root page. It confirms that the application serves a browser-facing HTML page with the current Moscow time and a link to the JSON API, not only the raw JSON endpoint.
+
+![Browser view of the root page](image-4.png)
 
 ---
 
@@ -202,4 +224,3 @@ I would stick with traditional containers when I need:
 - complete Go standard library compatibility
 - standard Linux tooling and debugging workflows
 - broader ecosystem support with fewer platform constraints
-
