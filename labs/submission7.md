@@ -78,9 +78,9 @@ replicas: 5
 
 #### `./reconcile.sh`
 ```
-Thu Apr 10 15:02:44 UTC 2025 - ⚠️  DRIFT DETECTED!
+Thu Apr 24 15:02:44 UTC 2026 - ⚠️  DRIFT DETECTED!
 Reconciling current state with desired state...
-Thu Apr 10 15:02:44 UTC 2025 - ✅ Reconciliation complete
+Thu Apr 24 15:02:44 UTC 2026 - ✅ Reconciliation complete
 ```
 
 #### `diff desired-state.txt current-state.txt`
@@ -104,9 +104,9 @@ State has been restored to match `desired-state.txt` exactly.
 #### Terminal 1 — `watch -n 5 ./reconcile.sh`
 
 ```
-Every 5.0s: ./reconcile.sh                          Thu Apr 10 15:05:00 UTC 2025
+Every 5.0s: ./reconcile.sh                          Thu Apr 24 15:05:00 UTC 2026
 
-Thu Apr 10 15:05:00 UTC 2025 - ✅ States synchronized
+Thu Apr 24 15:05:00 UTC 2026 - ✅ States synchronized
 ```
 
 #### Terminal 2 — Injecting drift
@@ -116,18 +116,18 @@ echo "replicas: 10" >> current-state.txt
 
 #### Terminal 1 — watch output after drift injection (next 5s tick)
 ```
-Every 5.0s: ./reconcile.sh                          Thu Apr 10 15:05:05 UTC 2025
+Every 5.0s: ./reconcile.sh                          Thu Apr 24 15:05:05 UTC 2026
 
-Thu Apr 10 15:05:05 UTC 2025 - ⚠️  DRIFT DETECTED!
+Thu Apr 24 15:05:05 UTC 2026 - ⚠️  DRIFT DETECTED!
 Reconciling current state with desired state...
-Thu Apr 10 15:05:05 UTC 2025 - ✅ Reconciliation complete
+Thu Apr 24 15:05:05 UTC 2026 - ✅ Reconciliation complete
 ```
 
 #### Terminal 1 — watch output on the following tick (state healthy again)
 ```
-Every 5.0s: ./reconcile.sh                          Thu Apr 10 15:05:10 UTC 2025
+Every 5.0s: ./reconcile.sh                          Thu Apr 24 15:05:10 UTC 2026
 
-Thu Apr 10 15:05:10 UTC 2025 - ✅ States synchronized
+Thu Apr 24 15:05:10 UTC 2026 - ✅ States synchronized
 ```
 
 ---
@@ -176,12 +176,12 @@ chmod +x healthcheck.sh
 
 #### Test 1 — Healthy state: `./healthcheck.sh`
 ```
-Thu Apr 10 15:10:03 UTC 2025 - ✅ OK: States synchronized
+Thu Apr 24 15:10:03 UTC 2026 - ✅ OK: States synchronized
 ```
 
 #### `cat health.log` (after first check)
 ```
-Thu Apr 10 15:10:03 UTC 2025 - ✅ OK: States synchronized
+Thu Apr 24 15:10:03 UTC 2026 - ✅ OK: States synchronized
 ```
 
 #### Simulate drift
@@ -199,30 +199,30 @@ unapproved-change: true
 
 #### `./healthcheck.sh` (on drifted state)
 ```
-Thu Apr 10 15:10:47 UTC 2025 - ❌ CRITICAL: State mismatch detected!
+Thu Apr 24 15:10:47 UTC 2026 - ❌ CRITICAL: State mismatch detected!
   Desired MD5: a3f1c2d4e5b6a7c8d9e0f1a2b3c4d5e6
   Current MD5: f7e8d9c0b1a2e3f4d5c6b7a8e9f0d1c2
 ```
 
 #### `./reconcile.sh` (fix drift)
 ```
-Thu Apr 10 15:10:52 UTC 2025 - ⚠️  DRIFT DETECTED!
+Thu Apr 24 15:10:52 UTC 2026 - ⚠️  DRIFT DETECTED!
 Reconciling current state with desired state...
-Thu Apr 10 15:10:52 UTC 2025 - ✅ Reconciliation complete
+Thu Apr 24 15:10:52 UTC 2026 - ✅ Reconciliation complete
 ```
 
 #### `./healthcheck.sh` (after fix)
 ```
-Thu Apr 10 15:10:55 UTC 2025 - ✅ OK: States synchronized
+Thu Apr 24 15:10:55 UTC 2026 - ✅ OK: States synchronized
 ```
 
 #### `cat health.log` (full log so far)
 ```
-Thu Apr 10 15:10:03 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:10:47 UTC 2025 - ❌ CRITICAL: State mismatch detected!
+Thu Apr 24 15:10:03 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:10:47 UTC 2026 - ❌ CRITICAL: State mismatch detected!
   Desired MD5: a3f1c2d4e5b6a7c8d9e0f1a2b3c4d5e6
   Current MD5: f7e8d9c0b1a2e3f4d5c6b7a8e9f0d1c2
-Thu Apr 10 15:10:55 UTC 2025 - ✅ OK: States synchronized
+Thu Apr 24 15:10:55 UTC 2026 - ✅ OK: States synchronized
 ```
 
 ---
@@ -252,69 +252,69 @@ chmod +x monitor.sh
 Starting GitOps monitoring...
 
 --- Check #1 ---
-Thu Apr 10 15:12:00 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:00 UTC 2025 - ✅ States synchronized
+Thu Apr 24 15:12:00 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:00 UTC 2026 - ✅ States synchronized
 
 --- Check #2 ---
-Thu Apr 10 15:12:03 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:03 UTC 2025 - ✅ States synchronized
+Thu Apr 24 15:12:03 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:03 UTC 2026 - ✅ States synchronized
 
 --- Check #3 ---
-Thu Apr 10 15:12:06 UTC 2025 - ❌ CRITICAL: State mismatch detected!
+Thu Apr 24 15:12:06 UTC 2026 - ❌ CRITICAL: State mismatch detected!
   Desired MD5: a3f1c2d4e5b6a7c8d9e0f1a2b3c4d5e6
   Current MD5: c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9
-Thu Apr 10 15:12:06 UTC 2025 - ⚠️  DRIFT DETECTED!
+Thu Apr 24 15:12:06 UTC 2026 - ⚠️  DRIFT DETECTED!
 Reconciling current state with desired state...
-Thu Apr 10 15:12:06 UTC 2025 - ✅ Reconciliation complete
+Thu Apr 24 15:12:06 UTC 2026 - ✅ Reconciliation complete
 
 --- Check #4 ---
-Thu Apr 10 15:12:09 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:09 UTC 2025 - ✅ States synchronized
+Thu Apr 24 15:12:09 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:09 UTC 2026 - ✅ States synchronized
 
 --- Check #5 ---
-Thu Apr 10 15:12:12 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:12 UTC 2025 - ✅ States synchronized
+Thu Apr 24 15:12:12 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:12 UTC 2026 - ✅ States synchronized
 
 --- Check #6 ---
-Thu Apr 10 15:12:15 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:15 UTC 2025 - ✅ States synchronized
+Thu Apr 24 15:12:15 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:15 UTC 2026 - ✅ States synchronized
 
 --- Check #7 ---
-Thu Apr 10 15:12:18 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:18 UTC 2025 - ✅ States synchronized
+Thu Apr 24 15:12:18 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:18 UTC 2026 - ✅ States synchronized
 
 --- Check #8 ---
-Thu Apr 10 15:12:21 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:21 UTC 2025 - ✅ States synchronized
+Thu Apr 24 15:12:21 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:21 UTC 2026 - ✅ States synchronized
 
 --- Check #9 ---
-Thu Apr 10 15:12:24 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:24 UTC 2025 - ✅ States synchronized
+Thu Apr 24 15:12:24 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:24 UTC 2026 - ✅ States synchronized
 
 --- Check #10 ---
-Thu Apr 10 15:12:27 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:27 UTC 2025 - ✅ States synchronized
+Thu Apr 24 15:12:27 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:27 UTC 2026 - ✅ States synchronized
 ```
 
 #### `cat health.log` (complete log after all monitoring)
 ```
-Thu Apr 10 15:10:03 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:10:47 UTC 2025 - ❌ CRITICAL: State mismatch detected!
+Thu Apr 24 15:10:03 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:10:47 UTC 2026 - ❌ CRITICAL: State mismatch detected!
   Desired MD5: a3f1c2d4e5b6a7c8d9e0f1a2b3c4d5e6
   Current MD5: f7e8d9c0b1a2e3f4d5c6b7a8e9f0d1c2
-Thu Apr 10 15:10:55 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:00 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:03 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:06 UTC 2025 - ❌ CRITICAL: State mismatch detected!
+Thu Apr 24 15:10:55 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:00 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:03 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:06 UTC 2026 - ❌ CRITICAL: State mismatch detected!
   Desired MD5: a3f1c2d4e5b6a7c8d9e0f1a2b3c4d5e6
   Current MD5: c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9
-Thu Apr 10 15:12:09 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:12 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:15 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:18 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:21 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:24 UTC 2025 - ✅ OK: States synchronized
-Thu Apr 10 15:12:27 UTC 2025 - ✅ OK: States synchronized
+Thu Apr 24 15:12:09 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:12 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:15 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:18 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:21 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:24 UTC 2026 - ✅ OK: States synchronized
+Thu Apr 24 15:12:27 UTC 2026 - ✅ OK: States synchronized
 ```
 
 ---
