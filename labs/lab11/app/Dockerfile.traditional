@@ -1,8 +1,0 @@
-FROM golang:1.22 AS build
-WORKDIR /src
-COPY main.go .
-RUN CGO_ENABLED=0 go build -o /out/app main.go
-
-FROM scratch
-COPY --from=build /out/app /app
-ENTRYPOINT ["/app"]
