@@ -56,7 +56,7 @@ root          14  0.0  0.0   7888  3072 pts/0    R+   14:22   0:00 ps aux
 
 #### `docker save -o ubuntu_image.tar ubuntu:latest` + `ls -lh`
 ```
--rw------- 1 yoba yoba 75M Apr 10 14:25 ubuntu_image.tar
+-rw------- 1 yoba yoba 75M Apr 24 14:25 ubuntu_image.tar
 ```
 
 #### First removal attempt — `docker rmi ubuntu:latest`
@@ -270,7 +270,7 @@ round-trip min/avg/max = 0.098/0.114/0.142 ms
     {
         "Name": "lab_network",
         "Id": "f4a7c3d891f02b5e8c1d6a3f0b9e4c7a2d5f8b1e4c7a0d3f6b9e2c5a8f1d4b7",
-        "Created": "2025-04-10T14:35:12.408571934Z",
+        "Created": "2026-04-24T14:35:12.408571934Z",
         "Scope": "local",
         "Driver": "bridge",
         "EnableIPv6": false,
@@ -383,7 +383,7 @@ Content persists — the new container (`web_new`) mounted the same `app_data` v
 ```json
 [
     {
-        "CreatedAt": "2025-04-10T14:48:33Z",
+        "CreatedAt": "2026-04-24T14:48:33Z",
         "Driver": "local",
         "Labels": {},
         "Mountpoint": "/var/lib/docker/volumes/app_data/_data",
@@ -395,14 +395,14 @@ Content persists — the new container (`web_new`) mounted the same `app_data` v
 ```
 
 **Why data persistence matters in containerized applications:**  
-Containers are ephemeral by design - their writable layer is destroyed when the container is removed. Any application that needs to retain state (databases, user uploads, config files, logs) must store that data outside the container's own filesystem. Without volumes, every container restart means a clean slate, which is fine for stateless services but catastrophic for anything that manages data. Volumes decouple data lifetime from container lifetime, enabling safe upgrades, scaling, and disaster recovery.
+Containers are ephemeral by design — their writable layer is destroyed when the container is removed. Any application that needs to retain state (databases, user uploads, config files, logs) must store that data outside the container's own filesystem. Without volumes, every container restart means a clean slate, which is fine for stateless services but catastrophic for anything that manages data. Volumes decouple data lifetime from container lifetime, enabling safe upgrades, scaling, and disaster recovery.
 
 **Volumes vs bind mounts vs container storage:**
 
 | Type | Where data lives | Use case |
 |---|---|---|
 | **Named volume** | Managed by Docker (`/var/lib/docker/volumes/`) | Production data that needs to persist; databases; Docker manages lifecycle |
-| **Bind mount** | Specific path on the host filesystem | Development - mount source code directly into a container for live editing |
+| **Bind mount** | Specific path on the host filesystem | Development — mount source code directly into a container for live editing |
 | **Container storage** (writable layer) | Inside the container via overlay2 | Truly ephemeral data; temp files; cache that doesn't need to survive restarts |
 
-Named volumes are the right default for persistence - they are portable across hosts (via `docker volume` commands), not tied to a specific host path, and Docker manages permissions and cleanup. Bind mounts are ideal during development when you want to edit code on the host and see changes reflected instantly inside the container. Container storage should only be used for scratch data you're happy to lose.
+Named volumes are the right default for persistence — they are portable across hosts (via `docker volume` commands), not tied to a specific host path, and Docker manages permissions and cleanup. Bind mounts are ideal during development when you want to edit code on the host and see changes reflected instantly inside the container. Container storage should only be used for scratch data you're happy to lose.
