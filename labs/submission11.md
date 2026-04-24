@@ -109,7 +109,7 @@ stripping (with command strip) in /nix/store/xz3a1w9k7p4m2n5b8q0r6v1j3c5f8h2d-ap
 #### Run the binary — `./result/bin/app`
 ```
 Built with Nix at compile time
-Running at: 2025-04-10T16:14:22+02:00
+Running at: 2026-04-24T16:14:22+02:00
 ```
 
 ---
@@ -262,7 +262,7 @@ Loaded image: nix-app:latest
 #### `docker run nix-app`
 ```
 Built with Nix at compile time
-Running at: 2025-04-10T16:21:07+02:00
+Running at: 2026-04-24T16:21:07+02:00
 ```
 
 ---
@@ -280,7 +280,7 @@ Note the `53 years ago` creation date on the Nix image — this is the Unix epoc
 
 #### `ls -lh result`
 ```
-lrwxrwxrwx 1 yoba yoba 63 Apr 10 16:21 result -> /nix/store/q4r7a0d3f6b9e2c5a8f1d4b7e0c3f6a9-nix-app.tar.gz
+lrwxrwxrwx 1 yoba yoba 63 Apr 24 16:21 result -> /nix/store/q4r7a0d3f6b9e2c5a8f1d4b7e0c3f6a9-nix-app.tar.gz
 -r--r--r-- 1 root root 2.8M Apr  1  1970 /nix/store/q4r7a0d3f6b9e2c5a8f1d4b7e0c3f6a9-nix-app.tar.gz
 ```
 
