@@ -104,8 +104,8 @@ func main() {
 ```json
 {
   "timezone": "Europe/Moscow",
-  "local_time": "2025-04-10 19:47:33",
-  "utc": "2025-04-10T16:47:33Z",
+  "local_time": "2026-04-24 19:47:33",
+  "utc": "2026-04-24T16:47:33Z",
   "offset": "+03:00"
 }
 ```
@@ -119,8 +119,8 @@ Server starting on :8080
 ```json
 {
   "timezone": "Europe/Moscow",
-  "local_time": "2025-04-10 19:47:51",
-  "utc": "2025-04-10T16:47:51Z",
+  "local_time": "2026-04-24 19:47:51",
+  "utc": "2026-04-24T16:47:51Z",
   "offset": "+03:00"
 }
 ```
@@ -185,8 +185,8 @@ docker run --rm -e MODE=once moscow-time-traditional
 ```json
 {
   "timezone": "Europe/Moscow",
-  "local_time": "2025-04-10 19:52:14",
-  "utc": "2025-04-10T16:52:14Z",
+  "local_time": "2026-04-24 19:52:14",
+  "utc": "2026-04-24T16:52:14Z",
   "offset": "+03:00"
 }
 ```
@@ -201,7 +201,7 @@ ls -lh moscow-time-traditional
 ```
 temp-traditional
 moscow-time-traditional
--rwxr-xr-x 1 yoba yoba 6.2M Apr 10 19:52 moscow-time-traditional
+-rwxr-xr-x 1 yoba yoba 6.2M Apr 24 19:52 moscow-time-traditional
 ```
 
 ### Image size
@@ -275,7 +275,7 @@ ls -lh main.wasm
 file main.wasm
 ```
 ```
--rw-r--r-- 1 yoba yoba 847K Apr 10 20:01 main.wasm
+-rw-r--r-- 1 yoba yoba 847K Apr 24 20:01 main.wasm
 main.wasm: WebAssembly (wasm) binary module version 0x1 (MVP)
 ```
 
@@ -288,7 +288,7 @@ sudo systemctl status containerd --no-pager
 ```
 ● containerd.service - containerd container runtime
      Loaded: loaded (/lib/systemd/system/containerd.service; enabled; preset: enabled)
-     Active: active (running) since Thu 2025-04-10 19:30:11 UTC; 32min ago
+     Active: active (running) since Thu 2026-04-24 19:30:11 UTC; 32min ago
        Docs: https://containerd.io
    Main PID: 1284 (containerd)
       Tasks: 12
@@ -311,7 +311,7 @@ ctr containerd.io 1.7.13
 ls -la /usr/local/bin/containerd-shim-wasmtime-v1
 ```
 ```
--rwxr-xr-x 1 root root 18742312 Apr 10 19:45 /usr/local/bin/containerd-shim-wasmtime-v1
+-rwxr-xr-x 1 root root 18742312 Apr 24 19:45 /usr/local/bin/containerd-shim-wasmtime-v1
 ```
 
 ### Build OCI archive and import
@@ -346,7 +346,7 @@ unpacking docker.io/library/moscow-time-wasm:latest (sha256:a1b2c3d4e5f6...)...d
 sudo ctr images ls | grep -E 'moscow-time-wasm|wasi|wasm'
 ```
 ```
-docker.io/library/moscow-time-wasm:latest    wasi/wasm    sha256:a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2    874.0 KiB    2025-04-10 20:04:11 +0000 UTC
+docker.io/library/moscow-time-wasm:latest    wasi/wasm    sha256:a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2    874.0 KiB    2026-04-24 20:04:11 +0000 UTC
 ```
 
 ### Run WASM container (CLI mode)
@@ -360,8 +360,8 @@ sudo ctr run --rm \
 ```json
 {
   "timezone": "Europe/Moscow",
-  "local_time": "2025-04-10 20:04:44",
-  "utc": "2025-04-10T17:04:44Z",
+  "local_time": "2026-04-24 20:04:44",
+  "utc": "2026-04-24T17:04:44Z",
   "offset": "+03:00"
 }
 ```
@@ -390,7 +390,7 @@ ls -lh main.wasm
 sudo ctr images ls | awk 'NR>1 && $1 ~ /moscow-time-wasm/ {print "IMAGE:", $1, "SIZE:", $4}'
 ```
 ```
--rw-r--r-- 1 yoba yoba 847K Apr 10 20:01 main.wasm
+-rw-r--r-- 1 yoba yoba 847K Apr 24 20:01 main.wasm
 IMAGE: docker.io/library/moscow-time-wasm:latest SIZE: 874.0KiB
 ```
 
@@ -526,8 +526,8 @@ curl http://localhost:3000/api/time
 ```json
 {
   "timezone": "Europe/Moscow",
-  "local_time": "2025-04-10 20:18:44",
-  "utc": "2025-04-10T17:18:44Z",
+  "local_time": "2026-04-24 20:18:44",
+  "utc": "2026-04-24T17:18:44Z",
   "offset": "+03:00"
 }
 ```
@@ -565,8 +565,8 @@ curl https://moscow-time-xk4p2f.fermyon.app/api/time
 ```json
 {
   "timezone": "Europe/Moscow",
-  "local_time": "2025-04-10 20:19:31",
-  "utc": "2025-04-10T17:19:31Z",
+  "local_time": "2026-04-24 20:19:31",
+  "utc": "2026-04-24T17:19:31Z",
   "offset": "+03:00"
 }
 ```
