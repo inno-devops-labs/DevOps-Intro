@@ -135,3 +135,61 @@ WASM starts faster because it launches a small sandboxed module instead of start
 Choose WASM when fast startup, small artifacts, sandboxing, and short-lived event-driven execution are important. It is a good fit for CLI-style jobs, serverless handlers, edge workloads, and platforms such as Spin that provide an HTTP abstraction.
 
 Choose traditional containers when the application needs long-running server processes, raw TCP/UDP networking, full operating system behavior, mature runtime metrics, or broad compatibility with existing production tooling.
+
+## Bonus - Fermyon Spin Cloud
+
+### Public URL
+
+```text
+https://moscow-time-1ctjrsef.fermyon.app/
+```
+
+### Deployment time
+
+```text
+Total deployment time: 23.15 seconds
+Upload time: not reported separately by spin cloud deploy output
+```
+
+### Cold start measurements
+
+```text
+0.621527 s
+0.708611 s
+0.606151 s
+0.637502 s
+3.755573 s
+Average: 1.2659 seconds
+```
+
+### Warm measurements
+
+```text
+0.647641 s
+0.586204 s
+0.611593 s
+0.613426 s
+0.674597 s
+Average: 0.6267 seconds
+```
+
+Warm requests were faster and more consistent than the cold measurements. The cold average was affected by one slower request.
+
+### Local Spin measurements
+
+```text
+0.0187 s
+0.0153 s
+0.0145 s
+0.0140 s
+0.0148 s
+Average: 0.0155 seconds / 15.5 ms
+```
+
+Local Spin was much faster than Spin Cloud because it had no public internet, TLS, routing, or edge network latency.
+
+### Reflection
+
+I would use Spin for production workloads that fit the serverless and edge model: small APIs, webhooks, lightweight request handlers, and event-driven services. It is less suitable for long-running stateful services or applications that require raw sockets and full operating system access.
+
+Compared with traditional serverless platforms such as AWS Lambda or Google Cloud Functions, Spin provides smaller deployment artifacts and a WASM sandbox with fast startup. Traditional serverless still has broader managed-service integration and more mature operational tooling.
