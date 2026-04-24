@@ -14,8 +14,13 @@ Working directly in `labs/lab12/` directory. The provided `main.go` supports thr
 
 ```bash
 $ MODE=once go run main.go
-{"city":"Moscow","timezone":"Europe/Moscow","time":"2026-04-01T14:32:17+03:00","unix":1775215937}
+{
+  "moscow_time": "2026-04-24 23:19:05 MSK",
+  "timestamp": 1777061945
+}
 ```
+
+![CLI Mode Output](screenshots/console_time.png)
 
 ### Server Mode (Browser)
 
@@ -24,7 +29,9 @@ $ go run main.go
 Server starting on :8080
 ```
 
-Visiting `http://localhost:8080` returns the same JSON payload.
+Visiting `http://localhost:8080` renders a page that fetches `/api/time` every second and displays the current Moscow time.
+
+![Server Mode in Browser](screenshots/browser.png)
 
 **Key design decision:** `time.FixedZone("MSK", 3*3600)` is used instead of `time.LoadLocation("Europe/Moscow")` because WASI Preview1 environments typically lack the tzdata database.
 
@@ -250,110 +257,3 @@ Average: 0.0430 seconds
 - **Long-running stateful processes** with complex I/O
 - **Mature tooling required** — Kubernetes ecosystem, established observability stack
 - **Multi-threading at scale** — traditional processes have better multi-core utilization
-
----
-
-## Bonus Task — Fermyon Spin Cloud Deployment
-
-### Deployment
-
-```bash
-$ spin --version
-spin 3.0.0
-
-$ spin login
-Logged in successfully
-
-$ time spin deploy
-Uploading moscow-time@0.1.0...
-Deploying moscow-time@0.1.0...
-App "moscow-time" is now deployed
-URL: https://moscow-time-abc123.fermyon.app
-
-real    0m4.128s
-user    0m0.412s
-sys     0m0.189s
-```
-
-**Public URL:** `https://moscow-time-abc123.fermyon.app`
-
-### Test Deployment
-
-```bash
-$ curl https://moscow-time-abc123.fermyon.app/api/time
-{"city":"Moscow","timezone":"Europe/Moscow","time":"2026-04-01T14:58:22+03:00","unix":1775218702}
-```
-
-### Performance Measurements
-
-**Cold Start Average (5 cache-busted requests):**
-
-```
-0.148
-0.142
-0.151
-0.139
-0.145
-Average: 0.1450 seconds (145 ms)
-```
-
-**Warm Average (5 repeated requests):**
-
-```
-0.038
-0.035
-0.036
-0.034
-0.037
-Average: 0.0360 seconds (36 ms)
-```
-
-**Local Spin Average:**
-
-```
-0.008
-0.007
-0.008
-0.006
-0.007
-Average: 0.0072 seconds (7.2 ms)
-```
-
-### Comparison
-
-| Measurement | Time | Notes |
-|-------------|------|-------|
-| Local Spin | 7.2 ms | No network overhead |
-| Spin Cloud warm | 36 ms | CDN + edge PoP cache hit |
-| Spin Cloud cold | 145 ms | New WASM instance at edge |
-| AWS Lambda cold (comparison) | 200-1000 ms | Container-based |
-
-### Reflection
-
-**Would I use Spin for production workloads?**
-
-**Yes, for specific use cases:**
-- Edge APIs where sub-100ms global latency is critical
-- Serverless microservices with variable traffic (no idle cost)
-- WebHook handlers that benefit from instant cold starts
-- Applications where cost scales with actual usage, not provisioned capacity
-
-**No, not for:**
-- Complex backends with relational database transactions (Spin's KV store is limited)
-- Long-running batch jobs (execution time limits apply)
-- Applications requiring background workers or scheduled tasks
-- Workloads that need deep OS integration
-
-**Comparison with Traditional Serverless:**
-
-| Aspect | AWS Lambda / Cloud Functions | Fermyon Spin |
-|--------|------------------------------|--------------|
-| Cold start | 100-1000 ms | <50 ms typical, <5 ms claimed |
-| Runtime | Container/microVM | WASM sandbox |
-| Language support | Many (Node, Python, Go, Java, .NET, Ruby, custom) | WASM-compatible (Go/TinyGo, Rust, JS, Python via Py2WASM) |
-| Deployment unit | Container image or ZIP | WASM binary (~KB to MB) |
-| Global edge | Paid add-on (Lambda@Edge, Cloudflare Workers) | Native (Fastly CDN) |
-| Ecosystem | Massive (native AWS integrations) | Growing |
-| Vendor lock-in | High | Low (WASM is portable) |
-
-Spin's key advantage is **portability** — the same `main.wasm` runs on Spin Cloud, self-hosted Spin, or SpinKube on Kubernetes. Lambda functions are tied to AWS-specific deployment formats and event sources.
