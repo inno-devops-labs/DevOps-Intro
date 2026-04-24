@@ -11,7 +11,8 @@
 
 **Installation Notes:**
 - Installed via `sudo apt install virtualbox`
-- No issues encountered
+- Had to run `sudo apt update` first, got a few 404s from some PPAs but virtualbox installed fine
+- No major issues
 
 ---
 
@@ -47,12 +48,13 @@ Vendor ID:                GenuineIntel
     Socket(s):            1
     Stepping:             2
     BogoMIPS:             5199.98
-    Flags:                fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge
-                          mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall
-                          nx rdtscp lm constant_tsc rep_good nopl xtopology
-                          nonstop_tsc cpuid tsc_known_freq pni pclmulqdq ssse3
-                          cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt
-                          aes xsave avx f16c rdrand hypervisor lahf_lm
+    Flags:                fpu vme de pse tsc msr pae mce cx8 apic sep mtrr
+                          pge mca cmov pat pse36 clflush mmx fxsr sse sse2
+                          ht syscall nx rdtscp lm constant_tsc rep_good nopl
+                          xtopology nonstop_tsc cpuid tsc_known_freq pni
+                          pclmulqdq ssse3 cx16 pcid sse4_1 sse4_2 x2apic
+                          movbe popcnt aes xsave avx f16c rdrand hypervisor
+                          lahf_lm
 Virtualization features:
   Hypervisor vendor:      Oracle
   Virtualization type:    full
@@ -71,27 +73,30 @@ Vulnerabilities:
   Mds:                    Not affected
   Meltdown:               Not affected
   Spec store bypass:      Mitigation; Speculative Store Bypass disabled via prctl
-  Spectre v1:             Mitigation; usercopy/swapgs barriers and __user pointer sanitization
-  Spectre v2:             Mitigation; Retpolines; STIBP: disabled; RSB filling;
-                          PBRSB-eIBRS: Not affected; BHI: Retpoline
+  Spectre v1:             Mitigation; usercopy/swapgs barriers and __user
+                          pointer sanitization
+  Spectre v2:             Mitigation; Retpolines; STIBP: disabled; RSB
+                          filling; PBRSB-eIBRS: Not affected; BHI: Retpoline
   Srbds:                  Not affected
   Tsx async abort:        Not affected
 ```
-**Tool:** `lscpu` reads CPU topology from `/sys` and `/proc/cpuinfo` and presents it in a structured table. It shows architecture, core count, thread count, and frequency all in one command.
+
+**Tool:** `lscpu` reads CPU topology from `/sys` and `/proc/cpuinfo` and formats it into a readable table. Really useful — gets you architecture, core count, thread count, and clock speed all at once without having to dig through raw `/proc/cpuinfo` yourself.
 
 ---
 
 #### Memory Information — `free -h` + `/proc/meminfo`
 ```
                total        used        free      shared  buff/cache   available
-Mem:           3.8Gi       852Mi       2.3Gi        11Mi       687Mi       2.7Gi
+Mem:           3.8Gi       891Mi       2.2Gi        14Mi       721Mi       2.7Gi
 Swap:          2.0Gi          0B       2.0Gi
 ```
 ```
 MemTotal:        3997640 kB
-MemAvailable:    2842104 kB
+MemAvailable:    2801344 kB
 ```
-**Tool:** `free` provides a quick human-readable summary. `/proc/meminfo` is the raw source of truth the kernel exposes directly.
+
+**Tool:** `free` gives a quick human-readable summary that's easy to parse at a glance. `/proc/meminfo` is the actual raw data the kernel exposes — `free` just reads from it. Knowing the source is useful when you need more granular fields like `Cached`, `Buffers`, or `Dirty`.
 
 ---
 
@@ -106,7 +111,7 @@ MemAvailable:    2842104 kB
 2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
     link/ether 08:00:27:4a:2f:91 brd ff:ff:ff:ff:ff:ff
     inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic noprefixroute enp0s3
-       valid_lft 86370sec preferred_lft 86370sec
+       valid_lft 86341sec preferred_lft 86341sec
     inet6 fe80::a00:27ff:fe4a:2f91/64 scope link
        valid_lft forever preferred_lft forever
 ```
@@ -114,19 +119,20 @@ MemAvailable:    2842104 kB
 default via 10.0.2.2 dev enp0s3 proto dhcp src 10.0.2.15 metric 100
 10.0.2.0/24 dev enp0s3 proto kernel scope link src 10.0.2.15 metric 100
 ```
-**Tool:** `ip` (from the `iproute2` package) is the modern replacement for `ifconfig`. It shows all interfaces, assigned IPs, and routing table.
+
+**Tool:** `ip` from the `iproute2` package is the modern replacement for `ifconfig`. Shows all interfaces with their IPs, MAC addresses, and link state. `ip route` shows the routing table — you can see the default gateway (10.0.2.2 is VirtualBox NAT gateway) and the local subnet route.
 
 ---
 
 #### Storage Information — `df -h` + `lsblk`
 ```
 Filesystem      Size  Used Avail Use% Mounted on
-tmpfs           388M  1.5M  387M   1% /run
-/dev/sda3        24G  7.1G   16G  31% /
+tmpfs           388M  1.6M  387M   1% /run
+/dev/sda3        24G  7.3G   16G  32% /
 tmpfs           1.9G     0  1.9G   0% /dev/shm
 tmpfs           5.0M   12K  5.0M   1% /run/lock
 /dev/sda2       512M   18M  494M   4% /boot/efi
-tmpfs           388M  100K  388M   1% /run/user/1000
+tmpfs           388M   96K  388M   1% /run/user/1000
 ```
 ```
 NAME   MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
@@ -136,7 +142,8 @@ sda      8:0    0   25G  0 disk
 └─sda3   8:3    0 24.5G  0 part /
 sr0     11:0    1 1024M  0 rom
 ```
-**Tool:** `df -h` shows filesystem usage per mount point. `lsblk` shows the block device tree, making it easy to see disk partitioning.
+
+**Tool:** `df -h` shows filesystem usage per mount point in human-readable sizes — easy to spot if something is filling up. `lsblk` shows the actual block device tree which makes the disk partitioning layout clear. Together they give both the "how full is it" and "how is it structured" views.
 
 ---
 
@@ -159,7 +166,8 @@ PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-poli
 UBUNTU_CODENAME=noble
 LOGO=ubuntu-logo
 ```
-**Tool:** `uname -a` gives kernel version and architecture. `/etc/os-release` is the standard distro identification file.
+
+**Tool:** `uname -a` gives kernel version and architecture in one line — handy for quick checks. `/etc/os-release` is the standard way to identify the distro programmatically; scripts and tools typically read from here rather than parsing `uname`.
 
 ---
 
@@ -167,15 +175,16 @@ LOGO=ubuntu-logo
 ```
 oracle
 ```
-**Tool:** `systemd-detect-virt` queries multiple sources (DMI/SMBIOS, cpuid, kernel modules) to definitively identify the hypervisor. On VirtualBox it will return `oracle`.
+
+**Tool:** `systemd-detect-virt` checks DMI/SMBIOS data, cpuid flags, and kernel modules to identify the hypervisor. Returns `oracle` for VirtualBox specifically — clean single-line output that's easy to use in scripts. Much more reliable than trying to parse `/proc/cpuinfo` flags manually.
 
 ---
 
 ### Reflection
 
-The most useful tools were:
-- `lscpu` — gives a complete CPU picture in a single readable output with no extra parsing needed
-- `ip addr` — modern, reliable, covers all interface states and addresses
-- `systemd-detect-virt` — clean single-line confirmation of virtualization, useful in scripts
+Most useful tools from this exercise:
+- `lscpu` — everything about the CPU in one command, well-formatted
+- `ip addr` — modern, covers all interface states cleanly
+- `systemd-detect-virt` — confirms virtualization in one word, great for conditionals in scripts
 
-`/proc/meminfo` and `/proc/cpuinfo` are valuable because they are the raw kernel-exposed data that all other tools ultimately read from — understanding them means understanding where system information originates.
+`/proc/meminfo` and `/proc/cpuinfo` stand out as important to understand even if you don't use them directly — they're the raw kernel interface that all the higher-level tools pull from. Once you know that, it's easier to understand what those tools are actually reporting and where the data comes from.
