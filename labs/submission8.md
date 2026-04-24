@@ -22,7 +22,7 @@ The following NEW packages will be installed:
 
 #### `iostat -x 1 5`
 ```
-Linux 6.8.0-41-generic (yoba-Legion-5-15IAH7H)    04/10/2025    _x86_64_    (12 CPU)
+Linux 6.8.0-41-generic (yoba-Legion-5-15IAH7H)    04/24/2026    _x86_64_    (12 CPU)
 
 avg-cpu:  %user   %nice %system %iowait  %steal   %idle
            8.43    0.02    2.17    0.34    0.00   89.04
