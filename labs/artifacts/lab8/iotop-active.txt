@@ -1,0 +1,13 @@
+   6011 be/4 root        0.00 B/s  408.18 M/s ?unavailable?  dd if=/dev/zero of=/tmp/lab8-io-test.bin bs=8M count=128 status=none
+   6011 be/4 root        0.00 B/s  251.94 M/s ?unavailable?  dd if=/dev/zero of=/tmp/lab8-io-test.bin bs=8M count=128 status=none
+   6015 be/4 root        0.00 B/s    3.85 K/s ?unavailable?  python3 /usr/sbin/iotop -b -o -n 5 -qqq
+   6012 be/4 root       30.77 M/s    0.00 B/s ?unavailable?  dd if=/var/lib/snapd/snaps/gnome-42-2204_247.snap of=/dev/null bs=4M status=none
+   6013 be/4 root       30.77 M/s    0.00 B/s ?unavailable?  dd if=/var/lib/snapd/cache/6b8f0b8920d12519d7c5e677950a231810fa253e34962f312b3dfa58af9d91eeab9d5c1b3483cf0da6df66f23f3f5f8d of=/dev/null bs=4M status=none
+   6011 be/4 root        0.00 B/s  101.88 M/s ?unavailable?  dd if=/dev/zero of=/tmp/lab8-io-test.bin bs=8M count=128 status=none
+   6012 be/4 root       38.45 M/s    0.00 B/s ?unavailable?  dd if=/var/lib/snapd/snaps/gnome-42-2204_247.snap of=/dev/null bs=4M status=none
+   6013 be/4 root       30.76 M/s    0.00 B/s ?unavailable?  dd if=/var/lib/snapd/cache/6b8f0b8920d12519d7c5e677950a231810fa253e34962f312b3dfa58af9d91eeab9d5c1b3483cf0da6df66f23f3f5f8d of=/dev/null bs=4M status=none
+   6011 be/4 root        0.00 B/s  100.00 M/s ?unavailable?  dd if=/dev/zero of=/tmp/lab8-io-test.bin bs=8M count=128 status=none
+   6012 be/4 root       31.37 M/s    0.00 B/s ?unavailable?  dd if=/var/lib/snapd/snaps/gnome-42-2204_247.snap of=/dev/null bs=4M status=none
+   6013 be/4 root       39.22 M/s    0.00 B/s ?unavailable?  dd if=/var/lib/snapd/cache/6b8f0b8920d12519d7c5e677950a231810fa253e34962f312b3dfa58af9d91eeab9d5c1b3483cf0da6df66f23f3f5f8d of=/dev/null bs=4M status=none
+   6012 be/4 root       21.93 M/s    0.00 B/s ?unavailable?  dd if=/var/lib/snapd/snaps/gnome-42-2204_247.snap of=/dev/null bs=4M status=none
+   6013 be/4 root       30.34 M/s    0.00 B/s ?unavailable?  dd if=/var/lib/snapd/cache/6b8f0b8920d12519d7c5e677950a231810fa253e34962f312b3dfa58af9d91eeab9d5c1b3483cf0da6df66f23f3f5f8d of=/dev/null bs=4M status=none

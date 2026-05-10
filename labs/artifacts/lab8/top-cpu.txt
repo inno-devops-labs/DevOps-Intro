@@ -1,0 +1,15 @@
+    PID COMMAND         %CPU %MEM
+   5567 ps               250  0.0
+   2272 gnome-shell      1.2  5.8
+   5421 packagekitd      0.7  0.3
+   3372 kworker/1:0-eve  0.2  0.0
+   1175 happd            0.2  0.2
+    891 polkitd          0.1  0.2
+      1 systemd          0.1  0.2
+   2565 ibus-extension-  0.1  0.4
+   5143 sshd             0.1  0.1
+    895 snapd            0.1  0.6
+    868 dbus-daemon      0.1  0.1
+   1189 containerd       0.1  0.8
+   1224 dockerd          0.1  1.2
+     24 ksoftirqd/1      0.0  0.0

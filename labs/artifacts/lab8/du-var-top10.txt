@@ -1,0 +1,10 @@
+3.1G	/var
+2.8G	/var/lib
+2.2G	/var/lib/snapd
+1.2G	/var/lib/snapd/cache
+1.1G	/var/lib/snapd/snaps
+254M	/var/lib/apt/lists
+254M	/var/lib/apt
+181M	/var/cache
+177M	/var/lib/docker
+176M	/var/lib/docker/overlay2

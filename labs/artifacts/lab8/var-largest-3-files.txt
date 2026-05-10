@@ -1,0 +1,3 @@
+607M	/var/lib/snapd/cache/6b8f0b8920d12519d7c5e677950a231810fa253e34962f312b3dfa58af9d91eeab9d5c1b3483cf0da6df66f23f3f5f8d
+532M	/var/lib/snapd/snaps/gnome-42-2204_247.snap
+395M	/var/lib/snapd/cache/651a6f21a71dfa0a5303df4e7e5661ba7a9213d5177cdc99ae3f0a1798e47bd6ee4b3805063e8f86da1f7b1b8ce9eacb

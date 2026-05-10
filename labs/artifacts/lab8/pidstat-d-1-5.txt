@@ -1,0 +1,13 @@
+Linux 6.17.0-19-generic (andrey-VirtualBox) 	05/10/2026 	_x86_64_	(2 CPU)
+
+05:53:04 PM   UID       PID   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command
+
+05:53:05 PM   UID       PID   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command
+
+05:53:06 PM   UID       PID   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command
+
+05:53:07 PM   UID       PID   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command
+
+05:53:08 PM   UID       PID   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command
+
+Average:      UID       PID   kB_rd/s   kB_wr/s kB_ccwr/s iodelay  Command
