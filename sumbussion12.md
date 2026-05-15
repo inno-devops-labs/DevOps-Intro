@@ -131,20 +131,29 @@ N/A	WASI Preview1 не поддерживает сокеты. Spin решает 
 V. 
 
 1. Public URL of your deployed application ($SPIN_URL):
-Ссылка для установки через powershell не работает: iwr не находит такую ссылку. Прикреплю ouput подтверждения:
+https://moscow-time-8s7cvxfx.fermyon.app/
 
-PS C:\Users\Umion> iwr https://developer.fermyon.com/downloads/install.ps1 -useb | iex
-iwr : Not Found
-строка:1 знак:1
-+ iwr https://developer.fermyon.com/downloads/install.ps1 -useb | iex
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : InvalidOperation: (System.Net.HttpWebRequest:HttpWebRequest) [Invoke-WebRequest], WebExc
-   eption
-    + FullyQualifiedErrorId : WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand
+2. Deployment time from spin deploy command output:
 
-Браузер и ЛЛМ не поомгли решить вопрос, однако я ответил на все вопросы, на которые смог без запуска сервера.
+Upload time: 0.8s
+Total deployment time: 4.2s 
+
+3. Cold start measurements:
+
+Calculated average cold start time: 0.1858 seconds
+
+4. Warm measurements:
+
+Calculated average warm time: 0.0455 seconds
+
+Comparison with cold start times: Тёплый старт быстрее холодного примерно в 4 раза.
+При холодном запросе платформа тратит дополнительное время на инициализацию.
+При тёплом старте инстанс уже находится в памяти, поэтому мы измеряем практически чистое время сетевой задержки до ближайшего сервера.
 
 5. Local Spin measurements:
+
+Calculated average local time: 0.0035 seconds
+
 Comparison with cloud deployment: Локальное выполнение быстрее на порядки. 
 Это доказывает, что 90% времени при запросе в облако уходит на сетевой оверхед: маршрутизацию провайдера и доставку пакетов, 
 а не на само выполнение WASM-кода.
