@@ -278,7 +278,7 @@ $ nix build
 $ sha256sum result/bin/app
 34171ef70af8cc848dee57e8dc284fc2d088626c24d3217c0b6101576c6b421a  result/bin/app
 
-!!!Хэши полностью совпадают!!!
+Хэши полностью совпадают
 
 5. Dev shell experience: Why is this better than traditional dev setups?
 Традиционные сетапы требуют ручной установки нужных версий компиляторов и утилит, что часто приводит к конфликтам версий.
