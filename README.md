@@ -26,7 +26,7 @@ A 10-week practical introduction to DevOps at Innopolis University. You will pac
 | 7 | Lab 7 | Configuration Management | Ansible playbook to deploy QuickNotes to Lab 5 VM; ansible-pull GitOps preview |
 | 8 | Lab 8 | SRE & Monitoring | Golden signals, Prometheus, Grafana, one good alert, Checkly |
 | 9 | Lab 9 | DevSecOps | Trivy, OWASP ZAP, SBOM, govulncheck reachability |
-| 10 | Lab 10 | Cloud Computing | Cloud Run (or Fly.io) deploy, registry push, cold-start measurement |
+| 10 | Lab 10 | Cloud Computing | `ghcr.io` push from CI, Hugging Face Spaces deploy (card-free), Cloudflare Tunnel comparison |
 | — | Lab 11 | Reproducible Builds *(bonus)* | Nix flake for QuickNotes; deterministic OCI image |
 | — | Lab 12 | WebAssembly Containers *(bonus)* | TinyGo + Spin/WAGI; perf comparison vs Docker |
 
@@ -98,7 +98,7 @@ Versions pinned to **April 2026**:
 | Dashboards | Grafana | 13.x | Week 8 |
 | Security scan | Trivy | 0.59.x | Week 9 |
 | DAST | OWASP ZAP | 2.16.x | Week 9 |
-| Cloud | Cloud Run / Fly.io | — | Week 10 |
+| Cloud | Hugging Face Spaces + Cloudflare Tunnel (card-free) | — | Week 10 |
 | *(bonus)* Reproducibility | Nix Flakes | 2.x | Lab 11 |
 | *(bonus)* WASM | TinyGo + Spin | 0.34 / 3.x | Lab 12 |
 
@@ -223,7 +223,7 @@ Top-10 per window share 1% of the total grade.
 | 7 | Ansible 10.x (Python 3.11+) |
 | 8 | (Prometheus + Grafana run in containers — nothing host-side needed) |
 | 9 | (Trivy + ZAP run in containers) |
-| 10 | `gcloud` CLI *or* `flyctl`; a GCP account *or* Fly.io account |
+| 10 | A Hugging Face account (free, no card); `cloudflared` for the Bonus tunnel |
 | 11 (bonus) | Nix (Determinate installer recommended) |
 | 12 (bonus) | TinyGo 0.34+, Spin 3.x |
 

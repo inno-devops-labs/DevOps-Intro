@@ -22,7 +22,7 @@
 | 2 | ✅ Explain the **shared responsibility** model |
 | 3 | ✅ Pick a region/zone with intent — for latency, data residency, cost |
 | 4 | ✅ Push the QuickNotes image to a real container registry |
-| 5 | ✅ Deploy QuickNotes to **Cloud Run** (or Fly.io / equivalent) with a single command |
+| 5 | ✅ Deploy QuickNotes to a **hosted container platform** with a public URL (the lab uses card-free Hugging Face Spaces + Cloudflare Tunnel — same patterns as Cloud Run / Lambda) |
 | 6 | ✅ Read a cloud bill — recognize the 3-4 line items that dominate it |
 
 ---
@@ -291,10 +291,12 @@ fly open                       # opens the URL in your browser
 
 ## 📍 Slide 15 – 🧪 Lab 10 Preview: Deploy QuickNotes to the Cloud
 
-* 📦 **Task 1 (6 pts):** Build the QuickNotes container image in your Lab 3 CI, push it to a real registry (ghcr.io, AR, ECR — your pick). Verify a fresh pull works
-* 🚀 **Task 2 (4 pts):** Deploy that image to **Cloud Run** (or **Fly.io** if you can't use GCP). Hit the public URL from your laptop. Demonstrate scale-to-zero (no requests for 5 min → 0 instances → first request cold-starts)
-* 🎁 **Bonus (2 pts):** Compare cold-start latency across **two** platforms (Cloud Run vs Fly.io vs Lambda) for the same image. Plot the distribution
-* 📜 Deliverable: `submissions/lab10.md` — registry push log, public URL (or screenshot if torn down), cold-start measurements
+> 💡 The lab uses two platforms that are **truly free — no credit card required** — so Innopolis students aren't blocked by payment-card friction. The *concepts* (registry, CaaS, scale-to-zero, public URL, edge) are identical to Cloud Run / Lambda / Fargate.
+
+* 📦 **Task 1 (6 pts):** Build the QuickNotes container image in your Lab 3 CI, push it to **`ghcr.io`** on a Git-tag trigger. Verify a fresh `docker pull` works from a clean machine
+* 🚀 **Task 2 (4 pts):** Deploy that image to **Hugging Face Spaces** (Docker SDK) — free hosted container, public URL, sleeps after ~30 min idle (real scale-to-zero, slower than Cloud Run). Measure cold vs warm latency
+* 🎁 **Bonus (2 pts):** Expose the same QuickNotes through a **Cloudflare Tunnel** (`cloudflared`, no account / no domain / no card required) and compare hosted-container latency vs local-via-edge latency
+* 📜 Deliverable: `submissions/lab10.md` — registry push log, HF Spaces URL, cold-start measurements, (Bonus) cross-platform comparison table
 
 ---
 
@@ -312,7 +314,7 @@ fly open                       # opens the URL in your browser
 ## 📍 Slide 17 – 🚀 What's Next + 📚 Resources
 
 * 📍 **Bonus readings:** Reproducible Builds with Nix (R11) + WebAssembly Containers (R12)
-* 🧪 **Lab 10:** Push QuickNotes image to a registry; deploy to Cloud Run; Bonus: cross-platform cold-start
+* 🧪 **Lab 10:** Push to `ghcr.io` from CI on tag; deploy to Hugging Face Spaces (card-free); Bonus: Cloudflare Tunnel + cross-platform latency comparison
 * 📖 **Read:**
   * 📕 *Cloud Native Patterns* — Cornelia Davis (2019) — Chapters 1-5
   * 📗 [AWS Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/) (the five pillars)
