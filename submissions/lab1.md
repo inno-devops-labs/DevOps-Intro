@@ -75,17 +75,15 @@ Signed commits cryptographically bind each commit to a verified identity (provin
 What have I done?
 
 - Added `.github/pull_request_template.md` to `main`.
-- Opened a PR `feature/lab1` → upstream `main`; the description auto-populated from the template.
+- Opened a PR `feature/lab1` →  `main`; the description auto-populated from the template.
 
-
-
-![PR template auto-populated](pr-template.png)
 
 ---
 
 ## Task 3 — GitHub Community
 
 What have I done?
+
 - Starred the course repo and `simple-container-com/api`.
 - Followed the professor (@Cre-eD), TAs (@Naghme98, @pierrepicaud), and 3 classmates.
 
@@ -95,11 +93,14 @@ Stars allow bookmarking projects(to probably use them later) and boost visibilit
 
 ## Bonus Task — Branch Protection:
 
-![Branch protection rules](branch-protection.png)
+What have I done?
 
 Rejected unsigned push:
-```
-<строка remote: error: ...>
-```
 
-<3–4 предложения рефлексии про Knight Capital>
+![Rejected commit](failed_to_commit.png)
+
+
+Rules: 
+![Branch protection rules](rules.png)
+
+About Knight Capital: I'd say this story was about a lack of discipline. Their problem was the deployment process (manual) and keeping dead code in repo. However, good DevOps practices (such as branch protection rules + automated deployment) would have radically changed their day. A mandatory PR review before merging could have highlighted the dangerous reuse of the old flag, and deploying a single verified, signed artifact via an automated pipeline instead of manually copying to each server would have removed that "7 out of 8 servers" inconsistency entirely.
