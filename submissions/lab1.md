@@ -77,7 +77,9 @@ What have I done?
 - Added `.github/pull_request_template.md` to `main`.
 - Opened a PR `feature/lab1` →  `main`; the description auto-populated from the template.
 
+![PR](PR.png)
 
+I added this screenshot after opening PR to my local main(it does no have this screenshot). 
 ---
 
 ## Task 3 — GitHub Community
