@@ -60,6 +60,8 @@ In March 2024, the xz-utils backdoor attack proved that commit authorship can be
 ## Task 2
 
 PR template added to .github/pull_request_template.md on main branch. PR opened from feature/lab1 to course main with template sections filled.
+<img width="811" height="652" alt="image" src="https://github.com/user-attachments/assets/3b941d98-8513-45ba-9444-8970daa968c7" />
+
 
 ## Task 3
 
