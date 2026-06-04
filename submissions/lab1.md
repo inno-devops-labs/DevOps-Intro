@@ -48,6 +48,7 @@ curl -s -X POST http://localhost:8080/notes \
 
 Good "git" signature with ED25519 key SHA256:C0WvWARzsC87AMQBs2ZmgKYf1rOjvTkKcrg6fro2VGw
 
+<img width="1427" height="212" alt="image" src="https://github.com/user-attachments/assets/4eb59b34-d43e-4745-aed1-33404dc8abfb" />
 
 Why signed commits matter
 
