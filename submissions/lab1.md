@@ -95,3 +95,9 @@ Date:   Fri Jun 5 01:42:15 2026 +0300
 ### Why signed commits matter
 
 Anyone can set arbitrary `user.name` and `user.email` in Git without proof of identity. In March 2024, the xz-utils backdoor incident showed how a long-trusted maintainer account (`JiaT75`) could slip malicious code into a dependency used by millions of Linux systems — a supply-chain attack that signed commits and provenance are meant to surface early ([Lecture 1](https://github.com/inno-devops-labs/DevOps-Intro/blob/main/lectures/lec1.md), Slide 16). A signed commit is a cryptographic claim that the holder of your SSH (or GPG) key actually authored that revision, so platforms can show **Verified** and reviewers can reject unauthenticated history before it merges.
+
+---
+
+## Task 2 — Pull Request Template & First PR
+
+PR template added on fork `main`: `.github/pull_request_template.md`
