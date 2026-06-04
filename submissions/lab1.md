@@ -57,3 +57,7 @@ Good "git" signature with ED25519 key SHA256:C0WvWARzsC87AMQBs2ZmgKYf1rOjvTkKcrg
 Why signed commits matter
 
 In March 2024, the xz-utils backdoor attack proved that commit authorship can be easily faked. Anyone can put someone else's name and email in Git config. Signed commits solve this by cryptographically proving that a commit actually came from the key owner. Without signing, you can never be sure if code really came from a trusted developer or from an attacker who compromised their account. That's why GitHub requires signed commits.
+
+## Task 3
+
+Stars help bookmark interesting projects, show community trust, and encourage maintainers. Following developers lets me see their activity, discover new projects, and stay connected with classmates and mentors beyond the classroom.
