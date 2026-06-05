@@ -82,3 +82,10 @@ Good "git" signature for djbubu28@yahoo.com with ED25519 key SHA256:QARDeDo9ASAT
 
 ## Why signed commits matter 
 In 2024, a malicious backdoor was discovered in the compression software XZ Utils, it would allow unauthorized remote access to any Linux system running the compromised version via SSH.. After and investigation it was esteblished that the exploit was introduced by a contributor going by the alias of "Jia Tan". The incident highlighted how unsigned, unverified commits from untrusted contributors can silently compromise critical infrastructure.
+
+
+ ## GitHub Community
+ 
+Starring repositories serves as a bookmarking system and a signal of community trust. A high star count indicates a project is widely used and maintained, making it easier for developers to discover reliable tools. It also encourages open-source maintainers by showing appreciation for their work.
+
+Following developers creates a live feed of their activity on GitHub, helping you discover new projects, stay updated on their work, and build professional connections that extend beyond the classroom into real-world collaboration
