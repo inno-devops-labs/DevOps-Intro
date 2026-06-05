@@ -71,3 +71,4 @@ $ ls .git/objects/ | head
 `.git/HEAD` points to `refs/heads/main` indicating current branch is main. The objects directory contains 42 loose objects stored in 2-character SHA prefix subdirectori> 
 
 
+more important work
