@@ -136,3 +136,51 @@ Good "git" signature with ED25519 key
 
 Use **rebase** when you want a clean, linear history without merge commits, especially for feature branches before merging into main. Use **merge** when you want to preserve the exact timeline and context of parallel development, or when working on a public branch where rewriting history would confuse other contributors. Rebase is preferred for local cleanup; merge is safer for shared branches.
 
+## Bonus Task — git bisect
+
+### Automatic bisect with `git bisect run`
+
+gitbisectstart git bisect bad HEAD
+$ git bisect good v0.0.1
+Bisecting: 1 revision left to test after this (roughly 1 step)
+[f285ede] refactor(store): simplify nextID restoration in load()
+
+$ git bisect run sh -c 'cd app && go test ./... && go build ./...'
+running 'sh' '-c' 'cd app && go test ./... && go build ./...'
+--- FAIL: TestStore_PersistsAcrossReload (0.00s)
+store_test.go:78: nextID not restored: got 1, want 2
+FAIL
+Bisecting: 0 revisions left to test after this (roughly 0 steps)
+[cb89bb9] docs(store): comment the load() decode step
+running 'sh' '-c' 'cd app && go test ./... && go build ./...'
+ok quicknotes 0.013s
+f285ede8611e55ac0a7d01100891c0cc775e0709 is the first bad commit
+
+
+### Full bisect log
+git bisect start
+bad: [f0c9243] docs(app): mention go test invocation
+
+git bisect bad f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493
+good: [0ec87b8] chore(app): document versioning scheme (bisect fixture baseline)
+
+git bisect good 0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7
+bad: [f285ede] refactor(store): simplify nextID restoration in load()
+
+git bisect bad f285ede8611e55ac0a7d01100891c0cc775e0709
+good: [cb89bb9] docs(store): comment the load() decode step
+
+git bisect good cb89bb9ee2ee5010b166061447eaca3ae0da2378
+first bad commit: [f285ede8611e55ac0a7d01100891c0cc775e0709]
+
+
+### Offending commit
+
+**SHA:** `f285ede8611e55ac0a7d01100891c0cc775e0709`
+
+**Message:** `refactor(store): simplify nextID restoration in load()`
+
+### How bisect found it in log₂(N) steps
+
+Git bisect uses binary search algorithm. Each step splits the remaining range of commits in half, testing the middle commit. With N commits between good and bad, it takes at most log₂(N) steps to find the first bad commit. In this case, only 2 steps were needed because the range was small (approximately 4 commits). This is exponentially faster than linear search, which would require checking each commit one by one.
+
