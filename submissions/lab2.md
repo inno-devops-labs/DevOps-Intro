@@ -344,3 +344,33 @@ Good "git" signature for djbubu28@yahoo.com with ED25519 key SHA256:QARDeDo9ASAT
 
 #### Merge vs Rebase — when to choose which?
 Use **rebase** when working on a personal feature branch to keep a clean, linear history that's easy to review. Use **merge** when integrating long-lived branches or public branches where rewriting history would be disruptive to other contributors. The golden rule: never rebase commits that have already been pushed to a shared branch others are working on.
+
+
+## Bonus Task — Git Bisect
+
+
+### Bisect log
+$ git bisect log
+git bisect log
+git bisect start
+# status: waiting for both good and bad commits
+# bad: [f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493] docs(app): mention go test invocation
+git bisect bad f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493
+# status: waiting for good commit(s), bad commit known
+# good: [0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7] chore(app): document versioning scheme (bisect fixture baseline)
+git bisect good 0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7
+# bad: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+git bisect bad f285ede8611e55ac0a7d01100891c0cc775e0709
+# good: [cb89bb9ee2ee5010b166061447eaca3ae0da2378] docs(store): comment the load() decode step
+git bisect good cb89bb9ee2ee5010b166061447eaca3ae0da2378
+# first bad commit: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+
+
+### Offending commit
+f0c9243 docs(app): mention go test invocation
+9fe75cc docs(store): document Count()
+f285ede refactor(store): simplify nextID restoration in load()
+cb89bb9 docs(store): comment the load() decode step  ← bisect stopped here last time
+
+### How bisect found it in log₂(N) steps
+Git bisect uses a binary search algorithm. At each step it picks the commit exactly halfway between the known-good and known-bad boundaries. This means for N commits, it only needs log2(N) steps to find the bug. 
