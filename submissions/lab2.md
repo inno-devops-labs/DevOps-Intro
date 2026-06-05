@@ -100,3 +100,39 @@ $ git log --oneline
 
 If `git gc` had run between the bad reset and recovery, the commits would have been garbage collected. By default, reflog entries expire after 90 days, but CI environments with aggressive GC can lose unreachable commits before manual recovery.
 
+
+## Task 2 — Signed Tag and Rebase
+
+### 2.1 Signed Annotated Tag
+
+**Tag creation and verification:**
+gittag−a−s"v0.1.0−lab2−ksu"−m"Lab2milestone—versioncontroldeepdive" git push origin "v0.1.0-lab2-ksu"
+
+$ git tag -v "v0.1.0-lab2-ksu"
+object cbb252da3df8707bd6b3fba6a41556cc31871282
+type commit
+tag v0.1.0-lab2-ksu
+tagger ksu ksenya.myasoedova@gmail.com 1780663711 +0300
+
+Lab 2 milestone — version control deep dive
+Good "git" signature with ED25519 key
+
+
+### 2.2 Rebase
+
+**After rebase (`git log --oneline --graph`):**
+    9063ebd (HEAD -> feature/lab2, origin/feature/lab2) docs(lab2): complete Task 1
+
+    15f37c2 wip(lab2): more progress
+
+    70d5ce8 wip(lab2): start
+
+    c3d9769 (origin/main, origin/HEAD, main) docs: upstream moved while you worked
+
+    cbb252d (tag: v0.1.0-lab2-ksu) test: unsigned commit (should fail)
+
+
+### Merge vs Rebase Reflection
+
+Use **rebase** when you want a clean, linear history without merge commits, especially for feature branches before merging into main. Use **merge** when you want to preserve the exact timeline and context of parallel development, or when working on a public branch where rewriting history would confuse other contributors. Rebase is preferred for local cleanup; merge is safer for shared branches.
+
