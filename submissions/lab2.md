@@ -137,7 +137,7 @@ Verification command:
 Output:
 
     v0.1.0-lab2-tivdzualubem tag commit
-    object a6f4f1d9d98e5a92f87d84f16be56ea8aa2a82e6
+    object ba1ae62a773bf3b19048b0425ebff3833ede7abb
     type commit
     tag v0.1.0-lab2-tivdzualubem
     tagger Tivdzualubem <tivdzualubem@gmail.com>
