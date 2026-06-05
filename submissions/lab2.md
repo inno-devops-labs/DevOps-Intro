@@ -256,3 +256,91 @@ HEAD is now at f9c7587 wip(lab2): more progress
 #### What if git gc had run first?
 `git gc` permanently deletes unreferenced objects once the reflog grace period expires (default 30 days, or immediately with `git gc --prune=now`). If garbage collection had run between the bad reset and the recovery attempt, the orphaned commits would have been deleted from `.git/objects/` and their reflog entries pruned — making recovery impossible without an external backup or remote copy.
 
+
+## Task 2 — Tag a Release & Rebase a Feature
+
+### 2.1: Annotated, signed release tag
+
+####  Tag list `git tag -l --format='%(refname:short) %(objecttype) %(*objecttype)'`
+v0.1.0-lab2-mackay tag commit
+
+#### Tag verification `git tag -v "v0.1.0-lab2-${USER}"`
+object eac5ad8a8f4e84670bacc33ebf4d8c9591221642
+type commit
+tag v0.1.0-lab2-mackay
+tagger DJ Bubu <djbubu28@yahoo.com> 1780652824 +1000
+
+Lab 2 milestone — version control deep dive
+Good "git" signature for djbubu28@yahoo.com with ED25519 key SHA256:QARDeDo9ASATwzSKffgwflEQuIS3bgo/m5fIrCCrgpY
+
+
+### 2.2: Rebase + force-with-lease
+
+#### Capture log before rebase `git fetch origin`
+* 30bfe0a (HEAD -> feature/lab2, origin/feature/lab2) docs(lab2): task 1 Git Object Model + Reflog Recovery
+* f9c7587 wip(lab2): more progress
+* 0f1874b wip(lab2): start
+* bb28227 (origin/feature/lab1, feature/lab1) docs(lab1): add Knight Capital reflection
+* a7c9ccb Added community engagement section
+* 491accc docs(lab1): add GitHub Community section
+* 3d3b2bf docs(lab1): finish submission
+* 9d1d98d docs(lab1): start submission
+* 533c32e docs(lab1): start submission
+* a7c94d7 docs(lab1): start submission
+* d9535bf docs(lab1): align Task 3 GitHub Community engagement with other courses
+*   170000c Merge pull request #907 from inno-devops-labs/s26-refactor
+|\  
+| * d50436c (upstream/s26-refactor) fix(lab12,gitignore): Spin SDK (WAGI removed in Spin 3.x); minimal student-safe gitignore
+| * 4705a3d fix(.gitignore): stop ignoring submissions/
+| * 4082340 docs(grading,lab11,lab12): bonus labs to 4+4+2; grading rebalanced to 70-14-5-20-30 = 139%
+| * 7b16dc5 docs(lab10): switch deploy targets to card-free platforms — HF Spaces + Cloudflare Tunnel
+| * 4a05efa docs(labs): scaffold the skill — labs 5-12 stop handing students copy-paste answers
+| * 8387fb9 docs(lab3): scaffold the skill — students write their own CI yaml; GitLab as parallel path
+| * 983fba0 docs(course): rewrite README + add .gitignore for project-threaded structure
+| * 7914e37 docs(labs): refactor 12 labs to 6+4+2 (lab1) / 6+4+bonus (lab2-10) / 10pts (lab11-12)
+| * aa5aa1c docs(lectures): rewrite lec1-10 + add reading11/12 for project-threaded course
+| * b8fc480 feat(app): introduce QuickNotes Go service for project-threaded course
+|/  
+* 6f044dd (upstream/s26) Replace IPFS with Nix
+* 0a87e1c refactor: reduce prescriptiveness in GitLab CI instructions
+* eaea715 feat: add GitLab CI alternative instructions to lab3
+* d6b6a03 Update lab2
+* 87810a0 feat: remove old Exam Exemption Policy
+* 1e1c32b feat: update structure
+* 6c27ee7 feat: publish lecs 9 & 10
+
+#### Capture log after rebase `git fetch origin`
+* 30bfe0a (HEAD -> feature/lab2, origin/feature/lab2) docs(lab2): task 1 Git Object Model + Reflog Recovery
+* f9c7587 wip(lab2): more progress
+* 0f1874b wip(lab2): start
+* bb28227 (origin/feature/lab1, feature/lab1) docs(lab1): add Knight Capital reflection
+* a7c9ccb Added community engagement section
+* 491accc docs(lab1): add GitHub Community section
+* 3d3b2bf docs(lab1): finish submission
+* 9d1d98d docs(lab1): start submission
+* 533c32e docs(lab1): start submission
+* a7c94d7 docs(lab1): start submission
+* d9535bf docs(lab1): align Task 3 GitHub Community engagement with other courses
+*   170000c Merge pull request #907 from inno-devops-labs/s26-refactor
+|\  
+| * d50436c (upstream/s26-refactor) fix(lab12,gitignore): Spin SDK (WAGI removed in Spin 3.x); minimal student-safe gitignore
+| * 4705a3d fix(.gitignore): stop ignoring submissions/
+| * 4082340 docs(grading,lab11,lab12): bonus labs to 4+4+2; grading rebalanced to 70-14-5-20-30 = 139%
+| * 7b16dc5 docs(lab10): switch deploy targets to card-free platforms — HF Spaces + Cloudflare Tunnel
+| * 4a05efa docs(labs): scaffold the skill — labs 5-12 stop handing students copy-paste answers
+| * 8387fb9 docs(lab3): scaffold the skill — students write their own CI yaml; GitLab as parallel path
+| * 983fba0 docs(course): rewrite README + add .gitignore for project-threaded structure
+| * 7914e37 docs(labs): refactor 12 labs to 6+4+2 (lab1) / 6+4+bonus (lab2-10) / 10pts (lab11-12)
+| * aa5aa1c docs(lectures): rewrite lec1-10 + add reading11/12 for project-threaded course
+| * b8fc480 feat(app): introduce QuickNotes Go service for project-threaded course
+|/  
+* 6f044dd (upstream/s26) Replace IPFS with Nix
+* 0a87e1c refactor: reduce prescriptiveness in GitLab CI instructions
+* eaea715 feat: add GitLab CI alternative instructions to lab3
+* d6b6a03 Update lab2
+* 87810a0 feat: remove old Exam Exemption Policy
+* 1e1c32b feat: update structure
+* 6c27ee7 feat: publish lecs 9 & 10
+
+#### Merge vs Rebase — when to choose which?
+Use **rebase** when working on a personal feature branch to keep a clean, linear history that's easy to review. Use **merge** when integrating long-lived branches or public branches where rewriting history would be disruptive to other contributors. The golden rule: never rebase commits that have already been pushed to a shared branch others are working on.
