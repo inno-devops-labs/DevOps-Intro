@@ -72,3 +72,31 @@ $ ls .git/objects/ | head
 
 
 more important work
+
+
+## Task 1.3 — Disaster and Recovery
+
+### Breaking with --hard reset
+$ git reset --hard HEAD~2
+HEAD is now at 66bbd4d docs(lab1): align Task 3
+
+$ git status
+On branch feature/lab2
+nothing to commit, working tree clean
+
+### Recovery via reflog
+$ git reflog
+3063f90 HEAD@{2}: commit: wip(lab2): more progress
+0062b37 HEAD@{3}: commit: wip(lab2): start
+
+$ git reset --hard 3063f90
+HEAD is now at 3063f90 wip(lab2): more progress
+
+$ git log --oneline
+3063f90 wip(lab2): more progress
+0062b37 wip(lab2): start
+
+### GC Window Risk Explanation
+
+If `git gc` had run between the bad reset and recovery, the commits would have been garbage collected. By default, reflog entries expire after 90 days, but CI environments with aggressive GC can lose unreachable commits before manual recovery.
+
