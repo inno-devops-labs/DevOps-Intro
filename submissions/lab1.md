@@ -101,3 +101,65 @@ Anyone can set arbitrary `user.name` and `user.email` in Git without proof of id
 ## Task 2 — Pull Request Template & First PR
 
 PR template added on fork `main`: `.github/pull_request_template.md`
+
+---
+
+## Task 3 — GitHub Community Engagement
+
+### Checklist
+
+- [x] Star the [course repository](https://github.com/inno-devops-labs/DevOps-Intro)
+- [x] Star [simple-container-com/api](https://github.com/simple-container-com/api)
+- [x] Follow professor [@Cre-eD](https://github.com/Cre-eD)
+- [x] Follow TA [@Naghme98](https://github.com/Naghme98)
+- [x] Follow TA [@pierrepicaud](https://github.com/pierrepicaud)
+- [x] Follow classmate [@moflotas](https://github.com/moflotas)
+- [x] Follow classmate [@Fil-126](https://github.com/Fil-126)
+- [x] Follow classmate [@IlyaPechersky](https://github.com/IlyaPechersky)
+
+### GitHub Community (1–2 sentences each)
+
+- **Why starring repositories matters:** Stars bookmark projects you may reuse later (like QuickNotes across 10 labs) and signal community trust — the same kind of social proof that helps open-source maintainers get visibility and contributors find reliable tools. [Lecture 1](https://github.com/inno-devops-labs/DevOps-Intro/blob/main/lectures/lec1.md) frames DevOps as a collaborative discipline, not a solo job title; starring is a small way to participate in that ecosystem instead of only consuming it.
+
+- **How following developers helps:** Following professors, TAs, and classmates surfaces what others ship — new repos, PR patterns, signed commits — which mirrors the **Sharing** pillar of CALMS from [Lecture 1](https://github.com/inno-devops-labs/DevOps-Intro/blob/main/lectures/lec1.md) (Slide 7): knowledge travels through people, not hoarded in silos. In team projects and after graduation, that feed becomes an informal discovery channel for tools, review habits, and collaborators.
+
+---
+
+## Bonus Task — Branch Protection
+
+**Branch protection on `main`:** require signed commits, pull request before merging, and linear history.
+
+![Branch protection rules for main](attachments/lab1/branch_protection_rule.png)
+
+**Unsigned push rejection (`remote: error:` line):**
+
+```text
+markovav@markovav-mac DevOps-Intro % git commit -S=false -s --allow-empty -m "test: unsigned commit (should fail)"
+
+error: Couldn't load public key =false: No such file or directory?
+
+fatal: failed to write commit object
+markovav@markovav-mac DevOps-Intro % git commit --no-gpg-sign -s --allow-empty -m "test: unsigned commit (should fail)"
+[main 396e58d] test: unsigned commit (should fail)
+markovav@markovav-mac DevOps-Intro % git push origin main
+
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 221 bytes | 221.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: error: GH006: Protected branch update failed for refs/heads/main.
+remote: 
+remote: - Commits must have verified signatures.
+remote:   Found 1 violation:
+remote: 
+remote:   396e58d683818ee7cb57af0c22071c3af98987a6
+remote: 
+remote: - Changes must be made through a pull request.
+To github.com:markovav-official/DevOps-Intro.git
+ ! [remote rejected] main -> main (protected branch hook declined)
+error: failed to push some refs to 'github.com:markovav-official/DevOps-Intro.git'
+```
+
+**Local commit issue:** `git commit -S=false` does not turn signing off — Git treats `-S` as “sign with this key” and reads the argument literally as a key path named `=false`, hence `Couldn't load public key =false`. The lab’s intent is to create an unsigned commit locally; the correct flag is `--no-gpg-sign` (or `-c commit.gpgsign=false`). With that, the unsigned commit was created locally, but `git push origin main` was rejected by GitHub with `remote: error: GH006` — branch protection blocked both the missing signature and the direct push to `main`.
+
+**Reflection (Knight Capital + branch protection):** On [August 1, 2012](https://github.com/inno-devops-labs/DevOps-Intro/blob/main/lectures/lec1.md) Knight Capital pushed SMARS to eight production servers manually; one server was missed and kept running stale code that re-activated **Power Peg**, costing **$440M in 45 minutes** ([Lecture 1](https://github.com/inno-devops-labs/DevOps-Intro/blob/main/lectures/lec1.md), Slide 1). A prod deploy branch with required signed commits, PR-only merges, and linear history would not replace automated, identical rollouts to every host — but it would eliminate “someone pushed straight to prod without review or proven identity” as a failure mode. Every production-bound change would trace to a **Verified** author and pass a review gate, aligning with the lecture’s lesson: *how* you ship matters as much as *what* you ship.
