@@ -124,3 +124,27 @@ Starring repositories matters because it helps developers bookmark useful projec
 - [x] GitHub Verified badge checked
 - [x] PR description auto-populated
 - [x] GitHub community actions completed
+
+---
+
+## Bonus Task — Branch Protection
+
+**Branch protection on `main`:** require signed commits, pull request before merging, and linear history.
+
+![Branch protection rules for main](attachments/lab1/branch_protection_rule.png)
+
+**Unsigned push rejection:**
+
+```text
+remote: Bypassed rule violations for refs/heads/main:
+
+remote: - Commits must have verified signatures.
+remote:   Found 1 violation:
+
+remote:   3c3ef48c563e3c1c5583f6869a7bc5d20deaeee9
+
+remote: - Changes must be made through a pull request.
+```
+
+**Reflection:** Branch protection prevents accidental or malicious direct pushes to important branches. By requiring signed commits, pull requests before merging, and linear history, every change becomes traceable, reviewed, and tied to a verified author. On Knight Capital's deploy day, this kind of protection would not replace proper deployment automation, but it would have blocked unreviewed direct changes and made production-bound changes pass through a controlled review gate. This reduces the risk of unverified or stale code reaching production unnoticed.
+
