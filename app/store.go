@@ -124,6 +124,7 @@ func (s *Store) Delete(id int) error {
 	return s.persist()
 }
 
+// Count returns the number of notes currently held.
 func (s *Store) Count() int {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
