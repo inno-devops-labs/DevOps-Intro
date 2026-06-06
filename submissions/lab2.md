@@ -131,17 +131,6 @@ What is the role of `git gc` ?
 
 `git gc`  compresses loose objects into packfiles and prunes objects that are no longer reachable from any branch, tag, reflog. After my `git reset --hard`, the two `wasted` commits became unreachable objects, but `git reflog` still pointed at them(30 days usually), which is why `git reset --hard <SHA>` brought them back. Running `git gc` in this case would not destroy them. Only an aggressive prune such as `git gc --prune=now` would erase them. 
 
-
-Good "git" signature for hydrogenim@yandex.ru with ED25519 key SHA256:A4DMi3JBqhY4gzOwwFEp42EaHJwR+5cF6LIWpVPtyYs
-
-Verified badge on GitHub:
-
-![Verified badge](verified_badge.png)
-
-### Why signed commits matter
-
-Signed commits cryptographically bind each commit to a verified identity (proving the code truly came from that person). This provenance is core to supply-chain security: the March 2024 xz-utils incident showed how attackers exploit trust in the contribution pipeline. To be honest, signing alone would not have stopped them, because the malicious maintainer was trusted and much of the malicious code was in the release tarballs(differed from the git source). And that is the lesson: if everyone had built from the git repository (with verified commits), those malicious build-script changes simply would not have appeared.
-
 ---
 
 ## Task 2 — Tag a Release & Rebase a Feature
@@ -150,9 +139,96 @@ What have I done?
 
 ### 2.1: Annotated, signed release tag
 
+Result of tagging: 
+```
+
+git tag -v "v0.1.0-lab2-${USER}"  
+object 7213a6fd82b08375c0e5a5356cf6ca71f1324e18
+type commit
+tag v0.1.0-lab2-ephy
+tagger Ephy01 <hydrogenim@yandex.ru> 1780745208 +0300
+
+Lab 2 milestone
+Good "git" signature for hydrogenim@yandex.ru with ED25519 key
+
+```
+
 ### 2.2: Rebase + force-with-lease
 
-### 2.3: Document
+Result of tagging: 
+```
+
+git tag -v "v0.1.0-lab2-${USER}"  
+object 7213a6fd82b08375c0e5a5356cf6ca71f1324e18
+type commit
+tag v0.1.0-lab2-ephy
+tagger Ephy01 <hydrogenim@yandex.ru> 1780745208 +0300
+
+Lab 2 milestone
+Good "git" signature for hydrogenim@yandex.ru with ED25519 key SHA256:A4DMi3JBqhY4gzOwwFEp42EaHJwR+5cF6LIWpVPtyYs
+
+```
+
+### 2.2: Rebased + force-with-leased
+
+Illustration of rebase
+
+Graph before rebase
+
+```
+git log --oneline --graph feature/lab2         
+* 93a9a68 (HEAD -> feature/lab2, origin/feature/lab2) docs(lab2): task1 done
+* 037abd4 wip(lab2): more progress
+* 3df2142 wip(lab2): start
+* 7213a6f (tag: v0.1.0-lab2-ephy, origin/main, origin/HEAD) docs: add PR template
+* 66bbd4d (upstream/main) docs(lab1): align Task 3 GitHub Community engagement with other courses
+```
+
+Graph after rebase
+
+```
+
+git log --oneline --graph feature/lab2 
+* aaad004 (HEAD -> feature/lab2) docs(lab2): task1 done
+* c854e5f wip(lab2): more progress
+* d8a5ec4 wip(lab2): start
+* e2c6e91 (main) docs: upstream moved while you worked
+* 7213a6f (tag: v0.1.0-lab2-ephy, origin/main, origin/HEAD) docs: add PR template
+* 66bbd4d (upstream/main) docs(lab1): align Task 3 GitHub Community engagement with other courses
+
+```
+
+So what has happened? 
+
+I create bracnh lab2, where I was working. Then on main occurs new commit. 
+```
+7213a6f -> 3df2142 -> 037abd4 -> 93a9a68   (feature/lab2)
+|-> e2c6e91                            (main)
+```
+Rebase rewrite history: it makes it linear, like if I started working from e2c6e91, rebase replayed all commits here:
+
+```
+7213a6f -> e2c6e91 -> d8a5ec4 -> c854e5f -> aaad004   (feature/lab2)
+```
+
+As you might noticed, SHA of commits changed. It happened, because commits' SHA is a function of its content, where also located link to the 'parent' commit. Since parent changed(7213a6f to e2c6e91), SHA also changed, as well as SHA of all following commits. 
+
+
+# Rebase vs merge:
+
+```
+ When you merge a one branch (for example lab2) into main, Git combines the two branches and creates a dedicated merge commit to link their histories
+
+ Choose it when: 
+    - if other developers are using the branch, you should use git merge to safely combine your work.
+    - if it is important to know exactly when and where two branches merged
+
+ Rebasing takes the commits from current branch and replays them  on top of the latest commit from another branch. It moves the starting point of your feature branch forward.
+
+Choose it when: 
+ - to keep your local branch up to date with the latest main without creating unnecessary merge commits
+
+```
 ---
 
 
