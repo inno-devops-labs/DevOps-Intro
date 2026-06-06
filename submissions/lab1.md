@@ -96,4 +96,10 @@ curl -s -X POST http://localhost:8080/notes \
 
 By default, Git does not verify an author's identity: anyone can configure an arbitrary name and email address. A signed commit provides a cryptographic proof that the commit was created by the holder of a specific private key, improving code provenance and giving reviewers an additional trust signal. The xz-utils backdoor discovered in March 2024 showed why software supply chains require verifiable provenance; commit signing does not guarantee that code is safe, but it makes changes easier to attribute and audit.
 
+## Task 2
 
+Created PR
+
+## Task 3
+
+Starring repositories helps developers bookmark useful projects and increases their visibility in the open-source ecosystem. Following developers makes it easier to discover their work, stay aware of team activity, and build professional connections!
