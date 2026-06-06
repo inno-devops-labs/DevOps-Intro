@@ -293,3 +293,4 @@ The tools change every five years. The discipline doesn't. Welcome to DevOps.
 
 > 🎯 *Reference: this course's Spring 2026 structure mirrors the SRE-Intro standard (Innopolis University, completed Apr 2026). DevOps-Intro is the broader intro to **how software is shipped**; SRE-Intro is the deeper dive into **keeping it reliable**.*
 <- [ ]  test -->
+<- [ ]  test -->
