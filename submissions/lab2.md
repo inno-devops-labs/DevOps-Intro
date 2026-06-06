@@ -24,20 +24,20 @@ commit
 `git cat-file -p HEAD ` 
 ```
 
-tree b2fe0c7c5e1b86c2995fdccb8e8b18e8a19fd322 \
-parent 66bbd4db9228bc9a4cab7439746b993749c026ab \
-author Ephy01 <hydrogenim@yandex.ru> 1780459207 +0300 \
-committer Ephy01 <hydrogenim@yandex.ru> 1780459207 +0300 \
+tree b2fe0c7c5e1b86c2995fdccb8e8b18e8a19fd322 
+parent 66bbd4db9228bc9a4cab7439746b993749c026ab 
+author Ephy01 <hydrogenim@yandex.ru> 1780459207 +0300 
+committer Ephy01 <hydrogenim@yandex.ru> 1780459207 +0300 
 gpgsig -----BEGIN SSH SIGNATURE----- 
- U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAge97OKIxCHeCbzOiv9oZ1Nm5Dzz \
- 7juGFSTt6rnU0py2IAAAADZ2l0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5 \
- AAAAQLvvhavSnriry1gFwyRl+0tC+Q0MtD/K7GUdj9ON0/GRN7q3b2gRyAdWbDwMswiFF3 \
+ U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAge97OKIxCHeCbzOiv9oZ1Nm5Dzz 
+ 7juGFSTt6rnU0py2IAAAADZ2l0AAAAAAAAAAZzaGE1MTIAAABTAAAAC3NzaC1lZDI1NTE5 
+ AAAAQLvvhavSnriry1gFwyRl+0tC+Q0MtD/K7GUdj9ON0/GRN7q3b2gRyAdWbDwMswiFF3 
  iyNyOB22nTqXnjcZi+Sg4= \
  -----END SSH SIGNATURE----- 
 
 docs: add PR template 
 
-Signed-off-by: Ephy01 <hydrogenim@yandex.ru> \
+Signed-off-by: Ephy01 <hydrogenim@yandex.ru> 
 
 ```
 
@@ -54,10 +54,16 @@ Signed-off-by: Ephy01 <hydrogenim@yandex.ru> \
 
 ```
 
-`git cat-file -p 1c0a1e94b7bbdd951f456cda51af6b8484cc3cee ` 
+```
+git cat-file -p 7d0898a908e274ea809722844cdbd836f3b1c05a
+git cat-file -p b76e91cf916dcebc1d6898e22012c737c117003a
 
-here should be content of .gitignore,
-I decided not to include it since its too large, so submission file would be clumsy
+module quicknotes
+go 1.24
+
+```
+
+here is the content of go.mod file
 
 
 ### Looked inside `.git/`
@@ -220,6 +226,36 @@ Choose rebase when:
 ## Bonus Task — Bisect a Real Bug 
 
 What have I done?
+
+run git bisect and identify where the bug was:
+
+`git bisect log`
+
+```
+
+git bisect start
+# status: waiting for both good and bad commits
+# bad: [f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493] docs(app): mention go test invocation
+git bisect bad f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493
+# status: waiting for good commit(s), bad commit known
+# good: [0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7] chore(app): document versioning scheme (bisect fixture baseline)
+git bisect good 0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7
+# bad: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+git bisect bad f285ede8611e55ac0a7d01100891c0cc775e0709
+# good: [cb89bb9ee2ee5010b166061447eaca3ae0da2378] docs(store): comment the load() decode step
+git bisect good cb89bb9ee2ee5010b166061447eaca3ae0da2378
+# first bad commit: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+Previous HEAD position was cb89bb9 docs(store): comment the load() decode step
+
+```
+
+The problem is commit with SHA - f285ede, with message: refactor(store): simplify nextID restoration in load().
+
+### Why is git bisect `log₂(N)`?
+
+Well, because git bisect is basically a binary search. Each step removes half of commits from list of potential 'culprit'.
+There is linear commit history: somewhere in the past was good commit, the latest commit is bad. So bug in the middle: take commit in the middle, if it still bad, repeat from the first good commit, to the current middle. At most `log₂(N)` checks.
+
 
 
 
