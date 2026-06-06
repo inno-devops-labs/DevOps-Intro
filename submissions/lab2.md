@@ -153,22 +153,6 @@ Good "git" signature for hydrogenim@yandex.ru with ED25519 key
 
 ```
 
-### 2.2: Rebase + force-with-lease
-
-Result of tagging: 
-```
-
-git tag -v "v0.1.0-lab2-${USER}"  
-object 7213a6fd82b08375c0e5a5356cf6ca71f1324e18
-type commit
-tag v0.1.0-lab2-ephy
-tagger Ephy01 <hydrogenim@yandex.ru> 1780745208 +0300
-
-Lab 2 milestone
-Good "git" signature for hydrogenim@yandex.ru with ED25519 key SHA256:A4DMi3JBqhY4gzOwwFEp42EaHJwR+5cF6LIWpVPtyYs
-
-```
-
 ### 2.2: Rebased + force-with-leased
 
 Illustration of rebase
@@ -219,13 +203,13 @@ As you might noticed, SHA of commits changed. It happened, because commits' SHA 
 ```
  When you merge a one branch (for example lab2) into main, Git combines the two branches and creates a dedicated merge commit to link their histories
 
- Choose it when: 
+ Choose merge when: 
     - if other developers are using the branch, you should use git merge to safely combine your work.
     - if it is important to know exactly when and where two branches merged
 
  Rebasing takes the commits from current branch and replays them  on top of the latest commit from another branch. It moves the starting point of your feature branch forward.
 
-Choose it when: 
+Choose rebase when: 
  - to keep your local branch up to date with the latest main without creating unnecessary merge commits
 
 ```
