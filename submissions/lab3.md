@@ -85,3 +85,29 @@ By default (`fail-fast: true`), GitHub cancels all remaining matrix jobs the mom
 A PR from a fork could write a poisoned cache entry that a protected branch later reads, introducing malicious code into trusted runs. GitHub mitigates this by isolating cache scopes: caches written from a fork PR are not accessible to runs on the base branch or other PRs. See: https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#restrictions-for-accessing-a-cache
 
 ---
+
+## Bonus Task — Pipeline Performance Investigation
+
+### B.1 Per-step Timing Profile (vet job)
+
+| Step | Time |
+|------|------|
+| Set up job | 1s |
+| checkout | 0s |
+| setup-go (cache restore) | 2s |
+| `go vet ./...` | 16s |
+| Cleanup | 0s |
+| **Total** | **~21s** |
+
+### B.2 Optimizations Applied
+
+| Optimization | Before | After | Saving |
+|-------------|--------|-------|--------|
+| Shallow clone (`fetch-depth: 1`) | 1s | 0s | -1s |
+| Explicit build cache (`cache: true`) | 2s | 2s | 0s |
+| `GOFLAGS=-buildvcs=false` (global env) | 16s | 16s | 0s |
+| **Total wall-clock** | **21s** | **20s** | **-1s** |
+
+### B.3 Bottleneck Analysis
+
+The dominant cost in this pipeline is `go vet ./...` at 16s, which is entirely compilation time. Go must build the package before it can analyse it. No amount of dependency caching can eliminate this cost because the bottleneck is CPU-bound compilation, not I/O-bound downloads.
