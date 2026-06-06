@@ -9,6 +9,10 @@ build:
 run: build
 	ADDR=$(ADDR) ./$(BINARY)
 
+docker-run:
+	docker build -t quicknotes:local .
+	docker run --rm -p 8080:8080 quicknotes:local
+
 test:
 	go test -race -count=1 ./...
 
