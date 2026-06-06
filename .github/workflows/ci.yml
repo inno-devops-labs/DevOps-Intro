@@ -7,7 +7,7 @@ on:
     branches: [main]
     paths:
       - "app/**"
-      - ".github/workflows/ci.yml"
+    #  - ".github/workflows/ci.yml"
 
 permissions:
   contents: read
