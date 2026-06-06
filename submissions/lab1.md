@@ -114,9 +114,9 @@ Starring repositories helps developers bookmark useful projects and increases th
 
 ### Screenshots
 
-![Settings 1](../docs/screenshots/bonus-settings)
-![Settings 2](../docs/screenshots/bonus-settings-2)
-![Error Example](../docs/screenshots/bonus-settings-3)
+![Settings 1](../docs/screenshots/bonus-settings.png)
+![Settings 2](../docs/screenshots/bonus-settings-2.png)
+![Error Example](../docs/screenshots/bonus-settings-3.png)
 
 Initially, GitHub reported that the unsigned commit violated the configured
 rules but allowed the repository owner to bypass them. After enabling the
