@@ -103,3 +103,28 @@ Created PR
 ## Task 3
 
 Starring repositories helps developers bookmark useful projects and increases their visibility in the open-source ecosystem. Following developers makes it easier to discover their work, stay aware of team activity, and build professional connections!
+
+## Bonus task
+
+### Enabled rules
+
+- Require signed commits
+- Require a pull request before merging
+- Require linear history
+
+### Screenshots
+
+![Settings 1](../docs/screenshots/bonus-settings)
+![Settings 2](../docs/screenshots/bonus-settings-2)
+![Error Example](../docs/screenshots/bonus-settings-3)
+
+Initially, GitHub reported that the unsigned commit violated the configured
+rules but allowed the repository owner to bypass them. After enabling the
+option that prevents bypassing the branch protection settings, direct updates
+to main were rejected.
+
+### Reflection
+
+Branch protection would have reduced the risk of an inconsistent manual deployment similar to the Knight Capital incident. Requiring pull requests creates an explicit review step, while signed commits improve traceability and make impersonation harder. Linear history also makes it easier to audit changes and identify the exact commit introduced into the deployment branch. These controls do not replace automated deployment and rollback mechanisms, but they make unsafe changes harder to push directly.
+
+
