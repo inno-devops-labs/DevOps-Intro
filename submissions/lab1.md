@@ -88,7 +88,7 @@ curl -s -X POST http://localhost:8080/notes \
 
 ### GitHub Verified badge
 
-![Verified badge](docs/screenshots/verified_badge.png)
+![Verified badge](../docs/screenshots/verified_badge.png)
 
 ---
 
