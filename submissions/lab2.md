@@ -162,3 +162,26 @@ tagger arsenez <arsenez@cybercommunity.space> 1780836310 +0300
 Lab 2 milestone — version control deep dive
 Good "git" signature for arsenez@cybercommunity.space with ED25519 key SHA256:2J3M7ENdm13QZIlzpxyzXRyoz6dEuk9j8zLyMQigQ40
 ```
+
+### Rebasing
+Feature branch before rebase
+```sh
+$ git log --oneline --graph
+* f485c3d (HEAD -> feature/lab2, origin/feature/lab2) docs(lab2): tag signature confirmation
+* 6e3f784 docs(lab2): recovery from reset
+* ebd0570 docs(lab2): git internals
+* 9952fea (tag: v0.1.0-lab2-arsenez) docs: add PR template
+* 66bbd4d (upstream/main, upstream/HEAD) docs(lab1): align Task 3 GitHub Community engagement with other courses
+```
+Feature branch after rebase
+```sh
+$ git log --oneline --graph
+* 56ed5aa (HEAD -> feature/lab2, origin/feature/lab2) docs(lab2): tag signature confirmation
+* d25a31d docs(lab2): recovery from reset
+* 2c610f2 docs(lab2): git internals
+* 1a9aa4e (origin/main, origin/HEAD, main) docs: upstream moved while you worked
+* 9952fea (tag: v0.1.0-lab2-arsenez) docs: add PR template
+* 66bbd4d (upstream/main, upstream/HEAD) docs(lab1): align Task 3 GitHub Community engagement with other courses
+```
+
+The choice between merge and rebase comes down to whether you prioritize a perfectly accurate historical record or a clean, readable story. For public shared branches, use `git merge` instead of `git rebase` to prevent other contributors from manual reconciling of their local branches.
