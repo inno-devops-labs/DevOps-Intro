@@ -1,4 +1,7 @@
 # Lab 1 submission
+
+Task 1
+
 ```
 $ curl -s http://localhost:8080/notes  | python3 -m json.tool
 [
@@ -90,6 +93,8 @@ Date:   Fri Jun 5 12:12:58 2026 +0300
 ![image](image.png)
 
 Signed commits matter because they cryptographically verify the identity of the author. THerefore, it is much harder to impersonate a trusted maintainer. As z-utils backdoor (March 2024) shows, if attaker can sucsessfully ippersonate and get acsess to some utisl sorce code, it can compromise the whole internet onfratructure.
+
+Task 3
 
 GitHub Social Features
 
