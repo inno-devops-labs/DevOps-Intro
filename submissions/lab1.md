@@ -107,7 +107,17 @@ commit.gpgsign=true
 Signed commit verification:
 
 ```text
-TODO: replaced after the first signed submission commit is created.
+commit ad68bde7daef814e65d58f805ed180e72db0284d
+Good "git" signature with ED25519 key SHA256:1+FN7gbX/oPuOkViQ3tkxMNih4MR/jJIPbeyF52zax8
+No principal matched.
+Author:     whynotgm <a.shiian@innopolis.university>
+AuthorDate: Sun Jun 7 15:27:56 2026 +0300
+Commit:     whynotgm <a.shiian@innopolis.university>
+CommitDate: Sun Jun 7 15:27:56 2026 +0300
+
+    docs(lab1): complete submission
+
+    Signed-off-by: whynotgm <a.shiian@innopolis.university>
 ```
 
 Verified badge screenshot:
