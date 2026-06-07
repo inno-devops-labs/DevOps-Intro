@@ -123,7 +123,7 @@ Signed commits give reviewers provenance and integrity checks: the commit can be
 
 Verified badge screenshot:
 
-![Verified badge](../Screenshots/Lab1_Verified.png)
+![Verified badge](../screenshots/lab1-verified.png)
 
 ## Task 2 - Pull Request Template and First PR
 
@@ -131,7 +131,7 @@ I prepared the required GitHub PR template at `.github/pull_request_template.md`
 
 ### PR Evidence To Add After Push
 
-![PR Evidence](../Screenshots/Task2_Evidence.png)
+![PR Evidence](../screenshots/task2-evidence.png)
 
 ## Task 3 - GitHub Community
 
@@ -150,8 +150,8 @@ Starring repositories is useful because it both bookmarks projects for future re
 
 ### Evidence To Add After GitHub Setup
 
-![Rule Evidence](../Screenshots/Bonus1.png)
-![Rule Evidence](../Screenshots/Bonus2.png)
+![Rule Evidence](../screenshots/bonus1.png)
+![Rule Evidence](../screenshots/bonus2.png)
 
 ```text
 remote: error: GH013: Repository rule violations found for refs/heads/main.
