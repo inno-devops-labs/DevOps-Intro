@@ -102,16 +102,7 @@ Task 3
 
 GitHub Social Features
 
-Why Stars Matter:
+In open source, starring repositories plays a key role in helping projects get discovered and validated—boosting their visibility, signaling trustworthiness, and drawing in new contributors. At the same time, following developers supports your professional development and keeps your team on the same page, as it provides ongoing insights into industry trends, fresh coding approaches, and the latest work of your colleagues.
 
-    Stars help you bookmark interesting projects for later reference
-    Star count indicates project popularity and community trust
-    Starred repos appear in your GitHub profile, showing your interests
-    Stars encourage maintainers and help projects gain visibility
+Bonus task
 
-Why Following Matters:
-
-    See what other developers are working on
-    Discover new projects through their activity
-    Build professional connections beyond the classroom
-    Stay updated on classmates' work for future collaboration
