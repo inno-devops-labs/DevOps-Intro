@@ -149,3 +149,16 @@ HEAD is now at 097e2b7 wip(lab2): more progress
 ```
 
 If `git gc` (garbage collection) had run after a bad reset but before you could recover, it would have permanently deleted the orphaned commits from Git's internal database. Because a hard reset removes the branch pointer, those commits become unreachable, and `git gc` is designed to prune these unreferenced objects to optimize repository size. Once garbage collection purges them, the lost code can no longer be recovered using `git reflog`.
+
+### Annotated, signed release tag
+Signature confirmation
+```sh
+$ git tag -v "v0.1.0-lab2-${USER}"
+object 9952fea4631fd30f9dd790ccf65d39d7dd94fa87
+type commit
+tag v0.1.0-lab2-arsenez
+tagger arsenez <arsenez@cybercommunity.space> 1780836310 +0300
+
+Lab 2 milestone — version control deep dive
+Good "git" signature for arsenez@cybercommunity.space with ED25519 key SHA256:2J3M7ENdm13QZIlzpxyzXRyoz6dEuk9j8zLyMQigQ40
+```
