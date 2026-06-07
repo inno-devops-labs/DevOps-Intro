@@ -12,7 +12,7 @@ This screnshot shows the output of curl against the /health, /notes, and POST /n
 After launching the command `git log --show-signature -1`, the output shows a "Good signature" from the commit:
 ![git log output](../images/lab1/1.2-git_signature.png)
 
-### A screenshot of the Verified badge on your platform's PR/commit page
+### A screenshot of the Verified badge on the commit page
 
 Here is a screenshot showing the Verified badge on the PR/commit page:
 ![Verified badge](../images/lab1/1.3-verified_badge.png)
