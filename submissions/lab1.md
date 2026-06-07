@@ -70,3 +70,31 @@ The March 2024 XZ Utils supply chain crisis highlighted that source code and rel
 
 ### GitHub Community
 Starring repositories acts as a vital discovery and validation mechanism in open source, helping projects gain visibility, signal reliability, and attract potential contributors. Meanwhile, following developers fosters professional growth and team alignment by keeping you updated on industry trends, innovative coding practices, and your peers' ongoing contributions.
+
+## Bonus: Branch protection
+### Branch protection rules
+![](./lab1-branch-protection.png)
+
+### Rejection test
+```log
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 221 bytes | 221.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote: Review all repository rules at https://github.com/arsenez2006/DevOps-Intro/rules?ref=refs%2Fheads%2Fmain
+remote: 
+remote: - Changes must be made through a pull request.
+remote: 
+remote: - Commits must have verified signatures.
+remote:   Found 1 violation:
+remote: 
+remote:   07c54eb205f5cc8137bdd13f58d1e5aedcf554e7
+remote: 
+To https://github.com/arsenez2006/DevOps-Intro.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/arsenez2006/DevOps-Intro.git'
+```
+
+### Reflection
+If Knight Capital had enforced branch protection and required signed commits on their production deployment branch, their catastrophic 2012 automated deployment failure would have been structurally blocked. The rogue, un-updated code on the eighth server would have been rejected at the deployment gate because unsigned or unreviewed commits could not be pushed to the release branch. Additionally, the process of manually patching or "hot-fixing" live production servers on the fly would have been impossible without triggering immediate compliance alerts and cryptographic verification failures. Ultimately, these guardrails would have forced the team to use a unified, automated CI/CD pipeline, catching the configuration discrepancy before the high-frequency trading code could execute.
