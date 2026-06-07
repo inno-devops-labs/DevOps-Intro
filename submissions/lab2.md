@@ -278,3 +278,87 @@ $ git push --force-with-lease origin feature/lab2
 **Choose rebase when:** you own a feature branch that hasn't been shared with teammates (or everyone on the team knows to expect rewrites). Rebase produces a clean, linear history that is easy to `git bisect` and `git log` through. It's the right call before merging a short-lived feature branch into `main` in a project that enforces linear history.
 
 **Choose merge when:** the branch is shared / public — rewriting commits that others have based work on will cause diverging histories and force-push pain. Merge also preserves the exact context of *when* and *from where* integration happened, which can matter for audit trails or for long-running release branches that must accept hotfixes.
+
+---
+
+## Bonus Task — Bisect a Real Bug
+
+### B.1 + B.2: Bisect setup and automated run
+
+The `bug/bisect-me` branch on upstream contains 4 commits after the `v0.0.1` baseline. Confirming HEAD is broken:
+
+```
+$ cd app && go test ./...
+--- FAIL: TestStore_PersistsAcrossReload (0.00s)
+    store_test.go:78: nextID not restored: got 1, want 2
+FAIL
+FAIL	quicknotes	0.008s
+```
+
+**Bisect session:**
+```
+$ git bisect start
+$ git bisect bad HEAD
+$ git bisect good v0.0.1
+Bisecting: 1 revision left to test after this (roughly 1 step)
+[f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+
+$ git bisect run sh -c 'cd app && go test ./... && go build ./...'
+running 'sh' '-c' 'cd app && go test ./... && go build ./...'
+--- FAIL: TestStore_PersistsAcrossReload (0.00s)
+    store_test.go:78: nextID not restored: got 1, want 2
+FAIL
+FAIL	quicknotes	0.008s
+FAIL
+Bisecting: 0 revisions left to test after this (roughly 0 steps)
+[cb89bb9ee2ee5010b166061447eaca3ae0da2378] docs(store): comment the load() decode step
+running 'sh' '-c' 'cd app && go test ./... && go build ./...'
+ok  	quicknotes	0.007s
+f285ede8611e55ac0a7d01100891c0cc775e0709 is the first bad commit
+commit f285ede8611e55ac0a7d01100891c0cc775e0709
+Author: Dmitrii Creed <creeed22@gmail.com>
+Date:   Fri Jun 5 13:36:56 2026 +0400
+
+    refactor(store): simplify nextID restoration in load()
+
+ app/store.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+bisect found first bad commit
+
+$ git bisect reset
+```
+
+**Full `git bisect log`:**
+```
+git bisect start
+# bad: [f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493] docs(app): mention go test invocation
+git bisect bad f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493
+# good: [0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7] chore(app): document versioning scheme (bisect fixture baseline)
+git bisect good 0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7
+# bad: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+git bisect bad f285ede8611e55ac0a7d01100891c0cc775e0709
+# good: [cb89bb9ee2ee5010b166061447eaca3ae0da2378] docs(store): comment the load() decode step
+git bisect good cb89bb9ee2ee5010b166061447eaca3ae0da2378
+# first bad commit: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+```
+
+---
+
+### B.3: The offending commit
+
+**SHA:** `f285ede8611e55ac0a7d01100891c0cc775e0709`  
+**Message:** `refactor(store): simplify nextID restoration in load()`
+
+**Diff:**
+```diff
+-		if n.ID >= s.nextID {
++		if n.ID > s.nextID {
+ 			s.nextID = n.ID + 1
+ 		}
+```
+
+**The bug:** changing `>=` to `>` means that when the store reloads from disk and the last saved ID equals `nextID` (the initial value of 0), the `nextID` is no longer updated. After reload, `nextID` stays at 1 instead of advancing past the highest existing ID, causing new notes to get ID 1 — colliding with an already-stored note. The test `TestStore_PersistsAcrossReload` catches this: it creates a note (ID=1), reloads, and expects `nextID=2`, but gets `1`.
+
+**How bisect found it in log₂(N) steps:**
+
+With 4 commits in the suspect range, bisect needs at most ⌈log₂(4)⌉ = 2 test rounds. In round 1 it checked the midpoint commit `f285ede` — tests failed → marked bad. In round 2 it checked the commit below that midpoint `cb89bb9` — tests passed → marked good. With bad and good adjacent, bisect concludes `f285ede` is the first bad commit. This binary search strategy guarantees at most ⌈log₂(N)⌉ test executions regardless of N, compared to O(N) for linear grep-based debugging.
