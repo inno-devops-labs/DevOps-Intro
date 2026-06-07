@@ -5,7 +5,7 @@
 ### The output of curl against /health, /notes, and POST /notes
 
 This screnshot shows the output of curl against the /health, /notes, and POST /notes endpoints:
-![curl output](../images/lab1/1.1-curl_output.png)
+![curl output](../images/lab1/1.1-curl_outputs.png)
 
 ### Output of git log --show-signature -1 showing Good signature
 
