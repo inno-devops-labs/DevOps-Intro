@@ -106,3 +106,24 @@ In open source, starring repositories plays a key role in helping projects get d
 
 Bonus task
 
+![alt text](image-1.png)
+
+```
+long1tail@Long1Tail:~/DevOps-Intro $ git push origin main
+Enter passphrase for key '/home/long1tail/.ssh/id_ed25519': 
+Перечисление объектов: 1, готово.
+Подсчет объектов: 100% (1/1), готово.
+Запись объектов: 100% (1/1), 458 bytes | 458.00 KiB/s, готово.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote: Review all repository rules at https://github.com/Long1Tail/DevOps-Intro/rules?ref=refs%2Fheads%2Fmain
+remote: 
+remote: - Changes must be made through a pull request.
+remote: 
+To github.com:Long1Tail/DevOps-Intro.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: не удалось отправить некоторые ссылки в «github.com:Long1Tail/DevOps-Intro.git»
+```
+
+If Knight Capital had implemented branch protection and mandatory commit signing on their production deployment branch, the 2012 automated release would have been stopped at the gate—unsigned or unapproved changes couldn’t have reached the release branch. The faulty code lingering on the eighth server would have triggered an immediate rejection. Moreover, any attempt to hot‑fix a live production server manually would have failed cryptographic verification and raised compliance flags. In short, these safeguards would have forced a consistent, automated CI/CD pipeline, likely catching the misconfiguration before any trading code went live.
+
