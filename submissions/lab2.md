@@ -181,3 +181,100 @@ Everything is back.
 **What if `git gc` had run between the bad reset and the recovery?**
 
 `git gc` prunes objects that are not reachable from any ref and are older than the grace period (default: 14 days for `gc.pruneExpire`, 30 days for reflog entries via `gc.reflogExpire`). In a standard local setup the reflog entries themselves protect the dangling commits for 30 days, so `gc` would not delete them — recovery would still work. However, in CI/CD environments or repos configured with aggressive GC settings (`gc.reflogExpire=now` or `gc.pruneExpire=now`), `git gc --prune=now` would permanently delete any commits unreachable from a ref, making recovery impossible without an external backup. The safe practice is: **capture the SHA from `git reflog` before experimenting with reset**, so you can restore even if gc has run.
+
+---
+
+## Task 2 — Tag a Release & Rebase a Feature
+
+### 2.1: Annotated, signed release tag
+
+```
+$ git switch main
+$ git pull --ff-only upstream main
+Already up to date.
+
+$ git tag -a -s "v0.1.0-lab2-tend" -m "Lab 2 milestone — version control deep dive"
+
+$ git push origin "v0.1.0-lab2-tend"
+To github.com:Ten-Do/DevOps-Intro.git
+ * [new tag]         v0.1.0-lab2-tend -> v0.1.0-lab2-tend
+```
+
+**Tag type verification:**
+```
+$ git tag -l --format='%(refname:short) %(objecttype) %(*objecttype)'
+v0.1.0-lab2-tend tag commit
+```
+
+`objecttype` is `tag` (an annotated tag object) and `*objecttype` is `commit` (the tagged commit) — confirming it is an annotated tag, not a lightweight one.
+
+**Signature verification:**
+```
+$ git tag -v "v0.1.0-lab2-tend"
+Good "git" signature for rybenko.urii@gmail.com with RSA key SHA256:5+QHMVYRnfNneCLqbLVqF/WRPbn4KvwSiMxoL/s2UkE
+object 3c777e89f7faf2a1552d0cf9b67d387039f3aeb3
+type commit
+tag v0.1.0-lab2-tend
+tagger yury <rybenko.urii@gmail.com> 1780834585 +0300
+
+Lab 2 milestone — version control deep dive
+```
+
+Signature is **Good** — SSH-signed with the configured key.
+
+---
+
+### 2.2: Rebase + force-with-lease
+
+**`git log --oneline --graph` BEFORE rebase** (feature/lab2 branched off `3c777e8`):
+```
+* e0fdd0b wip(lab2): more progress
+* 6fa362b wip(lab2): start
+* 3c777e8 Update pull_request_template.md
+* b26df80 docs: add PR template
+* 66bbd4d docs(lab1): align Task 3 GitHub Community engagement with other courses
+```
+
+**Simulating upstream move:**
+```
+$ git switch main
+$ git commit -S -s --allow-empty -m "docs: upstream moved while you worked"
+[main c4d4a97] docs: upstream moved while you worked
+
+$ git push origin main
+   3c777e8..c4d4a97  main -> main
+```
+
+**Rebase:**
+```
+$ git switch feature/lab2
+$ git fetch origin
+$ git rebase origin/main
+Rebasing (1/2)
+Rebasing (2/2)
+Successfully rebased and updated refs/heads/feature/lab2.
+```
+
+**`git log --oneline --graph` AFTER rebase** (feature/lab2 replayed on top of `c4d4a97`):
+```
+* 3a06aa5 wip(lab2): more progress
+* 854830c wip(lab2): start
+* c4d4a97 docs: upstream moved while you worked
+* 3c777e8 Update pull_request_template.md
+* b26df80 docs: add PR template
+* 66bbd4d docs(lab1): align Task 3 GitHub Community engagement with other courses
+```
+
+**Force-push:**
+```
+$ git push --force-with-lease origin feature/lab2
+ * [new branch]      feature/lab2 -> feature/lab2
+```
+
+---
+
+### 2.3: Merge vs Rebase reflection
+
+**Choose rebase when:** you own a feature branch that hasn't been shared with teammates (or everyone on the team knows to expect rewrites). Rebase produces a clean, linear history that is easy to `git bisect` and `git log` through. It's the right call before merging a short-lived feature branch into `main` in a project that enforces linear history.
+
+**Choose merge when:** the branch is shared / public — rewriting commits that others have based work on will cause diverging histories and force-push pain. Merge also preserves the exact context of *when* and *from where* integration happened, which can matter for audit trails or for long-running release branches that must accept hotfixes.
