@@ -1,3 +1,4 @@
+
 ## Goal
 <!-- What does this PR accomplish? 1 sentence. -->
 Complete lab 1 DevOps
