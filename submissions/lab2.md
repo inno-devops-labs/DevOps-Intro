@@ -291,3 +291,203 @@ nothing to commit, working tree clean
 The restore SHA was `3a32244` because it was the most recent lost commit, `wip(lab2): more progress`. Since that commit was created on top of `32d6bbd`, resetting to `3a32244` restored both lost Lab 2 commits.
 
 If `git gc` had run aggressively between the bad reset and the recovery, the unreachable commit objects could eventually have been pruned. In a normal local repository, reflog entries usually protect recent commits for a grace period, but that protection depends on Git's garbage collection settings. The safest recovery step is to copy the wanted reflog SHA immediately and restore it before experimenting further.
+
+## Task 2 - Tag a Release and Rebase a Feature
+
+### 2.1 Annotated, signed release tag
+
+Commands:
+
+```bash
+git switch main
+git pull --ff-only upstream main
+git tag -a -s "v0.1.0-lab2-${USER}" -m "Lab 2 milestone - version control deep dive"
+git push origin "v0.1.0-lab2-${USER}"
+```
+
+Output:
+
+```text
+Switched to branch 'main'
+Your branch is up to date with 'origin/main'.
+From https://github.com/inno-devops-labs/DevOps-Intro
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 417 bytes | 417.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0
+To github.com:software-engineering-toolkit/DevOps-Intro.git
+ * [new tag]         v0.1.0-lab2-mostafa -> v0.1.0-lab2-mostafa
+```
+
+Command:
+
+```bash
+git tag -l --format='%(refname:short) %(objecttype) %(*objecttype)'
+```
+
+Output:
+
+```text
+v0.0.1 tag commit
+v0.1.0-lab2-mostafa tag commit
+```
+
+The `v0.1.0-lab2-mostafa tag commit` line shows that the release tag is an annotated tag object that points to a commit.
+
+Command:
+
+```bash
+git tag -v "v0.1.0-lab2-${USER}"
+```
+
+Output:
+
+```text
+object fc232949952da1c22808b27a4daf4d765eae728b
+type commit
+tag v0.1.0-lab2-mostafa
+tagger Mostafa Kira <m.kira@innopolis.university> 1780910758 +0300
+
+Lab 2 milestone - version control deep dive
+Good "git" signature for m.kira@innopolis.university with ED25519 key SHA256:QT/alMbAtk5/wi2J6KpxQn16LgNmkOSTkeh/Q1al2QY
+```
+
+The `Good "git" signature` line confirms that the tag signature was valid.
+
+### 2.2 Rebase and force-with-lease
+
+Before rebase, I switched back to `feature/lab2` and captured the branch graph.
+
+Command:
+
+```bash
+git switch feature/lab2
+git log --oneline --graph --decorate --all -n 20
+```
+
+Output:
+
+```text
+Switched to branch 'feature/lab2'
+Your branch is up to date with 'origin/feature/lab2'.
+* 92c0af7 (HEAD -> feature/lab2, origin/feature/lab2) Solving task 1
+* 3a32244 wip(lab2): more progress
+* 32d6bbd wip(lab2): start
+* fc23294 (tag: v0.1.0-lab2-mostafa, origin/main, origin/HEAD, main) test: unsigned commit (should fail)
+*   e5e8d78 Merge branch 'main' of github.com:software-engineering-toolkit/DevOps-Intro
+|\
+| * f6c165b test: unsigned commit (should fail)
+* | ad4d525 test: unsigned commit (should fail)
+|/
+* 96bd289 docs: add PR template
+| * c002918 (origin/feature/lab1, feature/lab1) Updating lab file
+| * 6ee25e1 Updating images
+```
+
+Then I simulated `main` moving while the feature branch was in progress.
+
+Commands:
+
+```bash
+git switch main
+git commit -S -s --allow-empty -m "docs: upstream moved while you worked"
+git push origin main
+```
+
+Output:
+
+```text
+Switched to branch 'main'
+Your branch is up to date with 'origin/main'.
+[main 84a9832] docs: upstream moved while you worked
+
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 458 bytes | 458.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0
+To github.com:software-engineering-toolkit/DevOps-Intro.git
+   fc23294..84a9832  main -> main
+```
+
+After that, I rebased `feature/lab2` onto the updated `origin/main`.
+
+Commands:
+
+```bash
+git switch feature/lab2
+git fetch origin
+git rebase origin/main
+git status
+```
+
+Output:
+
+```text
+Switched to branch 'feature/lab2'
+Your branch is up to date with 'origin/feature/lab2'.
+Successfully rebased and updated refs/heads/feature/lab2.
+On branch feature/lab2
+Your branch and 'origin/feature/lab2' have diverged,
+and have 4 and 3 different commits each, respectively.
+  (use "git pull" if you want to integrate the remote branch with yours)
+
+nothing to commit, working tree clean
+```
+
+I also ran `git rebase --continue` afterward, but Git reported that there was no rebase left to continue because the rebase had already finished successfully.
+
+Command:
+
+```bash
+git rebase --continue
+```
+
+Output:
+
+```text
+fatal: No rebase in progress?
+```
+
+After rebase, I captured the branch graph again.
+
+Command:
+
+```bash
+git log --oneline --graph --decorate --all -n 20
+```
+
+Output:
+
+```text
+*   c427df8 (HEAD -> feature/lab2, origin/feature/lab2) Merge branch 'feature/lab2' of github.com:software-engineering-toolkit/DevOps-Intro into feature/lab2
+|\
+| * 92c0af7 Solving task 1
+| * 3a32244 wip(lab2): more progress
+| * 32d6bbd wip(lab2): start
+* | 9e9b286 Solving task 1
+* | c457fc0 wip(lab2): more progress
+* | b7dbc03 wip(lab2): start
+* | 84a9832 (origin/main, origin/HEAD, main) docs: upstream moved while you worked
+|/
+* fc23294 (tag: v0.1.0-lab2-mostafa) test: unsigned commit (should fail)
+```
+
+Finally, I pushed the feature branch with `--force-with-lease`.
+
+Command:
+
+```bash
+git push --force-with-lease origin feature/lab2
+```
+
+Output:
+
+```text
+Everything up-to-date
+```
+
+### 2.3 Merge vs rebase reflection
+
+I would choose rebase for a private feature branch when I want to replay my work on top of the latest `main` and keep the PR history easier to read. I would choose merge when the branch is shared with other people or when preserving the exact historical integration point is more important than a linear history. I would avoid rebasing commits that other people may already have based work on, because rewriting shared history can disrupt their branches.
