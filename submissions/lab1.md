@@ -4,16 +4,34 @@
 
 ### Output of curl against /health, /notes, and POST /notes
 
-```json
+#### /health
+
+Command:
+
+```bash
 curl -s http://localhost:8080/health | python3 -m json.tool
-curl -s http://localhost:8080/notes  | python3 -m json.tool
-curl -s -X POST http://localhost:8080/notes \
-  -H 'Content-Type: application/json' \
-  -d '{"title":"hello","body":"first POST"}' | python3 -m json.tool
+```
+
+Output:
+
+```json
 {
     "notes": 4,
     "status": "ok"
 }
+```
+
+#### /notes
+
+Command:
+
+```bash
+curl -s http://localhost:8080/notes | python3 -m json.tool
+```
+
+Output:
+
+```json
 [
     {
         "id": 1,
@@ -40,6 +58,21 @@ curl -s -X POST http://localhost:8080/notes \
         "created_at": "2026-01-15T10:15:00Z"
     }
 ]
+```
+
+#### POST /notes
+
+Command:
+
+```bash
+curl -s -X POST http://localhost:8080/notes \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"hello","body":"first POST"}' | python3 -m json.tool
+```
+
+Output:
+
+```json
 {
     "id": 5,
     "title": "hello",
@@ -69,6 +102,25 @@ I starred the required repositories and followed the professor, TAs, and at leas
 
 Stars help developers bookmark useful projects and show maintainers that their work is useful. Following developers helps track their public work, discover useful repositories, and build professional connections.
 
-## Bonus Task
+## Bonus — Branch Protection
+
+I enabled branch protection for the `main` branch in my fork with the following rules:
+
+- Require signed commits
+- Require a pull request before merging
+- Require linear history
+
+### Branch protection screenshot
+
 ![img_2.png](img_2.png)
 ![img_1.png](img_1.png)
+
+### Unsigned commit push rejection
+
+```text
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote: error: Commits must have verified signatures.
+```
+### Reflection
+
+Branch protection helps prevent unsafe changes from reaching important branches directly. Requiring signed commits ensures that changes can be linked to a verified cryptographic identity instead of only a Git name and email. Requiring pull requests and linear history makes the review process more explicit and keeps the project history easier to audit, which matters because incidents like Knight Capital showed how dangerous uncontrolled production changes can be.
