@@ -119,6 +119,38 @@ fatal: failed to write commit object
 
 ```
 
+I found out that this is because I use Windows, so I used this:
+
+```bash
+git commit --no-gpg-sign -s --allow-empty -m "test: unsigned commit (should fail)"
+```
+
+### Error
+
+```bash
+Enumerating objects: 2, done.
+Counting objects: 100% (2/2), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (2/2), 566 bytes | 566.00 KiB/s, done.
+Total 2 (delta 1), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (1/1), done.
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote: Review all repository rules at https://github.com/Mysteri0K1ng/DevOps-Intro/rules?ref=refs%2Fheads%2Fmain
+remote: 
+remote: - Changes must be made through a pull request.
+remote: 
+remote: - Commits must have verified signatures.
+remote:   Found 1 violation:
+remote: 
+remote:   f3c449b71f05345adc17eb0f2edc9a43ff076d15
+remote: 
+To github.com:Mysteri0K1ng/DevOps-Intro.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'github.com:Mysteri0K1ng/DevOps-Intro.git'
+
+```
+
 ### Knight Capital's deploy reflection
 
 With branch protection on the production deploy branch, Knight Capital’s release would likely have required review and approval before the code could reach production, making it harder for one missed manual step to cause a disaster. Required signing would also prove that every production change came from a trusted developer or deploy process, improving accountability and code provenance. If the old “Power Peg” code or the incomplete deployment had been caught during protected review/checks, the rogue server might never have gone live. Their deploy day would probably have been slower, but much safer: controlled, traceable, and easier to stop or roll back.
