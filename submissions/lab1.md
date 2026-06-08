@@ -144,3 +144,10 @@ GitHub successfully verified the commit signature and marked the commit as **Ver
 
 ![Verified Commit](screenshots/verified_commit.png)
 
+### 1.5 Make a Signed Commit
+
+Why Signed Commits Matter
+
+Signed commits provide cryptographic proof that a commit was created by the owner of a specific SSH key. This helps reviewers verify the identity of contributors and detect unauthorized or forged commits.
+
+The importance of commit verification was highlighted by the xz-utils supply-chain attack in March 2024, where an attacker gained trust in the project and introduced a malicious backdoor. Signed commits improve software supply-chain security by making the origin of changes easier to verify and audit.
