@@ -168,8 +168,51 @@ Starring repositories helps open-source projects gain visibility and shows appre
 
 ## BONUS
 
-### B1 task
+### B.1 Branch Protection
+
+I configured branch protection rules for the main branch in my fork.
+
+Enabled rules:
+Require signed commits
+Require a pull request before merging
+Require linear history
 
 ![Ruleset](screenshots/rule.png)
 
 
+### B.2 Attempt to Bypass Protection
+
+I created an unsigned commit and attempted to push it directly to the protected main branch.
+
+GitHub rejected the push with the following message:
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git -c commit.gpgsign=false commit --allow-empty -s -m "test: unsigned commit (should fail)"
+[main 666f982] test: unsigned commit (should fail)
+                                                                                                                                  
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git push origin main
+Enter passphrase for key '/home/p4in/.ssh/id_ed25519': 
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 230 bytes | 230.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote: Review all repository rules at https://github.com/Littlepr1nce/DevOps-Intro/rules?ref=refs%2Fheads%2Fmain
+remote: 
+remote: - Changes must be made through a pull request.
+remote: 
+remote: - Commits must have verified signatures.
+remote:   Found 1 violation:
+remote: 
+remote:   666f98251bab016f9a01d6a3697e6e68996bc3c4
+remote: 
+To github.com:Littlepr1nce/DevOps-Intro.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'github.com:Littlepr1nce/DevOps-Intro.git'
+```
+This confirms that the protection rules are working correctly.
+
+### B.3 Reflection
+
+Branch protection and required signed commits help ensure that only reviewed and verified changes reach critical branches. If similar controls had been enforced during the Knight Capital deployment incident, unauthorized or unreviewed code would have been much harder to deploy directly into production. Requiring pull requests introduces peer review, while signed commits provide accountability and traceability. Together these controls reduce the risk of operational mistakes and supply-chain attacks.
