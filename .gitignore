@@ -35,6 +35,8 @@ result-*
 *.tfstate.backup
 .terraform/
 
+docs
+
 # Python virtualenvs / caches
 .venv/
 __pycache__/
