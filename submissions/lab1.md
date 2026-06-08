@@ -166,6 +166,10 @@ Starring repositories helps open-source projects gain visibility and shows appre
 
 ![Follows](screenshots/follows.png)
 
+## BONUS
 
+### B1 task
+
+![Ruleset](screenshots/rule.png)
 
 
