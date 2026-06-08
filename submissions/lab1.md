@@ -62,3 +62,13 @@ Date:   Mon Jun 8 09:02:15 2026 +0300
 ### Why signed commits matter
 
 Signed commits matter because anyone can set any name and email in Git, so an unsigned commit does not prove who actually created it. A signed commit is a cryptographic proof that the commit was made by the holder of a specific key, which helps reviewers trust the source of changes. The xz-utils incident in March 2024 showed why this matters: an attacker maintained the project for years and introduced a backdoor that nearly compromised SSH on Linux systems.
+
+## GitHub Community
+
+I starred the required repositories and followed the professor, TAs, and at least three classmates.
+
+Stars help developers bookmark useful projects and show maintainers that their work is useful. Following developers helps track their public work, discover useful repositories, and build professional connections.
+
+## Bonus Task
+![img_2.png](img_2.png)
+![img_1.png](img_1.png)
