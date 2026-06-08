@@ -149,3 +149,23 @@ GitHub successfully verified the commit signature and marked the commit as **Ver
 Signed commits provide cryptographic proof that a commit was created by the owner of a specific SSH key. This helps reviewers verify the identity of contributors and detect unauthorized or forged commits.
 
 The importance of commit verification was highlighted by the xz-utils supply-chain attack in March 2024, where an attacker gained trust in the project and introduced a malicious backdoor. Signed commits improve software supply-chain security by making the origin of changes easier to verify and audit.
+
+
+## Task 2 - Pull Request Template & First PR
+
+I successfully made a pull request at the end of 2 tasks, just forgot about the third one, i closed it and finished it. 
+I add some text here to display it.
+
+## Task 3 - GitHub Community Engagement
+
+I starred the course repository and the simple-container-com/api project.
+I also followed the professor, teaching assistants, and 3 classmates.
+Starring repositories helps open-source projects gain visibility and shows appreciation for useful work. It also makes interesting projects easier to find later.
+
+![Stars](screenshots/stars.png)
+
+![Follows](screenshots/follows.png)
+
+
+
+
