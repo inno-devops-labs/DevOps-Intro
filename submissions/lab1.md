@@ -1,5 +1,7 @@
 "# Lab 1 submission" 
 
+# Task1
+
 ## 1.1 Curls output
 
 ### GET /health
@@ -97,11 +99,17 @@ Date:   Mon Jun 8 12:01:18 2026 +0300
 
 Signed commits help prove that a commit was really created by the claimed developer and was not forged by someone else. This matters because supply-chain attacks, like the xz-utils backdoor in March 2024, can happen when trust in maintainers or code history is abused. Signed commits improve code provenance: reviewers can better verify where changes came from and whether they were made by a trusted key.
 
+# Task 2
+
+# Task 3
+
 ## 3.3 A "GitHub Community" section
 
 Starring repositories matters in open source because it helps useful projects become more visible and signals that the community finds them valuable. Following developers helps in team projects and professional growth because it makes it easier to learn from others’ work, track good practices, and build connections in the software development community.
 
-## Bonus Task
+# Bonus Tasks
+
+## B.3
 
 ![ruleset1](../screenshots/lab1/ruleset1.png)
 ![ruleset2](../screenshots/lab1/ruleset2.png)
