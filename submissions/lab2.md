@@ -491,3 +491,109 @@ Everything up-to-date
 ### 2.3 Merge vs rebase reflection
 
 I would choose rebase for a private feature branch when I want to replay my work on top of the latest `main` and keep the PR history easier to read. I would choose merge when the branch is shared with other people or when preserving the exact historical integration point is more important than a linear history. I would avoid rebasing commits that other people may already have based work on, because rewriting shared history can disrupt their branches.
+
+## Bonus Task - Bisect a Real Bug
+
+### B.1 and B.2 Bisect setup and automated run
+
+Commands:
+
+```bash
+git bisect start
+git bisect bad HEAD
+git bisect good v0.0.1
+git bisect run sh -c 'cd app && go test ./... && go build ./...'
+```
+
+Output:
+
+```text
+status: waiting for both good and bad commits
+status: waiting for good commit(s), bad commit known
+Bisecting: 1 revision left to test after this (roughly 1 step)
+[f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+running 'sh' '-c' 'cd app && go test ./... && go build ./...'
+--- FAIL: TestStore_PersistsAcrossReload (0.00s)
+    store_test.go:78: nextID not restored: got 1, want 2
+FAIL
+FAIL    quicknotes      0.005s
+FAIL
+Bisecting: 0 revisions left to test after this (roughly 0 steps)
+[cb89bb9ee2ee5010b166061447eaca3ae0da2378] docs(store): comment the load() decode step
+running 'sh' '-c' 'cd app && go test ./... && go build ./...'
+ok      quicknotes      0.007s
+f285ede8611e55ac0a7d01100891c0cc775e0709 is the first bad commit
+commit f285ede8611e55ac0a7d01100891c0cc775e0709
+Author: Dmitrii Creed <creeed22@gmail.com>
+Date:   Fri Jun 5 13:36:56 2026 +0400
+
+    refactor(store): simplify nextID restoration in load()
+
+    Signed-off-by: Dmitrii Creed <creeed22@gmail.com>
+
+ app/store.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+bisect found first bad commit
+```
+
+### B.3 Bisect log
+
+Command:
+
+```bash
+git bisect log
+```
+
+Output:
+
+```text
+git bisect start
+# status: waiting for both good and bad commits
+# bad: [f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493] docs(app): mention go test invocation
+git bisect bad f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493
+# status: waiting for good commit(s), bad commit known
+# good: [0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7] chore(app): document versioning scheme (bisect fixture baseline)
+git bisect good 0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7
+# bad: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+git bisect bad f285ede8611e55ac0a7d01100891c0cc775e0709
+# good: [cb89bb9ee2ee5010b166061447eaca3ae0da2378] docs(store): comment the load() decode step
+git bisect good cb89bb9ee2ee5010b166061447eaca3ae0da2378
+# first bad commit: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+```
+
+### Offending commit
+
+The offending commit is:
+
+```text
+f285ede8611e55ac0a7d01100891c0cc775e0709 refactor(store): simplify nextID restoration in load()
+```
+
+The automated test failed at this commit with:
+
+```text
+store_test.go:78: nextID not restored: got 1, want 2
+```
+
+This shows that the bug is related to restoring `nextID` when the store is loaded again.
+
+### Bisect reset
+
+Command:
+
+```bash
+git bisect reset
+```
+
+Output:
+
+```text
+M       .gitignore
+Previous HEAD position was cb89bb9 docs(store): comment the load() decode step
+Switched to branch 'bisect-quickn'
+Your branch is up to date with 'upstream/bug/bisect-me'.
+```
+
+### Explanation
+
+Git bisect found the bug by keeping one known-good commit and one known-bad commit, then testing the commit in the middle of that range. After each test, Git marked the checked-out commit as either good or bad and discarded half of the remaining search space. This is why bisect takes about `log2(N)` steps instead of testing every commit one by one. In this run, Git only needed to test two commits to identify `f285ede8611e55ac0a7d01100891c0cc775e0709` as the first bad commit.
