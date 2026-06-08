@@ -4,7 +4,7 @@
 **Student:** T.R. Shekhmametyev
 
 ## Task 1 — SSH Commit Signing & First Signed Commit
-
+ 
 ### 1.1: Fork the Course Repository
 
 I forked the course repository to my personal GitHub account:
