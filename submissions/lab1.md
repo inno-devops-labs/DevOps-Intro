@@ -29,7 +29,7 @@ git log --show-signature -1
 ```
 
 ```text
-commit 680eaed3ea6101a16e9c8fadbd2b68f1b8d8e9f2
+commit 53b7a51
 Good "git" signature for foodgamesimple@mail.ru with ED25519 key SHA256:e1sAHFFYl4uOnpFOwThMC3M+fNgpvd5/MBZp5ekpbJc
 Author: IlyaPechersky <foodgamesimple@mail.ru>
 Date:   Mon Jun 8 19:34:55 2026 +0300
@@ -41,7 +41,7 @@ Date:   Mon Jun 8 19:34:55 2026 +0300
 
 I added a screenshot of the Verified badge on my signed commit:
 
-`https://github.com/IlyaPechersky/DevOps-Intro/commit/680eaed3ea6101a16e9c8fadbd2b68f1b8d8e9f2`
+`https://github.com/IlyaPechersky/DevOps-Intro/commit/53b7a51`
 
 ### Why signing matters
 
@@ -54,6 +54,8 @@ I added `.github/pull_request_template.md` on `main` in my fork before opening t
 ## Task 3 - GitHub Community
 
 I starred the course repository and `simple-container-com/api`. I also followed the professor, TAs, and classmates to track real project activity and learn from their workflows.
+
+Classmates followed: `rasulzhan`, `rinat-khaibullin`, `AmirkhanM`.
 
 ## Bonus - Branch Protection
 
