@@ -249,3 +249,152 @@ Verification:
 After the hard reset, the commits became unreachable. However, Git still retained them because they were referenced by the reflog. If aggressive garbage collection (`git gc`) had removed unreachable objects after the reflog entries expired, those commits could have been permanently deleted. In that situation recovery would become significantly more difficult or impossible.
 
 This task demonstrated that Git rarely deletes data immediately. Even after a destructive reset, previously reachable commits can often be recovered through the reflog. Understanding reflog recovery is one of the most important safety skills when working with Git.
+
+
+## Task 2 — Tags and Rebase
+
+### 2.1 Annotated Signed Tag
+
+I created an annotated and signed release tag:
+
+```bash                                                                                                  
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git pull --ff-only upstream main
+From https://github.com/inno-devops-labs/DevOps-Intro
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git tag -a -s "v0.1.0-lab2-p4in" -m "Lab 2 milestone — version control deep dive"
+Enter passphrase for "/home/p4in/.ssh/id_ed25519": 
+
+```
+The tag was pushed to GitHub:
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git push origin "v0.1.0-lab2-p4in"
+Enter passphrase for key '/home/p4in/.ssh/id_ed25519': 
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 426 bytes | 426.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To github.com:Littlepr1nce/DevOps-Intro.git
+ * [new tag]         v0.1.0-lab2-p4in -> v0.1.0-lab2-p4in
+```
+![Tag](screenshots/pushed_tag.png)
+
+Verification:
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git tag -l --format='%(refname:short) %(objecttype) %(*objecttype)'
+v0.0.1 tag commit
+v0.1.0-lab2-p4in tag commit
+```
+
+Signature verification:
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git tag -v "v0.1.0-lab2-p4in"
+object 9ebd9d302bd158506d7c009b96c4845da0b94925
+type commit
+tag v0.1.0-lab2-p4in
+tagger T. R. Shekhmametyev <ssssasaskfrjd@gmail.com> 1781036095 -0400
+
+Lab 2 milestone — version control deep dive
+Good "git" signature for ssssasaskfrjd@gmail.com with ED25519 key SHA256:i4koMK7Uh+hVaJ/BHiDLUKUHyOvpzeSvUpi4....
+```
+
+### Reflection
+
+Annotated tags are first-class Git objects that can store metadata, messages, and cryptographic signatures. Signed tags provide authenticity and are commonly used to mark release versions in CI/CD pipelines.
+
+---
+
+### 2.2 Rebase and Force-With-Lease
+
+Before rebase(only relevant text):
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git log --oneline --graph --decorate -10
+* 5e653d3 (HEAD -> feature/lab2, origin/feature/lab2) docs(lab2): complete task 1
+* 4772151 wip(lab2): more progress
+* 77f0a55 wip(lab2): start
+* 9ebd9d3 (tag: v0.1.0-lab2-p4in, origin/main, origin/HEAD, main) docs: add PR template 
+* 66bbd4d (upstream/main, upstream/HEAD) docs(lab1): align Task 3 GitHub Community engagement with other courses
+....
+```
+To simulate upstream progress, I created a new commit on main. Direct pushing to the protected main branch was rejected by GitHub branch protection rules configured during Lab 1. The rebase demonstration was therefore performed against the updated local main branch:
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git commit -S -s --allow-empty -m "docs: upstream moved while you worked"
+Enter passphrase for "/home/p4in/.ssh/id_ed25519": 
+[main 49607e8] docs: upstream moved while you worked
+                                                                                                                  
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git push origin main
+Enter passphrase for key '/home/p4in/.ssh/id_ed25519': 
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 459 bytes | 459.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote: Review all repository rules at https://github.com/Littlepr1nce/DevOps-Intro/rules?ref=refs%2Fheads%2Fmain
+remote: 
+remote: - Changes must be made through a pull request.
+remote: 
+To github.com:Littlepr1nce/DevOps-Intro.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'github.com:Littlepr1nce/DevOps-Intro.git'
+```
+Then I rebased the feature branch:
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git rebase main
+Enter passphrase for "/home/p4in/.ssh/id_ed25519": 
+Enter passphrase for "/home/p4in/.ssh/id_ed25519": 
+Enter passphrase for "/home/p4in/.ssh/id_ed25519": 
+Successfully rebased and updated refs/heads/feature/lab2.
+```
+After rebase:
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git log --oneline --graph --decorate -10
+* c0943f6 (HEAD -> feature/lab2) docs(lab2): complete task 1
+* c002069 wip(lab2): more progress
+* 60c284a wip(lab2): start
+* 49607e8 (main) docs: upstream moved while you worked
+* 9ebd9d3 (tag: v0.1.0-lab2-p4in, origin/main, origin/HEAD) docs: add PR template
+* 66bbd4d (upstream/main, upstream/HEAD) docs(lab1): align Task 3 GitHub Community engagement with other courses
+*   170000c Merge pull request #907 from inno-devops-labs/s26-refactor
+|\  .....
+```
+
+The commit messages remained the same, but all commit hashes changed because Git recreated the commits on top of a new parent commit.
+To update the remote branch, I used:
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git push --force-with-lease origin feature/lab2
+Enter passphrase for key '/home/p4in/.ssh/id_ed25519': 
+Enumerating objects: 16, done.
+Counting objects: 100% (16/16), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (10/10), done.
+Writing objects: 100% (15/15), 206.16 KiB | 1.42 MiB/s, done.
+Total 15 (delta 6), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (6/6), completed with 1 local object.
+To github.com:Littlepr1nce/DevOps-Intro.git
+ + 5e653d3...c0943f6 feature/lab2 -> feature/lab2 (forced update)
+```
+
+### Merge vs Rebase
+
+I would use merge when preserving the exact historical development process is important, especially on shared branches. 
+And I would use rebase when preparing a feature branch for integration because it creates a cleaner and more linear commit history. 
+Rebase should be used carefully because it rewrites commit history and changes commit hashes.
