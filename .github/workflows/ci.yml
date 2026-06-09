@@ -64,7 +64,7 @@ jobs:
           go-version: '1.24'
           cache: true
           cache-dependency-path: app/go.sum
-      - uses: golangci/golangci-lint-action@8564da7cb3c6866ed1da648ca8f00a258ef0c802  # v6.5.2
+      - uses: golangci/golangci-lint-action@7119f3d5ddced62a10a044847a6c6bb0f7a5e76a  # v7.0.0
         with:
           version: v2.5.0
           working-directory: app
