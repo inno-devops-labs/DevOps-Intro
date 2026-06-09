@@ -119,7 +119,14 @@
 ### Signature verification
 
 ```text
-<!-- paste: git log --show-signature -1 -->
+commit dbbf386a367e0a8f3ff5df48bfa92daa314e8f15
+Good "git" signature for mh2325132@gmail.com with ED25519 key SHA256:9OvCsi/f5zN9TWAVj8HsTQLZkJEnKjrkkQZZJi+BYe0
+Author: selysecr332 <mh2325132@gmail.com>
+Date:   Thu Jun 4 20:19:28 2026 +0300
+
+    docs(lab1): add QuickNotes curl output
+
+    Signed-off-by: selysecr332 <mh2325132@gmail.com>
 ```
 
 ### Verified badge
