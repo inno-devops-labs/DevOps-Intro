@@ -1,4 +1,6 @@
 #important work
+
+AND NOW I'M DID IN STUPID :)
 ```git rev-parse HEAD```
 
 66bbd4db9228bc9a4cab7439746b993749c026ab
@@ -77,3 +79,55 @@ feature/  main
 ```find .git/objects -type f | wc -l```
 
 29
+
+
+```git log --oneline```
+
+66bbd4d (HEAD -> feature/lab2, main) docs(lab1): align Task 3 GitHub Community engagement with other courses
+170000c Merge pull request #907 from inno-devops-labs/s26-refactor
+d50436c fix(lab12,gitignore): Spin SDK (WAGI removed in Spin 3.x); minimal student-safe gitignore
+4705a3d fix(.gitignore): stop ignoring submissions/
+4082340 docs(grading,lab11,lab12): bonus labs to 4+4+2; grading rebalanced to 70-14-5-20-30 = 139%
+7b16dc5 docs(lab10): switch deploy targets to card-free platforms — HF Spaces + Cloudflare Tunnel
+4a05efa docs(labs): scaffold the skill — labs 5-12 stop handing students copy-paste answers
+8387fb9 docs(lab3): scaffold the skill — students write their own CI yaml; GitLab as parallel path
+983fba0 docs(course): rewrite README + add .gitignore for project-threaded structure
+7914e37 docs(labs): refactor 12 labs to 6+4+2 (lab1) / 6+4+bonus (lab2-10) / 10pts (lab11-12)
+aa5aa1c docs(lectures): rewrite lec1-10 + add reading11/12 for project-threaded course
+b8fc480 feat(app): introduce QuickNotes Go service for project-threaded course
+6f044dd Replace IPFS with Nix
+0a87e1c refactor: reduce prescriptiveness in GitLab CI instructions
+eaea715 feat: add GitLab CI alternative instructions to lab3
+d6b6a03 Update lab2
+87810a0 feat: remove old Exam Exemption Policy
+1e1c32b feat: update structure
+6c27ee7 feat: publish lecs 9 & 10
+1826c36 feat: update lab7
+3049f08 feat: publish lec8
+da8f635 feat: introduce all labs and revised structure
+04b174e feat: publish lab and lec #5
+67f12f1 feat: publish labs 4&5, revise others
+82d1989 feat: publish lab3 and lec3
+3f80c83 feat: publish lec2
+499f2ba feat: publish lab2
+af0da89 feat: update lab1
+74a8c27 Publish lab1
+f0485c0 Publish lec1
+31dd11b Publish README.md
+
+```git reflog```
+
+66bbd4d (HEAD -> feature/lab2, main) HEAD@{0}: reset: moving to HEAD~2
+03cdb25 HEAD@{1}: commit: lab1
+9a2873e HEAD@{2}: commit: wip(lab2): Work progress
+66bbd4d (HEAD -> feature/lab2, main) HEAD@{3}: checkout: moving from main to feature/lab2
+66bbd4d (HEAD -> feature/lab2, main) HEAD@{4}: checkout: moving from feature/lab1 to main
+dce058f (feature/lab1) HEAD@{5}: checkout: moving from main to feature/lab1
+66bbd4d (HEAD -> feature/lab2, main) HEAD@{6}: checkout: moving from feature/lab1 to main
+dce058f (feature/lab1) HEAD@{7}: commit: docs(lab1): start submission
+66bbd4d (HEAD -> feature/lab2, main) HEAD@{8}: checkout: moving from main to feature/lab1
+66bbd4d (HEAD -> feature/lab2, main) HEAD@{9}: clone: from https://github.com/sovva6-14/DevOps-Intro.git
+
+```git reset --hard 9a2873e```
+
+HEAD is now at 9a2873e wip(lab2): Work progress
