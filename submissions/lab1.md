@@ -260,7 +260,10 @@ I already solved 3 tasks, the only one left is
 
 > A 2-3 sentence explanation: *why* signed commits matter (referencing the xz-utils March 2024 story from Lecture 1)
 
-TODO
+Signed commits matter because they cryptographically prove that a change really came from a specific developer account,
+preventing simple impersonation attacks. The March 2024 xz‑utils backdoor, where a malicious maintainer (Jia Tan) pushed
+harmful code under their own name, shows that signatures alone don't stop a compromised insider but they do ensure that
+any tampering or forgery by outsiders is immediately detectable.
 
 ## Task 2 — Pull Request Template & First PR (3 pts)
 
@@ -333,4 +336,33 @@ no changes added to commit (use "git add" and/or "git commit -a")
 
 Opening PR results in:
 
-TODO
+![Pull request creation](artifacts/lab1/03-pull-request-creation.png)
+
+![Pull request template](artifacts/lab1/04-pull-request-template.png)
+
+## Task 3 — GitHub Community Engagement (1 pt)
+
+### Following people and starring repositories
+
+1. Starred the course repository
+2. Starred the [simple-container-com/api](https://github.com/simple-container-com/api) project
+3. Followed professor and TAs
+4. Followed [markovav-official](https://github.com/markovav-official), [RoukayaZaki](https://github.com/RoukayaZaki)
+   and [Dnau15](https://github.com/Dnau15)
+
+### GitHub Community
+
+Starring repositories matters in open source because it signals community interest, helping maintainers gauge impact and
+prioritize work, while also creating a personal bookmark list for future reference. Following developers supports team
+projects by keeping you updated on their activity and contributions, and fuels professional growth by exposing you to
+their best practices, tools, and collaborative patterns.
+
+## Bonus Task — Branch Protection & Required Signed Commits (2 pts)
+
+### B.1: Configure branch protection on `main`
+
+On GitHub (Settings → Branches → Add rule for `main`):
+
+- [x] **Require signed commits**
+- [x] **Require a pull request before merging**
+- [x] **Require linear history**
