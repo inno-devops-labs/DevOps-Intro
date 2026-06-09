@@ -5,28 +5,40 @@ more important work
 
 ## 1.1  Explore your repo's plumbing
 
+Command:
+
 ```bash
 git rev-parse HEAD
 ```
+
+Output:
 
 ```bash
 f3c449b71f05345adc17eb0f2edc9a43ff076d15
 
 ```
 
+Command:
+
 ```bash
 git cat-file -t HEAD
 ```
+
+Output:
 
 ```bash
 commit
 
 ```
 
+Command:
+
 ```bash
 git cat-file -p HEAD
 
 ```
+
+Output:
 
 ```bash
 tree b2fe0c7c5e1b86c2995fdccb8e8b18e8a19fd322
@@ -41,9 +53,13 @@ Signed-off-by: Nikita Schankin <nikita.sshankin@gmail.com>
 
 ```
 
+Command:
+
 ```bash
 git cat-file -p b2fe0c7c5e1b86c2995fdccb8e8b18e8a19fd322
 ```
+
+Output:
 
 ```bash
 040000 tree 1d07791eee3c3dd0955a02402b05b3a357816d8d    .github
@@ -55,9 +71,13 @@ git cat-file -p b2fe0c7c5e1b86c2995fdccb8e8b18e8a19fd322
 
 ```
 
+Command:
+
 ```bash
 git cat-file -p 1c0a1e94b7bbdd951f456cda51af6b8484cc3cee
 ```
+
+Output:
 
 ```bash
  ⚠️  KEEP THIS FILE MINIMAL.
@@ -128,9 +148,13 @@ Thumbs.db
 
 ## 1.2 Look inside .git/
 
+Command:
+
 ```bash
 ls -la .git/ 
 ```
+
+Output:
 
 ```bash
 total 33
@@ -151,27 +175,39 @@ drwxr-xr-x 1 user 197121    0 Jun  7 23:14 refs/
 
 ```
 
+Command:
+
 ```bash
 cat .git/HEAD
 ```
+
+Output:
 
 ```bash
 ref: refs/heads/main
 
 ```
 
+Command:
+
 ```bash
 ls .git/refs/heads/
 ```
+
+Output:
 
 ```bash
 feature/  main
 
 ```
 
+Command:
+
 ```bash
 ls .git/objects/ | head
 ```
+
+Output:
 
 ```bash
 02/
@@ -187,9 +223,13 @@ ls .git/objects/ | head
 
 ```
 
+Command:
+
 ```bash
 find .git/objects -type f | wc -l
 ```
+
+Output:
 
 ```bash
 62
@@ -198,9 +238,13 @@ find .git/objects -type f | wc -l
 
 ## 1.3  Simulate disaster + recover
 
+Command:
+
 ```bash
 git reflog
 ```
+
+Output:
 
 ```bash
 f3c449b (HEAD -> feature/lab2, main) HEAD@{0}: reset: moving to HEAD~2
@@ -211,18 +255,26 @@ f3c449b (HEAD -> feature/lab2, main) HEAD@{4}: checkout: moving from feature/lab
 
 ```
 
+Command:
+
 ```bash
 git reset --hard 0a54263
 ```
+
+Output:
 
 ```bash
 HEAD is now at 0a54263 wip(lab2): start
 
 ```
 
+Command:
+
 ```bash
 git reset --hard e4b9102
 ```
+
+Output:
 
 ```bash
 HEAD is now at e4b9102 wip(lab2): more progress
@@ -233,27 +285,60 @@ If `git gc` had run after the bad reset, Git might eventually remove unreachable
 
 # Task 2
 
+## 2.1: Annotated, signed release tag
+
 ```bash
+git tag -v "v0.1.0-lab2-${USER}"
+```
+
+The signed tag verification output
+
+```bash
+object 0dcb25a68121f24c281348d724106ead11d1bf8d
+type commit
+tag v0.1.0-lab2-
+tagger Nikita Schankin <nikita.sshankin@gmail.com> 1781014173 +0300
+
+Lab 2 milestone — version control deep dive
+Good "git" signature for nikita.sshankin@gmail.com with ED25519 key SHA256:YmuqnukZ7Vv/dkS/udvYvJErhfCYImVdz+nMrsHdP/s
 
 ```
 
+## 2.2 Rebase + force-with-lease
+
+Before:
+
 ```bash
+* 745403f docs(lab2): start submission
+* e4b9102 wip(lab2): more progress
+* 0a54263 wip(lab2): start
+* f3c449b test: unsigned commit (should fail)
+* 027e77b test: signed commit (should not fail)
+* 0dcb25a (tag: v0.1.0-lab2-) docs: add PR template
+:...skipping...
+* 745403f docs(lab2): start submission
+* e4b9102 wip(lab2): more progress
+* 0a54263 wip(lab2): start
 
 ```
 
+After:
+
 ```bash
+* b91b8d4 (HEAD -> feature/lab2, origin/feature/lab2) docs(lab2): start submission
+* 9207a96 wip(lab2): more progress
+* 2da67d2 wip(lab2): start
+* aa19fea test: unsigned commit (should fail)
+* 92fa1a4 test: signed commit (should not fail)
+* 88bdfab (origin/main, origin/HEAD, main) docs: upstream moved while you worked
+* 0dcb25a (tag: v0.1.0-lab2-) docs: add PR template
+* 66bbd4d (upstream/main, upstream/HEAD) docs(lab1): align Task 3 GitHub Community engagement with other courses
+*   170000c Merge pull request #907 from inno-devops-labs/s26-refactor
+|\  
+| * d50436c (upstream/s26-refactor) fix(lab12,gitignore): Spin SDK
 
 ```
 
-```bash
+## 2.3: Document
 
-```
-
-```bash
-
-```
-
-```bash
-
-```
-
+I would choose **merge** when working on a shared branch or when I want to preserve the exact history of how branches were combined. I would choose **rebase** for my own feature branch before opening a PR, because it makes the history cleaner and easier to review. In team projects, I would avoid rebasing commits that other people already use, because rewriting shared history can create confusion.
