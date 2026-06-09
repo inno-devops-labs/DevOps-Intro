@@ -311,3 +311,26 @@ Your branch is up to date with 'origin/feature/lab1'.
 
 ### 2.2: Open the Lab PR
 
+```
+❯ git switch feature/lab1
+Switched to branch 'feature/lab1'
+Your branch is up to date with 'origin/feature/lab1'.
+❯ gst
+On branch feature/lab1
+Your branch is up to date with 'origin/feature/lab1'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   submissions/lab1.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+❯ git add submissions/lab1.md
+❯ git commit -S -s -m "docs(lab1): finish second task"
+[feature/lab1 6a218d7] docs(lab1): finish second task
+ 1 file changed, 48 insertions(+)
+```
+
+Opening PR results in:
+
+TODO
