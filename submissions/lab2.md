@@ -342,3 +342,32 @@ After:
 ## 2.3: Document
 
 I would choose **merge** when working on a shared branch or when I want to preserve the exact history of how branches were combined. I would choose **rebase** for my own feature branch before opening a PR, because it makes the history cleaner and easier to review. In team projects, I would avoid rebasing commits that other people already use, because rewriting shared history can create confusion.
+
+# Bonus task
+
+## git bisect log
+
+```bash
+git bisect start
+# status: waiting for both good and bad commits
+# bad: [f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493] docs(app): mention go test invocation
+git bisect bad f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493
+# status: waiting for good commit(s), bad commit known
+# good: [0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7] chore(app): document versioning scheme (bisect fixture baseline)
+git bisect good 0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7
+# bad: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+git bisect bad f285ede8611e55ac0a7d01100891c0cc775e0709
+# good: [cb89bb9ee2ee5010b166061447eaca3ae0da2378] docs(store): comment the load() decode step
+git bisect good cb89bb9ee2ee5010b166061447eaca3ae0da2378
+# first bad commit: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+```
+
+## The offending commit's SHA + message
+
+```bash
+[f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+```
+
+## Explanation
+
+Git bisect found the bug by starting with one known bad commit (HEAD) and one known good commit (v0.0.1). It then checked commits in the middle of that range and used the test command to decide whether each commit was good or bad. Because bisect uses binary search, it only needed about log₂(N) steps instead of testing every commit manually. In this case, it identified f285ede8611e55ac0a7d01100891c0cc775e0709 as the first commit where the QuickNotes store reload test started failing.
