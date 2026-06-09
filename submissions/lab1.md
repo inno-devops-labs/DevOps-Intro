@@ -139,12 +139,35 @@ Starring repositories helps bookmark useful projects for later and signals commu
 
 ### Branch protection rule
 
-<!-- Screenshots to be added -->
+Created ruleset **main protection** on fork `main` with:
+
+- Require a pull request before merging
+- Require signed commits
+- Require linear history
+
+![branch protection ruleset](branch-ruleset-1.png)
+
+![branch protection ruleset details](branch-ruleset-2.png)
 
 ### Unsigned push rejection
 
-<!-- Rejection output to be added -->
+```
+$ git push origin main
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote: Review all repository rules at https://github.com/Hidancloud/DevOps-Intro/rules?ref=refs%2Fheads%2Fmain
+remote:
+remote: - Changes must be made through a pull request.
+remote:
+remote: - Commits must have verified signatures.
+remote:   Found 1 violation:
+remote:
+remote:   d085da79b2f802fa568fde937fcdaa24d2323765
+remote:
+To github.com:Hidancloud/DevOps-Intro.git
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'github.com:Hidancloud/DevOps-Intro.git'
+```
 
 ### Reflection
 
-<!-- Reflection to be added -->
+Knight Capital's 2012 incident happened partly because a manual deploy missed one of eight production servers, leaving stale trading code running for 45 minutes and causing a $440M loss. With branch protection and required signed commits on a production deploy branch, every change would have to go through a reviewed PR, and only cryptographically verified commits could merge — reducing the chance of unaudited or impersonated code reaching production. Linear history would also make it clearer exactly what was deployed and when, instead of relying on ad-hoc manual checklists across multiple servers.
