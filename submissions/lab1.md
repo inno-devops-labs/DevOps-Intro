@@ -91,12 +91,12 @@ Signed commits let reviewers verify that a change really came from the claimed a
 ### Local signature verification
 
 ```text
-commit d3fd030427df3f6c4d77b6731c43cf3312d563bb
+commit db1cf28aaa4cb7bfec40cf8b52716c003e3254bc
 Good "git" signature for irina.bychkova06@mail.ru with ED25519 key SHA256:0QziAHQZeFYu2R3UOly0My2Bl/aGmRK46bdyePgznWM
 Author: Irina <irina.bychkova06@mail.ru>
-Date:   Tue Jun 9 09:26:33 2026 +0300
+Date:   Tue Jun 9 09:30:54 2026 +0300
 
-    docs(lab1): finish submission
+    docs(lab1): refresh signature evidence
 
     Signed-off-by: Irina <irina.bychkova06@mail.ru>
 ```
@@ -117,7 +117,7 @@ Community actions completed:
 
 - [ ] Starred `inno-devops-labs/DevOps-Intro`
 - [ ] Starred `simple-container-com/api`
-- [ ] Followed `@Cre-eD`
-- [ ] Followed `@Naghme98`
-- [ ] Followed `@pierrepicaud`
-- [ ] Followed at least 3 classmates
+- [x] Followed `@Cre-eD`
+- [x] Followed `@Naghme98`
+- [x] Followed `@pierrepicaud`
+- [x] Followed at least 3 classmates
