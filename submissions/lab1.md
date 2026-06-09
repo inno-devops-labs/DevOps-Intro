@@ -185,3 +185,59 @@ error: failed to push some refs to 'https://github.com/selysecr332/DevOps-Intro.
 ### Reflection
 
 On Knight Capital's deploy day (August 2012), a manual release missed one of eight servers and left dead code running in production — within 45 minutes that caused $440M in losses. If their production deploy branch had required signed commits, every change would need a verifiable author key, making unauthorized or mistaken pushes harder to land silently. Requiring pull requests and linear history would have forced review and a clear audit trail before code reached prod, instead of a rushed manual push at market open. Branch protection does not replace testing or rollback, but it adds guardrails that slow down exactly the kind of "one server got skipped" failure mode that destroyed the company.
+
+---
+
+## Lab 1 completion checklist
+
+### Setup & prerequisites
+
+- [x] Forked `inno-devops-labs/DevOps-Intro` → `selysecr332/DevOps-Intro`
+- [x] Cloned fork locally; `upstream` remote configured
+- [x] Go 1.24+ installed; QuickNotes runs from `app/`
+- [x] SSH key created; Git signing configured (`gpg.format ssh`, `commit.gpgsign`)
+- [x] SSH key added on GitHub as **Signing Key**
+- [x] Branch `feature/lab1` created; all lab commits signed
+
+### Task 1 — SSH signing + QuickNotes (6 pts)
+
+- [x] `GET /health` output captured
+- [x] `GET /notes` output captured
+- [x] `POST /notes` output captured
+- [x] `GET /notes` after POST captured
+- [x] `git log --show-signature -1` shows **Good "git" signature**
+- [x] Verified badge screenshot (`screenshots/Lab_1/lab1-verified.png`)
+- [x] Explanation of why signed commits matter (xz-utils, March 2024)
+
+### Task 2 — PR template + first PR (3 pts)
+
+- [x] `.github/pull_request_template.md` on fork `main`
+- [x] PR description filled; checklist ticked on GitHub
+- [x] Course PR: https://github.com/inno-devops-labs/DevOps-Intro/pull/974
+- [x] Fork PR: https://github.com/selysecr332/DevOps-Intro/pull/1
+- [x] PR contains only Lab 1 work on branch `feature/lab1`
+
+### Task 3 — GitHub community (1 pt)
+
+- [x] Starred `inno-devops-labs/DevOps-Intro`
+- [x] Starred `simple-container-com/api`
+- [x] Following @Cre-eD, @Naghme98, @pierrepicaud
+- [x] Following 3+ classmates
+- [x] GitHub Community section written
+
+### Bonus — Branch protection (2 pts)
+
+- [x] Ruleset **Active** on fork `main` (targets `main`)
+- [x] Require signed commits enabled
+- [x] Require a pull request before merging enabled
+- [x] Require linear history enabled
+- [x] Branch protection screenshots (`bones_1.png`, `bones_2.png`)
+- [x] Unsigned push rejected; `remote: error:` output captured
+- [x] Knight Capital reflection (3–4 sentences)
+
+### Submission
+
+- [x] `submissions/lab1.md` includes Task 1, Task 2, Task 3, and Bonus sections
+- [x] All commits on PR show **Verified** on GitHub
+- [x] Pushed to `origin/feature/lab1`
+- [x] Both PR URLs submitted on Moodle
