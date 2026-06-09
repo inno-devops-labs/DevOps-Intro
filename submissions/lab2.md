@@ -131,3 +131,30 @@ dce058f (feature/lab1) HEAD@{7}: commit: docs(lab1): start submission
 ```git reset --hard 9a2873e```
 
 HEAD is now at 9a2873e wip(lab2): Work progress
+
+```git push origin "v0.1.0-lab2-Sovva"```
+
+
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 420 bytes | 420.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+To https://github.com/sovva6-14/DevOps-Intro.git
+ * [new tag]         v0.1.0-lab2-Sovva -> v0.1.0-lab2-Sovva
+
+ ```git commit -S -s --allow-empty -m "docs: upstream moved while you worked"```
+
+[feature/lab2 04b5e86] docs: upstream moved while you worked
+
+
+```git push --force-with-lease origin feature/lab2```
+
+Enumerating objects: 14, done.
+Counting objects: 100% (14/14), done.
+Delta compression using up to 20 threads
+Compressing objects: 100% (10/10), done.
+Writing objects: 100% (13/13), 3.95 KiB | 3.96 MiB/s, done.
+Total 13 (delta 7), reused 6 (delta 1), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (7/7), completed with 1 local object.
+To https://github.com/sovva6-14/DevOps-Intro.git
+ + be131f7...04b5e86 feature/lab2 -> feature/lab2 (forced update)
