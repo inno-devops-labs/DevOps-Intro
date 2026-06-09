@@ -141,15 +141,16 @@ In March 2024, a malicious backdoor was discovered in xz-utils after an attacker
 
 ## Task 2 — PR template + first PR
 
-- PR URL: https://github.com/inno-devops-labs/DevOps-Intro/pull/974
+- Course PR: https://github.com/inno-devops-labs/DevOps-Intro/pull/974
+- Fork PR: https://github.com/selysecr332/DevOps-Intro/pull/1
 
 ---
 
 ## Task 3 — GitHub community
 
-- [ ] Starred course repo + simple-container-com/api
-- [ ] Following @Cre-eD, @Naghme98, @pierrepicaud + 3 classmates
+- [x] Starred course repo (`inno-devops-labs/DevOps-Intro`) + `simple-container-com/api`
+- [x] Following @Cre-eD, @Naghme98, @pierrepicaud + 3 classmates
 
 ### Why stars and follows matter
 
-<!-- your text -->
+Starring repositories bookmarks useful projects and signals community interest — it helps maintainers gain visibility and lets you quickly return to tools you may use later (like the course repo or `simple-container-com/api` for container work). Following developers on GitHub surfaces their activity in your feed, which makes it easier to discover projects, stay aligned with classmates' work, and build professional connections beyond the classroom.
