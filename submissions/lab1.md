@@ -199,6 +199,67 @@ After rebuilding the system here are the contents of `~/.config/git/config`
 
 I added the key to github
 
-![01-signed-key.png](images/lab1/01-signed-key.png)
+![Signed key](artifacts/lab1/01-signed-key.png)
 
 ### 1.4: Make a Signed Commit
+
+```
+❯ git switch -c feature/lab1
+Switched to a new branch 'feature/lab1'
+❯ mkdir -p submissions
+❯ echo "# Lab 1 submission" >> submissions/lab1.md
+❯ git add submissions/lab1.md
+❯ git commit -S -s -m "docs(lab1): start submission"
+[feature/lab1 acbe658] docs(lab1): start submission
+ 2 files changed, 204 insertions(+)
+ create mode 100644 submissions/images/lab1/01-signed-key.png
+ create mode 100644 submissions/lab1.md
+ ```
+
+Verify the signature locally:
+
+```
+❯ git log --show-signature -1
+commit f4da2c5327a14702e8226cc6ae7486f83c47f952 (HEAD -> feature/lab1, origin/feature/lab1)
+Good "git" signature for moflotas@gmail.com with ED25519 key SHA256:6hKFeqrCJq0NXQPLg/sXIujngtmzGmCxKX8u8PPtB6c
+Author: Timofey Sedov <moflotas@gmail.com>
+Date:   Tue Jun 9 22:58:39 2026 +0300
+
+    docs(lab1): start submission
+    
+    Signed-off-by: Timofey Sedov <moflotas@gmail.com>
+```
+
+Pushing to branch:
+
+```
+❯ git push -u origin feature/lab1
+Enumerating objects: 8, done.
+Counting objects: 100% (8/8), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (5/5), done.
+Writing objects: 100% (7/7), 52.48 KiB | 26.24 MiB/s, done.
+Total 7 (delta 1), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (1/1), completed with 1 local object.
+remote: 
+remote: Create a pull request for 'feature/lab1' on GitHub by visiting:
+remote:      https://github.com/moflotas/DevOps-Intro/pull/new/feature/lab1
+remote: 
+To github.com:moflotas/DevOps-Intro.git
+ * [new branch]      feature/lab1 -> feature/lab1
+branch 'feature/lab1' set up to track 'origin/feature/lab1'.
+```
+
+Verified commit
+
+![Signed commit](artifacts/lab1/02-signed-commit.png)
+
+### 1.5: Document in `submissions/lab1.md`
+
+I already solved 3 tasks, the only one left is
+
+> A 2-3 sentence explanation: *why* signed commits matter (referencing the xz-utils March 2024 story from Lecture 1)
+
+TODO
+
+## Task 2 — Pull Request Template & First PR (3 pts)
