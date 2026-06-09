@@ -100,3 +100,24 @@ Date:   Tue Jun 9 09:22:52 2026 +0300
 
     Signed-off-by: Irina <irina.bychkova06@mail.ru>
 ```
+
+Screenshot of the Verified badge: add after pushing the signed commit to GitHub.
+
+## Task 2 — Pull request template
+
+The pull request template was added on the `main` branch at `.github/pull_request_template.md`. It contains sections for the goal, changes, testing, and a checklist for title quality, signed commits, and the lab submission file.
+
+After opening the PR from `feature/lab1` to the course repository's `main`, the PR description should auto-populate with the template. Screenshot or PR URL: add after opening the PR.
+
+## Task 3 — GitHub Community
+
+Starring repositories matters because stars help bookmark useful projects, signal community interest, and give maintainers visibility. Following developers helps in team projects because it makes classmates' and instructors' work easier to discover, and it supports professional growth through exposure to real engineering activity.
+
+Community actions completed:
+
+- [ ] Starred `inno-devops-labs/DevOps-Intro`
+- [ ] Starred `simple-container-com/api`
+- [ ] Followed `@Cre-eD`
+- [ ] Followed `@Naghme98`
+- [ ] Followed `@pierrepicaud`
+- [ ] Followed at least 3 classmates
