@@ -85,4 +85,9 @@ Date:   Fri Jun 5 14:03:50 2026 +0300
 
 When we work with Github we trust that commit made by Dmitrii was actually made by Dmitrii. However Git itself does not verify commit's author. Anyone can set any name and make a commit, therefore we want commits to be verified.
 
-### Task 2
+### GitHub Community
+Why starring repositories matters in open source
+For a project, stars are a signal of trust and relevance. Moreover, starring is something like bookmarking a repository.
+
+How following developers helps in team projects and professional growth
+Following your colleagues on GitHub gives you a low-noise feed of their activity 
