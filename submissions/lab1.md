@@ -141,7 +141,7 @@ In March 2024, a malicious backdoor was discovered in xz-utils after an attacker
 
 ## Task 2 — PR template + first PR
 
-- PR URL: <!-- paste after opening PR -->
+- PR URL: https://github.com/inno-devops-labs/DevOps-Intro/pull/974
 
 ---
 
