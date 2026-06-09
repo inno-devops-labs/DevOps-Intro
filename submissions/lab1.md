@@ -91,12 +91,12 @@ Signed commits let reviewers verify that a change really came from the claimed a
 ### Local signature verification
 
 ```text
-commit 036fdc2e020f08d657f678fcd76a8eda8f6de31a
+commit d3fd030427df3f6c4d77b6731c43cf3312d563bb
 Good "git" signature for irina.bychkova06@mail.ru with ED25519 key SHA256:0QziAHQZeFYu2R3UOly0My2Bl/aGmRK46bdyePgznWM
 Author: Irina <irina.bychkova06@mail.ru>
-Date:   Tue Jun 9 09:22:52 2026 +0300
+Date:   Tue Jun 9 09:26:33 2026 +0300
 
-    docs(lab1): start submission
+    docs(lab1): finish submission
 
     Signed-off-by: Irina <irina.bychkova06@mail.ru>
 ```
