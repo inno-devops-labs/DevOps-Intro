@@ -1,6 +1,5 @@
 #important work
 
-AND NOW I'M DID IN STUPID :)
 ```git rev-parse HEAD```
 
 66bbd4db9228bc9a4cab7439746b993749c026ab
