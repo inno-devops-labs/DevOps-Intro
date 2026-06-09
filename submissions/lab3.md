@@ -245,4 +245,30 @@ This means a PR cannot be merged into `main` unless the CI pipeline passes and t
 
 ## Bonus Task — Pipeline Performance Investigation
 
-To be completed after collecting CI timing data.
+### Performance target
+
+The target was to keep PR feedback under 90 seconds. The measured optimized run completed in about 29 seconds wall-clock time, so the pipeline is comfortably within the target.
+
+### Optimizations used
+
+The pipeline uses more than three optimizations:
+
+1. Independent parallel jobs for `vet`, `test`, and `lint`.
+2. Go dependency caching through `actions/setup-go`.
+3. A Go version matrix for `vet` and `test`, covering Go 1.23 and Go 1.24.
+4. `fail-fast: false`, so all matrix results are collected even if one version fails.
+5. Path filters, so documentation-only or unrelated changes do not trigger application CI.
+6. Full SHA pinning for third-party actions, reducing supply-chain risk and making CI behavior more reproducible.
+7. Least-privilege `GITHUB_TOKEN` permissions using `contents: read`.
+
+### Bottleneck analysis
+
+The measured check times were:
+
+    lint: 25s
+    test-go-1.23: 29s
+    test-go-1.24: 27s
+    vet-go-1.23: 22s
+    vet-go-1.24: 23s
+
+The slowest job was `test-go-1.23` at 29 seconds. Because the jobs run in parallel, this slowest job determines the overall feedback time.
