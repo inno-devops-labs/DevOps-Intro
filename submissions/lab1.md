@@ -131,11 +131,11 @@ Date:   Thu Jun 4 20:19:28 2026 +0300
 
 ### Verified badge
 
-![Verified badge](screenshots/lab1-verified.png)
+![Verified badge](screenshots/Lab_1/commit%20fca0ee2.png)
 
 ### Why signed commits matter
 
-<!-- 2–3 sentences: xz-utils March 2024 -->
+In March 2024, a malicious backdoor was discovered in xz-utils after an attacker gained maintainer trust over months. Signed commits let reviewers verify that a change really came from a specific key holder, making supply-chain impersonation much harder. They do not replace code review, but they add cryptographic proof of who authored each commit.
 
 ---
 
