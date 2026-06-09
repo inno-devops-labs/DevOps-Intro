@@ -169,7 +169,44 @@ A malicious pull request could try to write dangerous or corrupted cache content
 
 ## Task 1.5 — Failure and Fix Evidence
 
-To be completed after intentionally breaking a test and restoring it.
+I intentionally broke the test suite in commit:
+
+    e7f828c test(lab3): demonstrate failing PR gate
+
+The failing change modified `app/handlers_test.go` so that `TestCreateNote_RoundTrip` failed even though the application returned HTTP 201.
+
+Local failure output:
+
+    --- FAIL: TestCreateNote_RoundTrip (0.00s)
+        handlers_test.go:64: expected 201, got 201
+    FAIL
+    FAIL    quicknotes      0.020s
+
+On the fork pull request, GitHub Actions showed:
+
+    Some checks were not successful
+    2 failing, 3 successful checks
+    ci / test-go-1.23 failed
+    ci / test-go-1.24 failed
+    Merging is blocked
+
+This demonstrates that the PR gate blocks a broken change.
+
+I then restored the test in commit:
+
+    4c73fff test(lab3): restore passing PR gate
+
+After the restore commit, the fork pull request showed:
+
+    All checks have passed
+    5 successful checks
+    ci / lint passed
+    ci / test-go-1.23 passed
+    ci / test-go-1.24 passed
+    ci / vet-go-1.23 passed
+    ci / vet-go-1.24 passed
+
+This confirms that the PR gate recovers after the fix and allows only passing code.
 
 ## Branch Protection Evidence
 
