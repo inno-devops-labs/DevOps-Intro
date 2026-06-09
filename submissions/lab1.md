@@ -21,3 +21,5 @@ By default, anyone can author a commit. Looking at the xz-utils backdoor: an att
 Require signing, keep a record of who signed what, and an unexpected or unverifiable commit sticks out instead of blending into the history. That alone won't stop a determined attacker, but it raises the cost.
 
 ## Task 2: Pull Request Template & First PR
+
+![PR Template](src/lab01_PR_template.png)
