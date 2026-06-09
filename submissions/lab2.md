@@ -139,3 +139,62 @@ git log --oneline --graph
 * | c2789ae docs: add PR template
 |/
 ```
+
+
+## Bonus
+```
+git switch -c bisect-quickn upstream/bug/bisect-me
+
+branch 'bisect-quickn' set up to track 'upstream/bug/bisect-me'.
+Switched to a new branch 'bisect-quickn'
+```
+
+```
+git bisect start
+
+status: waiting for both good and bad commits
+```
+
+```
+git bisect bad  HEAD
+status: waiting for good commit(s), bad commit known
+```
+
+```
+git bisect good v0.0.1
+Bisecting: 1 revision left to test after this (roughly 1 step)
+[f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+```
+
+```
+git bisect run sh -c 'cd app && go test ./... && go build ./...'
+running 'sh' '-c' 'cd app && go test ./... && go build ./...'
+--- FAIL: TestStore_PersistsAcrossReload (0.00s)
+    store_test.go:78: nextID not restored: got 1, want 2
+FAIL
+FAIL    quicknotes      0.260s
+FAIL
+Bisecting: 0 revisions left to test after this (roughly 0 steps)
+[cb89bb9ee2ee5010b166061447eaca3ae0da2378] docs(store): comment the load() decode step
+running 'sh' '-c' 'cd app && go test ./... && go build ./...'
+ok      quicknotes      0.362s
+f285ede8611e55ac0a7d01100891c0cc775e0709 is the first bad commit
+commit f285ede8611e55ac0a7d01100891c0cc775e0709
+Author: Dmitrii Creed <creeed22@gmail.com>
+Date:   Fri Jun 5 13:36:56 2026 +0400
+
+    refactor(store): simplify nextID restoration in load()
+
+    Signed-off-by: Dmitrii Creed <creeed22@gmail.com>
+
+ app/store.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+bisect found first bad commit
+```
+
+```
+git bisect reset
+Previous HEAD position was cb89bb9 docs(store): comment the load() decode step
+Switched to branch 'bisect-quickn'
+Your branch is up to date with 'upstream/bug/bisect-me'.
+```
