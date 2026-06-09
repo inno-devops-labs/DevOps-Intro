@@ -380,6 +380,9 @@ C:/Users/ddost/.config/git/allowed_signers:1: bad options: unknown key option
 No principal matched.
 ```
 
+```
+Note: SSH signing verification shows "Good signature" but no principal match due to local allowed_signers configuration issue. Signature is still valid.
+```
 
 ### Before tag:
 
