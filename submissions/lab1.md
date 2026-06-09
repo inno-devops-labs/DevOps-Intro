@@ -1,0 +1,147 @@
+# Lab 1 submission
+
+## Task 1. SSH Commit Signing & QuickNotes Run
+
+I ran the QuickNotes Go service locally and verified the main API endpoints required for the lab. The outputs below show that the service starts with 4 seed notes, accepts a POST request, and then returns 5 notes after the new note is created.
+
+### GET /health
+
+```json
+{
+    "notes": 4,
+    "status": "ok"
+}
+```
+
+### GET /notes
+
+```json
+[
+    {
+        "id": 4,
+        "title": "Endpoint cheat-sheet",
+        "body": "GET /notes GET /notes/{id}  POST /notes  DELETE /notes/{id}  GET /health  GET /metrics",
+        "created_at": "2026-01-15T10:15:00Z"
+    },
+    {
+        "id": 1,
+        "title": "Welcome to QuickNotes",
+        "body": "This is the project you'll containerize, deploy, monitor, and harden across all 10 labs.",
+        "created_at": "2026-01-15T10:00:00Z"
+    },
+    {
+        "id": 2,
+        "title": "Read app/main.go first",
+        "body": "Start by understanding the entry point ??? env vars, signal handling, graceful shutdown.",
+        "created_at": "2026-01-15T10:05:00Z"
+    },
+    {
+        "id": 3,
+        "title": "DevOps mantra",
+        "body": "If it hurts, do it more often.",
+        "created_at": "2026-01-15T10:10:00Z"
+    }
+]
+```
+
+### POST /notes
+
+```json
+{
+    "id": 5,
+    "title": "hello",
+    "body": "first POST",
+    "created_at": "2026-06-09T16:15:20.8332538Z"
+}
+```
+
+### GET /notes after POST
+
+```json
+[
+    {
+        "id": 1,
+        "title": "Welcome to QuickNotes",
+        "body": "This is the project you'll containerize, deploy, monitor, and harden across all 10 labs.",
+        "created_at": "2026-01-15T10:00:00Z"
+    },
+    {
+        "id": 2,
+        "title": "Read app/main.go first",
+        "body": "Start by understanding the entry point ??? env vars, signal handling, graceful shutdown.",
+        "created_at": "2026-01-15T10:05:00Z"
+    },
+    {
+        "id": 3,
+        "title": "DevOps mantra",
+        "body": "If it hurts, do it more often.",
+        "created_at": "2026-01-15T10:10:00Z"
+    },
+    {
+        "id": 4,
+        "title": "Endpoint cheat-sheet",
+        "body": "GET /notes GET /notes/{id}  POST /notes  DELETE /notes/{id}  GET /health  GET /metrics",
+        "created_at": "2026-01-15T10:15:00Z"
+    },
+    {
+        "id": 5,
+        "title": "hello",
+        "body": "first POST",
+        "created_at": "2026-06-09T16:15:20.8332538Z"
+    }
+]
+```
+
+
+### SSH Signature Verification
+
+Output of `git log --show-signature -1`:
+
+```text
+commit dc8c98d900773636b9d274270de88981ea55d5a5 (HEAD -> feature/lab1)
+Good "git" signature for sokoslav1707@gmail.com with ED25519 key SHA256:...
+Author: Yaroslav Sokolov <sokoslav1707@gmail.com>
+Date:   Tue Jun 9 19:21:06 2026 +0300
+
+    docs(lab1): start submission
+
+    Signed-off-by: Yaroslav Sokolov <sokoslav1707@gmail.com>
+```
+
+### Verified Commit Screenshot
+
+![Verified Commit](src/screenshots/lab01/task1_verified_commit_screenshot.png)
+
+### Why Signed Commits Matter
+
+Signed commits provide cryptographic proof that a commit was created by the claimed author and has not been modified after signing. This helps establish trust in the software supply chain and prevents attackers from impersonating trusted contributors.
+
+The importance of commit provenance became especially visible during the xz-utils incident in March 2024, where a malicious contributor managed to introduce a backdoor into a widely used open-source project. Signed commits and stronger verification mechanisms help teams verify who actually authored critical changes and reduce the risk of supply-chain attacks.
+
+
+## Task 2. Pull Request Template & First PR
+
+### PR Template Auto-Population
+
+The pull request description was automatically populated from the template stored in `.github/pull_request_template.md`.
+
+![PR Template Auto-Population](src/screenshots/lab01/task2_pr_template.png)
+
+
+## Task 3. GitHub Community
+
+Stars help developers bookmark useful repositories and give visibility to open-source projects. Following developers helps discover their work, track team activity, and build professional connections, which is important because DevOps is strongly based on collaboration.
+
+## Bonus Task. Branch Protection & Required Signed Commits
+
+### Branch Protection Configuration
+
+![Branch Protection Rules](src/screenshots/lab01/bonus_task_rulesets.png)
+
+### Unsigned Push Attempt
+
+![Unsigned Push Attempt](src/screenshots/lab01/bonus_task_failed_push.png)
+
+### Reflection
+
+With branch protection and required signed commits, a risky production branch becomes harder to mutate accidentally or anonymously. In a Knight Capital-style deployment incident, these controls would not eliminate every operational risk, but they would enforce traceability, review, and accountability before changes reach a protected branch. Requiring pull requests and signed commits creates a verifiable audit trail and makes unauthorized or accidental modifications significantly harder.
