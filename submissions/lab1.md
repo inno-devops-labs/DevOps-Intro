@@ -39,9 +39,9 @@ Date:   Mon Jun 8 19:34:55 2026 +0300
 
 ### Verified badge
 
-I added a screenshot of the Verified badge on my signed commit:
+All commits in PR #949 show the Verified badge:
 
-`https://github.com/IlyaPechersky/DevOps-Intro/commit/53b7a51`
+![Verified commits](../docs/screenshots/lab1-verified-commits.png)
 
 ### Why signing matters
 
@@ -50,6 +50,8 @@ The xz-utils incident in March 2024 showed that a trusted maintainer account can
 ## Task 2 - PR Template
 
 I added `.github/pull_request_template.md` on `main` in my fork before opening the lab PR. The PR body is auto-filled from this template, and I completed all checklist items.
+
+![PR template auto-filled](../docs/screenshots/lab1-pr-template.png)
 
 ## Task 3 - GitHub Community
 
@@ -67,7 +69,7 @@ Classmates followed: `rasulzhan`, `rinat-khaibullin`, `AmirkhanM`.
 
 Screenshot:
 
-`https://github.com/IlyaPechersky/DevOps-Intro/settings/branches`
+![Branch protection rule for main](../docs/screenshots/lab1-branch-protection.png)
 
 ### Unsigned push rejection
 
