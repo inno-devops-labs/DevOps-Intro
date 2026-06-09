@@ -292,3 +292,28 @@ Commits graph after rebase
 Choose merge when working on a **shared public branch** where others might have based their work on it, as it preserves the exact history of how changes were integrated and is non-destructive. 
 Choose rebase when working on a **local feature branch** before sharing it with others, as it creates a clean, linear history by reapplying commits on top of the target branch, but it crucial to avoid rebasing public branches that other people have already fetched.
 
+## Bonus Task — Bisect a Real Bug
+```bash
+[cb89bb9][~/Study/Innopolis/DevOps-Intro]$ git bisect log
+git bisect start
+# status: waiting for both good and bad commits
+# bad: [f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493] docs(app): mention go test invocation
+git bisect bad f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493
+# status: waiting for good commit(s), bad commit known
+# good: [0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7] chore(app): document versioning scheme (bisect fixture baseline)
+git bisect good 0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7
+# bad: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+git bisect bad f285ede8611e55ac0a7d01100891c0cc775e0709
+# good: [cb89bb9ee2ee5010b166061447eaca3ae0da2378] docs(store): comment the load() decode step
+git bisect good cb89bb9ee2ee5010b166061447eaca3ae0da2378
+# first bad commit: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+```
+
+first bad commit:
+ ```bash
+ [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+ ```
+
+Git bisect works like a binary search. It starts from a bad commit (with a bug) and a good commit (without the bug). Then it jumps to the middle commit between them and asks you if this commit is good or bad. Each time, it cuts the remaining commits in half, so we only need about log₂(N) steps to find the exact bug, even if you have thousands of commits. 
+
+For example, with 1 million commits, we need only about 20 steps because log₂(1,000,000) ≈ 20 — that means we can find the bug in just 20 tests, not 1 million.
