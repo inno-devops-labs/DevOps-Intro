@@ -131,7 +131,7 @@ Date:   Thu Jun 4 20:19:28 2026 +0300
 
 ### Verified badge
 
-![Verified badge](screenshots/Lab_1/commit%20fca0ee2.png)
+![Verified badge](screenshots/Lab_1/lab1-verified.png)
 
 ### Why signed commits matter
 
