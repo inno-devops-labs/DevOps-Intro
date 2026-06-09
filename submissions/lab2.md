@@ -205,4 +205,50 @@ WIP SHAs changed after rebase (`bc405c9` → `6cc0d38`, `05b8900` → `235f3c5`)
 
 ## Bonus Task — Bisect a Real Bug
 
-**Not attempted:** `upstream/bug/bisect-me` and tag `v0.0.1` are not published on the course repo yet (`git ls-remote upstream 'refs/heads/bug/*'` returned empty).
+### B.1–B.2: Manual setup + automated bisect
+
+```text
+$ git fetch upstream
+$ git switch -c bisect-quickn upstream/bug/bisect-me
+$ git bisect start
+$ git bisect bad HEAD
+$ git bisect good v0.0.1
+
+Bisecting: 1 revision left to test after this (roughly 1 step)
+[f285ede] refactor(store): simplify nextID restoration in load()
+
+$ git bisect run sh -c 'cd app && go test ./... && go build ./...'
+--- FAIL: TestStore_PersistsAcrossReload (0.00s)
+    store_test.go:78: nextID not restored: got 1, want 2
+FAIL
+f285ede8611e55ac0a7d01100891c0cc775e0709 is the first bad commit
+bisect found first bad commit
+```
+
+### `git bisect log`
+
+```text
+git bisect start
+# bad: [f0c9243] docs(app): mention go test invocation
+git bisect bad f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493
+# good: [0ec87b8] chore(app): document versioning scheme (bisect fixture baseline)
+git bisect good 0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7
+# bad: [f285ede] refactor(store): simplify nextID restoration in load()
+git bisect bad f285ede8611e55ac0a7d01100891c0cc775e0709
+# good: [cb89bb9] docs(store): comment the load() decode step
+git bisect good cb89bb9ee2ee5010b166061447eaca3ae0da2378
+# first bad commit: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+```
+
+### Offending commit
+
+| Field | Value |
+|-------|-------|
+| SHA | `f285ede8611e55ac0a7d01100891c0cc775e0709` |
+| Message | `refactor(store): simplify nextID restoration in load()` |
+| Symptom | `TestStore_PersistsAcrossReload` — `nextID not restored: got 1, want 2` |
+| Change | `app/store.go` — one-line regression in `load()` |
+
+### How bisect found it in log₂(N) steps
+
+Between known-good `v0.0.1` and broken `HEAD` on `bug/bisect-me`, Git bisect checked out the **middle** commit each round and ran `go test && go build` as the oracle. With ~4 commits in the suspect range, bisect needed only **2 test runs** instead of checking every commit linearly — roughly ⌈log₂(N)⌉ steps. Each halving eliminates half the remaining suspects; `git bisect run` automated that loop and stopped at `f285ede`, the first commit where `TestStore_PersistsAcrossReload` failed.
