@@ -115,8 +115,8 @@ Starring repositories matters because stars help bookmark useful projects, signa
 
 Community actions completed:
 
-- [ ] Starred `inno-devops-labs/DevOps-Intro`
-- [ ] Starred `simple-container-com/api`
+- [x] Starred `inno-devops-labs/DevOps-Intro`
+- [x] Starred `simple-container-com/api`
 - [x] Followed `@Cre-eD`
 - [x] Followed `@Naghme98`
 - [x] Followed `@pierrepicaud`
