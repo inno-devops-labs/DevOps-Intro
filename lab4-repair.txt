@@ -1,0 +1,14 @@
+## Repair evidence
+Killed actual quicknotes listener pid=9382 after kill PID1 only killed the go run wrapper.
+
+8080 is free after killing actual listener
+
+Restarted QuickNotes:
+ADDR=:8080 go run . &
+
+Health check:
+{"notes":6,"status":"ok"}
+
+
+Listener after repair:
+LISTEN 0      4096               *:8080             *:*    users:(("quicknotes",pid=9617,fd=3))

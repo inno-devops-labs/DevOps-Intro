@@ -1,0 +1,19 @@
+## 1) systemctl-style: is it running?
+teeroyce    9382    9319  0 23:35 pts/2    00:00:00 /home/teeroyce/.cache/go-build/90/9016c83a63fe787e68575294d14cbd10b92027c8670ffbf0636d85882db88588-d/quicknotes
+teeroyce    9319    3091  0 23:35 pts/2    00:00:00 go run .
+
+## 2) is it listening?
+LISTEN 0      4096               *:8080             *:*    users:(("quicknotes",pid=9382,fd=3))
+
+## 3) reachable from host?
+200
+
+## 4) firewall blocking?
+
+## 5) DNS?
+127.0.0.1
+
+## Broken log
+2026/06/09 23:35:11 quicknotes listening on :8080 (notes loaded: 6)
+2026/06/09 23:35:11 listen: listen tcp :8080: bind: address already in use
+exit status 1
