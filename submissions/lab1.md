@@ -1,1 +1,23 @@
 # Lab 1 submission
+
+## Task 1: SSH Commit Signing & First Signed Commit
+
+### `curl` output
+
+![curl output](src/lab01_curl.png)
+
+### `git log` output
+
+![git log output](src/lab01_sign.png)
+
+### Verification output
+
+![verification output](src/lab01_verified.png)
+
+### *why signed commits matter*
+
+Signing a commit cryptographically ties it to an identity, so a reviewer can check that a change really came from the person it claims to, not from someone who just set user.name and user.email to impersonate them. Git makes this easy to fake.
+By default, anyone can author a commit. Looking at the xz-utils backdoor: an attacker using the name "Jia Tan" spent months building maintainer trust, then buried a backdoor in a compression library that ships in most Linux distros.
+Require signing, keep a record of who signed what, and an unexpected or unverifiable commit sticks out instead of blending into the history. That alone won't stop a determined attacker, but it raises the cost.
+
+## Task 2: Pull Request Template & First PR
