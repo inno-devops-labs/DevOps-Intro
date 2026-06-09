@@ -23,3 +23,13 @@ Require signing, keep a record of who signed what, and an unexpected or unverifi
 ## Task 2: Pull Request Template & First PR
 
 ![PR Template](src/lab01_PR_template.png)
+
+## Task 3: GitHub Community Engagement
+
+- **Why starring repositories matters in open source:**
+
+    Starring is both a bookmark and a signal: it saves a project to your profile for later and publicly endorses it, and aggregate star counts act as a rough trust/popularity signal that helps others discover worthwhile tools and motivates maintainers who mostly work for free.
+
+- **How following developers helps in team projects and professional growth:**
+
+    Following developers turns GitHub into a feed of what your teammates and the wider community are building, you see their new projects and activity, which makes it easier to coordinate on team work, learn from how others structure code, and build the professional network that carries past a single course.
