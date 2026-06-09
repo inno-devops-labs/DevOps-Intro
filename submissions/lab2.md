@@ -323,4 +323,17 @@ Before:
 * 3fcf44f (origin/feature/lab1, feature/lab1) docs(lab1): finish submission
 ```
 
-After
+After:
+```
+* 0f25773 (HEAD -> feature/lab2) docs(lab2): add solution for task 1
+* e4b6109 wip(lab2): more progress
+* 5fbb5e0 wip(lab2): start
+* f1054c2 docs(lab1): finish submission
+* cb8d82b docs(lab1): replace submission directory
+* 32961cd docs(lab1): start submission
+* 9c9e541 (origin/main, origin/HEAD, main) docs: upstream moved while you worked
+```
+
+#### - A brief reflection on *when* you'd choose merge vs rebase
+
+I would use rebase on a project where linear project is required. On a project there several people use one branch merge can be better.
