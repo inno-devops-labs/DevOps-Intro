@@ -87,3 +87,16 @@
 ### Why signed commits matter
 
 Signed commits let reviewers verify that a change really came from the claimed author and was not altered in transit. The xz-utils compromise in March 2024 showed how a hidden backdoor can travel through trusted-looking code paths, so signing adds one more layer of trust and accountability. In a team workflow, that makes it much harder to sneak in tampered history unnoticed.
+
+### Local signature verification
+
+```text
+commit 036fdc2e020f08d657f678fcd76a8eda8f6de31a
+Good "git" signature for irina.bychkova06@mail.ru with ED25519 key SHA256:0QziAHQZeFYu2R3UOly0My2Bl/aGmRK46bdyePgznWM
+Author: Irina <irina.bychkova06@mail.ru>
+Date:   Tue Jun 9 09:22:52 2026 +0300
+
+    docs(lab1): start submission
+
+    Signed-off-by: Irina <irina.bychkova06@mail.ru>
+```
