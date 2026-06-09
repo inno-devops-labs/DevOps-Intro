@@ -1,8 +1,8 @@
 # Lab 1 — Submission
 
-**Student:** <!-- your name -->  
+**Student:** Mahmoud Hassan 
 **GitHub:** @selysecr332  
-**Date:** 2026-06-04
+**Date:** 00.06.2026
 
 ---
 
