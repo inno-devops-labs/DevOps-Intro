@@ -25,3 +25,21 @@ Nocised that folder was copied into system folder, changed lokation of it.
 
 ### Task 2
 
+### Task 3 - GitHub Community Engagement
+
+Stars: 
+![[Pasted image 20260609214203.png]]
+
+follows:
+![[Pasted image 20260609214253.png]]
+
+- Why starring repositories matters in open source:
+
+Starring a repository is a way to show appreciation to maintainers and bookmark projects I find useful. Stars help open-source projects gain visibility and credibility, which attracts more contributors and users.
+
+- How following developers helps in team projects and professional growth:
+
+Following developers and teammates creates a feed of their activity on GitHub. This helps me stay updated on what my peers are working on, learn from their contributions, and collaborate more effectively in team projects, for them this is sign of my interest in their work.
+
+### Bonus Task
+
