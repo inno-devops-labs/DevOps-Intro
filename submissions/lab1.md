@@ -154,3 +154,34 @@ In March 2024, a malicious backdoor was discovered in xz-utils after an attacker
 ### Why stars and follows matter
 
 Starring repositories bookmarks useful projects and signals community interest — it helps maintainers gain visibility and lets you quickly return to tools you may use later (like the course repo or `simple-container-com/api` for container work). Following developers on GitHub surfaces their activity in your feed, which makes it easier to discover projects, stay aligned with classmates' work, and build professional connections beyond the classroom.
+
+---
+
+## Bonus — Branch protection + required signed commits
+
+### Branch protection screenshot
+
+![Ruleset active — targets main](screenshots/Lab_1/bones_1.png)
+
+![Branch rules — signed commits, PR, linear history](screenshots/Lab_1/bones_2.png)
+
+### Unsigned push rejection
+
+```text
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote: Review all repository rules at https://github.com/selysecr332/DevOps-Intro/rules?ref=refs%2Fheads%2Fmain
+remote:
+remote: - Changes must be made through a pull request.
+remote:
+remote: - Commits must have verified signatures.
+remote:   Found 1 violation:
+remote:
+remote:   a8b4bd1a3bfbc1da6301abb9807c12b3d4130f88
+remote:
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/selysecr332/DevOps-Intro.git'
+```
+
+### Reflection
+
+On Knight Capital's deploy day (August 2012), a manual release missed one of eight servers and left dead code running in production — within 45 minutes that caused $440M in losses. If their production deploy branch had required signed commits, every change would need a verifiable author key, making unauthorized or mistaken pushes harder to land silently. Requiring pull requests and linear history would have forced review and a clear audit trail before code reached prod, instead of a rushed manual push at market open. Branch protection does not replace testing or rollback, but it adds guardrails that slow down exactly the kind of "one server got skipped" failure mode that destroyed the company.
