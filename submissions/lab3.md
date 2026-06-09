@@ -147,23 +147,44 @@ The workflow also uses path filters so CI runs only when `app/**` or `.github/wo
 
 ### Timing table
 
-The latest optimized GitHub Actions run on the fork PR produced the following timings:
+I measured three workflow states from the GitHub PR checks UI.
 
-| Check | Result | Time |
-|---|---:|---:|
-| lint | passed | 25s |
-| test-go-1.23 | passed | 29s |
-| test-go-1.24 | passed | 27s |
-| vet-go-1.23 | passed | 22s |
-| vet-go-1.24 | passed | 23s |
+| Scenario | Configuration | Wall-clock |
+|----------|---------------|-----------:|
+| Baseline | Single Go 1.24, no dependency cache, no path filter | 27s |
+| With cache | Single Go 1.24, dependency cache enabled, no matrix | 34s |
+| With cache + matrix + path filters | Go 1.23/1.24 matrix, dependency cache, path filters, parallel jobs | 29s |
 
-Because the jobs run in parallel, the total wall-clock feedback time is approximately the slowest job time, about 29 seconds.
+Detailed measured checks:
 
-| Scenario | Wall-clock observation |
-|----------|----------------------:|
-| Baseline idea: single Go version, no dependency cache, no path filter | Slower expected because every run must resolve dependencies and cannot skip irrelevant paths |
-| With cache | Faster after dependency cache is warm |
-| With cache + matrix + parallel jobs + path filters | About 29s on the measured PR run |
+| Scenario | Check | Time |
+|---|---|---:|
+| Baseline | lint-baseline | 27s |
+| Baseline | test-baseline-go-1.24 | 23s |
+| Baseline | vet-baseline-go-1.24 | 23s |
+| Cache-only | lint-cache | 23s |
+| Cache-only | test-cache-go-1.24 | 34s |
+| Cache-only | vet-cache-go-1.24 | 24s |
+| Final optimized | lint | 29s |
+| Final optimized | test-go-1.23 | 27s |
+| Final optimized | test-go-1.24 | 28s |
+| Final optimized | vet-go-1.23 | 22s |
+| Final optimized | vet-go-1.24 | 24s |
+
+The cache-only run was slower than the baseline in this measurement because hosted runner scheduling and cache restore behavior vary between runs. The final optimized pipeline still meets the performance target because the matrix jobs run in parallel and the total feedback time is determined by the slowest job.
+
+### Docs-only skip demonstration
+
+I added a temporary documentation-only commit:
+
+    cc8ffeb docs(lab3): demonstrate docs-only CI skip
+
+The changed file was outside both workflow trigger paths:
+
+    app/**
+    .github/workflows/ci.yml
+
+The PR did not start a new application CI run for that docs-only change. The PR continued showing the previous required optimized checks as successful. This demonstrates that the path filter skips documentation-only changes.
 
 ### Design questions for Task 2
 
@@ -247,28 +268,28 @@ This means a PR cannot be merged into `main` unless the CI pipeline passes and t
 
 ### Performance target
 
-The target was to keep PR feedback under 90 seconds. The measured optimized run completed in about 29 seconds wall-clock time, so the pipeline is comfortably within the target.
+The target was to keep PR feedback under 90 seconds. The final optimized run completed in about 29 seconds wall-clock time, so the pipeline is comfortably within the target.
 
-### Optimizations used
+### Additional optimizations beyond Task 2
 
-The pipeline uses more than three optimizations:
+The final workflow includes these extra optimizations and hardening choices beyond the basic cache + matrix + path filter requirements:
 
-1. Independent parallel jobs for `vet`, `test`, and `lint`.
-2. Go dependency caching through `actions/setup-go`.
-3. A Go version matrix for `vet` and `test`, covering Go 1.23 and Go 1.24.
-4. `fail-fast: false`, so all matrix results are collected even if one version fails.
-5. Path filters, so documentation-only or unrelated changes do not trigger application CI.
-6. Full SHA pinning for third-party actions, reducing supply-chain risk and making CI behavior more reproducible.
-7. Least-privilege `GITHUB_TOKEN` permissions using `contents: read`.
+1. Independent `vet`, `test`, and `lint` jobs run in parallel.
+2. `GOFLAGS=-buildvcs=false` is set to avoid unnecessary VCS stamping work in CI.
+3. `concurrency` cancels older duplicate runs when a newer commit is pushed to the same PR.
+4. Full SHA pinning is used for actions, making the pipeline reproducible and reducing supply-chain risk.
+5. Least-privilege `permissions: contents: read` limits the workflow token.
+
+### Before/after timing table
+
+| Optimization applied | Before | After | Saving |
+|---|---:|---:|---:|
+| Parallel independent jobs | Serial-style total would be about 73s using baseline check sum | 27s wall-clock baseline parallel run | about 46s |
+| Add cache-only setup | 27s baseline wall-clock | 34s measured cache-only wall-clock | no saving in this run |
+| Restore final matrix + path-filter workflow | 34s cache-only wall-clock | 29s optimized wall-clock | about 5s |
+| Docs-only path filter | Full CI run would be about 29s | skipped app CI for docs-only commit | about 29s saved |
 
 ### Bottleneck analysis
 
-The measured check times were:
+The dominant remaining cost is the test job, especially `go test -race -count=1 ./...`, because the race detector adds runtime compared with a normal test run. I kept the race detector because the lab explicitly requires it and because it is a useful quality gate for catching concurrency issues. To make QuickNotes itself faster, the application tests would need to reduce unnecessary setup work, avoid slow integration-style paths where unit tests are enough, and keep test data minimal. I would stop optimizing this pipeline below roughly 30 seconds because the remaining time is mostly runner startup and required quality checks, and further reduction would not justify weakening the gate.
 
-    lint: 25s
-    test-go-1.23: 29s
-    test-go-1.24: 27s
-    vet-go-1.23: 22s
-    vet-go-1.24: 23s
-
-The slowest job was `test-go-1.23` at 29 seconds. Because the jobs run in parallel, this slowest job determines the overall feedback time.
