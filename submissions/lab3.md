@@ -69,3 +69,4 @@ From my CI runs with cache + matrix: lint 28s, test 28s/26s, vet 22s/23s.
 
 ### Bottleneck analysis
 The lint job is slowest at 28 seconds because golangci-lint analyzes the whole codebase. The race detector in go test also adds overhead. To make it shorter, I would split tests into unit tests (fast, no race) and integration tests (slow, with race detector). My team would stop optimizing when the pipeline runs under 60 seconds. My pipeline is already under 60 seconds, so optimization is not urgent.
+<img width="896" height="505" alt="image" src="https://github.com/user-attachments/assets/15673a5b-ceda-4d06-b3cf-d7ad2783e9f6" />
