@@ -398,3 +398,158 @@ To github.com:Littlepr1nce/DevOps-Intro.git
 I would use merge when preserving the exact historical development process is important, especially on shared branches. 
 And I would use rebase when preparing a feature branch for integration because it creates a cleaner and more linear commit history. 
 Rebase should be used carefully because it rewrites commit history and changes commit hashes.
+
+## Bonus Task — Git Bisect
+
+### B1 - Bisect Setup
+
+I fetched the branch containing a deliberately introduced bug and started a bisect session.
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git fetch upstream
+                                                                                                                  
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git switch -c bisect-quickn upstream/bug/bisect-me
+branch 'bisect-quickn' set up to track 'upstream/bug/bisect-me'.
+Switched to a new branch 'bisect-quickn'
+
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git bisect start
+status: waiting for both good and bad commits
+                                                                                                                  
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git bisect bad HEAD
+status: waiting for good commit(s), bad commit known
+                                                                                                                  
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git bisect good v0.0.1
+Bisecting: 1 revision left to test after this (roughly 1 step)
+[f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+```
+
+### Manual Testing
+
+Git selected intermediate commits between the known-good and known-bad revisions.
+
+At commit:
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ git log --oneline -3
+f285ede (HEAD) refactor(store): simplify nextID restoration in load()
+cb89bb9 docs(store): comment the load() decode step
+0ec87b8 (tag: v0.0.1) chore(app): document versioning scheme (bisect fixture baseline)
+                                                                                                               
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ cd app
+                                                                                                                 
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ go build ./...
+```
+
+The application built successfully, but the test suite failed.
+Therefore this revision was marked as bad and Git moved to the next candidate commit:
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ go test ./...
+--- FAIL: TestStore_PersistsAcrossReload (0.00s)
+    store_test.go:78: nextID not restored: got 1, want 2
+FAIL
+FAIL    quicknotes      0.003s
+FAIL
+                                                                                                                 
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ git bisect bad     
+Bisecting: 0 revisions left to test after this (roughly 0 steps)
+[cb89bb9ee2ee5010b166061447eaca3ae0da2378] docs(store): comment the load() decode step
+```
+
+All tests passed successfully, so the revision was marked as good:
+
+```bash                                                                                                           
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ go build ./...
+                                                                                                                  
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ go test ./...
+ok      quicknotes      0.003s
+                                                                                                                  
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ git bisect good       
+f285ede8611e55ac0a7d01100891c0cc775e0709 is the first bad commit
+commit f285ede8611e55ac0a7d01100891c0cc775e0709
+Author: Dmitrii Creed <creeed22@gmail.com>
+Date:   Fri Jun 5 13:36:56 2026 +0400
+    refactor(store): simplify nextID restoration in load()
+    Signed-off-by: Dmitrii Creed <creeed22@gmail.com>
+ app/store.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+```
+### B2 - Automated Bisect
+
+I also automated the search using:
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ git bisect run sh -c 'cd app && go test ./... && go build ./...'
+running 'sh' '-c' 'cd app && go test ./... && go build ./...'
+--- FAIL: TestStore_PersistsAcrossReload (0.00s)
+    store_test.go:78: nextID not restored: got 1, want 2
+FAIL
+FAIL    quicknotes      0.004s
+FAIL
+Bisecting: 0 revisions left to test after this (roughly 0 steps)
+[cb89bb9ee2ee5010b166061447eaca3ae0da2378] docs(store): comment the load() decode step
+running 'sh' '-c' 'cd app && go test ./... && go build ./...'
+ok      quicknotes      (cached)
+f285ede8611e55ac0a7d01100891c0cc775e0709 is the first bad commit
+commit f285ede8611e55ac0a7d01100891c0cc775e0709
+Author: Dmitrii Creed <creeed22@gmail.com>
+Date:   Fri Jun 5 13:36:56 2026 +0400
+    refactor(store): simplify nextID restoration in load()
+    Signed-off-by: Dmitrii Creed <creeed22@gmail.com>
+ app/store.go | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+bisect found first bad commit
+
+```
+
+Git automatically executed the test suite and build process on each candidate commit. The failing commit produced:
+
+```text
+--- FAIL: TestStore_PersistsAcrossReload
+nextID not restored: got 1, want 2
+```
+
+After evaluating the remaining candidates, Git reported:
+
+```text
+f285ede8611e55ac0a7d01100891c0cc775e0709 is the first bad commit
+```
+
+The automated search reached the same conclusion as the manual investigation while requiring no further user interaction.
+
+### Full bisect log
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ git bisect log
+git bisect start
+# status: waiting for both good and bad commits
+# bad: [f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493] docs(app): mention go test invocation
+git bisect bad f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493
+# status: waiting for good commit(s), bad commit known
+# good: [0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7] chore(app): document versioning scheme (bisect fixture baseline)
+git bisect good 0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7
+# bad: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+git bisect bad f285ede8611e55ac0a7d01100891c0cc775e0709
+# good: [cb89bb9ee2ee5010b166061447eaca3ae0da2378] docs(store): comment the load() decode step
+git bisect good cb89bb9ee2ee5010b166061447eaca3ae0da2378
+# first bad commit: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+```
+
+### Reflection
+
+Git bisect performs a binary search through commit history. Instead of checking commits one by one, Git repeatedly selects a commit near the middle of the remaining search space. After each good/bad decision, approximately half of the candidate commits are eliminated. Because of this, the number of required tests grows roughly as log₂(N), making bisect extremely efficient even in repositories with thousands of commits.
