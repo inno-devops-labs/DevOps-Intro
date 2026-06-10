@@ -158,7 +158,8 @@ Good "git" signature for mh2325132@gmail.com with ED25519 key SHA256:9OvCsi/f5zN
 ### 2.2 Rebase — log after
 
 ```text
-* d9c9191 (HEAD -> feature/lab2, origin/feature/lab2) docs(lab2): complete submission documentation
+* 3b60c71 (HEAD -> feature/lab2, origin/feature/lab2) docs(lab2): add post-rebase log
+* d9c9191 docs(lab2): complete submission documentation
 * 6517a28 docs(lab2): complete Task 1 object model and reflog
 * 2ffea95 wip(lab2): more progress
 * 1cdad4b wip(lab2): start submission
@@ -184,30 +185,20 @@ Use **merge** on shared branches (`main`, `develop`) when others may already hav
 
 ---
 
-## Task 2 — PRs
+## Submission — Pull requests
 
-- Course PR: <!-- paste -->
-- Fork PR: <!-- paste -->
+| PR | URL |
+|----|-----|
+| **Course** (`feature/lab2` → `inno-devops-labs/main`) | https://github.com/inno-devops-labs/DevOps-Intro/pull/1006 |
+| **Fork** (`feature/lab2` → `selysecr332/main`) | https://github.com/selysecr332/DevOps-Intro/pull/2 |
+
+**Moodle:** submit both URLs above before the deadline.
 
 ---
 
-## Bonus — Git bisect (optional)
+## Bonus — Git bisect (not attempted)
 
-### `git bisect log`
-
-```text
-<!-- paste -->
-```
-
-### Offending commit
-
-```text
-<!-- SHA + message -->
-```
-
-### log₂(N) explanation
-
-<!-- 3-4 sentences -->
+Skipped for this submission. To earn +2 pts later: `git fetch upstream`, bisect on `upstream/bug/bisect-me` against tag `v0.0.1`, document `git bisect log` and offending commit SHA.
 
 ---
 
@@ -229,10 +220,10 @@ Use **merge** on shared branches (`main`, `develop`) when others may already hav
 
 ### Submission
 
-- [ ] Course PR opened (`feature/lab2` → `inno-devops-labs/main`)
-- [ ] Fork PR opened (`feature/lab2` → `selysecr332/main`)
-- [ ] Both URLs on Moodle
+- [x] Course PR opened (`feature/lab2` → `inno-devops-labs/main`) — [#1006](https://github.com/inno-devops-labs/DevOps-Intro/pull/1006)
+- [x] Fork PR opened (`feature/lab2` → `selysecr332/main`) — [#2](https://github.com/selysecr332/DevOps-Intro/pull/2)
+- [ ] Both URLs submitted on Moodle
 
 ### Bonus (2 pts)
 
-- [ ] Bisect log + offending commit + log₂(N) explanation
+- [ ] Not attempted
