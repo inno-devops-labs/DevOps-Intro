@@ -116,7 +116,7 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	srv := newTestServer(t)
 	_ = do(t, srv, http.MethodPost, "/notes", map[string]string{"title": "x"})
 	rec := do(t, srv, http.MethodGet, "/metrics", nil)
-	if rr.Code != http.StatusCreated {
+	if rec.Code != http.StatusOK {
 		t.Fatalf("metrics status: %d", rec.Code)
 	}
 	body := rec.Body.String()
