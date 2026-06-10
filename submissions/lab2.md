@@ -1,6 +1,6 @@
-
+# Lab 2 – Version Control Deep Dive
 # Task1: Git Object Model + Reflog Recovery
-## 1.1:
+### 1.1 Plumbing chain
 PS C:\Users\kudin\Desktop\DevOpsCourse\Lab1\DevOps-Intro> git rev-parse HEAD
 d208fa4dc95b62226d666a91d321b9c7456b72c6
 PS C:\Users\kudin\Desktop\DevOpsCourse\Lab1\DevOps-Intro> git cat-file -t HEAD
@@ -102,7 +102,7 @@ as defined in .github/pull_request_template.md.
 QAB:89 70?@5B =0 ?@O<>9 push 2 main 2K=C48; 1K @07@01>BG8:>2 Knight Capital ?@>E>48BL ?>;=>F5==K9 PR-?@>F5AA, GB> =5 ?>72>;8;> 1K AB0@><C, =5A>2<5AB8<><C :>4C ?>?0ABL 2 ?@>40:H5= 157 @52LN. >4?8A0==K5 :><<8BK 30@0=B8@>20;8 1K, GB> 87<5=5=8O 459AB28B5;L=> 8AE>4OB >B C?>;=><>G5==>3> 8=65=5@0, 0 =5 ?>4AB02=>3> ;8F0 8;8 A:><?@><5B8@>20==>9 CGQB=>9 70?8A8.  >1O70B5;L=>5 :>4-@52LN AB0;> 1K ?>A;54=8< 10@L5@><, 345 =5AB0=40@B=>5 8A?>;L7>20=85 D;030 0:B820F88 70<5B8;8 1K :>;;538, ?@54>B2@0B82 <8;;8>==K5 C1KB:8 70 AG8B0==K5 <8=CBK.
 
 
-## 1.2:
+### 1.2 Inside .git
 
 kudin@Ruslan MINGW64 ~/Desktop/DevOpsCourse/Lab1/DevOps-Intro (main)
 $ ls -la .git/
@@ -140,7 +140,7 @@ $ find .git/objects -type f | wc -l
 В git сейчас лежит 63 объекта, каждый - слепок состояния контента
 
 
-## 1.3:
+### 1.3 Disaster & recovery
 git reflog output:
 ![alt text](reflog.png)
 
@@ -151,3 +151,20 @@ git reset --hard 189e393 output:
 Если бы успел отработать git gc, он бы удалил коммит "more progress", и reflog не помог бы нам восстановиться.
 
 # Task2: Tag a Release & Rebase a Feature
+
+## 2.3:
+
+### Signed Teg:
+![alt text](Tag1.png)
+
+![alt text](Tag2.png)
+
+### Before rebase:
+![
+](BeforeRebase.png)
+
+### After rebase:
+![alt text](AfterReb.png)
+
+### Merge & Rebase
+rebase — для чистоты истории в feature-ветке перед вливанием, merge — когда нужна фиксация факта слияния и сохранение хронологии
