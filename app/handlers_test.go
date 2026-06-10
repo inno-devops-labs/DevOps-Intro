@@ -39,7 +39,7 @@ func TestHealth_ReportsCount(t *testing.T) {
 	srv := newTestServer(t)
 	_, _ = srv.store.Create("a", "")
 	rec := do(t, srv, http.MethodGet, "/health", nil)
-	if rec.Code != http.StatusNotFound {
+	if rec.Code != http.StatusOK {
 		t.Fatalf("status: %d", rec.Code)
 	}
 	var got map[string]any
