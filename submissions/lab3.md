@@ -40,10 +40,11 @@ In GitLab CI, a stage is a group of jobs that run at the same time. Stages run i
 | With cache | 23 |
 | With cache + matrix | 41 |
 
-### Answers:
+<img width="919" height="442" alt="image" src="https://github.com/user-attachments/assets/57f04ebc-309f-4e91-adb6-e8ff04a34ea4" />
 
-f) Because go.sum is deterministic. The same go.sum always downloads the same modules. Build outputs depend on Go version, CPU architecture, OS, and compiler flags. Caching outputs is unreliable.
-
-g) With fail-fast: true, if one matrix job fails GitHub cancels all other running jobs. With fail-fast: false, all jobs run to completion even if some fail. You want false to see results for all Go versions. You want true when jobs are expensive and you want to stop early after first failure.
-
-h) An attacker could poison the cache with malicious code. GitHub mitigates this by isolating caches from forks. Caches from PRs in forks are not accessible to protected branches.
+f) Why cache go.sum-keyed inputs and not build outputs?
+Because go.sum is deterministic. The same go.sum always downloads the same modules. Build outputs depend on Go version, CPU architecture, OS, and compiler flags. Caching outputs is unreliable.
+g) What does fail-fast: false change in a matrix run, and when do you actually want fail-fast: true?
+With fail-fast: true, if one matrix job fails GitHub cancels all other running jobs. With fail-fast: false, all jobs run to completion even if some fail. You want false to see results for all Go versions. You want true when jobs are expensive and you want to stop early after first failure.
+h) What's the risk of an attacker writing a cache from a malicious PR that protected branches later read? (Hint: GH has mitigations — find the official doc on this)
+An attacker could poison the cache with malicious code. GitHub mitigates this by isolating caches from forks. Caches from PRs in forks are not accessible to protected branches.
