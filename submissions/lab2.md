@@ -158,8 +158,16 @@ Good "git" signature for mh2325132@gmail.com with ED25519 key SHA256:9OvCsi/f5zN
 ### 2.2 Rebase — log after
 
 ```text
-<!-- paste after: git rebase main && git log --oneline --graph -10 -->
+* d9c9191 (HEAD -> feature/lab2, origin/feature/lab2) docs(lab2): complete submission documentation
+* 6517a28 docs(lab2): complete Task 1 object model and reflog
+* 2ffea95 wip(lab2): more progress
+* 1cdad4b wip(lab2): start submission
+* 578b0b4 (main) docs: upstream moved while you worked
+* a8b4bd1 (tag: v0.1.0-lab2-selysecr332) test: unsigned commit (should fail)
+* 72fc938 (origin/main) test: unsigned commit (should fail)
 ```
+
+Lab 2 commits now sit linearly on top of `578b0b4` (simulated upstream move) after `git rebase main`.
 
 **`git push origin main` (upstream simulation) — rejected by Lab 1 branch protection:**
 
@@ -216,8 +224,8 @@ Use **merge** on shared branches (`main`, `develop`) when others may already hav
 
 - [x] Signed annotated tag `v0.1.0-lab2-selysecr332` pushed
 - [x] `git tag -v` shows Good signature
-- [ ] Rebase before/after graphs captured
-- [ ] Merge vs rebase reflection
+- [x] Rebase before/after graphs captured
+- [x] Merge vs rebase reflection
 
 ### Submission
 
