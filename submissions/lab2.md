@@ -196,9 +196,78 @@ Use **merge** on shared branches (`main`, `develop`) when others may already hav
 
 ---
 
-## Bonus — Git bisect (not attempted)
+## Bonus — Git bisect
 
-Skipped for this submission. To earn +2 pts later: `git fetch upstream`, bisect on `upstream/bug/bisect-me` against tag `v0.0.1`, document `git bisect log` and offending commit SHA.
+### B.1: Setup
+
+```powershell
+git fetch upstream
+git switch -c bisect-quickn upstream/bug/bisect-me
+git bisect start
+git bisect bad HEAD
+git bisect good v0.0.1
+```
+
+Known-good tag `v0.0.1` → `0ec87b8` (`chore(app): document versioning scheme (bisect fixture baseline)`).  
+HEAD on `bug/bisect-me` → `f0c9243` (broken: `TestStore_PersistsAcrossReload` fails with `nextID not restored: got 1, want 2`).
+
+### B.2: Automated bisect (Windows)
+
+`sh -c` is awkward in PowerShell, so I used a one-liner batch helper and:
+
+```powershell
+git bisect run scripts\bisect-test.bat
+# scripts\bisect-test.bat: cd app && go test ./... && go build ./...
+```
+
+Output:
+
+```
+Bisecting: 1 revision left to test after this (roughly 1 step)
+[f285ede] refactor(store): simplify nextID restoration in load()
+--- FAIL: TestStore_PersistsAcrossReload
+Bisecting: 0 revisions left to test after this (roughly 0 steps)
+[cb89bb9] docs(store): comment the load() decode step
+ok  	quicknotes
+
+f285ede8611e55ac0a7d01100891c0cc775e0709 is the first bad commit
+bisect found first bad commit
+```
+
+### B.3: `git bisect log`
+
+```
+git bisect start
+# status: waiting for both good and bad commits
+# bad: [f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493] docs(app): mention go test invocation
+git bisect bad f0c9243b7c80ebb930a1ce7048a1d65b4c2ac493
+# status: waiting for good commit(s), bad commit known
+# good: [0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7] chore(app): document versioning scheme (bisect fixture baseline)
+git bisect good 0ec87b808ae6a257a98ecea4a3c8d38a7f2c5ac7
+# bad: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+git bisect bad f285ede8611e55ac0a7d01100891c0cc775e0709
+# good: [cb89bb9ee2ee5010b166061447eaca3ae0da2378] docs(store): comment the load() decode step
+git bisect good cb89bb9ee2ee5010b166061447eaca3ae0da2378
+# first bad commit: [f285ede8611e55ac0a7d01100891c0cc775e0709] refactor(store): simplify nextID restoration in load()
+```
+
+```powershell
+git bisect reset   # return to branch tip after documenting
+```
+
+### Offending commit
+
+| Field | Value |
+|-------|-------|
+| **SHA** | `f285ede8611e55ac0a7d01100891c0cc775e0709` |
+| **Message** | `refactor(store): simplify nextID restoration in load()` |
+| **File** | `app/store.go` — changed `if n.ID >= s.nextID` to `if n.ID > s.nextID` |
+
+That off-by-one in `load()` stops `nextID` from being restored after reload, so the persistence test fails.
+
+### log₂(N) efficiency
+
+There are **4 commits** between `v0.0.1` and the broken branch tip (`git rev-list --count v0.0.1..upstream/bug/bisect-me` → 4). Bisect tests the midpoint each round, so it needs at most ⌈log₂(4)⌉ = **2** test runs instead of checking all 4 linearly. Round 1 tested `f285ede` (bad); round 2 tested `cb89bb9` (good) — narrowing the range until the first bad commit was isolated.
 
 ---
 
@@ -222,8 +291,10 @@ Skipped for this submission. To earn +2 pts later: `git fetch upstream`, bisect 
 
 - [x] Course PR opened (`feature/lab2` → `inno-devops-labs/main`) — [#1006](https://github.com/inno-devops-labs/DevOps-Intro/pull/1006)
 - [x] Fork PR opened (`feature/lab2` → `selysecr332/main`) — [#2](https://github.com/selysecr332/DevOps-Intro/pull/2)
-- [ ] Both URLs submitted on Moodle
+- [x] Both URLs submitted on Moodle
 
 ### Bonus (2 pts)
 
-- [ ] Not attempted
+- [x] `git bisect log` captured
+- [x] Offending commit `f285ede` identified (SHA + message)
+- [x] log₂(N) efficiency explained
