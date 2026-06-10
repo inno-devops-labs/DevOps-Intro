@@ -1,4 +1,17 @@
 # Lab 3 — CI/CD Pipeline
+
+## Path: GitHub Actions. 
+I chose GitHub Actions because my fork is on GitHub and it works without extra setup. It is also the default path recommended in the lab instructions.
+
+## PR link:https://github.com/linxel/DevOps-Intro/pull/3
+
+<img width="1033" height="537" alt="image" src="https://github.com/user-attachments/assets/3af62d6f-6c7d-4080-b86c-ffa287c7a98d" />
+
+<img width="1013" height="993" alt="image" src="https://github.com/user-attachments/assets/8dc38d8a-3fcd-463a-99c4-0829e25504b2" />
+
+<img width="864" height="557" alt="image" src="https://github.com/user-attachments/assets/004ac78d-0396-4a9e-ab46-f20164f5d590" />
+
+
 a) Why pin the runner version (ubuntu-24.04) instead of ubuntu-latest? What breaks otherwise?
 ecause ubuntu-latest changes over time. Today it points to Ubuntu 24.04. Tomorrow it may point to Ubuntu 26.04. New Ubuntu versions have different system packages, different Go versions, different libraries. Your pipeline that works today may break tomorrow without any code change. Pinning to ubuntu-24.04 makes sure every run uses the exact same environment. This is called reproducibility.
 
@@ -13,16 +26,4 @@ Permissions controls what the GITHUB_TOKEN is allowed to do. The principle is le
 
 e) GitLab path: what's the difference between a stage and a job? What would dependencies: do that stages: doesn't?
 In GitLab CI, a stage is a group of jobs that run at the same time. Stages run in order. For example, you might have a test stage and then a deploy stage. All jobs in the test stage finish before any job in the deploy stage starts. A job is a single unit of work, like running go test or building a binary. The dependencies keyword does something different. It controls which artifacts from previous jobs get downloaded into the current job. For example, a deploy job might depend on a build job and download the binary artifact. Stages controls the order of execution. Dependencies controls which data flows between jobs, even between jobs in different stages. Stages alone cannot control artifact flow. Dependencies is more granular and lets you skip downloading artifacts you do not need.
-
-
-## Path: GitHub Actions
-
-
-## PR link:https://github.com/linxel/DevOps-Intro/pull/3
-
-<img width="1033" height="537" alt="image" src="https://github.com/user-attachments/assets/3af62d6f-6c7d-4080-b86c-ffa287c7a98d" />
-
-<img width="1013" height="993" alt="image" src="https://github.com/user-attachments/assets/8dc38d8a-3fcd-463a-99c4-0829e25504b2" />
-
-<img width="864" height="557" alt="image" src="https://github.com/user-attachments/assets/004ac78d-0396-4a9e-ab46-f20164f5d590" />
 
