@@ -2,7 +2,6 @@
 
 **Student:** Mahmoud Hassan  
 **GitHub:** @selysecr332  
-**Date:** <!-- YYYY-MM-DD -->
 
 ---
 
@@ -83,21 +82,44 @@ main
 
 ### 1.3 Disaster + recovery
 
+**After `git reset --hard HEAD~2`**
+
+```text
+$ git log --oneline -3
+a8b4bd1 (HEAD -> feature/lab2, main) test: unsigned commit (should fail)
+72fc938 (origin/main) test: unsigned commit (should fail)
+d149677 test: unsigned commit (should fail)
+
+$ git status
+On branch feature/lab2
+Untracked files: submissions/
+(two wip commits no longer appear on the branch — looks "gone")
+```
+
 **`git reflog` (after `reset --hard HEAD~2`)**
 
 ```text
-<!-- paste -->
+a8b4bd1 HEAD@{0}: reset: moving to HEAD~2
+1316d8a HEAD@{1}: commit: wip(lab2): more progress
+36bcfbb HEAD@{2}: commit: wip(lab2): start submission
+a8b4bd1 HEAD@{3}: checkout: moving from feature/lab2 to feature/lab2
 ```
 
 **Recovery command + output**
 
 ```text
-<!-- git reset --hard <SHA> -->
+$ git reset --hard 1316d8a
+HEAD is now at 1316d8a wip(lab2): more progress
+
+$ git log --oneline -3
+1316d8a (HEAD -> feature/lab2) wip(lab2): more progress
+36bcfbb wip(lab2): start submission
+a8b4bd1 (main) test: unsigned commit (should fail)
 ```
 
 **What if `git gc` ran before recovery?**
 
-<!-- 2-3 sentences -->
+Reflog keeps a history of where `HEAD` pointed, so after a bad `reset --hard` you can still find lost commit SHAs (like `1316d8a`). But `git gc` prunes unreachable objects once reflog entries expire (default ~90 days, sooner with aggressive gc). If gc ran before recovery and no remote/backup still had those commits, the wip work would be permanently lost. Reflog is a safety net, not a backup — always copy the SHA from reflog first.
 
 ---
 
@@ -108,30 +130,49 @@ main
 **`git tag -l --format='%(refname:short) %(objecttype) %(*objecttype)'`**
 
 ```text
-<!-- paste — expect: v0.1.0-lab2-selysecr332 tag commit -->
+v0.0.1 tag commit
+v0.1.0-lab2-selysecr332 tag commit
 ```
 
 **`git tag -v v0.1.0-lab2-selysecr332`**
 
 ```text
-<!-- paste — expect Good signature -->
+object a8b4bd1a3bfbc1da6301abb9807c12b3d4130f88
+type commit
+tag v0.1.0-lab2-selysecr332
+tagger selysecr332 <mh2325132@gmail.com> 1781077340 +0300
+
+Lab 2 milestone — version control deep dive
+Good "git" signature for mh2325132@gmail.com with ED25519 key SHA256:9OvCsi/f5zN9TWAVj8HsTQLZkJEnKjrkkQZZJi+BYe0
 ```
 
 ### 2.2 Rebase — log before
 
 ```text
-<!-- git log --oneline --graph before rebase -->
+* a8b4bd1 (HEAD -> main, tag: v0.1.0-lab2-selysecr332) test: unsigned commit (should fail)
+* 72fc938 (origin/main) test: unsigned commit (should fail)
+* d149677 test: unsigned commit (should fail)
+(feature/lab2 commits were on top of a8b4bd1, not yet rebased)
 ```
 
 ### 2.2 Rebase — log after
 
 ```text
-<!-- git log --oneline --graph after rebase -->
+<!-- paste after: git rebase main && git log --oneline --graph -10 -->
+```
+
+**`git push origin main` (upstream simulation) — rejected by Lab 1 branch protection:**
+
+```text
+remote: error: GH013: Repository rule violations found for refs/heads/main.
+remote: - Changes must be made through a pull request.
+! [remote rejected] main -> main
+(Rebased onto local main commit 578b0b4 instead)
 ```
 
 ### Merge vs rebase reflection
 
-<!-- brief reflection -->
+Use **merge** on shared branches (`main`, `develop`) when others may already have your commits — it preserves history and avoids rewriting. Use **rebase** on private feature branches to replay your commits on top of latest `main` for a clean linear history before opening a PR. Never rebase commits that teammates have already pulled; use `--force-with-lease` only on your own feature branch.
 
 ---
 
@@ -166,15 +207,15 @@ main
 
 ### Task 1 (6 pts)
 
-- [ ] HEAD → tree → blob chain documented
-- [ ] `.git/` exploration + interpretation
-- [ ] Reflog recovery demonstrated
-- [ ] `git gc` risk explained
+- [x] HEAD → tree → blob chain documented
+- [x] `.git/` exploration + interpretation
+- [x] Reflog recovery demonstrated
+- [x] `git gc` risk explained
 
 ### Task 2 (4 pts)
 
-- [ ] Signed annotated tag `v0.1.0-lab2-selysecr332` pushed
-- [ ] `git tag -v` shows Good signature
+- [x] Signed annotated tag `v0.1.0-lab2-selysecr332` pushed
+- [x] `git tag -v` shows Good signature
 - [ ] Rebase before/after graphs captured
 - [ ] Merge vs rebase reflection
 
