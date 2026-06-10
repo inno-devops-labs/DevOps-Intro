@@ -34,11 +34,11 @@ In GitLab CI, a stage is a group of jobs that run at the same time. Stages run i
 2. Matrix — run vet and test on Go 1.23 and 1.24 in parallel with fail-fast: false
 3. Path filter — pipeline only runs on changes to app/ or .github/workflows/ci.yml
 
-### Timing table:
-| Scenario | Time (s) |
-| Baseline | 26 |
-| With cache | 23 |
-| With cache + matrix | 41 |
+| Scenario | Wall-clock |
+|----------|-----------|
+| Baseline (no cache, single Go version, no path filter) | 26 s |
+| With cache | 23 s |
+| With cache + matrix | 41 s |
 
 <img width="919" height="442" alt="image" src="https://github.com/user-attachments/assets/57f04ebc-309f-4e91-adb6-e8ff04a34ea4" />
 
