@@ -187,3 +187,4 @@ main
 ### Bonus (2 pts)
 
 - [ ] Bisect log + offending commit + log₂(N) explanation
+more progress
