@@ -20,3 +20,9 @@ In GitLab CI, a stage is a group of jobs that run at the same time. Stages run i
 
 ## PR link:https://github.com/linxel/DevOps-Intro/pull/3
 
+<img width="1033" height="537" alt="image" src="https://github.com/user-attachments/assets/3af62d6f-6c7d-4080-b86c-ffa287c7a98d" />
+
+<img width="1013" height="993" alt="image" src="https://github.com/user-attachments/assets/8dc38d8a-3fcd-463a-99c4-0829e25504b2" />
+
+<img width="864" height="557" alt="image" src="https://github.com/user-attachments/assets/004ac78d-0396-4a9e-ab46-f20164f5d590" />
+
