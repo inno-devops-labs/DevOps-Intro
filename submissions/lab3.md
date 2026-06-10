@@ -27,3 +27,23 @@ Permissions controls what the GITHUB_TOKEN is allowed to do. The principle is le
 e) GitLab path: what's the difference between a stage and a job? What would dependencies: do that stages: doesn't?
 In GitLab CI, a stage is a group of jobs that run at the same time. Stages run in order. For example, you might have a test stage and then a deploy stage. All jobs in the test stage finish before any job in the deploy stage starts. A job is a single unit of work, like running go test or building a binary. The dependencies keyword does something different. It controls which artifacts from previous jobs get downloaded into the current job. For example, a deploy job might depend on a build job and download the binary artifact. Stages controls the order of execution. Dependencies controls which data flows between jobs, even between jobs in different stages. Stages alone cannot control artifact flow. Dependencies is more granular and lets you skip downloading artifacts you do not need.
 
+## Task 2 — Make It Fast and Smart
+
+### Optimizations applied:
+1. Cache — added cache: true to actions/setup-go
+2. Matrix — run vet and test on Go 1.23 and 1.24 in parallel with fail-fast: false
+3. Path filter — pipeline only runs on changes to app/ or .github/workflows/ci.yml
+
+### Timing table:
+| Scenario | Time (s) |
+| Baseline | 26 |
+| With cache | 23 |
+| With cache + matrix | 41 |
+
+### Answers:
+
+f) Because go.sum is deterministic. The same go.sum always downloads the same modules. Build outputs depend on Go version, CPU architecture, OS, and compiler flags. Caching outputs is unreliable.
+
+g) With fail-fast: true, if one matrix job fails GitHub cancels all other running jobs. With fail-fast: false, all jobs run to completion even if some fail. You want false to see results for all Go versions. You want true when jobs are expensive and you want to stop early after first failure.
+
+h) An attacker could poison the cache with malicious code. GitHub mitigates this by isolating caches from forks. Caches from PRs in forks are not accessible to protected branches.
