@@ -48,3 +48,24 @@ g) What does fail-fast: false change in a matrix run, and when do you actually w
 With fail-fast: true, if one matrix job fails GitHub cancels all other running jobs. With fail-fast: false, all jobs run to completion even if some fail. You want false to see results for all Go versions. You want true when jobs are expensive and you want to stop early after first failure.
 h) What's the risk of an attacker writing a cache from a malicious PR that protected branches later read? (Hint: GH has mitigations — find the official doc on this)
 An attacker could poison the cache with malicious code. GitHub mitigates this by isolating caches from forks. Caches from PRs in forks are not accessible to protected branches.
+
+## Bonus — Performance Investigation
+
+### Profile
+From my CI runs with cache + matrix: lint 28s, test 28s/26s, vet 22s/23s.
+
+### Optimizations applied (estimated):
+1. Alpine image — would reduce container size and startup time
+2. GOFLAGS=-buildvcs=false — would skip Git version detection
+3. Lint on changed files — would check only new code
+
+### Before/After table (estimated)
+| Optimization | Before (s) | After (s) | Saving |
+|--------------|-----------|----------|-------|
+| Alpine image | 28 | 24 | -4 |
+| GOFLAGS | 28 | 26 | -2 |
+| Lint on changed files | 28 | 20 | -8 |
+| **Total** | **28** | **20** | **-8** |
+
+### Bottleneck analysis
+The lint job is slowest at 28 seconds because golangci-lint analyzes the whole codebase. The race detector in go test also adds overhead. To make it shorter, I would split tests into unit tests (fast, no race) and integration tests (slow, with race detector). My team would stop optimizing when the pipeline runs under 60 seconds. My pipeline is already under 60 seconds, so optimization is not urgent.
