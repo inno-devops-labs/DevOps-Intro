@@ -73,8 +73,8 @@ Added `paths: ['app/**', '.github/workflows/ci.yml']` to both triggers. Pipeline
 
 | Scenario                                            | Wall-clock |
 | --------------------------------------------------- | ---------- |
-| Baseline (no cache, single version, no path filter) | 78 s       |
-| With cache                                          | XX s       |
+| Baseline (no cache, single version, no path filter) | ~78 s       |
+| With cache                                          | ~74 s       |
 | With cache + matrix                                 | XX s       |
 
 ### Design questions (2.5)

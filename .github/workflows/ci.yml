@@ -1,4 +1,4 @@
-name: CI main
+name: CI
 
 on:
   push:
@@ -20,8 +20,8 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
-      # matrix:
-      #   go: ['1.23', '1.24']
+      matrix:
+        go: ['1.23', '1.24']
     defaults:
       run:
         working-directory: app
@@ -29,9 +29,8 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff  # v5.6.0
         with:
-          # go-version: ${{ matrix.go }}
-          go-version: '1.24'
-          cache: false
+          go-version: ${{ matrix.go }}
+          cache: true
           cache-dependency-path: app/go.sum
       - run: go vet ./...
 
@@ -39,8 +38,8 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
-      # matrix:
-      #   go: ['1.23', '1.24']
+      matrix:
+        go: ['1.23', '1.24']
     defaults:
       run:
         working-directory: app
@@ -48,9 +47,8 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff  # v5.6.0
         with:
-          # go-version: ${{ matrix.go }}
-          go-version: '1.24'
-          cache: false
+          go-version: ${{ matrix.go }}
+          cache: true
           cache-dependency-path: app/go.sum
       - run: go test -race -count=1 ./...
 
@@ -61,7 +59,7 @@ jobs:
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff  # v5.6.0
         with:
           go-version: '1.24'
-          cache: false
+          cache: true
           cache-dependency-path: app/go.sum
       - uses: golangci/golangci-lint-action@82606bf257cbaff209d206a39f5134f0cfbfd2ee  # v9.2.1
         with:
