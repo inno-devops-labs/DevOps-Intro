@@ -12,18 +12,19 @@
 
 ### Green CI run
 
-<!-- TODO: paste link to green CI run after first push, e.g.:
-https://github.com/<your-fork>/DevOps-Intro/actions/runs/<run-id>
--->
+https://github.com/Ten-Do/DevOps-Intro/pull/2/checks?sha=e94d43398c013f71b2cb8564d4b3068cad11aa47
 
 ### Failed run evidence (Task 1.5)
 
-<!-- TODO: paste screenshot or log URL of the red run (broken handlers_test.go),
-     plus the revert commit SHA that turned it green again -->
+![alt text](failed-run-evidence.png)
+
+https://github.com/Ten-Do/DevOps-Intro/actions/runs/27352327259/job/80817239954?pr=2
 
 ### Branch protection screenshot
 
-<!-- TODO: paste screenshot of Settings -> Branches -> branch protection rule for main -->
+![alt text](branch-protection.png)
+
+![alt text](branch-protection-pr.png)
 
 ---
 
