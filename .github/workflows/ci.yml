@@ -19,9 +19,6 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  GOFLAGS: -buildvcs=false
-
 jobs:
   vet:
     name: vet (Go ${{ matrix.go-version }})
@@ -75,3 +72,4 @@ jobs:
         with:
           version: v2.5.0
           working-directory: app
+          args: --timeout=5m
