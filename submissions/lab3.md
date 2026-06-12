@@ -65,6 +65,8 @@ Default key is `go.mod`. Set `cache-dependency-path: app/go.sum` to key on `go.s
 
 Added `strategy.matrix.go: ['1.23', '1.24']` to `vet` and `test`. Both versions run in parallel. `fail-fast: false` is required - default is `true`, which cancels the other cell on first failure and hides whether the bug is version-specific. `lint` stays on 1.24 only.
 
+![alt text](ci-with-matrix.png)
+
 **3. Path filter**
 
 Added `paths: ['app/**', '.github/workflows/ci.yml']` to both triggers. Pipeline only runs when Go source or the CI config changes. README edits don't trigger a run.
@@ -75,7 +77,7 @@ Added `paths: ['app/**', '.github/workflows/ci.yml']` to both triggers. Pipeline
 | --------------------------------------------------- | ---------- |
 | Baseline (no cache, single version, no path filter) | 70~80 s    |
 | With cache                                          | 70~80 s    |
-| With cache + matrix                                 | 130~150 s  |
+| With cache + matrix                                 | 120~140 s  |
 
 > There is no optimize because go app has 0 dependencies.
 
