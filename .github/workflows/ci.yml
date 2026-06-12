@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - '.github/workflows/ci.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GOFLAGS: -buildvcs=false
+
+jobs:
+  vet:
+    name: vet (Go ${{ matrix.go-version }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ['1.24', '1.25']
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c  # v6.4.0
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+          cache-dependency-path: app/go.sum
+      - run: go vet ./...
+
+  test:
+    name: test (Go ${{ matrix.go-version }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ['1.24', '1.25']
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c  # v6.4.0
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+          cache-dependency-path: app/go.sum
+      - run: go test -race -count=1 ./...
+
+  lint:
+    name: lint
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c  # v6.4.0
+        with:
+          go-version: '1.24'
+          cache: true
+          cache-dependency-path: app/go.sum
+      - uses: golangci/golangci-lint-action@82606bf257cbaff209d206a39f5134f0cfbfd2ee  # v9.2.1
+        with:
+          version: v2.5.0
+          working-directory: app
+          args: --timeout=5m
