@@ -1,0 +1,167 @@
+*   Trying 127.0.0.1:8443...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Connected to localhost (127.0.0.1) port 8443 (#0)
+* ALPN, offering h2
+* ALPN, offering http/1.1
+* TLSv1.0 (OUT), TLS header, Certificate Status (22):
+} [5 bytes data]
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+} [512 bytes data]
+* TLSv1.2 (IN), TLS header, Certificate Status (22):
+{ [5 bytes data]
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+{ [122 bytes data]
+* TLSv1.2 (IN), TLS header, Finished (20):
+{ [5 bytes data]
+* TLSv1.2 (IN), TLS header, Supplemental data (23):
+{ [5 bytes data]
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+{ [6 bytes data]
+* TLSv1.2 (IN), TLS header, Supplemental data (23):
+{ [5 bytes data]
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+{ [794 bytes data]
+* TLSv1.2 (IN), TLS header, Supplemental data (23):
+{ [5 bytes data]
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+{ [264 bytes data]
+* TLSv1.2 (IN), TLS header, Supplemental data (23):
+{ [5 bytes data]
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+{ [52 bytes data]
+* TLSv1.2 (OUT), TLS header, Finished (20):
+} [5 bytes data]
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+} [1 bytes data]
+* TLSv1.2 (OUT), TLS header, Supplemental data (23):
+} [5 bytes data]
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+} [52 bytes data]
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+* ALPN, server did not agree to a protocol
+* Server certificate:
+*  subject: CN=localhost
+*  start date: Jun 12 10:19:30 2026 GMT
+*  expire date: Jun 13 10:19:30 2026 GMT
+*  issuer: CN=localhost
+*  SSL certificate verify result: self-signed certificate (18), continuing anyway.
+* TLSv1.2 (OUT), TLS header, Supplemental data (23):
+} [5 bytes data]
+> GET / HTTP/1.1
+> Host: localhost:8443
+> User-Agent: curl/7.81.0
+> Accept: */*
+> 
+* TLSv1.2 (IN), TLS header, Supplemental data (23):
+{ [5 bytes data]
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+{ [233 bytes data]
+* TLSv1.2 (IN), TLS header, Supplemental data (23):
+{ [5 bytes data]
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+{ [233 bytes data]
+* old SSL session ID is stale, removing
+* TLSv1.2 (IN), TLS header, Supplemental data (23):
+{ [5 bytes data]
+* Mark bundle as not supporting multiuse
+* HTTP 1.0, assume close after body
+< HTTP/1.0 200 ok
+< Content-type: text/html
+< 
+{ [5110 bytes data]
+<HTML><BODY BGCOLOR="#ffffff">
+<pre>
+
+s_server -accept 8443 -cert lab4-local.crt -key lab4-local.key -www 
+Secure Renegotiation IS supported
+Ciphers supported in s_server binary
+TLSv1.3    :TLS_AES_256_GCM_SHA384    TLSv1.3    :TLS_CHACHA20_POLY1305_SHA256 
+TLSv1.3    :TLS_AES_128_GCM_SHA256    TLSv1.2    :ECDHE-ECDSA-AES256-GCM-SHA384 
+TLSv1.2    :ECDHE-RSA-AES256-GCM-SHA384 TLSv1.2    :DHE-RSA-AES256-GCM-SHA384 
+TLSv1.2    :ECDHE-ECDSA-CHACHA20-POLY1305 TLSv1.2    :ECDHE-RSA-CHACHA20-POLY1305 
+TLSv1.2    :DHE-RSA-CHACHA20-POLY1305 TLSv1.2    :ECDHE-ECDSA-AES128-GCM-SHA256 
+TLSv1.2    :ECDHE-RSA-AES128-GCM-SHA256 TLSv1.2    :DHE-RSA-AES128-GCM-SHA256 
+TLSv1.2    :ECDHE-ECDSA-AES256-SHA384 TLSv1.2    :ECDHE-RSA-AES256-SHA384   
+TLSv1.2    :DHE-RSA-AES256-SHA256     TLSv1.2    :ECDHE-ECDSA-AES128-SHA256 
+TLSv1.2    :ECDHE-RSA-AES128-SHA256   TLSv1.2    :DHE-RSA-AES128-SHA256     
+TLSv1.0    :ECDHE-ECDSA-AES256-SHA    TLSv1.0    :ECDHE-RSA-AES256-SHA      
+SSLv3      :DHE-RSA-AES256-SHA        TLSv1.0    :ECDHE-ECDSA-AES128-SHA    
+TLSv1.0    :ECDHE-RSA-AES128-SHA      SSLv3      :DHE-RSA-AES128-SHA        
+TLSv1.2    :RSA-PSK-AES256-GCM-SHA384 TLSv1.2    :DHE-PSK-AES256-GCM-SHA384 
+TLSv1.2    :RSA-PSK-CHACHA20-POLY1305 TLSv1.2    :DHE-PSK-CHACHA20-POLY1305 
+TLSv1.2    :ECDHE-PSK-CHACHA20-POLY1305 TLSv1.2    :AES256-GCM-SHA384         
+TLSv1.2    :PSK-AES256-GCM-SHA384     TLSv1.2    :PSK-CHACHA20-POLY1305     
+TLSv1.2    :RSA-PSK-AES128-GCM-SHA256 TLSv1.2    :DHE-PSK-AES128-GCM-SHA256 
+TLSv1.2    :AES128-GCM-SHA256         TLSv1.2    :PSK-AES128-GCM-SHA256     
+TLSv1.2    :AES256-SHA256             TLSv1.2    :AES128-SHA256             
+TLSv1.0    :ECDHE-PSK-AES256-CBC-SHA384 TLSv1.0    :ECDHE-PSK-AES256-CBC-SHA  
+SSLv3      :SRP-RSA-AES-256-CBC-SHA   SSLv3      :SRP-AES-256-CBC-SHA       
+TLSv1.0    :RSA-PSK-AES256-CBC-SHA384 TLSv1.0    :DHE-PSK-AES256-CBC-SHA384 
+SSLv3      :RSA-PSK-AES256-CBC-SHA    SSLv3      :DHE-PSK-AES256-CBC-SHA    
+SSLv3      :AES256-SHA                TLSv1.0    :PSK-AES256-CBC-SHA384     
+SSLv3      :PSK-AES256-CBC-SHA        TLSv1.0    :ECDHE-PSK-AES128-CBC-SHA256 
+TLSv1.0    :ECDHE-PSK-AES128-CBC-SHA  SSLv3      :SRP-RSA-AES-128-CBC-SHA   
+SSLv3      :SRP-AES-128-CBC-SHA       TLSv1.0    :RSA-PSK-AES128-CBC-SHA256 
+TLSv1.0    :DHE-PSK-AES128-CBC-SHA256 SSLv3      :RSA-PSK-AES128-CBC-SHA    
+SSLv3      :DHE-PSK-AES128-CBC-SHA    SSLv3      :AES128-SHA                
+TLSv1.0    :PSK-AES128-CBC-SHA256     SSLv3      :PSK-AES128-CBC-SHA        
+---
+Ciphers common between both SSL end points:
+TLS_AES_256_GCM_SHA384     TLS_CHACHA20_POLY1305_SHA256 TLS_AES_128_GCM_SHA256    
+ECDHE-ECDSA-AES256-GCM-SHA384 ECDHE-RSA-AES256-GCM-SHA384 DHE-RSA-AES256-GCM-SHA384 
+ECDHE-ECDSA-CHACHA20-POLY1305 ECDHE-RSA-CHACHA20-POLY1305 DHE-RSA-CHACHA20-POLY1305 
+ECDHE-ECDSA-AES128-GCM-SHA256 ECDHE-RSA-AES128-GCM-SHA256 DHE-RSA-AES128-GCM-SHA256 
+ECDHE-ECDSA-AES256-SHA384  ECDHE-RSA-AES256-SHA384    DHE-RSA-AES256-SHA256     
+ECDHE-ECDSA-AES128-SHA256  ECDHE-RSA-AES128-SHA256    DHE-RSA-AES128-SHA256     
+ECDHE-ECDSA-AES256-SHA     ECDHE-RSA-AES256-SHA       DHE-RSA-AES256-SHA        
+ECDHE-ECDSA-AES128-SHA     ECDHE-RSA-AES128-SHA       DHE-RSA-AES128-SHA        
+AES256-GCM-SHA384          AES128-GCM-SHA256          AES256-SHA256             
+AES128-SHA256              AES256-SHA                 AES128-SHA
+Signature Algorithms: ECDSA+SHA256:ECDSA+SHA384:ECDSA+SHA512:Ed25519:Ed448:RSA-PSS+SHA256:RSA-PSS+SHA384:RSA-PSS+SHA512:RSA-PSS+SHA256:RSA-PSS+SHA384:RSA-PSS+SHA512:RSA+SHA256:RSA+SHA384:RSA+SHA512:ECDSA+SHA224:RSA+SHA224:DSA+SHA224:DSA+SHA256:DSA+SHA384:DSA+SHA512
+Shared Signature Algorithms: ECDSA+SHA256:ECDSA+SHA384:ECDSA+SHA512:Ed25519:Ed448:RSA-PSS+SHA256:RSA-PSS+SHA384:RSA-PSS+SHA512:RSA-PSS+SHA256:RSA-PSS+SHA384:RSA-PSS+SHA512:RSA+SHA256:RSA+SHA384:RSA+SHA512:ECDSA+SHA224:RSA+SHA224
+Supported groups: x25519:secp256r1:x448:secp521r1:secp384r1:ffdhe2048:ffdhe3072:ffdhe4096:ffdhe6144:ffdhe8192
+Shared groups: x25519:secp256r1:x448:secp521r1:secp384r1:ffdhe2048:ffdhe3072:ffdhe4096:ffdhe6144:ffdhe8192
+---
+New, TLSv* TLSv1.2 (IN), TLS header, Supplemental data (23):
+{ [5 bytes data]
+* TLSv1.3 (IN), TLS alert, close notify (256):
+{ [2 bytes data]
+100  5110    0  5110    0     0   104k      0 --:--:-- --:--:-- --:--:--  108k
+* Closing connection 0
+* TLSv1.2 (OUT), TLS header, Supplemental data (23):
+} [5 bytes data]
+* TLSv1.3 (OUT), TLS alert, close notify (256):
+} [2 bytes data]
+1.3, Cipher is TLS_AES_256_GCM_SHA384
+SSL-Session:
+    Protocol  : TLSv1.3
+    Cipher    : TLS_AES_256_GCM_SHA384
+    Session-ID: 5F09711CCD1E700FB157B5AC51906F44401D82F91079F8093EDA555776E1E6B4
+    Session-ID-ctx: 01000000
+    Resumption PSK: A079B3A2BDD001BCCF5AFCAE7812058766D0977D48EB1D6DF794296D759C2B81E1CB602C28D118C05AEF883F68E6E998
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    Start Time: 1781259844
+    Timeout   : 7200 (sec)
+    Verify return code: 0 (ok)
+    Extended master secret: no
+    Max Early Data: 0
+---
+   0 items in the session cache
+   0 client connects (SSL_connect())
+   0 client renegotiates (SSL_connect())
+   0 client connects that finished
+   2 server accepts (SSL_accept())
+   0 server renegotiates (SSL_accept())
+   2 server accepts that finished
+   0 session cache hits
+   0 session cache misses
+   0 session cache timeouts
+   0 callback cache hits
+   0 cache full overflows (128 allowed)
+---
+no client certificate available
+</pre></BODY></HTML>
+

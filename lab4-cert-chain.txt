@@ -1,0 +1,55 @@
+Can't use SSL_get_servername
+depth=0 CN = localhost
+verify error:num=18:self-signed certificate
+verify return:1
+depth=0 CN = localhost
+verify return:1
+CONNECTED(00000003)
+---
+Certificate chain
+ 0 s:CN = localhost
+   i:CN = localhost
+   a:PKEY: rsaEncryption, 2048 (bit); sigalg: RSA-SHA256
+   v:NotBefore: Jun 12 10:19:30 2026 GMT; NotAfter: Jun 13 10:19:30 2026 GMT
+-----BEGIN CERTIFICATE-----
+MIIDCTCCAfGgAwIBAgIUFHHfAkJNf7M4j/zFmf/lUr8/Z7wwDQYJKoZIhvcNAQEL
+BQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTI2MDYxMjEwMTkzMFoXDTI2MDYx
+MzEwMTkzMFowFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEF
+AAOCAQ8AMIIBCgKCAQEA9CNIqA5IOPB1ZpcCQi/OaKAbgjS/k9ejV1PZZnE1CdU3
+PEt/LCwYqvox8G/fcHxGp+NYLyD4HRqm5gv/LuxWZi1yquCo65NnHlejQi1NtTm1
+Uut5G0zaPUaWigGLVq3sohL0dOichxFHRjkRBlx/b6FjvGqplZYfMm2nEqBKrq2K
+0jagiSkATqaRPIbwUaLDUFc6rAs4ckAgEIVcz1oD5Df2X42pGgcc6q2KTUuXs1r9
+CDhwZXec+Pp6/mvWmlR4aLlmzMwtN5a1BRPr7TYzhs9727CVYuHd4Wf0Vb8F2uZG
+m1H9fCEf7312eADsLFVABNTf2kTZVW4BOhF5V6GAsQIDAQABo1MwUTAdBgNVHQ4E
+FgQUTtDRdkHwgyfh5evTT+6ZOCn91H4wHwYDVR0jBBgwFoAUTtDRdkHwgyfh5evT
+T+6ZOCn91H4wDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEAoGOL
+fAJQJbk/I8cqeJ5Z9HhXR3vVvPyXo/eFV00CwLNauipxCS/jF9IrK2NiA2I6HK3b
+tP1HPpzEKTsu2/JkNzFIdEnVwiMqLic2Xd4dfy0BQI0gMied8csyivwIdfV8qia0
+gD5KIFV6gvG+DeHaxudAtE1z+w1xPDzmVx5+ybR9jilHiKAzjSpe+F4ivqAhcKg5
+MXmNXInbxrodXoXIlMVf5jIZNm661tsU+30Fdjl3sm6U+dRdFlz0ilLHL11j9CRD
+R2KpNUiDHuAzUyc+PFE2wWJV1bmwtG2F7RAtq/fp2ZxeDSG/XBS6omg81LHthtcb
+S0Kfna9fsZNUHcDw5g==
+-----END CERTIFICATE-----
+---
+Server certificate
+subject=CN = localhost
+issuer=CN = localhost
+---
+No client certificate CA names sent
+Peer signing digest: SHA256
+Peer signature type: RSA-PSS
+Server Temp Key: X25519, 253 bits
+---
+SSL handshake has read 1337 bytes and written 373 bytes
+Verification error: self-signed certificate
+---
+New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+Server public key is 2048 bit
+Secure Renegotiation IS NOT supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+Early data was not sent
+Verify return code: 18 (self-signed certificate)
+---
+DONE
