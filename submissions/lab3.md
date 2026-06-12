@@ -73,9 +73,11 @@ Added `paths: ['app/**', '.github/workflows/ci.yml']` to both triggers. Pipeline
 
 | Scenario                                            | Wall-clock |
 | --------------------------------------------------- | ---------- |
-| Baseline (no cache, single version, no path filter) | ~78 s       |
-| With cache                                          | ~74 s       |
-| With cache + matrix                                 | XX s       |
+| Baseline (no cache, single version, no path filter) | 70~80 s    |
+| With cache                                          | 70~80 s    |
+| With cache + matrix                                 | 130~150 s  |
+
+> There is no optimize because go app has 0 dependencies.
 
 ### Design questions (2.5)
 
