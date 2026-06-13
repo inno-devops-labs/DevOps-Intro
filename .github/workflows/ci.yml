@@ -5,14 +5,14 @@ on:
     branches:
       - main
     paths:
-      - 'app/'
-      - '.github/workflows/'
+      - 'app/**'
+      - '.github/workflows/**'
   pull_request:
     branches:
       - main
     paths:
-      - 'app/'
-      - '.github/workflows/'
+      - 'app/**'
+      - '.github/workflows/**'
 
 permissions:
   contents: read
