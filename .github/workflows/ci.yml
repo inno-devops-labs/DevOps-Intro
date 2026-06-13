@@ -21,12 +21,12 @@ permissions:
   contents: read
 
 jobs:
-  vet-test-lint:
+  vet-and-test:
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        go-version: ['1.23', '1.24']
+        go-version: [ '1.23', '1.24' ]
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
@@ -34,21 +34,30 @@ jobs:
           go-version: ${{ matrix.go-version }}
           cache: true
           cache-dependency-path: app/go.sum
-      - working-directory: ./app
-        run: |
-          go vet ./...
-          go test -race -count=1 ./...
 
+      - working-directory: ./app
+        run: go vet ./...
+
+      - working-directory: ./app
+        run: go test -race -count=1 ./...
+
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+        with:
+          go-version: '1.24'
+          cache: true
+          cache-dependency-path: app/go.sum
       - uses: golangci/golangci-lint-action@82606bf257cbaff209d206a39f5134f0cfbfd2ee
         with:
           version: v2.5.0
           working-directory: app
-          args: --timeout=5m
 
   ci-ok:
-    name: CI OK
     if: always()
-    needs: [vet-test-lint]
+    needs: [ vet-and-test, lint ]
     runs-on: ubuntu-24.04
     steps:
       - run: |
