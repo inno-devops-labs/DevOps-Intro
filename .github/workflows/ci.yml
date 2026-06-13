@@ -14,6 +14,9 @@ on:
       - 'app/**'
       - '.github/workflows/**'
 
+env:
+  GOFLAGS: -buildvcs=false
+
 permissions:
   contents: read
 
