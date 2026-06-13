@@ -4,35 +4,37 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'app/'
+      - '.github/workflows/'
   pull_request:
     branches:
       - main
+    paths:
+      - 'app/'
+      - '.github/workflows/'
 
 permissions:
   contents: read
 
 jobs:
-  vet:
+  vet-and-test:
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: [ '1.23', '1.24' ]
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
-          go-version: '1.24'
+          go-version: ${{ matrix.go-version }}
           cache: true
           cache-dependency-path: app/go.sum
+
       - working-directory: ./app
         run: go vet ./...
 
-  test:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
-        with:
-          go-version: '1.24'
-          cache: true
-          cache-dependency-path: app/go.sum
       - working-directory: ./app
         run: go test -race -count=1 ./...
 
@@ -49,3 +51,11 @@ jobs:
         with:
           version: v2.5.0
           working-directory: app
+
+  ci-ok:
+    if: always()
+    needs: [ vet-and-test, lint ]
+    runs-on: ubuntu-24.04
+    steps:
+      - run: |
+          test "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" = "false"
