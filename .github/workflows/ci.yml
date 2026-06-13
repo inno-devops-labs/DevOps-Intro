@@ -14,14 +14,11 @@ on:
       - 'app/**'
       - '.github/workflows/**'
 
-env:
-  GOFLAGS: -buildvcs=false
-
 permissions:
   contents: read
 
 jobs:
-  vet-and-test:
+  vet:
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
@@ -38,14 +35,25 @@ jobs:
       - working-directory: ./app
         run: go vet ./...
 
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: [ '1.23', '1.24' ]
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+          cache-dependency-path: app/go.sum
+
       - working-directory: ./app
         run: go test -race -count=1 ./...
 
   lint:
     runs-on: ubuntu-24.04
-    if: |
-      github.event_name == 'push' || 
-      !contains(github.event.pull_request.labels.*.name, 'documentation')
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
@@ -60,7 +68,7 @@ jobs:
 
   ci-ok:
     if: always()
-    needs: [ vet-and-test, lint ]
+    needs: [ vet, test, lint ]
     runs-on: ubuntu-24.04
     steps:
       - run: |
