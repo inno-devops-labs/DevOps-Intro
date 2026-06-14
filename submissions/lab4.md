@@ -30,7 +30,7 @@ Full raw Linux output is also saved in `submissions/lab4-linux-evidence.txt`.
 I captured loopback traffic inside the Linux container:
 
 ```bash
-tcpdump -i lo -nn -s 0 -A 'tcp port 8080' -w submissions/lab4-docker-trace.pcap
+tcpdump -i lo -nn -s 0 -A 'tcp port 8080' -w submissions/lab4-trace.pcap
 ```
 
 ```text
@@ -69,7 +69,7 @@ curl -v -X POST http://localhost:8080/notes \
 
 ### 1.2 Decode the capture
 
-The decoded trace is saved in `submissions/lab4-trace.txt`, and the Linux pcap is saved as `submissions/lab4-docker-trace.pcap`.
+The decoded trace is saved in `submissions/lab4-trace.txt`, and the Linux pcap is saved as `submissions/lab4-trace.pcap`.
 
 TCP three-way handshake:
 
@@ -349,7 +349,7 @@ The TLS capture is saved as `submissions/lab4-tls.pcap`.
 
 ### B.3 Decode the handshake
 
-I decoded the pcap with `tshark`, the Wireshark CLI decoder:
+I decoded the pcap with `tshark`:
 
 - `submissions/lab4-tls-clienthello.txt` - ClientHello decode.
 - `submissions/lab4-tls-serverhello.txt` - ServerHello decode.

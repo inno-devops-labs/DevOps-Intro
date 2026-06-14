@@ -1,9 +1,9 @@
 Lab 4 annotated packet trace
 Environment: Linux container, loopback interface lo
-Capture file: submissions/lab4-docker-trace.pcap
-Decoded with: tcpdump -r submissions/lab4-docker-trace.pcap -nn -A
+Capture file: submissions/lab4-trace.pcap
+Decoded with: tcpdump -r submissions/lab4-trace.pcap -nn -A
 
-reading from file submissions/lab4-docker-trace.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+reading from file submissions/lab4-trace.pcap, link-type EN10MB (Ethernet), snapshot length 262144
 14:16:25.452682 IP 127.0.0.1.47304 > 127.0.0.1.8080: Flags [S], seq 4278554227, win 65495, options [mss 65495,sackOK,TS val 2462602185 ecr 0,nop,wscale 7], length 0
 E..<9.@.@..................s.........0.........
 ..S.........
