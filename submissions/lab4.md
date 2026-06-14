@@ -164,3 +164,82 @@ $ sleep 1
 $ ADDR=:8080 go run . 2>&1 | tee /tmp/qn-broken.log &
 $ PID2=$!
 $ sleep 2
+```
+#### Output
+```bash
+2026/06/14 21:38:07 quicknotes listening on :8080 (notes loaded: 6)
+2026/06/14 21:38:07 listen: listen tcp :8080: bind: address already in use
+exit status 1
+2026/06/14 21:38:08 quicknotes listening on :8080 (notes loaded: 6)
+2026/06/14 21:38:08 listen: listen tcp :8080: bind: address already in use
+exit status 1
+[1]-  Exit 1                  ADDR=:8080 go run .
+[2]+  Done                    ADDR=:8080 go run . 2>&1 | tee /tmp/qn-broken.log
+```
+
+### 2.2 Walk the outside-in chain
+#### 1. Is the process running?
+```bash
+$ ps -ef | grep quicknotes
+sano03      5232    3346  0 21:00 pts/0    00:00:00 /tmp/go-build.../quicknotes
+```
+One QuickNotes process is running.
+
+#### 2. Is it listening?
+```bash
+$ ss -tlnp | grep 8080
+LISTEN 0      4096               *:8080             *:*    users:(("quicknotes",pid=5232,fd=3))
+```
+ Process 5232 is listening on port 8080.
+
+ #### 3. Is it reachable from host?
+ ```bash
+$ curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8080/health
+200
+ ```
+Health endpoint returns 200 OK.
+ #### 4. Is firewall blocking?
+ ```bash
+$ sudo iptables -L -n -v
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+...
+ ```
+ No INPUT rules block port 8080. Firewall is not the issue.
+ #### 5. Does DNS work?
+ ```bash
+$ dig +short localhost
+127.0.0.1
+ ```
+ DNS resolves localhost correctly.
+
+ ### 2.3 Root cause
+ The second process failed with:
+ ```text
+2026/06/14 21:38:08 listen: listen tcp :8080: bind: address already in use
+ ```
+ Root cause: Port 8080 was already occupied by the first QuickNotes process. The second process attempted to bind to the same port, causing the bind: address already in use error.
+
+ ### 2.4 Repair and re-verify
+ ```bash
+$ kill 5232
+$ sleep 1
+$ ADDR=:8080 go run . &
+$ sleep 1
+$ curl -s http://localhost:8080/health
+{"notes":6,"status":"ok"}
+ ```
+ After killing the old process, a new one starts successfully and returns a 200 response.
+
+ ### 2.5 Mini-postmortem (blameless, ≤200 words)
+ ```text
+What happened?
+Two processes tried to bind to the same port (8080). The first succeeded, the second failed with bind: address already in use. This caused the deploy to fail.
+Systemic issue:
+There was no coordination mechanism between processes. The system allowed two instances to attempt launching without checking port availability first. This is a common problem in environments without proper process management — it's not a developer mistake, but a missing guardrail.
+How to prevent this in the future?
+Use systemd with Socket Activation — systemd can hold the port and start the service on demand
+Use a simple port check before launch: lsof -i :8080 or ss -tlnp | grep 8080
+Use an orchestrator (docker-compose, Kubernetes) to manage port assignment
+Use PID/lock files to ensure only one instance runs at a time
+These tools shift port conflict resolution from "human memory" to automated policy, eliminating the class of failure entirely.
+ ```
