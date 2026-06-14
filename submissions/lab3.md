@@ -119,10 +119,20 @@ The lab's documentation checklist and where each item lives:
 | **Branch-protection screenshot** | below ⬇️ |
 | Written answers to 5 design questions | §1.2 |
 
-**Branch-protection screenshot:**
+**Branch-protection screenshot.** The rule is enabled on `tdzdslippen/DevOps-Intro` → `main`, with:
+☑️ Require a pull request before merging (1 approval) · ☑️ Require status checks to pass + branches up to date · **required check `ci-gate`** · ☑️ Require signed commits · ☑️ Require linear history.
 
-> _Pending: `branch-protection.png` — screenshot of the `main` rule (Settings → Branches), all four boxes ticked and required check `ci-gate`. Will be inserted here once the rule is enabled on the fork._
-<!-- replace the line above with: ![branch protection on main — required check ci-gate](branch-protection.png) -->>
+Rule top — pattern `main`, Require PR, Require status checks:
+
+![branch protection on main — rule top](branch-protection-1.png)
+
+Required check `ci-gate` + signed commits + linear history:
+
+![branch protection on main — required check ci-gate](branch-protection-2.png)
+
+The rule exists in the repo's branch-protection list:
+
+![branch protection rules list — main](branch-protection-list.png)
 
 ---
 
