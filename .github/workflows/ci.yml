@@ -35,7 +35,7 @@ jobs:
         if: matrix.target == 'lint'
         uses: golangci/golangci-lint-action@82606bf257cbaff209d206a39f5134f0cfbfd2ee # v9.2.1
         with:
-          version: ff63786c30d6c2926f99d677ab2ecf089e9390ad # v2.5.0
+          version: v2.5.0
           working-directory: app
 
       - name: Run ${{ matrix.target }}
