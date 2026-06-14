@@ -87,8 +87,8 @@ Both `test` legs went red and `ci-gate` went red — with branch protection requ
 > - ☑️ Require status checks to pass before merging → required check: **`ci-gate`**
 > - ☑️ Require branches to be up to date before merging
 > - ☑️ Require linear history (already proven active — a `--force-with-lease` to `main` during this lab was rejected with `protected branch hook declined`)
->
-> Screenshot the rules page for the submission. (The force-push rejection during this lab is independent proof the protection is live.)
+
+Independent proof the protection is already live: a `--force-with-lease` to `main` during this lab was rejected by the server with `protected branch hook declined`. The required-rules **screenshot** is in [§1.7](#17-document) below.
 
 ### 1.2 Design questions
 
@@ -106,6 +106,23 @@ A mutable reference like `@v4` or `@main` is resolved at run time to whatever co
 
 **e) GitLab CI: stage vs job; what does `dependencies:` do that `stages:` doesn't?**
 (GitHub path, answered conceptually.) A **job** is one unit of work (a script on a runner). A **stage** is an ordered group: all jobs in a stage run in parallel, and stages run sequentially — stage *N+1* starts only after every job in stage *N* passes. `stages:` therefore defines **run order** and, by default, that later jobs download all earlier stages' artifacts. `dependencies:` overrides **only the artifact graph** — a job can declare it pulls artifacts from just the `build` job, or `dependencies: []` to download none (faster), independent of stage ordering. (And `needs:` goes further, building a DAG that can break strict stage ordering for earlier starts.)
+
+### 1.7 Document
+
+The lab's documentation checklist and where each item lives:
+
+| Required item (1.7) | Where |
+|---------------------|-------|
+| Which path picked + why | top of this file — **GitHub Actions** |
+| Link to a green CI run | §1.4/1.5 → 🟢 [run 27506521594](https://github.com/tdzdslippen/DevOps-Intro/actions/runs/27506521594) |
+| Screenshot **or log** of the failed run + fix commit | §1.4/1.5 → failing `--- FAIL` log + 🔴 [run 27506990278](https://github.com/tdzdslippen/DevOps-Intro/actions/runs/27506990278); break `2e38db9`, fix `bf66572` |
+| **Branch-protection screenshot** | below ⬇️ |
+| Written answers to 5 design questions | §1.2 |
+
+**Branch-protection screenshot:**
+
+> _Pending: `branch-protection.png` — screenshot of the `main` rule (Settings → Branches), all four boxes ticked and required check `ci-gate`. Will be inserted here once the rule is enabled on the fork._
+<!-- replace the line above with: ![branch protection on main — required check ci-gate](branch-protection.png) -->>
 
 ---
 
