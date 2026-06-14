@@ -26,16 +26,14 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# The QuickNotes module lives in app/, not the repo root — run every step there.
-defaults:
-  run:
-    working-directory: app
-
 jobs:
   # ── Unit 1: vet — Task 2.2 matrix over Go 1.23 + 1.24 ──────────────
   vet:
     name: vet
     runs-on: ubuntu-24.04 # Task 1.1(3) — pinned LTS, never ubuntu-latest
+    defaults:
+      run:
+        working-directory: app # QuickNotes module lives in app/, not the root
     strategy:
       fail-fast: false # Task 2.2 — see every cell, don't cancel siblings
       matrix:
@@ -54,6 +52,9 @@ jobs:
   test:
     name: test
     runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: app
     strategy:
       fail-fast: false
       matrix:
@@ -82,9 +83,10 @@ jobs:
           working-directory: app
 
   # ── Aggregate gate ───────────────────────────────────────────────
-  # A single, stable check name to mark "Required" in branch protection.
-  # Without this, the matrix produces vet (1.23) / vet (1.24) / … and you'd
-  # have to require each leg by name. This job fails if ANY unit failed.
+  # One stable check name to mark "Required" in branch protection. Without
+  # it the matrix produces vet (1.23) / vet (1.24) / … and you'd have to
+  # require each leg by name. Fails if ANY unit failed/was cancelled.
+  # No checkout here, so this job runs in the workspace root (no app/ cd).
   ci-gate:
     name: ci-gate
     if: ${{ always() }}
@@ -93,9 +95,8 @@ jobs:
     steps:
       - name: Verify all required jobs succeeded
         run: |
-          results="${{ needs.vet.result }} ${{ needs.test.result }} ${{ needs.lint.result }}"
           echo "vet=${{ needs.vet.result }} test=${{ needs.test.result }} lint=${{ needs.lint.result }}"
-          for r in $results; do
+          for r in "${{ needs.vet.result }}" "${{ needs.test.result }}" "${{ needs.lint.result }}"; do
             if [ "$r" != "success" ]; then
               echo "::error::a required job did not succeed (got '$r')"
               exit 1
