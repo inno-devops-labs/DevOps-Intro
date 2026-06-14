@@ -43,14 +43,14 @@ Two design choices worth calling out:
 🟢 https://github.com/tdzdslippen/DevOps-Intro/actions/runs/27506521594
 
 | Job | Result | Job time |
-|-----|--------|---------:|
-| `vet (1.23)` | ✅ success | 7 s |
-| `vet (1.24)` | ✅ success | 12 s |
-| `test (1.23)` | ✅ success | 28 s |
-| `test (1.24)` | ✅ success | 25 s |
-| `lint` | ✅ success | 13 s |
-| `ci-gate` | ✅ success | 2 s |
-| **Total wall-clock** | ✅ | **37 s** |
+|-----|-------|---------:|
+| `vet (1.23)` |  success | 7 s |
+| `vet (1.24)` |  success | 12 s |
+| `test (1.23)` |  success | 28 s |
+| `test (1.24)` |  success | 25 s |
+| `lint` |  success | 13 s |
+| `ci-gate` |  success | 2 s |
+| **Total wall-clock** |  | **37 s** |
 
 > Honesty note: my *first* run failed — `ci-gate` had inherited a global `working-directory: app`, but that job has no `checkout`, so the shell couldn't `cd app` and the step died in 0 s before my script ran. Fix: scope `working-directory: app` to the three Go jobs only (commit `ff9227c`). That is the real "iterate to green" the lab asks for.
 
@@ -60,11 +60,11 @@ Two design choices worth calling out:
 
 | Job | Result |
 |-----|--------|
-| `test (1.23)` | ❌ **failure** |
-| `test (1.24)` | ❌ **failure** |
-| `vet (1.23/1.24)` | ✅ success |
-| `lint` | ✅ success |
-| `ci-gate` | ❌ **failure** (a required job did not succeed) |
+| `test (1.23)` |  **failure** |
+| `test (1.24)` |  **failure** |
+| `vet (1.23/1.24)` |  success |
+| `lint` |  success |
+| `ci-gate` |  **failure** (a required job did not succeed) |
 
 The failing assertion in the log:
 
@@ -83,10 +83,10 @@ Both `test` legs went red and `ci-gate` went red — with branch protection requ
 ### 1.6 Branch protection
 
 > ⚠️ Branch protection is configured in the GitHub UI by the repo owner (no API token available to me). On `tdzdslippen/DevOps-Intro` → **Settings → Branches → Add branch ruleset / rule for `main`**:
-> - ☑️ Require a pull request before merging
-> - ☑️ Require status checks to pass before merging → required check: **`ci-gate`**
-> - ☑️ Require branches to be up to date before merging
-> - ☑️ Require linear history (already proven active — a `--force-with-lease` to `main` during this lab was rejected with `protected branch hook declined`)
+> -  Require a pull request before merging
+> -  Require status checks to pass before merging → required check: **`ci-gate`**
+> -  Require branches to be up to date before merging
+> -  Require linear history (already proven active — a `--force-with-lease` to `main` during this lab was rejected with `protected branch hook declined`)
 
 Independent proof the protection is already live: a `--force-with-lease` to `main` during this lab was rejected by the server with `protected branch hook declined`. The required-rules **screenshot** is in [§1.7](#17-document) below.
 
@@ -116,7 +116,7 @@ The lab's documentation checklist and where each item lives:
 | Which path picked + why | top of this file — **GitHub Actions** |
 | Link to a green CI run | §1.4/1.5 → 🟢 [run 27506521594](https://github.com/tdzdslippen/DevOps-Intro/actions/runs/27506521594) |
 | Screenshot **or log** of the failed run + fix commit | §1.4/1.5 → failing `--- FAIL` log + 🔴 [run 27506990278](https://github.com/tdzdslippen/DevOps-Intro/actions/runs/27506990278); break `2e38db9`, fix `bf66572` |
-| **Branch-protection screenshot** | below ⬇️ |
+| **Branch-protection screenshot** | below |
 | Written answers to 5 design questions | §1.2 |
 
 **Branch-protection screenshot.** The rule is enabled on `tdzdslippen/DevOps-Intro` → `main`, with:
