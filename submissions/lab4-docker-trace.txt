@@ -1,0 +1,50 @@
+Lab 4 annotated packet trace
+Environment: Linux container, loopback interface lo
+Capture file: submissions/lab4-docker-trace.pcap
+Decoded with: tcpdump -r submissions/lab4-docker-trace.pcap -nn -A
+
+reading from file submissions/lab4-docker-trace.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+14:16:25.452682 IP 127.0.0.1.47304 > 127.0.0.1.8080: Flags [S], seq 4278554227, win 65495, options [mss 65495,sackOK,TS val 2462602185 ecr 0,nop,wscale 7], length 0
+E..<9.@.@..................s.........0.........
+..S.........
+14:16:25.452689 IP 127.0.0.1.8080 > 127.0.0.1.47304: Flags [S.], seq 1200757750, ack 4278554228, win 65483, options [mss 65495,sackOK,TS val 2462602185 ecr 2462602185,nop,wscale 7], length 0
+E..<..@.@.<.............G......t.....0.........
+..S...S.....
+14:16:25.452695 IP 127.0.0.1.47304 > 127.0.0.1.8080: Flags [.], ack 1, win 512, options [nop,nop,TS val 2462602185 ecr 2462602185], length 0
+E..49.@.@..................tG........(.....
+..S...S.
+14:16:25.452898 IP 127.0.0.1.47304 > 127.0.0.1.8080: Flags [P.], seq 1:176, ack 1, win 512, options [nop,nop,TS val 2462602185 ecr 2462602185], length 175: HTTP: POST /notes HTTP/1.1
+E...9.@.@..^...............tG..............
+..S...S.POST /notes HTTP/1.1
+Host: localhost:8080
+User-Agent: curl/7.88.1
+Accept: */*
+Content-Type: application/json
+Content-Length: 39
+
+{"title":"trace me","body":"in flight"}
+14:16:25.452912 IP 127.0.0.1.8080 > 127.0.0.1.47304: Flags [.], ack 176, win 511, options [nop,nop,TS val 2462602185 ecr 2462602185], length 0
+E..4.<@.@.y.............G......#.....(.....
+..S...S.
+14:16:25.453162 IP 127.0.0.1.8080 > 127.0.0.1.47304: Flags [P.], seq 1:207, ack 176, win 512, options [nop,nop,TS val 2462602185 ecr 2462602185], length 206: HTTP: HTTP/1.1 201 Created
+E....=@.@.x.............G......#...........
+..S...S.HTTP/1.1 201 Created
+Content-Type: application/json
+Date: Sun, 14 Jun 2026 14:16:25 GMT
+Content-Length: 93
+
+{"id":5,"title":"trace me","body":"in flight","created_at":"2026-06-14T14:16:25.453003253Z"}
+
+14:16:25.453165 IP 127.0.0.1.47304 > 127.0.0.1.8080: Flags [.], ack 207, win 511, options [nop,nop,TS val 2462602185 ecr 2462602185], length 0
+E..49.@.@..................#G........(.....
+..S...S.
+14:16:25.456667 IP 127.0.0.1.47304 > 127.0.0.1.8080: Flags [F.], seq 176, ack 207, win 512, options [nop,nop,TS val 2462602189 ecr 2462602185], length 0
+E..49.@.@..................#G........(.....
+..S...S.
+14:16:25.456716 IP 127.0.0.1.8080 > 127.0.0.1.47304: Flags [F.], seq 207, ack 177, win 512, options [nop,nop,TS val 2462602189 ecr 2462602189], length 0
+E..4.>@.@.y.............G......$.....(.....
+..S...S.
+14:16:25.456730 IP 127.0.0.1.47304 > 127.0.0.1.8080: Flags [.], ack 208, win 512, options [nop,nop,TS val 2462602189 ecr 2462602189], length 0
+E..49.@.@..
+...............$G........(.....
+..S...S.

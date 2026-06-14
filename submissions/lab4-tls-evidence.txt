@@ -1,0 +1,225 @@
+# Lab 4 Bonus TLS Evidence
+
+Date: 2026-06-14T15:06:36Z
+Kernel: Linux ee606eb3ea99 6.12.54-linuxkit #1 SMP Tue Nov  4 21:21:47 UTC 2025 aarch64 GNU/Linux
+Go: go version go1.24.13 linux/arm64
+Reverse proxy: nginx with self-signed localhost certificate
+TLS protocols configured: TLSv1.2 TLSv1.3
+
+## QuickNotes startup
+2026/06/14 15:06:35 quicknotes listening on :8080 (notes loaded: 4)
+
+## nginx config
+worker_processes 1;
+events { worker_connections 1024; }
+http {
+  access_log /tmp/lab4-tls/access.log;
+  error_log /tmp/lab4-tls/error.log info;
+  server {
+    listen 8443 ssl;
+    server_name localhost;
+    ssl_certificate /tmp/lab4-tls/localhost.crt;
+    ssl_certificate_key /tmp/lab4-tls/localhost.key;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    location / {
+      proxy_pass http://127.0.0.1:8080;
+      proxy_set_header Host $host;
+      proxy_set_header X-Forwarded-Proto https;
+    }
+  }
+}
+
+## listeners
+LISTEN 0      511          0.0.0.0:8443      0.0.0.0:*    users:(("nginx",pid=2661,fd=5))
+LISTEN 0      4096               *:8080            *:*    users:(("quicknotes",pid=2686,fd=3))
+
+## curl -vk https://localhost:8443/health
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 127.0.0.1:8443...
+* Connected to localhost (127.0.0.1) port 8443 (#0)
+* ALPN: offers h2,http/1.1
+} [5 bytes data]
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+} [512 bytes data]
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+{ [122 bytes data]
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+{ [25 bytes data]
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+{ [822 bytes data]
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+{ [264 bytes data]
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+{ [52 bytes data]
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+} [1 bytes data]
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+} [52 bytes data]
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+* ALPN: server accepted http/1.1
+* Server certificate:
+*  subject: CN=localhost
+*  start date: Jun 14 15:06:32 2026 GMT
+*  expire date: Jun 15 15:06:32 2026 GMT
+*  issuer: CN=localhost
+*  SSL certificate verify result: self-signed certificate (18), continuing anyway.
+* using HTTP/1.1
+} [5 bytes data]
+> GET /health HTTP/1.1
+> Host: localhost:8443
+> User-Agent: curl/7.88.1
+> Accept: */*
+> 
+{ [5 bytes data]
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+{ [265 bytes data]
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+{ [265 bytes data]
+* old SSL session ID is stale, removing
+{ [5 bytes data]
+< HTTP/1.1 200 OK
+< Server: nginx/1.22.1
+< Date: Sun, 14 Jun 2026 15:06:37 GMT
+< Content-Type: application/json
+< Content-Length: 26
+< Connection: keep-alive
+< 
+{ [26 bytes data]
+100    26  100    26    0     0   1209      0 --:--:-- --:--:-- --:--:--  1238
+* Connection #0 to host localhost left intact
+{"notes":4,"status":"ok"}
+
+## tcpdump TLS capture log
+tcpdump: listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+16 packets captured
+32 packets received by filter
+0 packets dropped by kernel
+
+## openssl s_client -connect localhost:8443 -showcerts </dev/null
+depth=0 CN = localhost
+verify error:num=18:self-signed certificate
+verify return:1
+depth=0 CN = localhost
+verify return:1
+CONNECTED(00000003)
+---
+Certificate chain
+ 0 s:CN = localhost
+   i:CN = localhost
+   a:PKEY: rsaEncryption, 2048 (bit); sigalg: RSA-SHA256
+   v:NotBefore: Jun 14 15:06:32 2026 GMT; NotAfter: Jun 15 15:06:32 2026 GMT
+-----BEGIN CERTIFICATE-----
+MIIDJTCCAg2gAwIBAgIUSP0k9s4R2iQyjbrVSNc/Vy65dl4wDQYJKoZIhvcNAQEL
+BQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTI2MDYxNDE1MDYzMloXDTI2MDYx
+NTE1MDYzMlowFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEF
+AAOCAQ8AMIIBCgKCAQEAwWOkXbcSdQcoZpxk3/PB5/ev7TLg3NMW+vmQg5fRADME
+8Z0tiLrMwO4svyGFSPsjUhlFuaDk5/qzsFA1dimDOtDoJCd99Qr0tk4ZQTvoXg6D
+XSivPKcXpVrpWWb+9gVD8Z78FzROvwL+/wssEInpr6TQuK3CrChkIiIOIwsgaqZi
+/xWyCVeIfog5K1rHYWcP0PWbk8UXFl0swniZpOSXeNeyj4WfhFbBU5ZNU67QCBof
+sJq9jaH94taA9tVaFWD1l3S2eupqDhzMgcz0qjBCUJh2Ysp19wlmGaPfmjy0w/vz
+L2xTuEFWrf3XZPilXXoKplCAxRtj9fq9gDzD0KPVIwIDAQABo28wbTAdBgNVHQ4E
+FgQUGiRd6/5xAHzxOnIYW7Pkq+jFfLcwHwYDVR0jBBgwFoAUGiRd6/5xAHzxOnIY
+W7Pkq+jFfLcwDwYDVR0TAQH/BAUwAwEB/zAaBgNVHREEEzARgglsb2NhbGhvc3SH
+BH8AAAEwDQYJKoZIhvcNAQELBQADggEBAFc09g/xkV3RfFlurr6GQiYO+h5DMOYf
+6JkRfvOKyWnhvIMJRAtseQ7y2eIBU4kcYLjQYV5uKnVfVof09Iew6U6AZ+aw61Up
+5o24Qm2PqWcWBczkemKVdBeCvl/7M2DxbLyb0AfTHla9nGDIMx8yl1uXXARyKDlg
+7NEw6jI3mIIyAPafPQ3IgZpnss5iJ7b+gapv5Ryymz7hdV/I4yff9k0n5Z09ytwQ
+AVAbFdcfcnP1zU20jTaq2VxPaS+UXdafecbQ1dW4fejdOFBXm3oK/RU2TA5TdrcP
+EEEBxiB7FCGXmX1UFNuOtg0cjh9TF+tKQ+DPxPQlgJ19oNqGitSLSYU=
+-----END CERTIFICATE-----
+---
+Server certificate
+subject=CN = localhost
+issuer=CN = localhost
+---
+No client certificate CA names sent
+Peer signing digest: SHA256
+Peer signature type: RSA-PSS
+Server Temp Key: X25519, 253 bits
+---
+SSL handshake has read 1369 bytes and written 395 bytes
+Verification error: self-signed certificate
+---
+New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+Server public key is 2048 bit
+Secure Renegotiation IS NOT supported
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+Early data was not sent
+Verify return code: 18 (self-signed certificate)
+---
+DONE
+---
+Post-Handshake New Session Ticket arrived:
+SSL-Session:
+    Protocol  : TLSv1.3
+    Cipher    : TLS_AES_256_GCM_SHA384
+    Session-ID: 80746FAE88E2F1652089A15733F344782E1D6337CE5A056BE2777533836D3C71
+    Session-ID-ctx: 
+    Resumption PSK: BDE2B278DD948C2B2A9178A421F7369EAD45262714D0E97C8FAA2A27CD1BDA5BF1E525AF69A033F5E05A9A6A039005C9
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    TLS session ticket lifetime hint: 300 (seconds)
+    TLS session ticket:
+    0000 - ac 9b 15 10 7c 90 44 fb-3a 94 1d d2 9f ca d9 e9   ....|.D.:.......
+    0010 - 5b 8d 32 0e 7a 01 dd f9-9b 34 80 bd 37 99 1c 8c   [.2.z....4..7...
+    0020 - ba 71 c9 ef 5c 50 fa e7-8c 88 81 31 27 c6 a1 66   .q..\P.....1'..f
+    0030 - 47 e8 2e 53 64 3d 39 c9-ed a5 61 bd 1e d7 87 6c   G..Sd=9...a....l
+    0040 - 0c e8 9d 4c 0c 09 11 a7-73 6b 57 16 ab a0 40 34   ...L....skW...@4
+    0050 - 9f 97 b2 a6 99 58 68 5c-dd 9d a4 d4 f1 d1 5b 28   .....Xh\......[(
+    0060 - e3 03 be d6 83 93 81 9c-18 25 5e d0 2d 33 4a 23   .........%^.-3J#
+    0070 - 66 4d 76 92 d1 69 a6 dd-42 8f 57 cb dd 53 0e 90   fMv..i..B.W..S..
+    0080 - c8 fa aa 78 04 8a 87 59-3f be 09 65 54 34 48 de   ...x...Y?..eT4H.
+    0090 - db 12 e0 5c fa ec f1 2a-06 49 0a 14 cc 91 df 01   ...\...*.I......
+    00a0 - 13 ec 29 05 01 d4 4f bc-f6 1a b6 0a 62 06 0e 5f   ..)...O.....b.._
+    00b0 - 77 57 bd c0 5f b2 9a ff-34 39 7f b2 06 f1 7d 81   wW.._...49....}.
+    00c0 - 22 b2 87 a3 e1 82 3d a6-97 6e ea 70 4d 37 27 0e   ".....=..n.pM7'.
+    00d0 - f1 13 a0 7e 24 30 27 29-51 b4 bd 5a 45 4b 54 cf   ...~$0')Q..ZEKT.
+    00e0 - 91 2f 6d 98 53 2a ac 96-ee f1 be 54 6a 9f 04 f8   ./m.S*.....Tj...
+
+    Start Time: 1781449598
+    Timeout   : 7200 (sec)
+    Verify return code: 18 (self-signed certificate)
+    Extended master secret: no
+    Max Early Data: 0
+---
+read R BLOCK
+---
+Post-Handshake New Session Ticket arrived:
+SSL-Session:
+    Protocol  : TLSv1.3
+    Cipher    : TLS_AES_256_GCM_SHA384
+    Session-ID: C93087742DE883F575FA4AC83D6398F3A5FDFF750CA74B5446049C5BD330195E
+    Session-ID-ctx: 
+    Resumption PSK: C74960E1CD6471602D264F227BE3C3CA3AC701ECD0342CEE3A3EB4A998B3CF1F30CCD1E73222ADBF129FAA9B85BAC627
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    TLS session ticket lifetime hint: 300 (seconds)
+    TLS session ticket:
+    0000 - ac 9b 15 10 7c 90 44 fb-3a 94 1d d2 9f ca d9 e9   ....|.D.:.......
+    0010 - 42 ac d7 97 db 85 69 55-f7 c0 5a f2 a5 61 bf c8   B.....iU..Z..a..
+    0020 - 90 cb ba a4 aa dd 8e cf-7b 26 43 06 8f 41 9d 3e   ........{&C..A.>
+    0030 - 03 8c 28 97 b8 82 c3 89-2a 48 d5 0d 98 b0 36 56   ..(.....*H....6V
+    0040 - 8c f8 8a bd 18 91 bd b2-16 7a 35 56 d4 7e ac 53   .........z5V.~.S
+    0050 - a9 28 68 fc 79 5f 69 39-03 a8 e8 dd 71 3e b9 e3   .(h.y_i9....q>..
+    0060 - b7 de 7e c7 0f 40 45 15-28 4b 50 0f bd 39 74 50   ..~..@E.(KP..9tP
+    0070 - 80 c7 d8 c0 5d 33 9e 73-0f 0c fb 6c 2c 1e c3 d4   ....]3.s...l,...
+    0080 - d3 64 5c d5 08 e0 71 7e-e1 58 43 d7 49 57 4b 1c   .d\...q~.XC.IWK.
+    0090 - 84 99 b9 48 18 72 58 d2-f3 4f 9d 39 12 35 ea 4b   ...H.rX..O.9.5.K
+    00a0 - b0 77 41 53 7e cd ec f6-1f b4 9b 4c 47 72 44 19   .wAS~......LGrD.
+    00b0 - c4 be f4 65 07 76 68 db-68 ee da 49 1b 1a 33 31   ...e.vh.h..I..31
+    00c0 - 9f 37 68 69 e1 94 25 2c-85 15 b9 23 fe 04 6f f4   .7hi..%,...#..o.
+    00d0 - 68 07 86 35 dc 81 6e aa-08 cc d0 e2 cd 0b a1 2d   h..5..n........-
+    00e0 - 5e d8 8c 88 5c 81 84 e1-d8 f4 3e 74 28 60 78 17   ^...\.....>t(`x.
+
+    Start Time: 1781449598
+    Timeout   : 7200 (sec)
+    Verify return code: 18 (self-signed certificate)
+    Extended master secret: no
+    Max Early Data: 0
+---
+read R BLOCK

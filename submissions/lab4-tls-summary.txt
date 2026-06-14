@@ -1,0 +1,73 @@
+# TLS handshake summary
+
+Environment: Linux container
+Proxy: nginx on https://localhost:8443
+Upstream: QuickNotes on http://127.0.0.1:8080
+Capture: submissions/lab4-tls.pcap
+Decoder: tshark (Wireshark CLI)
+
+## curl result
+
+curl negotiated TLS 1.3 and successfully reached QuickNotes through nginx:
+
+  SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384
+  Server certificate: subject: CN=localhost
+  issuer: CN=localhost
+  HTTP/1.1 200 OK
+  {"notes":4,"status":"ok"}
+
+## ClientHello
+
+Full decode: submissions/lab4-tls-clienthello.txt
+
+Important fields:
+
+  SNI: localhost
+  Cipher suites offered include:
+    TLS_AES_256_GCM_SHA384 (0x1302)
+    TLS_CHACHA20_POLY1305_SHA256 (0x1303)
+    TLS_AES_128_GCM_SHA256 (0x1301)
+    TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)
+    TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (0xc02f)
+
+  supported_versions extension:
+    TLS 1.3 (0x0304)
+    TLS 1.2 (0x0303)
+    TLS 1.1 (0x0302)
+    TLS 1.0 (0x0301)
+
+## ServerHello
+
+Full decode: submissions/lab4-tls-serverhello.txt
+
+Important fields:
+
+  selected cipher suite:
+    TLS_AES_256_GCM_SHA384 (0x1302)
+
+  supported_versions extension:
+    TLS 1.3 (0x0304)
+
+  key share group:
+    x25519
+
+## Certificate chain
+
+Full openssl output: submissions/lab4-tls-evidence.txt
+Certificate excerpt: submissions/lab4-tls-certificate.txt
+
+  subject=CN = localhost
+  issuer=CN = localhost
+  self-signed certificate
+  public key: RSA 2048
+  signature algorithm: RSA-SHA256
+
+## TLS 1.0 / 1.1 deprecation note
+
+The decisive negotiation step is ServerHello. The client offered several protocol
+versions in the supported_versions extension, including TLS 1.0 and TLS 1.1, but
+nginx was configured with only TLSv1.2 and TLSv1.3 enabled. The server selected
+TLS 1.3 in ServerHello's supported_versions extension, so TLS 1.0 and TLS 1.1
+were not chosen. If a client only supported TLS 1.0/1.1, the server would reject
+the handshake during protocol version negotiation before any HTTP request could
+be sent.

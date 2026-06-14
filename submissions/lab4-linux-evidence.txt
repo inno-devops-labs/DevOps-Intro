@@ -1,0 +1,141 @@
+# Lab 4 Linux Docker Evidence
+
+Date: 2026-06-14T14:16:21Z
+Kernel: Linux ae8db4a22f62 6.12.54-linuxkit #1 SMP Tue Nov  4 21:21:47 UTC 2025 aarch64 GNU/Linux
+Go: go version go1.24.13 linux/arm64
+Installed tools: iproute2 dnsutils mtr-tiny tcpdump curl procps iptables nftables jq systemd
+
+## QuickNotes startup
+2026/06/14 14:16:24 quicknotes listening on :8080 (notes loaded: 4)
+
+## Capture command
+tcpdump -i lo -nn -s 0 -A tcp port 8080 -w submissions/lab4-docker-trace.pcap
+
+## curl -v POST /notes
+Note: Unnecessary use of -X or --request, POST is already inferred.
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying 127.0.0.1:8080...
+* Connected to localhost (127.0.0.1) port 8080 (#0)
+> POST /notes HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.88.1
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 39
+> 
+} [39 bytes data]
+< HTTP/1.1 201 Created
+< Content-Type: application/json
+< Date: Sun, 14 Jun 2026 14:16:25 GMT
+< Content-Length: 93
+< 
+{ [93 bytes data]
+100   132  100    93  100    39   8200   3438 --:--:-- --:--:-- --:--:-- 12000
+* Connection #0 to host localhost left intact
+{"id":5,"title":"trace me","body":"in flight","created_at":"2026-06-14T14:16:25.453003253Z"}
+
+## tcpdump capture log
+tcpdump: listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+10 packets captured
+20 packets received by filter
+0 packets dropped by kernel
+
+## tcpdump decode
+reading from file submissions/lab4-docker-trace.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+14:16:25.452682 IP 127.0.0.1.47304 > 127.0.0.1.8080: Flags [S], seq 4278554227, win 65495, options [mss 65495,sackOK,TS val 2462602185 ecr 0,nop,wscale 7], length 0
+E..<9.@.@..................s.........0.........
+..S.........
+14:16:25.452689 IP 127.0.0.1.8080 > 127.0.0.1.47304: Flags [S.], seq 1200757750, ack 4278554228, win 65483, options [mss 65495,sackOK,TS val 2462602185 ecr 2462602185,nop,wscale 7], length 0
+E..<..@.@.<.............G......t.....0.........
+..S...S.....
+14:16:25.452695 IP 127.0.0.1.47304 > 127.0.0.1.8080: Flags [.], ack 1, win 512, options [nop,nop,TS val 2462602185 ecr 2462602185], length 0
+E..49.@.@..................tG........(.....
+..S...S.
+14:16:25.452898 IP 127.0.0.1.47304 > 127.0.0.1.8080: Flags [P.], seq 1:176, ack 1, win 512, options [nop,nop,TS val 2462602185 ecr 2462602185], length 175: HTTP: POST /notes HTTP/1.1
+E...9.@.@..^...............tG..............
+..S...S.POST /notes HTTP/1.1
+Host: localhost:8080
+User-Agent: curl/7.88.1
+Accept: */*
+Content-Type: application/json
+Content-Length: 39
+
+{"title":"trace me","body":"in flight"}
+14:16:25.452912 IP 127.0.0.1.8080 > 127.0.0.1.47304: Flags [.], ack 176, win 511, options [nop,nop,TS val 2462602185 ecr 2462602185], length 0
+E..4.<@.@.y.............G......#.....(.....
+..S...S.
+14:16:25.453162 IP 127.0.0.1.8080 > 127.0.0.1.47304: Flags [P.], seq 1:207, ack 176, win 512, options [nop,nop,TS val 2462602185 ecr 2462602185], length 206: HTTP: HTTP/1.1 201 Created
+E....=@.@.x.............G......#...........
+..S...S.HTTP/1.1 201 Created
+Content-Type: application/json
+Date: Sun, 14 Jun 2026 14:16:25 GMT
+Content-Length: 93
+
+{"id":5,"title":"trace me","body":"in flight","created_at":"2026-06-14T14:16:25.453003253Z"}
+
+14:16:25.453165 IP 127.0.0.1.47304 > 127.0.0.1.8080: Flags [.], ack 207, win 511, options [nop,nop,TS val 2462602185 ecr 2462602185], length 0
+E..49.@.@..................#G........(.....
+..S...S.
+14:16:25.456667 IP 127.0.0.1.47304 > 127.0.0.1.8080: Flags [F.], seq 176, ack 207, win 512, options [nop,nop,TS val 2462602189 ecr 2462602185], length 0
+E..49.@.@..................#G........(.....
+..S...S.
+14:16:25.456716 IP 127.0.0.1.8080 > 127.0.0.1.47304: Flags [F.], seq 207, ack 177, win 512, options [nop,nop,TS val 2462602189 ecr 2462602189], length 0
+E..4.>@.@.y.............G......$.....(.....
+..S...S.
+14:16:25.456730 IP 127.0.0.1.47304 > 127.0.0.1.8080: Flags [.], ack 208, win 512, options [nop,nop,TS val 2462602189 ecr 2462602189], length 0
+E..49.@.@..
+...............$G........(.....
+..S...S.
+
+## ss -tlnp | grep :8080
+LISTEN 0      4096               *:8080            *:*    users:(("quicknotes",pid=2698,fd=3))
+
+## ip route show
+default via 172.17.0.1 dev eth0 
+172.17.0.0/16 dev eth0 proto kernel scope link src 172.17.0.2 
+
+## mtr -rwc 5 localhost
+Start: 2026-06-14T14:16:26+0000
+HOST: ae8db4a22f62 Loss%   Snt   Last   Avg  Best  Wrst StDev
+  1.|-- localhost     0.0%     5    0.0   0.1   0.0   0.2   0.1
+
+## dig +short example.com @1.1.1.1
+172.66.147.243
+104.20.23.154
+
+## journalctl --user -u quicknotes -n 20 || true
+No journal files were found.
+-- No entries --
+
+## Broken deploy: second ADDR=:8080 go run .
+2026/06/14 14:16:36 quicknotes listening on :8080 (notes loaded: 4)
+2026/06/14 14:16:36 listen: listen tcp :8080: bind: address already in use
+exit status 1
+
+## ps -ef | grep quicknotes
+root      2698   898  0 14:16 ?        00:00:00 /tmp/go-build1352676339/b001/exe/quicknotes
+
+## ss -tlnp | grep 8080
+LISTEN 0      4096               *:8080            *:*    users:(("quicknotes",pid=2698,fd=3))
+
+## curl health HTTP code
+200
+
+## iptables -L -n -v 2>/dev/null || nft list ruleset 2>/dev/null || true
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+
+## dig +short localhost
+127.0.0.1
+
+## Repair: kill conflicting first instance and restart
+2026/06/14 14:16:38 quicknotes listening on :8080 (notes loaded: 4)
+{"notes":4,"status":"ok"}
+

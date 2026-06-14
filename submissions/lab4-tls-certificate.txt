@@ -1,0 +1,41 @@
+Certificate chain from:
+
+  openssl s_client -connect localhost:8443 -servername localhost -showcerts </dev/null
+
+Summary:
+
+  Certificate chain
+   0 s:CN = localhost
+     i:CN = localhost
+     a:PKEY: rsaEncryption, 2048 (bit); sigalg: RSA-SHA256
+     v:NotBefore: Jun 14 15:06:32 2026 GMT; NotAfter: Jun 15 15:06:32 2026 GMT
+
+  Server certificate
+  subject=CN = localhost
+  issuer=CN = localhost
+
+  Server Temp Key: X25519, 253 bits
+  New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+  Verify return code: 18 (self-signed certificate)
+
+PEM:
+
+-----BEGIN CERTIFICATE-----
+MIIDJTCCAg2gAwIBAgIUSP0k9s4R2iQyjbrVSNc/Vy65dl4wDQYJKoZIhvcNAQEL
+BQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTI2MDYxNDE1MDYzMloXDTI2MDYx
+NTE1MDYzMlowFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEF
+AAOCAQ8AMIIBCgKCAQEAwWOkXbcSdQcoZpxk3/PB5/ev7TLg3NMW+vmQg5fRADME
+8Z0tiLrMwO4svyGFSPsjUhlFuaDk5/qzsFA1dimDOtDoJCd99Qr0tk4ZQTvoXg6D
+XSivPKcXpVrpWWb+9gVD8Z78FzROvwL+/wssEInpr6TQuK3CrChkIiIOIwsgaqZi
+/xWyCVeIfog5K1rHYWcP0PWbk8UXFl0swniZpOSXeNeyj4WfhFbBU5ZNU67QCBof
+sJq9jaH94taA9tVaFWD1l3S2eupqDhzMgcz0qjBCUJh2Ysp19wlmGaPfmjy0w/vz
+L2xTuEFWrf3XZPilXXoKplCAxRtj9fq9gDzD0KPVIwIDAQABo28wbTAdBgNVHQ4E
+FgQUGiRd6/5xAHzxOnIYW7Pkq+jFfLcwHwYDVR0jBBgwFoAUGiRd6/5xAHzxOnIY
+W7Pkq+jFfLcwDwYDVR0TAQH/BAUwAwEB/zAaBgNVHREEEzARgglsb2NhbGhvc3SH
+BH8AAAEwDQYJKoZIhvcNAQELBQADggEBAFc09g/xkV3RfFlurr6GQiYO+h5DMOYf
+6JkRfvOKyWnhvIMJRAtseQ7y2eIBU4kcYLjQYV5uKnVfVof09Iew6U6AZ+aw61Up
+5o24Qm2PqWcWBczkemKVdBeCvl/7M2DxbLyb0AfTHla9nGDIMx8yl1uXXARyKDlg
+7NEw6jI3mIIyAPafPQ3IgZpnss5iJ7b+gapv5Ryymz7hdV/I4yff9k0n5Z09ytwQ
+AVAbFdcfcnP1zU20jTaq2VxPaS+UXdafecbQ1dW4fejdOFBXm3oK/RU2TA5TdrcP
+EEEBxiB7FCGXmX1UFNuOtg0cjh9TF+tKQ+DPxPQlgJ19oNqGitSLSYU=
+-----END CERTIFICATE-----
