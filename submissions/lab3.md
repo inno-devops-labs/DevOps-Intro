@@ -6,11 +6,10 @@ I chose the GitHub Actions path because this fork is hosted on GitHub and GitHub
 
 ## CI Evidence
 
-- Green CI run: TODO after pushing `feature/lab3`.
-- Deliberately failed run from Task 1.5: TODO after pushing a breaking commit.
-- Fix commit that restored green CI: TODO after reverting the deliberate breakage.
-- Branch protection evidence: TODO screenshot after enabling protection for `main`.
-- Required check to configure in branch protection: `ci-ok`.
+- Green CI run: ![ci-ok](img/ci-ok.png)
+- Deliberately failed run from Task 1.5: ![broken-ci](img/broken-ci.png)
+- Fix commit that restored green CI: ![fixed-ci](img/fixed-ci.png).
+- Branch protection evidence: ![pr-checks](img/pr-checks.png)
 
 ## Pipeline Summary
 
@@ -51,11 +50,11 @@ I used the GitHub path, so this does not apply to my implementation. In GitLab, 
 
 | Scenario | Wall-clock |
 |----------|-----------:|
-| Baseline: no cache, single Go version, no path filter | TODO |
-| With cache | TODO |
-| With cache + matrix | TODO |
+| Baseline: no cache, single Go version, no path filter | 35s |
+| With cache | 36s |
+| With cache + matrix | 38s |
 
-QuickNotes has no third-party dependencies, so I expect caching to have little effect on total wall-clock time. The dominant cost should be runner provisioning, checkout, setup, and linter download rather than module download.
+QuickNotes has no third-party dependencies, so caching doesn't affect total wall-clock time. The dominant cost is runner provisioning, checkout, setup, and linter download rather than module download. Time with matrix was increased a little due to parallel job management overhead.
 
 ## Task 2 Optimizations
 
@@ -78,18 +77,3 @@ With `fail-fast: false`, one failing matrix cell does not cancel the remaining c
 ### h) What is the cache poisoning risk?
 
 The risk is that untrusted PR code writes malicious files into a cache, then a trusted workflow later restores and executes those files. GitHub mitigates this with cache scope restrictions: caches created by pull-request runs are scoped to the PR merge ref and cannot be restored by the base branch or other pull requests. The relevant GitHub reference is "Dependency caching reference", especially the cache access restrictions section: https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching
-
-## Bonus Investigation
-
-Not attempted yet. After the first GitHub runs, I will fill this from the per-step timing UI.
-
-| Optimization applied | Before (s) | After (s) | Saving |
-|----------------------|-----------:|----------:|-------:|
-| TODO | TODO | TODO | TODO |
-| TODO | TODO | TODO | TODO |
-| TODO | TODO | TODO | TODO |
-| **Total wall-clock** | **TODO** | **TODO** | **TODO** |
-
-### Bottleneck Analysis
-
-TODO after collecting CI timing data.
