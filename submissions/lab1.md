@@ -1,0 +1,63 @@
+# Lab 1 submission
+## Task 1: SSH Commit Signing $ First Signed Commit
+
+#### QuickNotes Output
+![alt text](QN1.png)
+
+![
+](QN2.png)
+
+
+### Signature Verification
+![
+](<Screenshot 2026-06-10 182034.png>)
+
+### Verified Badge
+
+![alt text](<Screenshot 2026-06-10 182613.png>)
+
+### Why Signed Commits Matter
+
+Подпись коммита криптографически доказывает, что код написал именно я, а не кто-то, подделавший email. Она защищает репозиторий и повышает доверие к коду.
+
+## Task 2: Pull Request Template & First PR
+
+### PR Template Added
+- Created .github/pull_request_template.md in main branch
+- Template contains structured sections: Goal, Changes, Testing, Checklist
+
+### PR Template Auto-Population
+Pull request template auto-populated successfully. 
+Description includes Goal, Changes, Testing, and Checklist sections 
+as defined in .github/pull_request_template.md.
+![alt text](PR1.png)
+![alt text](PR2.png)
+
+
+### PR Checklist
+- [x] Title is clear sentence
+- [x] Commits are signed (git log --show-signature)
+- [x] submissions/lab1.md updated
+
+## Task 3: GitHub Community Engagement
+
+### Stars & Follows
+- Starred the course repo and simple-container-com/api.
+- Following professor @Cre-eD, TAs @Naghme98 and @pierrepicaud, and least 3 classmates: 
+
+### Why It Matters
+Звёзды показывают интерес к проекту и повышают его видимость; подписки позволяют следить за работой коллег, находить новые идеи и строить профессиональную сеть.
+
+
+## Bonus Task: Branch Protection & Required Signed Commits
+
+### Branch Protection Rules
+![alt text](BranchProtection.png)
+
+### Unsigned Push Attempt
+![alt text](BranchProtectionOutput.png)
+
+### Reflection (3-4 предложения)
+Жёсткий запрет на прямой push в main вынудил бы разработчиков Knight Capital проходить полноценный PR-процесс, что не позволило бы старому, несовместимому коду попасть в продакшен без ревью. Подписанные коммиты гарантировали бы, что изменения действительно исходят от уполномоченного инженера, а не подставного лица или скомпрометированной учётной записи. А обязательное код-ревью стало бы последним барьером, где нестандартное использование флага активации заметили бы коллеги, предотвратив миллионные убытки за считанные минуты.
+
+#### 
