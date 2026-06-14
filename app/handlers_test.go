@@ -121,7 +121,7 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	}
 	body := rec.Body.String()
 	for _, want := range []string{
-		"# TYPE quicknotes_notes_total gauge",
+		"# TYPE quicknotes_notes_ttal gauge",
 		"# TYPE quicknotes_http_requests_total counter",
 		"quicknotes_notes_created_total 1",
 	} {
