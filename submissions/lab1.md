@@ -2,6 +2,7 @@
 
 
 
+
 TASK 1 - QUICKNOTES 
 
  * [new tag]         v0.0.1        -> v0.0.1
@@ -65,4 +66,5 @@ remote: - Commits must have verified signatures.
 
 REFLECTION
 Branch protection would have prevented unsafe or unreviewed changes from reaching production. Signed commits ensure authenticity of changes and prevent unauthorized or tampered code. Together, these controls enforce accountability and reduce risk in deployment pipelines. In a system like Knight Capital, this would have prevented direct faulty deployments.
+
 
