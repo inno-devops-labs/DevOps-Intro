@@ -1,0 +1,104 @@
+name: CI
+
+# Task 1.1(1) — trigger on push to main and on every PR targeting main.
+# Task 2.3 — path filter: only run when the Go app or this workflow changes,
+# so docs-only PRs (e.g. README, submissions/) don't burn CI minutes.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "app/**"
+      - ".github/workflows/ci.yml"
+
+# Task 1.1(5) — least privilege. The pipeline only reads the repo; it never
+# writes contents, packages, or issues. Declared at workflow level so every
+# job inherits it (and the default GITHUB_TOKEN is read-only).
+permissions:
+  contents: read
+
+# Stop superseded runs on the same PR/branch from piling up.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# The QuickNotes module lives in app/, not the repo root — run every step there.
+defaults:
+  run:
+    working-directory: app
+
+jobs:
+  # ── Unit 1: vet — Task 2.2 matrix over Go 1.23 + 1.24 ──────────────
+  vet:
+    name: vet
+    runs-on: ubuntu-24.04 # Task 1.1(3) — pinned LTS, never ubuntu-latest
+    strategy:
+      fail-fast: false # Task 2.2 — see every cell, don't cancel siblings
+      matrix:
+        go: ["1.23", "1.24"]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version: ${{ matrix.go }}
+          # Task 2.1 — cache module + build cache. No go.sum (std-lib only),
+          # so key the cache on go.mod instead of the default **/go.sum.
+          cache-dependency-path: app/go.mod
+      - run: go vet ./...
+
+  # ── Unit 2: test — Task 2.2 matrix over Go 1.23 + 1.24 ────────────
+  test:
+    name: test
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ["1.23", "1.24"]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version: ${{ matrix.go }}
+          cache-dependency-path: app/go.mod
+      - run: go test -race -count=1 ./...
+
+  # ── Unit 3: lint — golangci-lint pinned to v2.5.0 ─────────────────
+  lint:
+    name: lint
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version: "1.24"
+          cache-dependency-path: app/go.mod
+      - uses: golangci/golangci-lint-action@25e2cdc5eb1d7a04fdc45ff538f1a00e960ae128 # v8.0.0
+        with:
+          version: v2.5.0 # Task 1.1(2) — linter pinned, never latest
+          working-directory: app
+
+  # ── Aggregate gate ───────────────────────────────────────────────
+  # A single, stable check name to mark "Required" in branch protection.
+  # Without this, the matrix produces vet (1.23) / vet (1.24) / … and you'd
+  # have to require each leg by name. This job fails if ANY unit failed.
+  ci-gate:
+    name: ci-gate
+    if: ${{ always() }}
+    needs: [vet, test, lint]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Verify all required jobs succeeded
+        run: |
+          results="${{ needs.vet.result }} ${{ needs.test.result }} ${{ needs.lint.result }}"
+          echo "vet=${{ needs.vet.result }} test=${{ needs.test.result }} lint=${{ needs.lint.result }}"
+          for r in $results; do
+            if [ "$r" != "success" ]; then
+              echo "::error::a required job did not succeed (got '$r')"
+              exit 1
+            fi
+          done
+          echo "all required jobs succeeded"
