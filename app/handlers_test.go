@@ -130,4 +130,3 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 		}
 	}
 }
-
