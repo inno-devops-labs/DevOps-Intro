@@ -121,3 +121,45 @@ With `fail-fast: false`, GitHub Actions keeps the remaining matrix jobs running 
 The risk is cache poisoning. If an attacker can cause CI to save malicious content under a cache key that trusted branches later restore, the trusted branch could run with attacker-controlled dependencies, tools, or generated files. That can turn a low-privilege pull request into a later trusted-branch compromise.
 
 GitHub mitigates this with cache access restrictions: workflow runs can restore caches from their own branch and from the default branch, but protected branches should not read arbitrary caches written by untrusted pull request branches. This is also why caches must not contain secrets. GitHub's dependency caching documentation warns that anyone with read access can open a pull request and access cache contents, and fork pull requests can access base-branch caches.
+
+## Bonus Task - Pipeline Performance Investigation
+
+### Goal result
+
+The full GitHub Actions pipeline completes under the bonus target of 90 seconds.
+
+Final measured wall-clock time:
+
+```text
+30 s
+```
+
+### Additional optimizations beyond Task 2
+
+The first bonus optimization was setting:
+
+```yaml
+GOFLAGS: -buildvcs=false
+```
+
+This tells Go not to stamp VCS metadata into builds or package loading work. The CI pipeline does not need build-time Git metadata, so skipping it reduces unnecessary repository inspection during CI.
+
+The second bonus optimization was narrowing the workflow path filters. Instead of triggering on every file under `app/**`, the workflow now triggers on Go source files, Go module files, `app/Makefile`, `app/seed.json`, and `.github/workflows/ci.yml`. This keeps CI active for code and build-relevant changes while avoiding a full pipeline for app documentation-only edits such as `app/README.md`.
+
+The third attempted optimization was explicit shallow checkout with disabled persisted credentials. This changed the run from 32 seconds to 40 seconds, so it was removed because it made the pipeline slower.
+
+The final kept optimization was limiting Go cache restore/save to the `test` matrix only. The smaller `vet` and `lint` jobs no longer pay cache overhead, while the race-enabled test job still benefits from caching.
+
+### Before and after measurements
+
+| Optimization applied                                                   | Before (s) | After (s) | Saving |
+| ---------------------------------------------------------------------- | ---------: | --------: | -----: |
+| `GOFLAGS=-buildvcs=false`                                              |         34 |        32 |     -2 |
+| Narrow app path filters                                                |         32 |        32 |      0 |
+| Explicit shallow checkout and disabled persisted credentials, reverted |         32 |        40 |     +8 |
+| Limit Go cache restore/save to `test` job                              |         32 |        30 |     -2 |
+| **Total wall-clock, kept optimizations**                               |     **34** |    **30** | **-4** |
+
+### Bottleneck analysis
+
+The remaining time appears to be dominated by GitHub Actions job orchestration and tool setup rather than the QuickNotes application code itself. QuickNotes is a small Go service with a small test suite, so `go vet` and `go test -race` have little application work to do once the runner and Go toolchain are ready. To make the pipeline shorter by changing QuickNotes itself, the main option would be keeping tests focused and avoiding slow integration-style tests in the PR gate unless they are split into a separate job. I would stop optimizing this PR gate around 30 seconds because it is already far below the 90 second target and further changes risk adding complexity for very small savings. If the project grows later, I would optimize again only when the slowest step is clearly identified from per-step GitHub Actions timings.
