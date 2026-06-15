@@ -1,0 +1,31 @@
+### 2.1 bind conflict
+PID1=67398
+PID2=67406
+--- ps quicknotes ---
+root       67398   67317  0 11:26 ?        00:00:00 /tmp/quicknotes
+--- broken stderr/log ---
+2026/06/15 11:26:38 quicknotes listening on :8080 (notes loaded: 5)
+2026/06/15 11:26:38 listen: listen tcp :8080: bind: address already in use
+
+### 2.2 outside-in
+--- 1) process running? ---
+root       67398   67317  0 11:26 ?        00:00:00 /tmp/quicknotes
+--- 2) listening? ---
+LISTEN 0      4096               *:8080            *:*    users:(("quicknotes",pid=67398,fd=3))                   
+--- 3) curl health HTTP code ---
+200
+--- 4) firewall ---
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+--- 5) dig localhost ---
+127.0.0.1
+
+### 2.3 repair
+{"notes":5,"status":"ok"}
+

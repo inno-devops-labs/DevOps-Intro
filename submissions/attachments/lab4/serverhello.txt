@@ -1,0 +1,149 @@
+Frame 16: 1516 bytes on wire (12128 bits), 1516 bytes captured (12128 bits)
+    Encapsulation type: Linux cooked-mode capture v2 (210)
+    Arrival Time: Jun 15, 2026 11:28:28.324248000 MSK
+    UTC Arrival Time: Jun 15, 2026 08:28:28.324248000 UTC
+    Epoch Arrival Time: 1781512108.324248000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.000805000 seconds]
+    [Time delta from previous displayed frame: 0.000000000 seconds]
+    [Time since reference or first frame: 0.022827000 seconds]
+    Frame Number: 16
+    Frame Length: 1516 bytes (12128 bits)
+    Capture Length: 1516 bytes (12128 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: sll:ethertype:ipv6:tcp:tls]
+Linux cooked capture v2
+    Protocol: IPv6 (0x86dd)
+    Interface index: 1
+    Link-layer address type: Loopback (772)
+    Packet type: Unicast to us (0)
+    Link-layer address length: 6
+    Source: 00:00:00_00:00:00 (00:00:00:00:00:00)
+    Unused: 0000
+Internet Protocol Version 6, Src: ::1, Dst: ::1
+    0110 .... = Version: 6
+    .... 0000 0000 .... .... .... .... .... = Traffic Class: 0x00 (DSCP: CS0, ECN: Not-ECT)
+        .... 0000 00.. .... .... .... .... .... = Differentiated Services Codepoint: Default (0)
+        .... .... ..00 .... .... .... .... .... = Explicit Congestion Notification: Not ECN-Capable Transport (0)
+    .... 0000 1000 0101 0110 0010 = Flow Label: 0x08562
+    Payload Length: 1456
+    Next Header: TCP (6)
+    Hop Limit: 64
+    Source Address: ::1
+    Destination Address: ::1
+Transmission Control Protocol, Src Port: 8443, Dst Port: 49408, Seq: 1, Ack: 518, Len: 1424
+    Source Port: 8443
+    Destination Port: 49408
+    [Stream index: 1]
+    [Conversation completeness: Incomplete, DATA (15)]
+        ..0. .... = RST: Absent
+        ...0 .... = FIN: Absent
+        .... 1... = Data: Present
+        .... .1.. = ACK: Present
+        .... ..1. = SYN-ACK: Present
+        .... ...1 = SYN: Present
+        [Completeness Flags: ··DASS]
+    [TCP Segment Len: 1424]
+    Sequence Number: 1    (relative sequence number)
+    Sequence Number (raw): 813048789
+    [Next Sequence Number: 1425    (relative sequence number)]
+    Acknowledgment Number: 518    (relative ack number)
+    Acknowledgment number (raw): 1663731148
+    1000 .... = Header Length: 32 bytes (8)
+    Flags: 0x018 (PSH, ACK)
+        000. .... .... = Reserved: Not set
+        ...0 .... .... = Accurate ECN: Not set
+        .... 0... .... = Congestion Window Reduced: Not set
+        .... .0.. .... = ECN-Echo: Not set
+        .... ..0. .... = Urgent: Not set
+        .... ...1 .... = Acknowledgment: Set
+        .... .... 1... = Push: Set
+        .... .... .0.. = Reset: Not set
+        .... .... ..0. = Syn: Not set
+        .... .... ...0 = Fin: Not set
+        [TCP Flags: ·······AP···]
+    Window: 512
+    [Calculated window size: 65536]
+    [Window size scaling factor: 128]
+    Checksum: 0x05b8 [unverified]
+    [Checksum Status: Unverified]
+    Urgent Pointer: 0
+    Options: (12 bytes), No-Operation (NOP), No-Operation (NOP), Timestamps
+        TCP Option - No-Operation (NOP)
+            Kind: No-Operation (1)
+        TCP Option - No-Operation (NOP)
+            Kind: No-Operation (1)
+        TCP Option - Timestamps
+            Kind: Time Stamp Option (8)
+            Length: 10
+            Timestamp value: 392863708: TSval 392863708, TSecr 392863708
+            Timestamp echo reply: 392863708
+    [Timestamps]
+        [Time since first frame in this TCP stream: 0.004667000 seconds]
+        [Time since previous frame in this TCP stream: 0.000805000 seconds]
+    [SEQ/ACK analysis]
+        [iRTT: 0.000033000 seconds]
+        [Bytes in flight: 1424]
+        [Bytes sent since last PSH flag: 1424]
+    TCP payload (1424 bytes)
+Transport Layer Security
+    TLSv1.2 Record Layer: Handshake Protocol: Server Hello
+        Content Type: Handshake (22)
+        Version: TLS 1.2 (0x0303)
+        Length: 122
+        Handshake Protocol: Server Hello
+            Handshake Type: Server Hello (2)
+            Length: 118
+            Version: TLS 1.2 (0x0303)
+            Random: 8b533e3839dd967a90f30541b9923be258fe28caafa3202594c7cd56803c9175
+            Session ID Length: 32
+            Session ID: af048ed4d8bf335189046ed3d4d516b3dd0e3dfec0e23a82bb022d119fc7f0a2
+            Cipher Suite: TLS_AES_128_GCM_SHA256 (0x1301)
+            Compression Method: null (0)
+            Extensions Length: 46
+            Extension: supported_versions (len=2) TLS 1.3
+                Type: supported_versions (43)
+                Length: 2
+                Supported Version: TLS 1.3 (0x0304)
+            Extension: key_share (len=36) x25519
+                Type: key_share (51)
+                Length: 36
+                Key Share extension
+                    Key Share Entry: Group: x25519, Key Exchange length: 32
+                        Group: x25519 (29)
+                        Key Exchange Length: 32
+                        Key Exchange: 6dbc5420d4ead44552044f0f13356f88834c5eba73238f97a745aeed041a4b4d
+            [JA3S Fullstring: 771,4865,43-51]
+            [JA3S: f4febc55ea12b31ae17cfb7e614afda8]
+    TLSv1.3 Record Layer: Change Cipher Spec Protocol: Change Cipher Spec
+        Content Type: Change Cipher Spec (20)
+        Version: TLS 1.2 (0x0303)
+        Length: 1
+        Change Cipher Spec Message
+    TLSv1.3 Record Layer: Application Data Protocol: Application Data
+        Opaque Type: Application Data (23)
+        Version: TLS 1.2 (0x0303)
+        Length: 32
+        Encrypted Application Data: 087152f8fff8323d8d4b2d461887fe6bfc6334ef1313c512913336dacfbb9843
+    TLSv1.3 Record Layer: Application Data Protocol: Application Data
+        Opaque Type: Application Data (23)
+        Version: TLS 1.2 (0x0303)
+        Length: 945
+        Encrypted Application Data [truncated]: bf62c3ef43659a374d9c5c5c02bd7040dc387dbbdbae80e054f3b642047e0d674e6c6c22ebc7e1ec59680d12bb5ec981de12cd1905e3deab2f24e496963c3852562bf2468ef020511250948572f68721bab074eb91611dacaa0bc78faa19eaaafaebcc1
+    TLSv1.3 Record Layer: Application Data Protocol: Application Data
+        Opaque Type: Application Data (23)
+        Version: TLS 1.2 (0x0303)
+        Length: 97
+        Encrypted Application Data: 2afb7ee4bb34364593ac48ef709ec99c20c173a311501e229a4d2391834d7ef8e659d81b5f484952a8377fa663a7571b5efe8281c85324cedd39a90577d75ce55e053dfacaf4992e135525d0671ad03b2ac049c5d13182a462e42e60b3e5ccd944
+    TLSv1.3 Record Layer: Application Data Protocol: Application Data
+        Opaque Type: Application Data (23)
+        Version: TLS 1.2 (0x0303)
+        Length: 53
+        Encrypted Application Data: 603d98eec1f34105ee54edce5eac83dfb19e4f365c38debee6a7c00eb069b8197f2877d604817479d8287442d6fe3305c6918b2282
+    TLSv1.3 Record Layer: Application Data Protocol: Application Data
+        Opaque Type: Application Data (23)
+        Version: TLS 1.2 (0x0303)
+        Length: 139
+        Encrypted Application Data [truncated]: 64749333d4fcc37b5fee3d8aa34c72584b274db238a9bc0717d8d0e6f62b5f8dd67ba0a969054c849d18e18333c3643d532ff43b77f1e0662ff5b9003cdecfb31b8a58a0686a4809bac9a46513a70d72fbf1197880f37de48b00d77e199e3451c847487
+

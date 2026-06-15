@@ -1,0 +1,18 @@
+### 1. ss -tlnp | grep :8080
+LISTEN 0      4096               *:8080            *:*    users:(("quicknotes",pid=67371,fd=3))                   
+
+### 2. ip route show
+default via 10.93.24.1 dev eth0 proto static 
+10.93.24.0/22 dev eth0 proto kernel scope link src 10.93.26.172 
+
+### 3. mtr -rwc 5 localhost
+Start: 2026-06-15T11:26:25+0300
+HOST: capstone55 Loss%   Snt   Last   Avg  Best  Wrst StDev
+  1.|-- localhost   0.0%     5    0.1   0.1   0.1   0.1   0.0
+
+### 4. dig +short example.com @1.1.1.1
+8.47.69.0
+8.6.112.0
+
+### 5. journalctl --user -u quicknotes -n 20 || true
+-- No entries --
