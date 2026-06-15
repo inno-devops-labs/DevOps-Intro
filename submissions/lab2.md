@@ -143,3 +143,16 @@ text HEAD is now at 81cc3d3 wip(lab2): more progress
 The git reflog command records movements of HEAD, including commits, resets, and checkouts. Even after the destructive git reset --hard HEAD~2, the lost commits remained accessible through the reflog and were recovered by resetting back to commit 81cc3d3.
 
 If git gc had run between the bad reset and the recovery, the unreachable commits could eventually have been garbage-collected and permanently removed. In that case, recovery through the reflog might no longer be possible because the underlying objects would have been deleted.
+
+
+## Task 2.1 — Annotated Signed Release Tag
+
+### Tag creation command
+```bash
+git tag -a -s "v0.1.0-lab2-${USER}" -m "Lab 2 milestone — version control deep dive"
+Tag type
+git cat-file -t v0.1.0-lab2-i
+OUTPUT
+tag
+Tag verification output
+git show v0.1.0-lab2-i
