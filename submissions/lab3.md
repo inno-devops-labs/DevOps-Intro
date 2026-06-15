@@ -1,6 +1,8 @@
 # Lab 3 - CI/CD: PR-Gated Pipeline
 
-## Chosen path: I decided to work on Github not Gitlab since I am more familiar with Github and I have used it for my previous projects. I also find Github Actions to be more intuitive and easier to set up than Gitlab CI/CD.
+## Chosen path:
+
+I decided to work on Github not Gitlab since I am more familiar with Github and I have used it for my previous projects. I also find Github Actions to be more intuitive and easier to set up than Gitlab CI/CD.
 
 ## Task 1 - Write the PR gate
 
@@ -55,10 +57,12 @@ The GitHub Actions used by the workflow are pinned to full commit SHAs with the 
 
 ### Evidence to add after pushing
 
-Red CI run image:
+Red CI run:
+![Link to red CI commit](https://github.com/software-engineering-toolkit/DevOps-Intro/pull/3/changes/bb2556c0b3d30a8eea7f4f3746da2478b477eea3)
 ![Red CI run](../images/lab3/red_ci.png)
 
 Green CI run image:
+![Link to green CI run](https://github.com/software-engineering-toolkit/DevOps-Intro/pull/3/changes/33e23cf71d55bb68d6c44f06c78fe0e9cd7e7230)
 ![Green CI run](../images/lab3/green_ci.png)
 
 Branch protection evidence:
