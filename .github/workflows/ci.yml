@@ -21,9 +21,9 @@ permissions:
   contents: read
 
 
-#concurrency:
-  #group: ${{ github.workflow }}-${{ github.ref }}
-  #cancel-in-progress: true
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
   
 env:
   GOFLAGS: -buildvcs=false  
@@ -34,7 +34,9 @@ jobs:
     name: vet (${{ matrix.go-version }})
 
     runs-on: ubuntu-24.04
-
+    
+    timeout-minutes: 5
+    
     strategy:
       fail-fast: false
 
@@ -61,7 +63,9 @@ jobs:
     name: test (${{ matrix.go-version }})
 
     runs-on: ubuntu-24.04
-
+    
+    timeout-minutes: 5
+    
     strategy:
       fail-fast: false
 
@@ -88,6 +92,8 @@ jobs:
     name: lint
 
     runs-on: ubuntu-24.04
+    
+    timeout-minutes: 5
 
     steps:
       - name: Checkout repository
