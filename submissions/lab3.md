@@ -25,3 +25,21 @@ Incident CVE-2025-30066 took place on March 14, 2025. Attackers added malicious 
 
 Answer:
 In GitHub Actions `permissions` are used to set correct permissions for different operations within workflow. For example, `deployments: write` allows to create a new deployment. I decided to choose `contents: read` since I need nothing but listing the commits within `go vet`, `go test`, `go lint`.
+
+## Link to green CI run
+
+https://github.com/ilnarkhasanov/DevOps-Intro/actions/runs/27507991821/job/81302633680
+
+## Screenshot of the failed run from 1.5, plus the fix commit
+
+![alt text](static/failed-ci.png)
+
+Fix commit: ![alt text](static/fix-commit.png)
+
+## Branch protection rules
+
+![alt text](static/branch-protection.png)
+
+Additionally, I removed the possibility to bypass checks:
+
+![alt text](static/no-bypass.png)
