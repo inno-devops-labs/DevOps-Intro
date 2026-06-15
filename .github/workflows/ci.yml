@@ -82,10 +82,18 @@ jobs:
           cache: true
           cache-dependency-path: app/go.sum
       
+      - uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4.2.2
+        with:
+          path: |
+            ~/.cache/golangci-lint
+            ~/go/bin
+          key: golangci-lint-${{ runner.os }}-v2.5.0-${{ hashFiles('app/.golangci.yml') }}
+          restore-keys: |
+            golangci-lint-${{ runner.os }}-v2.5.0-
+      
       - uses: golangci/golangci-lint-action@1481404843c368bc19ca9406f87d6e0fc97bdcfd # v7.0.0
         with:
           version: v2.5.0
-          working-directory: app
 
   ci-ok:
     name: ci-ok
