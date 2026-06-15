@@ -19,10 +19,6 @@ on:
 
 jobs:
   vet:
-    strategy:
-      fail-fast: false
-      matrix:
-        version: ['1.23', '1.24']
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -31,16 +27,12 @@ jobs:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
-          go-version: ${{ matrix.version }}
+          go-version: '1.24'
           check-latest: false
           cache: true
       - run: go vet ./...
 
   test:
-    strategy:
-      fail-fast: false
-      matrix:
-        version: ['1.23', '1.24']
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -49,7 +41,7 @@ jobs:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
-          go-version: ${{ matrix.version }}
+          go-version: '1.24'
           check-latest: false
           cache: true
       - run: go test -race -count=1 ./...
