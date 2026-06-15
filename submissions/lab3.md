@@ -1,0 +1,112 @@
+# Lab 3 submission
+
+# Lab 3
+
+## Platform choice
+
+I chose GitHub Actions because the project is already hosted on GitHub and GitHub Actions 
+is tightly integrated with pull requests, branch protection rules and repository management.
+This makes it easy to implement CI/CD for QuickNotes without introducing an additional platform.
+
+## Task 1.1 and 1.4 - CI implementation and iteration to green
+
+I implemented a CI pipeline for QuickNotes using GitHub Actions.
+
+The workflow executes three independent jobs:
+* vet
+* test
+* lint
+
+The workflow is configured to run on:
+
+* pushes to main
+* pull requests targeting main
+
+I iterated on the workflow configuration until all checks passed successfully.
+
+![Ci1](screenshots/greenci1.png)
+
+Link: https://github.com/Littlepr1nce/DevOps-Intro/actions/runs/27525351060
+
+## 1.2 Design questions
+
+### a) Why pin the runner version (ubuntu-24.04) instead of ubuntu-latest? What breaks otherwise?
+
+`ubuntu-24.04` is pinned to guarantee reproducible builds.
+`ubuntu-latest` may suddenly point to a newer operating system version,
+which can introduce different package versions,
+deprecations or compatibility issues and unexpectedly break the pipeline.
+
+### b) Why split vet + test + lint into separate units? What would happen with one combined job?
+
+`vet`, `test` and `lint` are separated to isolate responsibilities and allow parallel execution.
+If they were combined into one job, a failure in one step would stop 
+the entire pipeline and make troubleshooting harder.
+
+### c) GH path: what real attack does SHA pinning prevent? Cite the date + name of the incident from Lecture 3
+
+SHA pinning prevents supply-chain attacks caused by a compromised third-party GitHub Action.
+It ensures that the workflow always executes the exact audited commit instead of a mutable tag.
+
+Lecture 3 referenced the March 2025 tj-actions/changed-files compromise,
+where attackers modified a GitHub Action and exposed CI secrets.
+
+### d) GH path: what is permissions: and what's the principle behind it?
+
+`permissions:` defines which GitHub API permissions are granted to the workflow token (`GITHUB_TOKEN`).
+The underlying security principle is least privilege:
+workflows should receive only the permissions they actually need.
+
+### e) GitLab path: what's the difference between a stage and a job? What would dependencies: do that stages: doesn't?
+
+In GitLab CI, a stage is a high-level execution phase (for example: build, test, deploy),
+while a job is an individual task executed within a stage.
+`dependencies:` allows a job to download artifacts from specific earlier jobs,
+whereas `stages:` only defines the execution order between groups of jobs.
+
+## Task 1.3 - Resources used
+
+I used the official documentation provided in the assignment:
+
+GitHub Actions Quickstart
+GitHub Actions Workflow syntax reference
+actions/setup-go documentation
+golangci/golangci-lint-action documentation
+
+The workflow was adapted to the QuickNotes project structure by using app/ as the working directory.
+
+## Task 1.5 Prove the gate works
+
+To prove that the PR gate works, I intentionally broke a test in `app/handlers_test.go` by changing the expected HTTP status code.
+
+Broken commit:
+
+`test(lab3): intentionally break CI`
+
+![Brokencommit](screenshots/redci.png)
+
+Link: https://github.com/Littlepr1nce/DevOps-Intro/actions/runs/27525728100
+
+Fix commit:
+
+`test(lab3): restore passing CI`
+
+![Ci2](screenshots/greenci2.png)
+
+Link: https://github.com/Littlepr1nce/DevOps-Intro/actions/runs/27525935469
+
+## Task 1.6 Branch protection
+
+I configured a branch protection rule for `main` with the following settings:
+
+* Require a pull request before merging
+* Require status checks to pass before merging
+* Require branches to be up to date before merging
+* Required checks:
+  * ci / vet
+  * ci / test
+  * ci / lint
+
+![Rules](screenshots/rules.png)
+
+
