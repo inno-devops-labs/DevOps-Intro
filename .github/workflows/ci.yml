@@ -4,17 +4,30 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "app/**"
+      - ".github/workflows/ci.yml"
   pull_request:
     branches:
       - main
+    paths:
+      - "app/**"
+      - ".github/workflows/ci.yml"
 
 permissions:
   contents: read
 
 jobs:
   vet:
-    name: vet
+    name: vet (go ${{ matrix.go-version }})
     runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version:
+          - "1.23"
+          - "1.24"
 
     steps:
       - name: Check out repository
@@ -25,16 +38,23 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
         with:
-          go-version: "1.24"
-          cache: false
+          go-version: ${{ matrix.go-version }}
+          cache: true
 
       - name: Run go vet
         working-directory: app
         run: go vet ./...
 
   test:
-    name: test
+    name: test (go ${{ matrix.go-version }})
     runs-on: ubuntu-24.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version:
+          - "1.23"
+          - "1.24"
 
     steps:
       - name: Check out repository
@@ -45,8 +65,8 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
         with:
-          go-version: "1.24"
-          cache: false
+          go-version: ${{ matrix.go-version }}
+          cache: true
 
       - name: Run tests with race detector
         working-directory: app
@@ -66,7 +86,7 @@ jobs:
         uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
         with:
           go-version: "1.24"
-          cache: false
+          cache: true
 
       - name: Install golangci-lint
         working-directory: app
@@ -75,3 +95,27 @@ jobs:
       - name: Run golangci-lint
         working-directory: app
         run: golangci-lint run
+
+  ci-ok:
+    name: ci-ok
+    if: always()
+    needs:
+      - vet
+      - test
+      - lint
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check all required jobs passed
+        run: |
+          if [[ "${{ contains(needs.*.result, 'failure') }}" == "true" ]]; then
+            echo "At least one required job failed"
+            exit 1
+          fi
+
+          if [[ "${{ contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+            echo "At least one required job was cancelled"
+            exit 1
+          fi
+
+          echo "All required jobs passed"
