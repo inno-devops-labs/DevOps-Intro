@@ -33,6 +33,7 @@ jobs:
         with:
           go-version: ${{ matrix.version }}
           check-latest: false
+          cache: true
       - run: go vet ./...
 
   test:
@@ -50,6 +51,7 @@ jobs:
         with:
           go-version: ${{ matrix.version }}
           check-latest: false
+          cache: true
       - run: go test -race -count=1 ./...
 
   lint:
@@ -63,6 +65,7 @@ jobs:
         with:
           go-version: '1.24'
           check-latest: false
+          cache: true
       - uses: golangci/golangci-lint-action@82606bf257cbaff209d206a39f5134f0cfbfd2ee
         with:
           working-directory: ./app
