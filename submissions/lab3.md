@@ -144,3 +144,49 @@ With `fail-fast: false`, all matrix cells run even if one fails — you see whet
 **h) Cache poisoning risk and GitHub mitigations**
 
 A malicious PR could try to populate the cache with bad data that a later protected-branch build restores. GitHub restricts cache **write** access: caches from fork PRs are not available to the base branch's default workflow, and cache keys are scoped. See [Dependency caching — Restrictions for accessing the cache](https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#restrictions-for-accessing-a-cache).
+
+---
+
+## Bonus Task — Pipeline Performance
+
+**Goal:** ≤ 90 s wall-clock (Task 2 baseline **38 s** already passes) + measure **≥ 3 optimizations one at a time**.
+
+**Method:** start from Task 2 config; add **one** optimization per commit; push; record total duration from Actions UI; fill the table below.
+
+**Baseline (Task 2, no bonus):** [run 27529469084](https://github.com/markovav-official/DevOps-Intro/actions/runs/27529469084) — **38 s**
+
+### B.1: Profile (baseline run `27529469084`)
+
+| Phase | `lint` job | `test (1.23)` job |
+|-------|----------:|------------------:|
+| Runner start | 1 s | 2 s |
+| Checkout | 1 s | 0 s |
+| Dependency setup | 19 s (golangci-lint-action) | 2 s (`setup-go`) |
+| Actual work | (in lint step) | 21 s (`go test -race`) |
+
+Dominant: **`golangci-lint-action` ~19 s**, then **`go test -race` ~21 s** (parallel → wall **38 s**).
+
+### B.2: Optimizations — one per commit
+
+| Step | Optimization (from lab list) | In `ci.yml`? | Run URL | Wall-clock |
+|------|------------------------------|-------------|---------|----------:|
+| 0 | Task 2 baseline | — | [27529469084](https://github.com/markovav-official/DevOps-Intro/actions/runs/27529469084) | **38 s** |
+| 1 | **`GOFLAGS=-buildvcs=false`** | ✅ | [27531104914](https://github.com/markovav-official/DevOps-Intro/actions/runs/27531104914) | **48 s** (UI; jobs: `lint` 26 s, `test (1.23)` 25 s) |
+| 2 | **`fetch-depth: 1`** (shallow clone) | ✅ | [27531214640](https://github.com/markovav-official/DevOps-Intro/actions/runs/27531214640) | **48 s** (UI; jobs: `lint` 25 s, `test (1.23)` 28 s) |
+| 3 | **Cache golangci-lint** (`actions/cache` on linter binary) | ✅ | [27531410682](https://github.com/markovav-official/DevOps-Intro/actions/runs/27531410682) | **48 s** (UI; `lint` **32 s** — cold cache save) |
+| 4 | **Skip lint** on non-`app-go` diffs (`dorny/paths-filter`) | ✅ | [27531535180](https://github.com/markovav-official/DevOps-Intro/actions/runs/27531535180) | **40 s** (`lint` **skipped**; `test (1.23)` 28 s) |
+
+
+### B.3: Cumulative before / after
+
+| Optimization applied | Before (s) | After (s) | Saving |
+|----------------------|----------:|----------:|-------:|
+| 1 — `GOFLAGS=-buildvcs=false` | 38 | 48 | +10 (runner variance; no measurable win) |
+| 2 — `fetch-depth: 1` | 48 | 48 | 0 (tiny repo; clone was never the bottleneck) |
+| 3 — cache golangci-lint | 48 | 48 | 0 (first run populates cache; `lint` 25→32 s incl. save) |
+| 4 — skip lint (non-`app-go` diff) | 48 | 40 | **-8** (`lint` skipped; wall = slowest parallel job, not sum) |
+| **Total (full code-change run)** | **38** | **38–48** | **0** (within runner variance; **≤ 90 s** target met) |
+
+### B.4: Bottleneck analysis
+
+After Task 2, the **remaining** wall-clock is set by the slowest parallel branch: **`go test -race`** on the matrix (~21–28 s per cell) and **`golangci-lint-action`** (~22–32 s when it runs). Runner provisioning and `setup-go` are small (~2 s) because QuickNotes has zero module dependencies. Bonus opts 1–3 (`GOFLAGS`, shallow clone, linter cache) did not move the needle on this tiny repo — clone and VCS metadata were never the bottleneck, and the first linter-cache run paid upload cost. **Opt 4** is the only bonus change with a clear win, and only when diffs exclude Go sources. To shrink full runs further you would need **more tests** (race detector cost scales with code) or a **heavier dependency tree** where module cache actually restores tarballs — not pipeline YAML tweaks. I would stop optimizing this pipeline around **~40 s**: it is well under the 90 s lab target, PR feedback is fast enough, and further work belongs in the application (fewer/slower tests, splitting integration suites) or in org-wide runners — not in marginal Action flags for a ~15-file Go service.
