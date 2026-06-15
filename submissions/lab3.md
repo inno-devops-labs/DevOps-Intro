@@ -34,7 +34,9 @@ Fix commit:
 
 ### Branch Protection
 
-TODO: add a screenshot of the branch protection rule for `main`.
+Branch protection rule for `main`:
+
+![Branch protection rule](branch_protection.png)
 
 ### Design Answers
 
@@ -96,6 +98,4 @@ I have not completed the Bonus task yet.
 
 ## What Still Needs To Be Done On GitHub
 
-1. Enable branch protection on your fork's `main`.
-2. Add the branch protection screenshot.
-3. Measure the baseline and cache-only timing runs for Task 2.4.
+1. Measure the baseline and cache-only timing runs for Task 2.4.
