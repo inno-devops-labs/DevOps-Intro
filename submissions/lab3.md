@@ -103,10 +103,79 @@ I configured a branch protection rule for `main` with the following settings:
 * Require status checks to pass before merging
 * Require branches to be up to date before merging
 * Required checks:
-  * ci / vet
-  * ci / test
-  * ci / lint
+  * vet
+  * test
+  * lint
 
 ![Rules](screenshots/rules.png)
+
+## Task 2 — Make It Fast and Smart
+
+### 2.1 - 2.2 - 2.3 Applied optimizations
+
+I applied three CI optimizations.
+
+First, I enabled caching through `actions/setup-go` by setting `cache: true`.
+This allows GitHub Actions to reuse downloaded Go modules 
+and Go build cache data between workflow runs.
+
+Second, I added a build matrix for `vet` and `test`,
+running these jobs against Go `1.23` and Go `1.24` in parallel.
+This helps detect toolchain-specific issues and reduces
+the risk of "works on my machine" problems.
+After introducing the build matrix,
+I updated the required checks in the branch protection rule to match the new check names.
+![Updrules](screenshots/rulesupdate.png)
+
+The branch protection rule was updated to require the matrix-generated checks instead of the original `vet` and `test` checks.
+
+Third, I added path filters so that the workflow only runs when files 
+inside `app/**` or `.github/workflows/**` change. 
+Documentation-only changes no longer trigger unnecessary CI runs.
+
+### 2.4 Timing measurements
+
+| Scenario                                               | Wall-clock |
+| ------------------------------------------------------ | ---------- |
+| Baseline (no cache, single Go version, no path filter) | 35 s       |
+| With cache                                             | 38 s       |
+| With cache + matrix                                    | 34 s       |
+
+baseline screenshot:
+![Baseline](screenshots/baseline.png)
+
+with cache screenshot:
+![With cache](screenshots/cache.png)
+
+with cache+matrix screenshot:
+![With cache and matrix](screenshots/cache+matrix.png)
+
+
+The cache optimization did not significantly improve the total wall-clock time because QuickNotes has almost no external dependencies.
+Most of the pipeline time is spent on runner provisioning, repository checkout and Go toolchain setup rather than downloading Go modules.
+Small differences between runs are expected because GitHub-hosted runners have variable startup times and matrix jobs execute in parallel.
+
+## 2.5 - Design questions
+
+### f) Why cache `go.sum`-keyed inputs and not build outputs?
+
+`go.sum`-keyed inputs are deterministic because they describe the exact dependency versions used by the project.
+If `go.sum` does not change, the same dependencies can be safely restored from cache.
+Build outputs are less reliable because they may depend on the operating system, architecture, Go version,
+compiler flags and environment variables. 
+Caching deterministic inputs is safer and more reproducible than caching generated outputs.
+
+### g) What does `fail-fast: false` change in a matrix run, and when do you actually want `fail-fast: true`?
+
+With `fail-fast: false`, GitHub Actions continues running all matrix jobs even if one of them fails.
+This is useful for compatibility testing because it shows exactly which Go versions are affected by a problem.
+`fail-fast: true` is useful when CI resources are limited and continuing after the first failure would only waste time.
+
+### h) What's the risk of an attacker writing a cache from a malicious PR that protected branches later read?
+
+The main risk is cache poisoning. An attacker could try to inject malicious data into a cache that is later restored by trusted branches or workflows.
+This could influence future CI runs by introducing modified dependencies or build artifacts. 
+GitHub mitigates this by restricting cache access between branches, 
+but workflows should still use narrow cache keys and cache deterministic dependency inputs instead of executable outputs.
 
 
