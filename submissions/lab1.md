@@ -1,5 +1,9 @@
 # Lab 1 submission
 
+## Task 1
+
+### QuickNotes run `/health`, `/notes`, `POST /notes`
+
 ```powershell
 PS C:\Users\danielpancake> curl -s http://localhost:8080/health | py -m json.tool
 {
@@ -44,6 +48,8 @@ PS C:\Users\danielpancake> curl -s -X POST http://localhost:8080/notes -H 'Conte
 }
 ```
 
+### Signed commit verification & Verified badge
+
 ```powershell
 PS D:\Desktop\DevOps-Intro> git log --show-signature -1
 
@@ -58,3 +64,19 @@ Date:   Mon Jun 15 15:02:53 2026 +0500
 ```
 
 ![Showing verified badge](image/lab1/1781518238214.png)
+
+### Why signed commits matter
+
+Signed commits use cryptographic signatures to verify who created a commit, helping reviewers trust the source of code changes and prevent impersonation. The `xz-utils` backdoor showed that even trusted contributors can introduce malicious code, but commit signing provides an auditable record of authorship and strengthens software supply-chain security.
+
+## Task 2
+
+The PR template was added to my fork's `main` at `.github/pull_request_template.md`
+
+## Task 3
+
+### GitHub Community
+
+**Why starring repositories matters:** Starring a repository helps you save projects you find useful and shows support for the people who maintain them. It also helps good open-source projects become more visible to others.
+
+**How following developers helps:** Following developers lets you see what they are building and contributing to, making it easier to discover useful projects, learn from others, and stay updated on your teammates' work.
