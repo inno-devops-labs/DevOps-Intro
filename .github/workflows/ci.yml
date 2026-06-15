@@ -15,6 +15,9 @@ on:
 permissions:
   contents: read
 
+env:
+  GOFLAGS: -buildvcs=false
+
 jobs:
   vet:
     name: vet
