@@ -5,13 +5,21 @@ on:
     branches:
       - main
     paths:
-      - "app/**"
+      - "app/**/*.go"
+      - "app/go.mod"
+      - "app/go.sum"
+      - "app/Makefile"
+      - "app/seed.json"
       - ".github/workflows/ci.yml"
   pull_request:
     branches:
       - main
     paths:
-      - "app/**"
+      - "app/**/*.go"
+      - "app/go.mod"
+      - "app/go.sum"
+      - "app/Makefile"
+      - "app/seed.json"
       - ".github/workflows/ci.yml"
 
 permissions:
