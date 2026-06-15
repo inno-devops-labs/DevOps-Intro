@@ -68,22 +68,40 @@ jobs:
         working-directory: app
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 2
+      - id: lint-scope
+        if: github.event_name == 'pull_request'
+        working-directory: .
+        run: |
+          changed_files="$(git diff --name-only HEAD^1 HEAD -- app)"
+          if [ -n "$changed_files" ] && ! printf '%s\n' "$changed_files" | grep -v '^app/README.md$' >/dev/null; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+        if: steps.lint-scope.outputs.skip != 'true'
         with:
           go-version: "1.24"
           cache: true
           cache-dependency-path: app/go.mod
       - id: golangci-lint-binary
+        if: steps.lint-scope.outputs.skip != 'true'
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: ~/go/bin/golangci-lint
           key: ${{ runner.os }}-go-1.24-golangci-lint-${{ env.GOLANGCI_LINT_VERSION }}
       - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        if: steps.lint-scope.outputs.skip != 'true'
         with:
           path: ~/.cache/golangci-lint
           key: ${{ runner.os }}-golangci-cache-${{ env.GOLANGCI_LINT_VERSION }}-${{ hashFiles('app/.golangci.yml', 'app/go.mod') }}
           restore-keys: |
             ${{ runner.os }}-golangci-cache-${{ env.GOLANGCI_LINT_VERSION }}-
-      - if: steps.golangci-lint-binary.outputs.cache-hit != 'true'
+      - if: steps.lint-scope.outputs.skip != 'true' && steps.golangci-lint-binary.outputs.cache-hit != 'true'
         run: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION}
-      - run: '"$(go env GOPATH)/bin/golangci-lint" run'
+      - if: steps.lint-scope.outputs.skip != 'true'
+        run: '"$(go env GOPATH)/bin/golangci-lint" run'
+      - if: steps.lint-scope.outputs.skip == 'true'
+        run: echo "Only app README changed; lint skipped."
