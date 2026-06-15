@@ -5,11 +5,17 @@ permissions:
 
 on:
   pull_request:
+    paths:
+      - 'app/**'
+      - '.github/workflows/ci.yml'
     branches:
       - main
   push:
     branches:
       - main
+    paths:
+      - 'app/**'
+      - '.github/workflows/ci.yml'
 
 jobs:
   vet:
