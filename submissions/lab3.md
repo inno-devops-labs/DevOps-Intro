@@ -58,11 +58,11 @@ The GitHub Actions used by the workflow are pinned to full commit SHAs with the 
 ### Evidence to add after pushing
 
 Red CI run:
-![Link to red CI commit](https://github.com/software-engineering-toolkit/DevOps-Intro/pull/3/changes/bb2556c0b3d30a8eea7f4f3746da2478b477eea3)
+[Link to red CI commit](https://github.com/software-engineering-toolkit/DevOps-Intro/pull/3/changes/bb2556c0b3d30a8eea7f4f3746da2478b477eea3)
 ![Red CI run](../images/lab3/red_ci.png)
 
 Green CI run image:
-![Link to green CI run](https://github.com/software-engineering-toolkit/DevOps-Intro/pull/3/changes/33e23cf71d55bb68d6c44f06c78fe0e9cd7e7230)
+[Link to green CI run](https://github.com/software-engineering-toolkit/DevOps-Intro/pull/3/changes/33e23cf71d55bb68d6c44f06c78fe0e9cd7e7230)
 ![Green CI run](../images/lab3/green_ci.png)
 
 Branch protection evidence:
@@ -70,18 +70,54 @@ Branch protection evidence:
 
 ## Design questions
 
-### a) Why pin the runner version instead of `ubuntu-latest`?
+### Why pin the runner version instead of `ubuntu-latest`?
 
 Pinning `ubuntu-24.04` makes the CI environment predictable. `ubuntu-latest` is a moving alias, so GitHub can retarget it to a newer image with different system packages, compiler behavior, shell behavior, OpenSSL versions, or preinstalled tools. A workflow that passed yesterday could fail after the alias changes even though the repository code did not change. Pinning the runner makes environment upgrades intentional instead of accidental.
 
-### b) Why split vet, test, and lint into separate units?
+### Why split vet, test, and lint into separate units?
 
 Splitting `vet`, `test`, and `lint` into separate jobs makes failures easier to diagnose and lets GitHub Actions run independent checks in parallel. If all three commands were combined into one job, the first failing command would stop the rest unless extra shell handling was added. That would hide whether the other checks also fail and would make branch protection less precise because there would be only one combined status check instead of separate quality gates.
 
-### c) What real attack does SHA pinning prevent?
+### What real attack does SHA pinning prevent?
 
 SHA pinning prevents a workflow from silently running different action code when a tag or branch is moved. Lecture 3 cites the March 2025 `tj-actions/changed-files` supply-chain incident: the action was compromised, and the attacker rewrote tags to point to malicious code that leaked secrets from public CI runs. Pinning to a full commit SHA protects against this class of tag-rewrite attack because the workflow keeps using the exact reviewed commit instead of whatever code the tag points to later.
 
-### d) What is `permissions:` and what principle is behind it?
+### What is `permissions:` and what principle is behind it?
 
 `permissions:` controls the scopes granted to the automatic `GITHUB_TOKEN` available inside a GitHub Actions workflow or job. Setting `contents: read` gives the workflow only enough access to read repository contents. The principle is least privilege: CI jobs should receive only the permissions they need, so a compromised action or command has less ability to write code, modify pull requests, publish packages, or change repository settings.
+
+## Task 2 - Make it fast and smart
+
+### Timing measurements
+
+| Scenario                                               | Wall-clock |
+| ------------------------------------------------------ | ---------- |
+| Baseline (no cache, single Go version, no path filter) | 37 s       |
+| With cache                                             | 36 s       |
+| With cache + matrix                                    | 34 s       |
+
+### Optimizations applied
+
+The first optimization was dependency caching through `actions/setup-go`. The workflow enables the built-in Go cache and uses `app/go.mod` as the cache dependency path because this repository does not currently contain `app/go.sum`.
+
+The second optimization was a Go version matrix for the `vet` and `test` jobs. Those jobs now run against Go `1.23` and Go `1.24` in parallel with `fail-fast: false`, which checks compatibility across both toolchains without hiding failures in the second matrix cell.
+
+The third optimization was path filtering. The workflow now runs only when files under `app/**` or `.github/workflows/ci.yml` change, so root-level documentation, lab notes, and submission-only edits do not spend CI minutes.
+
+### Why cache `go.sum`-keyed inputs and not build outputs?
+
+Dependency inputs are deterministic because Go modules are pinned by module metadata and checksums. A cache key based on dependency files changes when the dependency graph changes, so the restored cache matches the code's expected inputs. Build outputs are less safe as cache boundaries because they can depend on the Go version, compiler flags, operating system, architecture, race detector settings, and other environment details. Caching the wrong build output can create confusing or unsafe results, while caching downloaded modules just avoids repeated network work.
+
+In this repository, `app/go.mod` is used as the cache dependency path because `app/go.sum` is not present. If `app/go.sum` appears later, it should be used as the stronger cache key input because it records exact dependency checksums.
+
+### What does `fail-fast: false` change in a matrix run, and when do you actually want `fail-fast: true`?
+
+With `fail-fast: false`, GitHub Actions keeps the remaining matrix jobs running even if one matrix cell fails. That is useful here because the goal is to see whether Go `1.23`, Go `1.24`, or both versions fail.
+
+`fail-fast: true` is useful when matrix jobs are expensive and one failure is enough to make the whole result unusable. For example, a deployment matrix or a long integration-test matrix might stop early to save time and CI minutes after the first clear failure.
+
+### What's the risk of an attacker writing a cache from a malicious PR that protected branches later read?
+
+The risk is cache poisoning. If an attacker can cause CI to save malicious content under a cache key that trusted branches later restore, the trusted branch could run with attacker-controlled dependencies, tools, or generated files. That can turn a low-privilege pull request into a later trusted-branch compromise.
+
+GitHub mitigates this with cache access restrictions: workflow runs can restore caches from their own branch and from the default branch, but protected branches should not read arbitrary caches written by untrusted pull request branches. This is also why caches must not contain secrets. GitHub's dependency caching documentation warns that anyone with read access can open a pull request and access cache contents, and fork pull requests can access base-branch caches.
