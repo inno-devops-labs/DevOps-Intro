@@ -103,3 +103,22 @@ jobs:
           version: v2.5.0
           working-directory: app
           args: --timeout=2m
+
+  ci-ok:
+    name: ci-ok
+    if: always()
+    needs:
+      - vet
+      - test
+      - lint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check required jobs
+        run: |
+          if [[ "${{ contains(needs.*.result, 'failure') }}" == "true" ]]; then
+            exit 1
+          fi
+          if [[ "${{ contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+            exit 1
+          fi

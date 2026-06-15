@@ -15,6 +15,7 @@ The workflow runs three independent units of work:
 - `vet (go 1.23.x)` and `vet (go 1.24.x)` run `go vet ./...` in `app/`.
 - `test (go 1.23.x)` and `test (go 1.24.x)` run `go test -race -count=1 ./...` in `app/`.
 - `lint` runs `golangci-lint run` in `app/` with `golangci-lint` pinned to `v2.5.0`.
+- `ci-ok` aggregates the required jobs so branch protection can require one stable check name even though the matrix expands `vet` and `test`.
 
 The workflow uses:
 
@@ -42,12 +43,7 @@ TODO: paste the fix commit SHA here.
 Branch protection evidence:
 
 ```text
-TODO: add screenshot reference showing main requires these checks:
-- vet (go 1.23.x)
-- vet (go 1.24.x)
-- test (go 1.23.x)
-- test (go 1.24.x)
-- lint
+TODO: add screenshot reference showing main requires ci-ok.
 ```
 
 ### Design Questions
@@ -83,6 +79,7 @@ Caching:
 Matrix:
 
 The `vet` and `test` jobs run against `1.23.x` and `1.24.x` with `fail-fast: false`, so both Go versions report their result even if one fails.
+The `ci-ok` job uses `if: always()` and fails if any required job fails or is cancelled, which avoids branch-protection churn when matrix check names change.
 
 Path filters:
 
