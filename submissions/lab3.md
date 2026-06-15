@@ -10,13 +10,27 @@ I picked GitHub Actions because the lab uses GitHub by default and the course fl
 
 ### Green CI Run
 
-TODO: add the link to one green GitHub Actions run.
+Green run after the fix:
+
+https://github.com/lime413/DevOps-Intro/actions/runs/27573596586
 
 ### Failed Run And Fix
 
-TODO: add a screenshot or log of the failed run from Task 1.5.
+Failed run:
 
-TODO: add the commit link or hash that fixes the deliberate break.
+https://github.com/lime413/DevOps-Intro/actions/runs/27573354392
+
+Screenshot:
+
+![Failed CI run](failure.png)
+
+Deliberate failing commit:
+
+`f6a5ec746b0f66fc1930813ffcc85b3c6153766a`
+
+Fix commit:
+
+`28aa5363378e13e7b8783e70c3d522acce6dbe4e`
 
 ### Branch Protection
 
@@ -60,7 +74,7 @@ Note: this project has no `app/go.sum` file because it has no direct external mo
 | --- | --- |
 | Baseline (no cache, single Go version, no path filter) | TODO |
 | With cache | TODO |
-| With cache + matrix | TODO |
+| With cache + matrix | 72 s |
 
 ### Design Answers
 
@@ -82,9 +96,6 @@ I have not completed the Bonus task yet.
 
 ## What Still Needs To Be Done On GitHub
 
-1. Push `feature/lab3` to your fork.
-2. Open a draft PR to `main`.
-3. Check the workflow results and fix any CI-only issues.
-4. Make one deliberate failing commit for Task 1.5, then fix it.
-5. Enable branch protection on your fork's `main`.
-6. Collect screenshots, run links, and timing numbers from GitHub Actions.
+1. Enable branch protection on your fork's `main`.
+2. Add the branch protection screenshot.
+3. Measure the baseline and cache-only timing runs for Task 2.4.
