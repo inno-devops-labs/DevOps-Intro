@@ -87,3 +87,87 @@ $ journalctl --user -u quicknotes -n 20 || true
 
 ### _What would you check first if QuickNotes returned 502?_
 Since a 502 Bad Gateway error inherently indicates a communication failure between a gateway/proxy and an upstream application server, my first step would be to verify the architecture, as QuickNotes is not currently configured behind a reverse proxy or load balancer. However, assuming a proxy like Nginx were introduced, a 502 means the proxy cannot reach the application, prompting me to immediately check the Nginx error logs to isolate the root cause. If the logs show a DNS resolution failure, I would verify the container's existence and use `dig` to check service discovery; if it indicates Destination Host Unreachable, I would investigate VPN routing and `iptables` firewall rules; and if it registers a Connection Refused, I would use `ss -tlnp` (or inspect the container's network namespace) to ensure the QuickNotes process is actually running and listening on the correct port.
+
+### Outside-in debugging
+The error
+```
+2026/06/15 21:32:32 quicknotes listening on :8080 (notes loaded: 8)
+2026/06/15 21:32:32 listen: listen tcp :8080: bind: address already in use
+exit status 1
+```
+
+Debug steps:
+1) Process check
+```
+$ ps -ef | grep quicknotes | grep -v grep
+arsenez   147501  147453  0 21:38 pts/4    00:00:00 /home/arsenez/.cache/go-build/a8/a8d936339183ad49344bbc06c6ff536a334c191b9d3e1cddc58ad3e9dca75285-d/quicknotes
+```
+Decision: QuickNotes binary is running.
+2) Port binding check
+```
+$ ss -tlnp | grep 8080
+LISTEN 0      4096               *:8080             *:*    users:(("quicknotes",pid=147501,fd=3))
+```
+Decision: The application is bound to port 8080, PID matches process from step 1.
+3) Local End-to-End check
+```
+$ curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8080/health
+200
+```
+Decision: QuickNotes application is healthy.
+4) Network Barrier Check
+```
+$ sudo iptables -L -n -v 2>/dev/null || sudo nft list ruleset 2>/dev/null || true
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain FORWARD (policy ACCEPT 167 packets, 17826 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+ 192K  771M DOCKER-USER  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+ 192K  771M DOCKER-FORWARD  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain DOCKER (0 references)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain DOCKER-BRIDGE (1 references)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain DOCKER-CT (1 references)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain DOCKER-FORWARD (1 references)
+ pkts bytes target     prot opt in     out     source               destination
+ 192K  771M DOCKER-CT  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+80549 4263K DOCKER-ISOLATION-STAGE-1  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+80549 4263K DOCKER-BRIDGE  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+
+Chain DOCKER-ISOLATION-STAGE-1 (1 references)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain DOCKER-ISOLATION-STAGE-2 (0 references)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain DOCKER-USER (1 references)
+ pkts bytes target     prot opt in     out     source               destination
+```
+Decision: The `INPUT` chain policy is explicitly set to `ACCEPT` and contains no explicit rules blocking inbound traffic.
+5) Name Resolution Check
+```
+$ dig +short localhost
+127.0.0.1
+```
+Decision: The hostname `localhost` correctly resolves locally to the IPv4 loopback address `127.0.0.1`.
+
+### Postmortem
+**Incident Summary**\
+An attempt to deploy a second instance of the QuickNotes application on port 8080 failed during initialization because the network socket was already exclusively claimed by an actively running primary instance.
+
+**Systemic Factors**\
+This failure highlights a lack of deployment atomicity and state awareness within the delivery pipeline. Systemically, the deployment script executes "blindly"—it assumes a pristine target environment without verifying if the requested socket resource is already bound. Because the runtime configuration relies on static port assignments without coordination or dynamic port allocation, concurrent executions naturally result in resource collisions.
+
+**Preventative Tooling**
+- **Orchestration & Containerization**: Migrating the application to Docker/Podman abstracts host networking. Containers isolate application network namespaces, allowing the runtime engine to dynamically map available host ports to internal application ports.
+- **Process Managers**: Standardizing deployments around native init systems like systemd prevents overlapping instances. A systemd service configured with `Type=simple` or `exec` enforces strict lifecycle management; attempting to start the service while it is already active gracefully reuses or safely restarts the unit rather than spawning an overlapping, conflicting process.
