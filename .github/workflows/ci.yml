@@ -24,6 +24,8 @@ jobs:
           go-version: '1.24'
           go-version-file: 'go.mod'
           check-latest: false
+          cache: true
+          cache-dependency-path: app/go.sum
       - run: go vet ./...
 
   test:
@@ -38,6 +40,8 @@ jobs:
           go-version: '1.24'
           go-version-file: 'go.mod'
           check-latest: false
+          cache: true
+          cache-dependency-path: app/go.sum
       - run: go test -race -count=1 ./...
 
   lint:
@@ -52,6 +56,8 @@ jobs:
           go-version: '1.24'
           go-version-file: 'go.mod'
           check-latest: false
+          cache: true
+          cache-dependency-path: app/go.sum
       - uses: golangci/golangci-lint-action@82606bf257cbaff209d206a39f5134f0cfbfd2ee
         with:
           working-directory: ./app
