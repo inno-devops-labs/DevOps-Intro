@@ -14,6 +14,7 @@ on:
 jobs:
   vet:
     strategy:
+      fail-fast: false
       matrix:
         version: ['1.23', '1.24']
     runs-on: ubuntu-24.04
@@ -30,6 +31,7 @@ jobs:
 
   test:
     strategy:
+      fail-fast: false
       matrix:
         version: ['1.23', '1.24']
     runs-on: ubuntu-24.04
