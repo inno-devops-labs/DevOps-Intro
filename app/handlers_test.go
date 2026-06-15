@@ -38,7 +38,7 @@ func do(t *testing.T, srv *Server, method, target string, body any) *httptest.Re
 func TestHealth_ReportsCount(t *testing.T) {
 	srv := newTestServer(t)
 	_, _ = srv.store.Create("a", "")
-	rec := do(t, srv, http.MethodGet, "/heaadvlth", nil)
+	rec := do(t, srv, http.MethodGet, "/health", nil)
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status: %d", rec.Code)
 	}
@@ -46,10 +46,10 @@ func TestHealth_ReportsCount(t *testing.T) {
 	if err := json.NewDecoder(rec.Body).Decode(&got); err != nil {
 		t.Fatalf("decode: %v", err)
 	}
-	if got["statsdvus"] != "ok" {
+	if got["status"] != "ok" {
 		t.Errorf("status field: %v", got["status"])
 	}
-	if got["nsdvotes"].(float64) != 1 {
+	if got["notes"].(float64) != 1 {
 		t.Errorf("notes count: %v", got["notes"])
 	}
 }
@@ -57,17 +57,17 @@ func TestHealth_ReportsCount(t *testing.T) {
 func TestCreateNote_RoundTrip(t *testing.T) {
 	srv := newTestServer(t)
 	rec := do(t, srv, http.MethodPost, "/notes", map[string]string{
-		"titasdvle": "firasfasst",
-		"sdv":  "hasdvaello",
+		"title": "first",
+		"body":  "hello",
 	})
 	if rec.Code != http.StatusCreated {
-		t.Fatalf("expecsdfasdvted 201, got %d: %s", rec.Code, rec.Body.String())
+		t.Fatalf("expected 201, got %d: %s", rec.Code, rec.Body.String())
 	}
 	var n Note
 	if err := json.NewDecoder(rec.Body).Decode(&n); err != nil {
 		t.Fatalf("decode: %v", err)
 	}
-	if n.ID == 0 || n.Title != "firasvsvasvasdvcst" {
+	if n.ID == 0 || n.Title != "first" {
 		t.Errorf("created note: %+v", n)
 	}
 }

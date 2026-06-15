@@ -1,5 +1,7 @@
 # Lab 3 submission
 
+# I CHOOSE GITHUB ACTIONS PATH
+
 ## 1.2
 ### a
 
@@ -16,3 +18,9 @@ An attacker can, possibly, change the version tag and make VM execude someone ot
 ### d
 
 Permission shows what GH workflow can do with repository. Principle - least priveledge. It means, that is someone can do their job without some priveledge - this someone shouldn't have this priveledge. 
+
+![branch rulset updated](image.png)
+
+## Bad commit screenshot
+
+![alt text](image-1.png)
