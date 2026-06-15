@@ -178,4 +178,56 @@ This could influence future CI runs by introducing modified dependencies or buil
 GitHub mitigates this by restricting cache access between branches, 
 but workflows should still use narrow cache keys and cache deterministic dependency inputs instead of executable outputs.
 
+## Bonus Task — Pipeline Performance Investigation
+
+### B.1 Pipeline profiling
+
+I inspected the execution times reported by GitHub Actions.
+
+| Unit | Total duration |
+|------|----------------|
+| vet (1.23) | 22 s |
+| vet (1.24) | 18 s |
+| test (1.23) | 27 s |
+| test (1.24) | 38 s |
+| lint | 28 s |
+
+The GitHub Actions summary view did not provide an exact breakdown for runner startup,
+dependency setup and cleanup separately. 
+However, most of the wall-clock time is spent preparing GitHub-hosted runners and 
+setting up the Go environment rather than executing the Go commands themselves.
+
+### B.2 Additional optimizations
+
+I applied three additional optimizations beyond Task 2:
+
+* Added `concurrency` to automatically cancel outdated workflow runs.
+* Added `GOFLAGS=-buildvcs=false` to avoid unnecessary VCS metadata processing.
+* Added `timeout-minutes: 5` to prevent jobs from hanging indefinitely.
+
+### B.3 Before/after measurements
+
+| Configuration | Wall-clock |
+|---------------|------------|
+| Cache + matrix | 38 s |
+| Cache + matrix + concurrency + GOFLAGS | 37 s |
+| Cache + matrix + concurrency + GOFLAGS + timeout | 43 s |
+
+![Without](screenshots/testrunwithout.png)
+![Concurrency and GOFLAGS](screenshots/concurrency+goflags.png)
+![Concurrency and GOFLAGS and timeout-minutes](screenshots/runwith3optimizations.png)
+
+The additional optimizations did not significantly reduce the total execution time. 
+The measurements vary between runs because GitHub-hosted runners have non-deterministic startup times.
+The pipeline still remains well below the target of 90 seconds.
+
+### B.4 Bottleneck analysis
+
+The dominant cost is GitHub runner provisioning rather than the Go commands themselves. 
+QuickNotes is a small project with almost no external dependencies, so the actual `vet`, `test` and `lint` commands complete quickly.
+To reduce the execution time further, the application itself would need to contain fewer tests or additional simplifications,
+but such changes would provide little practical benefit.
+Most of the remaining overhead comes from GitHub-hosted runner initialization, which is outside the repository's control.
+I would stop optimizing at around 30–40 seconds because the current pipeline is already sufficiently fast and 
+additional optimizations would add unnecessary complexity without meaningful gains.
 
