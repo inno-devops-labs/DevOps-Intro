@@ -1,4 +1,8 @@
 name: QuickNotes CI
+
+permissions:
+  contents: read
+
 on:
   pull_request:
     branches:
@@ -6,6 +10,7 @@ on:
   push:
     branches:
       - main
+
 jobs:
   vet:
     runs-on: ubuntu-24.04
