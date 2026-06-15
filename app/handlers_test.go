@@ -46,7 +46,7 @@ func TestHealth_ReportsCount(t *testing.T) {
 	if err := json.NewDecoder(rec.Body).Decode(&got); err != nil {
 		t.Fatalf("decode: %v", err)
 	}
-	if got["status"] == "ok" {
+	if got["status"] != "ok" {
 		t.Errorf("status field: %v", got["status"])
 	}
 	if got["notes"].(float64) != 1 {
