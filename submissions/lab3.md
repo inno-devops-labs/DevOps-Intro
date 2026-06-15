@@ -119,3 +119,45 @@ With `fail-fast: false`, GitHub Actions does not cancel the remaining matrix job
 #### h) What's the risk of an attacker writing a cache from a malicious PR that protected branches later read?
 
 The risk is cache poisoning. If a malicious pull request can write data into a cache key that is later restored by trusted branches, the attacker may be able to influence future CI runs by injecting modified dependencies, tools, or build artifacts. This is dangerous because the later run may happen in a more trusted context. GitHub mitigates this by scoping cache access by branch and by restricting how caches created in pull requests are shared, but workflows should still avoid restoring overly broad cache keys and should cache deterministic dependency inputs rather than executable outputs.
+
+## Bonus Task — Pipeline Performance Investigation
+
+### B.1 Profiling
+
+I profiled the pipeline using the GitHub Actions UI per-job and per-step timing breakdown.
+
+For the optimized cache + matrix run, the total wall-clock time was **1m 25s**. The accumulated runner time was **2m 49s**, which is higher than the wall-clock time because the matrix jobs run in parallel.
+
+Per-job timings:
+
+| Job              | Runtime |
+| ---------------- | ------: |
+| `vet (go 1.23)`  |     20s |
+| `vet (go 1.24)`  |     23s |
+| `test (go 1.23)` |     28s |
+| `test (go 1.24)` |     28s |
+| `lint`           |   1m 7s |
+| `ci-ok`          |      3s |
+
+The dominant remaining job is `lint`, mostly because it installs and runs `golangci-lint`. The actual Go project is small, so `vet` and `test` finish quickly.
+
+### B.2 Additional optimizations beyond Task 2
+
+I applied three additional CI optimizations beyond the required cache, matrix, and path filter work.
+
+1. I added `GOFLAGS=-buildvcs=false`. This avoids unnecessary VCS metadata work during Go commands in CI, which is useful when the repository is checked out in a limited CI environment.
+2. I added workflow `concurrency` with `cancel-in-progress: true`. This prevents outdated runs from wasting CI minutes when I push several fixes to the same branch quickly.
+3. I added `timeout-minutes: 5` to all jobs. This does not normally reduce successful run time, but it prevents stuck jobs from consuming CI time indefinitely and makes pipeline failures faster to detect.
+
+### B.3 Before/after table
+
+| Optimization applied             |                         Before |                       After |                                  Saving |
+| -------------------------------- | -----------------------------: | --------------------------: | --------------------------------------: |
+| `GOFLAGS=-buildvcs=false`        |                         1m 25s |                      1m 24s |              depends on runner variance |
+| `concurrency.cancel-in-progress` |            stale runs continue |        stale runs cancelled | saves CI minutes during repeated pushes |
+| `timeout-minutes: 5`             | stuck jobs can run much longer | stuck jobs stop after 5 min |                 saves time on hung jobs |
+| **Total wall-clock**             |                     **1m 25s** |                      1m 24s |                **target ≤90s achieved** |
+
+### B.4 Bottleneck analysis
+
+The single step that dominates the remaining pipeline time is the `lint` job, because it installs and runs `golangci-lint`. The QuickNotes codebase itself is small, so `go vet` and `go test` are not the bottleneck. To make the pipeline shorter by changing the code rather than the pipeline, the project would need to stay small, avoid unnecessary generated files, avoid slow integration tests in the fast PR gate, and keep dependencies minimal. In a real team, I would stop optimizing this PR pipeline once it stays under about 90 seconds wall-clock, because below that point developer feedback is already fast enough and further optimization would likely add complexity without much benefit.
