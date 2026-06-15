@@ -22,6 +22,10 @@ jobs:
   vet:
     name: vet
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ['1.23', '1.24']
     defaults:
       run:
         working-directory: app
@@ -32,7 +36,7 @@ jobs:
       
       - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
         with:
-          go-version: '1.24'
+          go-version: ${{ matrix.go }}
           cache: true
           cache-dependency-path: app/go.sum
       
@@ -41,6 +45,10 @@ jobs:
   test:
     name: test
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ['1.23', '1.24']
     defaults:
       run:
         working-directory: app
@@ -51,7 +59,7 @@ jobs:
       
       - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
         with:
-          go-version: '1.24'
+          go-version: ${{ matrix.go }}
           cache: true
           cache-dependency-path: app/go.sum
       
