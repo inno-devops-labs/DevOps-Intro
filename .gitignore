@@ -45,6 +45,8 @@ __pycache__/
 .idea/
 *.swp
 
+docs
+
 # OS noise
 .DS_Store
 Thumbs.db
