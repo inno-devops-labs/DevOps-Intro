@@ -24,3 +24,14 @@ Permission shows what GH workflow can do with repository. Principle - least priv
 ## Bad commit screenshot
 
 ![alt text](image-1.png)
+
+## Logs
+
+![alt text](image-3.png)
+
+## Fix commit screenshot
+
+![alt text](image-2.png)
+
+![link to good commit] (https://github.com/Long1Tail/DevOps-Intro/pull/3/changes/61ce79952dde9ed59597353acb487e23c208eb24)
+
