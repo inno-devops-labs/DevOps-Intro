@@ -43,3 +43,37 @@ Fix commit: ![alt text](static/fix-commit.png)
 Additionally, I removed the possibility to bypass checks:
 
 ![alt text](static/no-bypass.png)
+
+# Task 2 — Make It Fast and Smart
+
+## Timing table
+
+| Scenario | Wall-clock |
+|----------|-----------:|
+| Baseline: no cache, single Go version, no path filter | 36s |
+| With cache | 41s |
+| With cache + matrix | 40s |
+
+## Description of optimizations
+
+- Caching: actually there are no dependencies, therefore there is nothing to cache. Hence, adding hashing did not speed up CI. Probably, the caching work in CI is the reason why there are 5 seconds more.
+- Matrix: matrix increased the time, but CI now compares several versions. It shifts-left the situation when our program fail on some Go versions.
+
+## Design questions
+
+Why cache go.sum-keyed inputs and not build outputs?
+
+Answer:
+`go.sum` can be used as a hash for cache and it does not depend on environment. Build outputs do. Therefore, better to use `go.sum`-keyed inputs.
+
+What does `fail-fast: false` change in a matrix run, and when do you actually want fail-fast: true?
+
+Answer:
+
+`fail-fast: false` makes all matrix values run even if some of them fail. We want it if we want to get a feedback for all version. Probably we do not want it if jobs are expensive and we only care if anything is broken.
+
+What's the risk of an attacker writing a cache from a malicious PR that protected branches later read?
+
+Answer:
+
+Attacker can craft a cache where backdoored package included. If this cache will be used on a protected branch, app can be deployed with attacker's code.
