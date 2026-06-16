@@ -35,3 +35,7 @@ Permission shows what GH workflow can do with repository. Principle - least priv
 
 ![link to good commit] (https://github.com/Long1Tail/DevOps-Intro/pull/3/changes/61ce79952dde9ed59597353acb487e23c208eb24)
 
+| Scenario | Wall-clock |
+|----------|------------|
+| Baseline | 39 s|
+| With chache | 
