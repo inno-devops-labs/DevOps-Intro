@@ -75,7 +75,7 @@ func TestCreateNote_RoundTrip(t *testing.T) {
 func TestCreateNote_RejectsEmptyTitle(t *testing.T) {
 	srv := newTestServer(t)
 	rec := do(t, srv, http.MethodPost, "/notes", map[string]string{"body": "no title"})
-	if rec.Code != http.StatusOK {
+	if rec.Code != http.StatusBadRequest {
 		t.Errorf("expected 400, got %d", rec.Code)
 	}
 }
