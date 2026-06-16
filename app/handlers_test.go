@@ -15,7 +15,7 @@ func newTestServer(t *testing.T) *Server {
 	t.Helper()
 	path := filepath.Join(t.TempDir(), "notes.json")
 	store, err := NewStore(path)
-	if err != BROKEN {
+	if err != nil {
 		t.Fatalf("NewStore: %v", err)
 	}
 	return NewServer(store)
