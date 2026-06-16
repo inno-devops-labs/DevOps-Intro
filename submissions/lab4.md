@@ -279,4 +279,139 @@ The failure was a port ownership conflict: a new QuickNotes process was started 
 
 ## Bonus Task
 
-Not attempted. The required Task 1 and Task 2 packet/debug evidence was completed.
+### B.1 HTTPS layer with Caddy
+
+I terminated TLS with Caddy on `localhost:8443` and proxied traffic to the QuickNotes HTTP server on `127.0.0.1:8080`.
+
+```caddyfile
+{
+  auto_https disable_redirects
+}
+
+localhost:8443 {
+  tls internal
+  reverse_proxy 127.0.0.1:8080
+}
+```
+
+QuickNotes backend:
+
+```text
+2026/06/16 10:25:29 quicknotes listening on :8080 (notes loaded: 4)
+```
+
+Caddy started and obtained a local internal certificate:
+
+```text
+{"level":"info","msg":"using provided configuration","config_file":"/tmp/lab4-Caddyfile","config_adapter":"caddyfile"}
+{"level":"info","logger":"http","msg":"enabling HTTP/3 listener","addr":":8443"}
+{"level":"info","logger":"http","msg":"enabling automatic TLS certificate management","domains":["localhost"]}
+{"level":"info","logger":"tls.obtain","msg":"certificate obtained successfully","identifier":"localhost"}
+```
+
+Listener verification:
+
+```text
+LISTEN 0 4096 *:8443 *:* users:(("caddy",pid=603,fd=7))
+```
+
+### B.2 TLS capture
+
+Capture command:
+
+```bash
+tcpdump -i lo -nn -s 0 -w /tmp/lab4-tls.pcap 'tcp port 8443'
+curl -vk https://localhost:8443/health
+```
+
+The HTTPS request succeeded through the TLS proxy:
+
+```text
+* Connected to localhost (::1) port 8443
+* ALPN: curl offers h2,http/1.1
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / TLS_AES_128_GCM_SHA256 / X25519 / id-ecPublicKey
+* ALPN: server accepted h2
+* Server certificate:
+*  issuer: CN=Caddy Local Authority - ECC Intermediate
+* SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+> GET /health HTTP/2
+< HTTP/2 200
+< server: Caddy
+{"notes":4,"status":"ok"}
+```
+
+Capture result:
+
+```text
+tcpdump: listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+21 packets captured
+42 packets received by filter
+0 packets dropped by kernel
+```
+
+### B.3 Decoded handshake
+
+I decoded `lab4-tls.pcap` with Wireshark's CLI decoder, `tshark`, to capture the same fields requested for the Wireshark screenshots.
+
+ClientHello:
+
+```text
+Frame 4: 603 bytes on wire (4824 bits), 603 bytes captured (4824 bits)
+TLSv1 Record Layer: Handshake Protocol: Client Hello
+  Version: TLS 1.0 (0x0301)
+  Handshake Protocol: Client Hello
+    Version: TLS 1.2 (0x0303)
+    Cipher Suites (31 suites)
+      Cipher Suite: TLS_AES_256_GCM_SHA384 (0x1302)
+      Cipher Suite: TLS_CHACHA20_POLY1305_SHA256 (0x1303)
+      Cipher Suite: TLS_AES_128_GCM_SHA256 (0x1301)
+      Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 (0xc02c)
+      Cipher Suite: TLS_EMPTY_RENEGOTIATION_INFO_SCSV (0x00ff)
+    Extension: server_name (len=14) name=localhost
+      Server Name: localhost
+    Extension: supported_versions (len=5) TLS 1.3, TLS 1.2
+      Supported Version: TLS 1.3 (0x0304)
+      Supported Version: TLS 1.2 (0x0303)
+```
+
+ServerHello:
+
+```text
+Frame 6: 1506 bytes on wire (12048 bits), 1506 bytes captured (12048 bits)
+TLSv1.2 Record Layer: Handshake Protocol: Server Hello
+  Handshake Protocol: Server Hello
+    Version: TLS 1.2 (0x0303)
+    Cipher Suite: TLS_AES_128_GCM_SHA256 (0x1301)
+    Extension: supported_versions (len=2) TLS 1.3
+      Supported Version: TLS 1.3 (0x0304)
+```
+
+Certificate chain:
+
+```text
+Certificate chain
+ 0 s:
+   i:CN = Caddy Local Authority - ECC Intermediate
+   a:PKEY: id-ecPublicKey, 256 (bit); sigalg: ecdsa-with-SHA256
+   v:NotBefore: Jun 16 07:25:29 2026 GMT; NotAfter: Jun 16 19:25:29 2026 GMT
+ 1 s:CN = Caddy Local Authority - ECC Intermediate
+   i:CN = Caddy Local Authority - 2026 ECC Root
+   a:PKEY: id-ecPublicKey, 256 (bit); sigalg: ecdsa-with-SHA256
+   v:NotBefore: Jun 16 07:25:29 2026 GMT; NotAfter: Jun 23 07:25:29 2026 GMT
+Server certificate
+subject=
+issuer=CN = Caddy Local Authority - ECC Intermediate
+Peer signing digest: SHA256
+Peer signature type: ECDSA
+Server Temp Key: X25519, 253 bits
+New, TLSv1.3, Cipher is TLS_AES_128_GCM_SHA256
+Verify return code: 20 (unable to get local issuer certificate)
+```
+
+### TLS 1.0 / 1.1 deprecation note
+
+TLS 1.0 and TLS 1.1 are eliminated during version negotiation. The `TLS 1.0 (0x0301)` record version and `TLS 1.2 (0x0303)` ClientHello version shown above are compatibility fields, not the selected protocol. The real offer is the `supported_versions` extension, where this client offered only `TLS 1.3` and `TLS 1.2`. The server selected `TLS 1.3` in its ServerHello `supported_versions` extension. A client that only supported TLS 1.0 or 1.1 would fail at this ClientHello/ServerHello negotiation step with a protocol-version failure instead of reaching HTTP.
