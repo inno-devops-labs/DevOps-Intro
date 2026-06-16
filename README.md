@@ -1,5 +1,7 @@
 # DevOps Intro — Modern DevOps Practices Through One Project
 
+<!-- lab3 path-filter demo: docs-only change should not trigger CI -->
+
 [![Course](https://img.shields.io/badge/Course-DevOps%20Intro-blue)](#course-roadmap)
 [![Project](https://img.shields.io/badge/Project-QuickNotes%20(Go)-success)](#the-project-quicknotes)
 [![Duration](https://img.shields.io/badge/Duration-10%20Weeks-lightgrey)](#course-roadmap)
