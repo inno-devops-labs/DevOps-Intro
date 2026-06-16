@@ -25,6 +25,8 @@ https://github.com/Hidancloud/DevOps-Intro/actions/runs/27641204235 (full optimi
 - Commit: `97daa52` `test(lab3): break health test to prove CI gate`
 - CI run: https://github.com/Hidancloud/DevOps-Intro/actions/runs/27641676019 — `test` job failed; PR merge blocked by branch protection
 
+![failed CI run](failed_run.png)
+
 **Fix run:**
 
 - Commit: `bd238ff` `test(lab3): fix health test — CI gate verified`
@@ -32,7 +34,7 @@ https://github.com/Hidancloud/DevOps-Intro/actions/runs/27641204235 (full optimi
 
 ### Branch protection
 
-<!-- TODO: add screenshot submissions/lab3-branch-protection.png -->
+![branch protection rules](branch_protection.png)
 
 Required checks on fork `main`: `vet`, `test`, `lint` (all matrix variants), branches up to date.
 
