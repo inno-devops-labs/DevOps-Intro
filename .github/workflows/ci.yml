@@ -4,10 +4,16 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "app/**"
+      - ".github/workflows/**"
 
   pull_request:
     branches:
       - main
+    paths:
+      - "app/**"
+      - ".github/workflows/**"
 
 permissions:
   contents: read
@@ -15,6 +21,10 @@ permissions:
 jobs:
   vet:
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ["1.23", "1.24"]
 
     steps:
       - name: Checkout
@@ -23,7 +33,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
-          go-version: "1.24"
+          go-version: ${{ matrix.go-version }}
           cache: true
           cache-dependency-path: app/go.mod
 
@@ -33,6 +43,10 @@ jobs:
 
   test:
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ["1.23", "1.24"]
 
     steps:
       - name: Checkout
@@ -41,7 +55,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
         with:
-          go-version: "1.24"
+          go-version: ${{ matrix.go-version }}
           cache: true
           cache-dependency-path: app/go.mod
 
@@ -68,3 +82,12 @@ jobs:
         with:
           version: v2.5.0
           working-directory: app
+
+  ci-ok:
+    if: always()
+    needs: [vet, test, lint]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Verify all checks passed
+        run: |
+          test "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" = "false"
