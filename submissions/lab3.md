@@ -20,9 +20,15 @@ https://github.com/Hidancloud/DevOps-Intro/actions/runs/27641204235 (full optimi
 
 ### Deliberate failure + fix
 
-<!-- Completed manually during Task 1 — add failed run link/screenshot if not already saved -->
+**Failed run** (broke `TestHealth_ReportsCount` — expected notes count `99` instead of `1`):
 
-Broke `app/handlers_test.go`, pushed, confirmed CI failed and merge was blocked. Reverted in a follow-up commit; pipeline green again.
+- Commit: `97daa52` `test(lab3): break health test to prove CI gate`
+- CI run: https://github.com/Hidancloud/DevOps-Intro/actions/runs/27641676019 — `test` job failed; PR merge blocked by branch protection
+
+**Fix run:**
+
+- Commit: `bd238ff` `test(lab3): fix health test — CI gate verified`
+- CI run: https://github.com/Hidancloud/DevOps-Intro/actions/runs/27641751324 — all checks green again
 
 ### Branch protection
 
