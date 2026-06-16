@@ -12,39 +12,47 @@ Workflow file: `.github/workflows/ci.yml`
 
 The workflow runs three independent units of work:
 
-- `vet (go 1.23.x)` and `vet (go 1.24.x)` run `go vet ./...` in `app/`.
-- `test (go 1.23.x)` and `test (go 1.24.x)` run `go test -race -count=1 ./...` in `app/`.
-- `lint` runs `golangci-lint run` in `app/` with `golangci-lint` pinned to `v2.5.0`.
-- `ci-ok` aggregates the required jobs so branch protection can require one stable check name even though the matrix expands `vet` and `test`.
+* `vet (go 1.23.x)` and `vet (go 1.24.x)` run `go vet ./...` in `app/`.
+
+* `test (go 1.23.x)` and `test (go 1.24.x)` run `go test -race -count=1 ./...` in `app/`.
+
+* `lint` runs `golangci-lint run` in `app/` with `golangci-lint` pinned to `v2.5.0`.
+
+* `ci-ok` aggregates the required jobs so branch protection can require one stable check name even though the matrix expands `vet` and `test`.
 
 The workflow uses:
 
-- Pinned runner: `ubuntu-24.04`.
-- Least-privilege token permissions: `contents: read`.
-- Full-SHA action pins with readable version comments.
-- `actions/setup-go` dependency caching.
-- Path filters for `app/**` and `.github/workflows/ci.yml`.
+* Pinned runner: `ubuntu-24.04`.
+
+* Least-privilege token permissions: `contents: read`.
+
+* Full-SHA action pins with readable version comments.
+
+* `actions/setup-go` dependency caching.
+
+* Path filters for `app/**` and `.github/workflows/ci.yml`.
 
 ### Evidence To Add After PR Runs
 
 Green CI run:
 
 ```text
-TODO: paste the GitHub Actions green run URL here.
+https://github.com/BearAx/DevOps-Intro/actions/runs/27604560723/job/81613358274?pr=4
 ```
 
 Deliberate failing run from Task 1.5:
 
 ```text
-TODO: paste the failed run URL or screenshot reference here.
-TODO: paste the fix commit SHA here.
+Failed run: https://github.com/BearAx/DevOps-Intro/pull/4/checks?sha=4d40acc2249c4e61722a40516b4a8d505fe59174
+fix commit SHA: 1cbfae257978ad42747b91057984d501ad6b6086
 ```
+
+![Green CI run](../screenshots/lab3-failed-run.png)
 
 Branch protection evidence:
 
-```text
-TODO: add screenshot reference showing main requires ci-ok.
-```
+![Branch protection evidence](../screenshots/lab3-branch-protection.png)
+
 
 ### Design Questions
 
@@ -94,16 +102,22 @@ The workflow sets `GOFLAGS=-buildvcs=false`, which avoids VCS stamping work in C
 ```text
 | Scenario                                             | Wall-clock |
 |------------------------------------------------------|-----------:|
-| Baseline: no cache, single Go version, no path filter | TODO       |
-| With cache                                            | TODO       |
-| With cache + matrix                                   | TODO       |
+| Baseline: no cache, single Go version, no path filter | 39s       |
+| With cache                                            | 49s       |
+| With cache + matrix                                   | 38s       |
 ```
+![Timing Table](../screenshots/lab3-baseline.png)
+![Timing Table](../screenshots/lab3-baseline-with-cache.png)
+![Timing Table](../screenshots/lab3-baseline-with-cache-and-matrix.png)
+
+The cache did not significantly reduce total wall-clock time because QuickNotes has no third-party dependencies. Most time was spent on runner provisioning, checkout, setup-go, and linter setup rather than module download.
 
 Docs-only skip evidence:
 
 ```text
-TODO: paste URL or screenshot showing a docs-only PR/change skipped the workflow.
+URL of PR: https://github.com/BearAx/DevOps-Intro/pull/6
 ```
+![Docs-only skip evidence](../screenshots/lab3-docs-only.png)
 
 ### Design Questions
 
@@ -121,19 +135,4 @@ If an untrusted PR could write a cache that protected branches later restore, th
 
 ## Bonus Task - Pipeline Performance Investigation
 
-Bonus evidence is pending real GitHub Actions timing data.
-
-```text
-| Optimization applied        | Before (s) | After (s) | Saving |
-|-----------------------------|-----------:|----------:|-------:|
-| GOFLAGS=-buildvcs=false     | TODO       | TODO      | TODO   |
-| Parallel vet/test/lint jobs | TODO       | TODO      | TODO   |
-| setup-go cache              | TODO       | TODO      | TODO   |
-| Total wall-clock            | TODO       | TODO      | TODO   |
-```
-
-Bottleneck analysis to complete after CI runs:
-
-```text
-TODO: use the per-step GitHub Actions timing breakdown to identify the dominant remaining cost.
-```
+Not attempted.
