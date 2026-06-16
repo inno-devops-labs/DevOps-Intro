@@ -1,6 +1,0 @@
-/home/karim/Dev/DevOps-Intro/.devenv/bootstrap/bootstrapLib.nix
-/home/karim/Dev/DevOps-Intro/.devenv/bootstrap/default.nix
-/home/karim/Dev/DevOps-Intro/devenv.lock
-/home/karim/Dev/DevOps-Intro/devenv.nix
-/home/karim/Dev/DevOps-Intro/devenv.yaml
-/home/karim/Dev/DevOps-Intro/.env
