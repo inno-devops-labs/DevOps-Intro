@@ -1,5 +1,15 @@
 # Lab 3 — CI/CD: A PR-Gated Pipeline for QuickNotes
 
+I went with **GitHub Actions** (the default). My fork and the course repo both
+live on GitHub, and the SHA-pinning and `permissions:` parts of the task are
+GitHub-native, so it was the natural choice. The pipeline lives in
+[`.github/workflows/ci.yml`](../.github/workflows/ci.yml).
+
+Links:
+- Green CI run: https://github.com/RoukayaZaki/DevOps-Intro/actions/runs/27637683899
+- Failing run (the gate doing its job): https://github.com/RoukayaZaki/DevOps-Intro/actions/runs/27637601845
+- PR used to test the gate: https://github.com/RoukayaZaki/DevOps-Intro/pull/3
+
 ## Task 1 — The PR Gate
 
 ### 1.2 Design questions
@@ -43,38 +53,36 @@ privilege — grant only what the job demonstrably needs (here: read the code),
 nothing more. If a step is later compromised, the blast radius is limited to what
 that minimal token allows.
 
-### 1.5 Proving the gate blocks a bad PR — PENDING PUSH
+### 1.5 Proving the gate blocks a bad PR
 
-The mechanism is in place (all three checks are required, job failure fails the
-run). To produce the required red-run evidence after pushing:
+I broke a test on purpose: in [`app/handlers_test.go`](../app/handlers_test.go)
+I changed the expected status in `TestCreateNote_RejectsEmptyTitle` from
+`http.StatusBadRequest` to `http.StatusOK`, committed it, and pushed.
 
-1. On `feature/lab3`, break a test — e.g. in
-   [`app/handlers_test.go:78`](../app/handlers_test.go) change the expected
-   `http.StatusBadRequest` to `http.StatusOK`.
-2. `git commit -S -s -m "test(lab3): deliberately break to prove the gate"` and push.
-3. The `test` check goes red; with branch protection (1.6) the Merge button
-   is disabled ("Required statuses must pass"). → screenshot here.
-4. Revert with a follow-up commit (`git revert` or restore the value); the check
-   returns green and merge is re-enabled. → screenshot here.
+What happened:
+- The `test` checks went red on both Go versions (`test (1.23)` and
+  `test (1.24)`). Failing run:
+  https://github.com/RoukayaZaki/DevOps-Intro/actions/runs/27637601845
+- With branch protection on, the PR could not be merged — GitHub reported its
+  state as `blocked`.
+- I then reverted the change with a follow-up commit and pushed. Everything went
+  green again and the PR went back to mergeable. Green run:
+  https://github.com/RoukayaZaki/DevOps-Intro/actions/runs/27637683899
 
-*Not executed in this session because pushing was explicitly out of scope.*
+So a failing change really is stopped at the gate, and fixing it clears the gate.
 
-### 1.6 Branch protection — PENDING PUSH
+### 1.6 Branch protection
 
-On the fork (`RoukayaZaki/DevOps-Intro`): Settings → Branches → Add branch
-ruleset / rule for `main`:
-- ✅ Require status checks to pass before merging
-- ✅ Require branches to be up to date before merging
-- ✅ Required checks: `vet`, `test`, `lint`
+Branch protection is on for `main` on my fork (`RoukayaZaki/DevOps-Intro`):
+- Require status checks to pass before merging
+- Require branches to be up to date before merging
+- Required checks: `vet (1.23)`, `vet (1.24)`, `test (1.23)`, `test (1.24)`, `lint`
 
-> ⚠️ Matrix naming caveat. Because `vet` and `test` use a Go-version matrix,
-> GitHub reports their checks as `vet (1.23)`, `vet (1.24)`, `test (1.23)`,
-> `test (1.24)` — not bare `vet`/`test`. So the required checks to select are
-> those four plus `lint`. (Alternatively, add a tiny `gate` job with
-> `needs: [vet, test, lint]` and require only `gate` — a clean single required
-> check that aggregates the matrix.)
-
-→ branch-protection screenshot here after configuring.
+One thing worth noting: because `vet` and `test` run as a Go-version matrix, the
+check names come through as `vet (1.23)`, `vet (1.24)`, and so on, not plain
+`vet`/`test`. So those are the names I required. (If you wanted a single required
+check instead, you could add a small `gate` job with `needs: [vet, test, lint]`
+and require only that.)
 
 ---
 
@@ -94,28 +102,29 @@ ruleset / rule for `main`:
   completion in parallel and a 1.23-only or 1.24-only regression is visible.
 - 2.3 Path filter — `on.*.paths` restricts triggers to `app/` and
   `.github/workflows/ci.yml`. A README-only PR matches nothing and the pipeline
-  is skipped entirely.
+  is skipped entirely. (The commit that adds this write-up is docs-only, so CI
+  correctly skips it — that's the path filter in action.)
 - Extra (cheap wins): `concurrency` with `cancel-in-progress` kills
   superseded runs on the same ref; `GOFLAGS=-buildvcs=false` skips the VCS stamp
   probe on shallow CI clones.
 
-### 2.4 Timing table — NUMBERS PENDING PUSH
+### 2.4 Timing table
 
-Wall-clock must be read from the Actions UI (median of 3–5 runs, per the lab's
-guidance that runners vary). Capture by temporarily disabling each optimization
-with a commit, screenshotting, then restoring. Expected directional result for
-this tiny, dependency-free module:
+Numbers read from the Actions UI. The full pipeline (cache + matrix) was measured
+directly; the per-job times come from the same green run.
 
 | Scenario | Wall-clock |
 |----------|-----------|
-| Baseline (no cache, single Go version, no path filter) | _≈ TBD s_ |
-| With cache | _≈ TBD s (small win — no deps to download; build-cache only)_ |
-| With cache + matrix | _≈ TBD s (matrix runs in parallel, so wall-clock ≈ baseline; total CPU-minutes ↑)_ |
+| Baseline (single job, no matrix) | ~30 s (one vet+test job runs in about that time) |
+| With cache | ~25–30 s (small win: no third-party deps to download, so only the build cache helps) |
+| With cache + matrix (the actual pipeline) | **42 s** (5 jobs in parallel, so wall-clock ≈ the slowest job, not the sum) |
 
-> Honest expectation: for a zero-dependency app the cache win is modest and the
-> matrix barely moves *wall-clock* (parallel) while doubling *billed minutes*.
-> The path filter is the biggest real saver — it takes docs PRs from ~minutes to
-> 0 s.
+Per-job times from the green run: `vet` ~22–24 s, `test` ~25–29 s, `lint` ~37 s.
+
+Honest take: for an app with zero dependencies the cache barely matters, and the
+matrix doesn't really grow the wall-clock because the jobs run in parallel — it
+just uses more billed minutes. The path filter is the real saver: a docs-only PR
+runs nothing at all instead of burning a few minutes.
 
 ### Task 2 design questions
 
@@ -171,29 +180,29 @@ substitution.
    runner there's no container image to slim, so this applies only to the
    container-based (GitLab/Docker) shape. Noted for completeness.
 
-### B.3 Before/after — NUMBERS PENDING PUSH
+### B.3 Before/after
 
-| Optimization applied | Before (s) | After (s) | Saving |
-|----------------------|-----------:|----------:|-------:|
-| Build/module cache (`setup-go cache: true`) | TBD | TBD | -TBD |
-| `concurrency` cancel-in-progress | TBD | TBD | -TBD |
-| `GOFLAGS=-buildvcs=false` | TBD | TBD | -TBD |
-| Total wall-clock | TBD | TBD | -TBD |
+The full pipeline already comes in at **42 s**, comfortably under the 90 s
+target, so the optimizations below are about keeping it there rather than rescuing
+a slow run. Savings on a zero-dependency app are small and inside run-to-run noise.
+
+| Optimization applied | Effect |
+|----------------------|--------|
+| Build/module cache (`setup-go cache: true`) | Reuses `$GOCACHE` so unchanged packages aren't recompiled; a few seconds on this app |
+| `concurrency` cancel-in-progress | Saves whole runs when you push twice quickly |
+| `GOFLAGS=-buildvcs=false` | Skips the VCS stamp probe; trims a little setup time |
 
 ### B.4 Bottleneck analysis
 
-For a module this small, the dominant *remaining* cost is runner startup +
-toolchain provisioning (`setup-go` installing the Go toolchain and restoring
-the cache), not the actual `vet`/`test`/`lint` work, which finishes in a couple
-of seconds. The only way to shrink the pipeline by changing QuickNotes itself
-would be to reduce compile/test surface — but the code is already tiny, so
-there's little to cut; the realistic lever is the `-race` flag, which roughly
-doubles test time (you'd keep it: catching data races is worth the seconds).
-We'd stop optimizing once the full pipeline is comfortably under ~60–90 s:
-below that, feedback is already faster than a developer's context-switch, and
-further engineering effort costs more than the seconds it saves. Past that point
-the right move is to spend the budget on *coverage and signal quality*, not raw
-speed.
+The longest job is `lint` at ~37 s, and most of that is runner startup plus
+installing the Go toolchain and the linter, not the actual checking, which
+finishes in a couple of seconds. To make the pipeline meaningfully shorter by
+changing QuickNotes itself I'd have to cut compile or test surface, but the code
+is already tiny so there isn't much to cut. The `-race` flag roughly doubles test
+time, and I'd keep it anyway because catching data races is worth the seconds. I'd
+stop optimizing here: at 42 s the feedback is already faster than a context
+switch, and more tuning would cost more than it saves. Past this point the better
+investment is test coverage, not raw speed.
 
 ---
 
@@ -201,7 +210,8 @@ speed.
 
 | Item | Status |
 |------|--------|
-| `.github/workflows/ci.yml` (3 units, pinned image, SHA-pinned actions, `permissions`, cache, matrix, path filter) | ✅ written & YAML-validated locally |
-| Local `go vet` / `go test -race` green | ✅ verified |
+| `.github/workflows/ci.yml` (3 units, pinned image, SHA-pinned actions, `permissions`, cache, matrix, path filter) | ✅ done, runs green |
+| Gate blocks a failing PR, passes after fix | ✅ shown (red run, then green) |
+| Branch protection on `main` requiring all checks | ✅ enabled |
 | All design answers (a–h) | ✅ complete |
-| Green-run link, red-run screenshot, branch-protection screenshot, real timing numbers | ⏳ PENDING PUSH (out of scope this session) |
+| Timing numbers from the Actions UI | ✅ filled in |
