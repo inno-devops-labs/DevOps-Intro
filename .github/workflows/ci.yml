@@ -1,4 +1,4 @@
-name: CI Baseline
+name: CI
 
 on:
   push:
@@ -6,40 +6,39 @@ on:
   pull_request:
     branches: [main]
 
-
 permissions:
   contents: read
-
-defaults:
-  run:
-    working-directory: app
 
 jobs:
   vet:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11   # v4.2.2
-      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff   # v5.6.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.2.2
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff  # v5.6.0
         with:
           go-version: '1.24'
           cache: false
-      - run: go vet ./...
+      - name: go vet
+        working-directory: app
+        run: go vet ./...
 
   test:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11   # v4.2.2
-      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff   # v5.6.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.2.2
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff  # v5.6.0
         with:
           go-version: '1.24'
           cache: false
-      - run: go test -race -count=1 ./...
+      - name: go test -race
+        working-directory: app
+        run: go test -race -count=1 ./...
 
   lint:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11   # v4.2.2
-      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff   # v5.6.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.2.2
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff  # v5.6.0
         with:
           go-version: '1.24'
           cache: false
