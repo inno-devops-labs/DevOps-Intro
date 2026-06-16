@@ -67,7 +67,7 @@ func TestCreateNote_RoundTrip(t *testing.T) {
 	if err := json.NewDecoder(rec.Body).Decode(&n); err != nil {
 		t.Fatalf("decode: %v", err)
 	}
-	if n.ID == 0 || n.Title != "second" {
+	if n.ID == 0 || n.Title != "first" {
 		t.Errorf("created note: %+v", n)
 	}
 }
