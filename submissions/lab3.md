@@ -113,9 +113,45 @@ An attacker on a fork PR could try to populate the Actions cache with malicious 
 
 ---
 
-## Bonus — Performance (optional)
+## Bonus — Performance investigation
 
-_Not started — complete after Task 1+2 are green._
+**Goal:** pipeline ≤ 90 s wall-clock (achieved: **54–59 s** measured).
+
+### B.1 Profile (pre-bonus run `27620789400`)
+
+| Phase | Dominant cost | Observed |
+|-------|---------------|----------|
+| Runner start | Queue + VM boot | ~3–8 s before first step |
+| Dependency setup | `setup-go` toolchain download | ~5–10 s per vet/test job |
+| Actual work | `go test -race` | **test (1.24): 28 s** (slowest job) |
+| Actual work | `golangci-lint` | lint: **25 s** |
+| Cleanup | `ci-ok` aggregation | ~3–5 s |
+
+Runner provisioning and `go test -race` dominate; QuickNotes has no module deps so cache gains are small.
+
+### B.2 Optimizations applied (beyond Task 2)
+
+1. **Shallow clone** — `fetch-depth: 1` on vet/test/lint checkouts
+2. **golangci-lint cache** — `cache: true` on `golangci-lint-action`
+3. **Skip lint on app docs-only** — `dorny/paths-filter` skips lint when only `app/**/*.md` changed (still runs for `.go` or workflow edits)
+4. **Concurrency** — `cancel-in-progress` avoids stacked runs on rapid pushes
+
+### B.3 Before/after
+
+| Optimization applied | Before (s) | After (s) | Saving |
+|----------------------|----------:|----------:|-------:|
+| Shallow clone (`fetch-depth: 1`) | 54 (total) | 54 (within runner variance) | ~0–2 s (noise) |
+| golangci-lint cache | 25 (lint job) | 22 (lint job) | **-3 s** |
+| Skip lint on app docs-only | 22 (lint job runs) | 0 (skipped on docs-only PR) | **-22 s** when applicable |
+| **Total wall-clock** | **54** | **59** | +5 s* |
+
+\*Adding the `changes` paths-filter job costs ~8 s on code PRs; docs-only PRs net faster. Both totals are **under the 90 s target**.
+
+Runs: before `27620789400`, after `27623189289`.
+
+### B.4 Bottleneck analysis
+
+The slowest step after optimization is still **`go test -race`** in the test matrix (~27–29 s per cell), not vet or lint. Runner startup and Go toolchain setup are the next-largest fixed costs because QuickNotes has zero third-party modules — there is nothing meaningful for the module cache to save. To shrink test time further you would need to change QuickNotes itself: fewer/slimmer tests, split unit vs integration suites, or drop `-race` on a fast PR gate and keep race detection on a nightly job. I would stop optimizing this pipeline around **60–90 s** for a small stdlib-only app; below that returns diminish and YAML complexity (extra filter jobs, conditional graphs) costs more than it saves for a team of this size.
 
 ---
 
@@ -154,4 +190,7 @@ _Not started — complete after Task 1+2 are green._
 
 ### Bonus (2 pts)
 
-- [ ] Not attempted
+- [x] ≥ 3 optimizations beyond Task 2
+- [x] Before/after timing table
+- [x] Bottleneck analysis
+- [x] Target ≤ 90 s met (54–59 s measured)
