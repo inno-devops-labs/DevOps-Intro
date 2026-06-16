@@ -7,8 +7,8 @@ Environment: WSL2 (Ubuntu 24.04). QuickNotes was cross-compiled for `linux/amd64
 ### 1.1 Capture
 
 ```bash
-# terminal A: run the server (cross-compiled linux binary)
-./quicknotes                       # listening on :8080, 4 seeded notes
+# terminal A: run the server
+./quicknotes
 
 # terminal B: capture loopback traffic on port 8080
 sudo tcpdump -i lo -nn -s 0 -A 'tcp port 8080' -w lab4-trace.pcap
@@ -113,3 +113,62 @@ QuickNotes runs as a foreground process, not a systemd unit, so journald has not
 ### 1.4 What I would check first if QuickNotes returned 502
 
 A 502 comes from a gateway/proxy in front of the app that could not get a valid response from the upstream, so I debug the proxy-to-app boundary outside-in. First I confirm the app is actually up and bound to the expected port (`ss -tlnp | grep :8080`), then I hit it directly, bypassing the proxy (`curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/health`). If the direct call is `200`, the app is healthy and the fault is the proxy's upstream config - wrong port or host, or the app bound to `127.0.0.1` while the proxy dials a different address. If the direct call also fails, the app crashed or never bound, so I check its logs/exit status and whether something else already holds the port. The order is always: is it running, is it listening, is it reachable from where the proxy sits, and is the proxy pointed at the right upstream.
+
+## Task 2: Outside-in debugging on a broken deploy
+
+Reproduced with the same `~/lab4/quicknotes` linux binary, started twice on the same port to simulate a failed deploy.
+
+### 2.1 Run a broken instance
+
+```bash
+ADDR=:8080 ./quicknotes > qn1.log 2>&1 &              # instance 1 - binds :8080
+sleep 1
+ADDR=:8080 ./quicknotes > /tmp/qn-broken.log 2>&1 &   # instance 2 - the "new deploy"
+sleep 2
+ps -ef | grep quicknotes | grep -v grep
+```
+
+Instance 1 (pid 487) stays up; instance 2 logs its error and exits immediately:
+
+```
+2026/06/17 01:53:55 quicknotes listening on :8080 (notes loaded: 5)
+2026/06/17 01:53:55 listen: listen tcp :8080: bind: address already in use
+```
+
+Exact error: `bind: address already in use`. The new deploy never came up.
+
+### 2.2 Outside-in chain
+
+| Step | Command | Output | Decision |
+| --- | --- | --- | --- |
+| 1. Running? | `ps -ef \| grep quicknotes` | `... 487 ... ./quicknotes` (one PID) | A process IS running - but which instance? |
+| 2. Listening? | `sudo ss -tlnp \| grep 8080` | `LISTEN *:8080 users:(("quicknotes",pid=487))` | Port 8080 is held by pid 487 (the first instance) |
+| 3. Reachable? | `curl -s -o /dev/null -w "%{http_code}" .../health` | `200` | The socket answers, so L3/L4/L7 are fine |
+| 4. Firewall? | `iptables -L` / `nft list ruleset` | neither installed, no rules | No packet filter in the path - not a firewall issue |
+| 5. DNS? | `dig +short localhost` | `127.0.0.1` (`getent`: `::1 localhost`) | Name resolution works |
+
+Every outside-in check is green, yet the deploy failed - that is the tell. The fault is not in the network path: a process is already bound to 8080, so the new instance could never start. Cross-referencing `ss` (pid **487** = the first instance) against the broken log (`address already in use`) pins it.
+
+### 2.3 Repair + re-verify
+
+```bash
+kill 487                      # free the port by killing the conflicting first instance
+sleep 1
+ADDR=:8080 ./quicknotes &     # start the intended instance
+curl -s http://localhost:8080/health
+```
+
+```
+ss:   LISTEN *:8080 users:(("quicknotes",pid=526))   # new pid now owns the port
+curl: {"notes":5,"status":"ok"}                      # HTTP 200
+```
+
+Port freed, new instance bound, health green.
+
+### Root cause
+
+`listen tcp :8080: bind: address already in use` - a previous QuickNotes process still held port 8080, so the second `ListenAndServe` could not bind and `log.Fatalf` terminated the process.
+
+### Mini-postmortem (blameless)
+
+What is systemic here is not that someone "forgot to stop the old process" - it is that nothing in the path made the conflict visible or prevented it. A second instance was allowed to launch against an already-bound port, and its only signal was a single fatal line that scrolled past in a backgrounded process. From the outside everything looked healthy (a process was running, the port returned 200), which is exactly how a stale instance masquerades as a good deploy. The deeper gap is the missing supervisor: run under systemd or any process manager and the unit owns the port, a restart stops the old instance before starting the new one, and a failed start surfaces in `systemctl status` / `journalctl` instead of a lost stdout line. Tooling that prevents this class of failure: a real init/supervisor with restart-on-failure, a deploy health gate that confirms the *new* process answered (not just any process), and an `ss`/`lsof` preflight that fails fast on a busy port.
