@@ -52,6 +52,9 @@ Thumbs.db
 # Local agent config (not part of the course)
 .claude/
 
+# Devenv env
+.devenv/
+
 # NOTE: deliberately NOT ignored, because students commit them as lab evidence:
 #   submissions/labN.md        (lab reports)
 #   .github/workflows/*.yml    (Lab 3 CI)
