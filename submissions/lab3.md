@@ -247,4 +247,76 @@ restricts cache writes to the default branch.")
 
 ## Bonus — Pipeline Performance Investigation
 
-<!-- TODO -->
+Target: full pipeline ≤ 90 s. We were already there (~40 s), so the Bonus is
+really about *understanding where the time goes* and proving which "optimizations"
+are real.
+
+### B.1 Profile (per-step breakdown of one matrix cell)
+
+Reading the per-step timings in the CI UI, each `test` cell (~29 s) splits roughly:
+
+| Phase | ~time | Notes |
+|-------|------:|-------|
+| Runner start / job provisioning | ~5–8 s | fixed tax, paid per job, not controllable from our repo |
+| Setup Go (download + extract toolchain) | ~5–8 s | `setup-go` fetches and unpacks the Go SDK every run |
+| Checkout | ~1–2 s | shallow by default |
+| Actual work (`go test -race`) | ~8–12 s | cgo build of the race-instrumented test binary + run |
+| Cleanup | <1 s | nothing to upload |
+
+The work that QuickNotes actually causes (compile + run tests) is a *minority* of
+the wall-clock; the fixed CI tax (provisioning + toolchain setup) dominates.
+
+### B.2 Optimizations applied (3)
+
+1. **Removed the Go build cache.** Task 2 proved it was net-negative on this
+   zero-dependency module — restoring/uploading ~20 MB cost more than the
+   compile it saved. Deleting it is the single biggest win.
+2. **`GOFLAGS=-buildvcs=false`.** Stops Go stamping VCS metadata into binaries,
+   trimming a little work and removing any need for full git history on checkout.
+3. **`concurrency: cancel-in-progress`.** Cancels a still-running pipeline when a
+   newer commit lands on the same ref — doesn't speed a single run but stops the
+   queue piling up and wasting minutes during a fast push sequence.
+
+Considered but **rejected** (with reasons):
+- **`golang:1.24-alpine` container** instead of `setup-go`: would cut the
+  toolchain-extract phase, but alpine needs `gcc`/`musl-dev` added for the cgo
+  `-race` build, and container jobs add their own provisioning quirks — net
+  unclear for ~5 s, not worth the fragility here.
+- **Self-hosted runner:** would erase the runner-start + toolchain tax (warm
+  machine), but it's massive overkill for a 33 s gate and adds maintenance/
+  security burden. Mentioned for completeness only.
+
+### B.3 Before / after
+
+Wall-clock from the CI UI (before = Task 2 cache+matrix run; after = Bonus run):
+
+| Optimization applied | Before (s) | After (s) | Saving |
+|----------------------|-----------:|----------:|-------:|
+| Remove net-negative build cache | 43 | ~34 | ~-9 |
+| `GOFLAGS=-buildvcs=false`       | ~34 | ~33 | ~-1 |
+| `concurrency` cancel-in-progress | n/a (per-run) | n/a | saves *minutes* across pushes, not seconds within a run |
+| **Total wall-clock**            | **43** | **33** | **-10** |
+
+Caveat: per-row isolation is below the runner-noise floor (±~10 s), so rows 1–2
+are attributed, not independently measured; the **total 43 → 33 s is the real,
+repeatable number** (Bonus run CI #8). 33 s is also below the original 39 s
+baseline.
+
+- ![Bonus run timing](img/lab3-s9-bonus-after.png) <!-- S9 -->
+
+### B.4 Bottleneck analysis
+
+The single step that dominates the *remaining* 33 s is the `test` matrix cell, and
+within it the **fixed setup tax (runner provisioning + Go toolchain
+download/extract) plus the cgo `-race` build** — not the test execution itself,
+which is a few seconds on a handful of handlers. To make it meaningfully shorter
+I'd have to change the *CI substrate*, not QuickNotes' code: a warm/self-hosted
+runner or a base image with Go and the linter pre-installed would remove the
+toolchain-setup seconds that every job re-pays. There's almost nothing to cut in
+the code — it's already a tiny, zero-dependency module, so `go build`/`go test`
+are about as cheap as they get; the only code-side lever would be dropping
+`-race` (which we won't, it's the point of the test job). My team would **stop
+optimizing at ~33 s**: we're 3× under the 90 s target, every further second now
+costs disproportionate engineering time and adds operational complexity
+(containers, self-hosted infra), and a fast-enough gate that engineers don't
+dread is the actual goal — not a leaderboard number.
