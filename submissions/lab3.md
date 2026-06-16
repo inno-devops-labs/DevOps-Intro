@@ -16,7 +16,28 @@ https://github.com/lime413/DevOps-Intro/actions/runs/27573596586
 
 Final green run after Task 2 and Bonus changes:
 
-https://github.com/lime413/DevOps-Intro/actions/runs/27575107600
+https://github.com/lime413/DevOps-Intro/actions/runs/27575284056
+
+GitHub Actions summary for this run:
+
+```text
+ci: completed, success
+lint: success
+vet (go 1.23): success
+vet (go 1.24): success
+test (go 1.23): success
+test (go 1.24): success
+```
+
+Local command output:
+
+```text
+$ cd app && go vet ./...
+# no output, exit code 0
+
+$ cd app && go test -race -count=1 ./...
+ok  	quicknotes	2.259s
+```
 
 ### Failed Run And Fix
 
@@ -42,6 +63,8 @@ Branch protection rule for `main`:
 
 ![Branch protection rule](branch_protection.png)
 
+The screenshot shows that status checks are required and branches must be up to date before merging.
+
 The required checks are:
 
 - `vet (go 1.23)`
@@ -64,6 +87,20 @@ Separate jobs show exactly what failed. They can also run in parallel, so the to
 
 SHA pinning protects the workflow from a supply-chain attack where a tag or release reference points to changed or malicious code. A clear example is the `tj-actions/changed-files` compromise from March 2025. With a full commit SHA, the workflow runs one exact version of the action, not whatever code the tag points to later.
 
+Command output showing the action pins:
+
+```text
+$ rg -n "uses: [^@]+@[^ ]+" .github/workflows/ci.yml
+36:      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+37:      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+55:      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+56:      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+70:      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+83:      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+91:        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+95:      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+```
+
 #### d) What is `permissions:` and what principle is behind it?
 
 `permissions:` defines what the GitHub token inside the workflow can do. The right principle is least privilege: give the workflow only the smallest access it needs. For this lab, `contents: read` is enough.
@@ -78,11 +115,13 @@ I used GitHub Actions, so this question does not apply.
 
 1. Added Go cache through `actions/setup-go`.
 2. Added a matrix for Go `1.23` and `1.24` on `vet` and `test`.
-3. Added path filters so docs-only changes do not start the pipeline.
+3. Added path filters so a separate docs-only PR does not start the pipeline.
 
 Note: this project has no `app/go.sum` file because it has no direct external module dependencies. For this reason, the cache key uses `app/go.mod`, which is the stable input available in this repository.
 
 I also changed `app/go.mod` from `go 1.24` to `go 1.23`. Without this, the Go `1.23` matrix cells were not a real compatibility check with the newer `setup-go` action.
+
+The final report-only commit still started CI because this PR already contains changes in `app/` and `.github/workflows/ci.yml`. The path filter is meant for a PR where the whole diff is documentation outside those paths.
 
 ### Timing Table
 
@@ -99,6 +138,14 @@ Measurement runs:
 - With cache + matrix: https://github.com/lime413/DevOps-Intro/actions/runs/27573596586
 
 The cache-only run was slower than the baseline because the cache was still cold and GitHub runner startup time changed between runs. The important result is not only this one number, but that later runs can reuse the cache.
+
+Relevant workflow output from the latest run:
+
+```text
+Cache hit for: Linux-go-1.24-golangci-lint-v2.5.0
+Run go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION}: skipped
+0 issues.
+```
 
 ### Design Answers
 
@@ -120,9 +167,9 @@ A malicious PR may try to write bad data into a cache and then make protected br
 
 Final bonus run:
 
-https://github.com/lime413/DevOps-Intro/actions/runs/27575107600
+https://github.com/lime413/DevOps-Intro/actions/runs/27575284056
 
-Total wall-clock time: 44 s.
+Total wall-clock time: 45 s.
 
 | Unit | Runner and actions setup | Dependency setup | Actual work | Cleanup | Unit total |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -147,7 +194,7 @@ The test command is slower than the Go output suggests because CI also spends ti
 | Cache `golangci-lint` binary | 42 | 0 | -42 |
 | Cache linter analysis data | 21 | 21 | 0 in this small app |
 | Skip lint for `app/README.md` only | 11 | about 2-4 | about -7 |
-| Total wall-clock | 63 | 44 | -19 |
+| Total wall-clock | 63 | 45 | -18 |
 
 The total comparison uses the first bonus run before the linter binary cache was warm and the latest run after the cache was warm.
 
@@ -157,5 +204,5 @@ The remaining slow parts are the race-test jobs and lint. They take similar time
 
 ## What Still Needs To Be Done On GitHub
 
-1. Submit the course PR link in Moodle.
-2. Before final submission, make sure the branch protection rule also has "Require branches to be up to date before merging" checked.
+1. Mark the course PR as ready for review if it is still a draft.
+2. Submit the course PR link in Moodle.
