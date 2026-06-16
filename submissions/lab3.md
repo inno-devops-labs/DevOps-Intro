@@ -101,9 +101,11 @@ and require only that.)
   `go: ['1.23', '1.24']` with `fail-fast: false`, so both toolchains run to
   completion in parallel and a 1.23-only or 1.24-only regression is visible.
 - 2.3 Path filter — `on.*.paths` restricts triggers to `app/` and
-  `.github/workflows/ci.yml`. A README-only PR matches nothing and the pipeline
-  is skipped entirely. (The commit that adds this write-up is docs-only, so CI
-  correctly skips it — that's the path filter in action.)
+  `.github/workflows/ci.yml`, so a PR that only touches docs (e.g. just the
+  README or this write-up) runs nothing at all. One thing I confirmed in
+  practice: for a pull request the filter looks at the whole PR diff, not the
+  last commit, so pushing a docs-only commit to a PR that already changed `app/`
+  still re-runs CI. The skip kicks in when the entire PR is docs-only.
 - Extra (cheap wins): `concurrency` with `cancel-in-progress` kills
   superseded runs on the same ref; `GOFLAGS=-buildvcs=false` skips the VCS stamp
   probe on shallow CI clones.
