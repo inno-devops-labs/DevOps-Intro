@@ -1,0 +1,105 @@
+name: CI
+
+# Trigger on pushes to main and on all PRs targeting main.
+# The pull_request "paths" filter skips the pipeline for docs-only changes
+# (anything outside app/ or this workflow file). See lab3.md design answer.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - '.github/workflows/ci.yml'
+
+# Least privilege: the pipeline only needs to read the repository contents.
+permissions:
+  contents: read
+
+jobs:
+  vet:
+    name: vet
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ['1.23', '1.24']
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Set up Go ${{ matrix.go }}
+        uses: actions/setup-go@3041bf56c941b39c61721a86cd11f3bb1338122a # v5.2.0
+        with:
+          go-version: ${{ matrix.go }}
+          # No go.sum (zero dependencies), so key the cache on go.mod instead.
+          cache-dependency-path: |
+            app/go.sum
+            app/go.mod
+      - name: go vet
+        run: go vet ./...
+
+  test:
+    name: test
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ['1.23', '1.24']
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Set up Go ${{ matrix.go }}
+        uses: actions/setup-go@3041bf56c941b39c61721a86cd11f3bb1338122a # v5.2.0
+        with:
+          go-version: ${{ matrix.go }}
+          cache-dependency-path: |
+            app/go.sum
+            app/go.mod
+      - name: go test
+        run: go test -race -count=1 ./...
+
+  lint:
+    name: lint
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Set up Go
+        uses: actions/setup-go@3041bf56c941b39c61721a86cd11f3bb1338122a # v5.2.0
+        with:
+          go-version: '1.24'
+          cache-dependency-path: |
+            app/go.sum
+            app/go.mod
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@9fae48acfc02a90574d7c304a1758ef9895495fa # v7.0.1
+        with:
+          version: v2.5.0
+          working-directory: app
+
+  # Aggregation gate: a single stable status check for branch protection,
+  # independent of the matrix context names (e.g. "vet (1.23)").
+  ci-ok:
+    name: ci-ok
+    if: always()
+    needs: [vet, test, lint]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Verify required jobs passed
+        run: |
+          echo "vet=${{ needs.vet.result }} test=${{ needs.test.result }} lint=${{ needs.lint.result }}"
+          if [ "${{ contains(needs.*.result, 'failure') }}" = "true" ] || \
+             [ "${{ contains(needs.*.result, 'cancelled') }}" = "true" ]; then
+            echo "::error::one or more required jobs failed"
+            exit 1
+          fi
+          echo "all required jobs passed"
