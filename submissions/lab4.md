@@ -164,4 +164,60 @@ Two deploy processes were started against the same `ADDR=:8080` without coordina
 
 ## Bonus Task — TLS Handshake
 
-<!-- Optional: requires Caddy + sudo tcpdump on port 8443 — not attempted on macOS in this session -->
+### B.1 HTTPS layer (Caddy reverse proxy)
+
+```bash
+# QuickNotes on :8080 (already running)
+caddy reverse-proxy --from https://localhost:8443 --to localhost:8080
+```
+
+Caddy issued a local CA certificate for `localhost` (internal PKI). Health check via HTTPS:
+
+```bash
+curl -vk https://localhost:8443/health
+# HTTP/2 200 — {"notes":9,"status":"ok"} via Caddy
+```
+
+### B.2 TLS handshake capture
+
+**`curl -vk` handshake trace** (saved in `lab4-tls-curl.txt`):
+
+```
+* (OUT), TLS handshake, Client hello (1):
+* (IN), TLS handshake, Server hello (2):
+* (IN), TLS handshake, Certificate (11):
+* (IN), TLS handshake, CERT verify (15):
+* (IN), TLS handshake, Finished (20):
+* (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256
+* ALPN: server accepted h2
+*  issuer: CN=Caddy Local Authority - ECC Intermediate
+```
+
+**Certificate chain** (`openssl s_client -connect localhost:8443 -showcerts`, saved in `lab4-tls-certs.txt`):
+
+```
+Certificate chain
+ 0 s: (leaf — localhost)
+   i: CN=Caddy Local Authority - ECC Intermediate
+ 1 s: CN=Caddy Local Authority - ECC Intermediate
+   i: CN=Caddy Local Authority - 2026 ECC Root
+
+Negotiated TLS1.3 group: X25519MLKEM768
+Cipher: TLS_AES_128_GCM_SHA256
+Protocol: TLSv1.3
+```
+
+### B.3 ClientHello / ServerHello / cert chain analysis
+
+| Message | Key fields observed |
+|---------|---------------------|
+| **ClientHello** | TLS 1.3 offer; ALPN `h2, http/1.1`; SNI `localhost` (via `:authority` in HTTP/2) |
+| **ServerHello** | Selected **TLS 1.3**; cipher `CHACHA20-POLY1305` / `TLS_AES_128_GCM_SHA256`; ALPN `h2` |
+| **Certificate** | Caddy local intermediate → 2026 ECC root; short-lived leaf cert for `localhost` |
+
+**Which step kills TLS 1.0 / 1.1 in 2026?**
+
+The **`supported_versions` extension in ClientHello** and the server's **ServerHello version selection** jointly enforce the floor. Modern clients (curl/OpenSSL 3.x, Caddy) negotiate **TLS 1.3** directly; TLS 1.0 and 1.1 are not offered or accepted because they were deprecated industry-wide (RFC 8996, browser removal ~2020, PCI DSS requiring TLS 1.2+). Caddy's default TLS stack refuses legacy protocols — even if a client offered TLS 1.0 in ClientHello, the server would not select it and would either negotiate 1.2/1.3 or fail the handshake. The decisive moment is **ServerHello**: the server picks the highest mutually supported version, and in 2026 that is TLS 1.2 or 1.3 only.
+
+Optional: capture `lab4-tls.pcap` with `sudo tcpdump -i lo0 -nn -s 0 -w lab4-tls.pcap 'tcp port 8443'` and inspect ClientHello/ServerHello in Wireshark.
