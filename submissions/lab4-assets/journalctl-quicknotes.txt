@@ -1,0 +1,2 @@
+$ journalctl --user -u quicknotes -n 20 || true
+-- No entries --

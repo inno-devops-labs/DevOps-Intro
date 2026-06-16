@@ -1,0 +1,2 @@
+$ ss -tlnp | grep 8080
+LISTEN 0      4096                *:8080            *:*    users:(("quicknotes",pid=4535,fd=3))     

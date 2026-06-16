@@ -1,0 +1,2 @@
+$ ps -ef | grep quicknotes
+root        4535    4460  0 19:48 pts/0    00:00:00 /root/.cache/go-build/01/01b36d0cffeef160fa8af2f501e7375bd20c7b28a5467c110d6e43fef651f8f2-d/quicknotes

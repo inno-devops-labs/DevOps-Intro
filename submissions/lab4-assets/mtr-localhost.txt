@@ -1,0 +1,4 @@
+$ mtr -rwc 5 localhost
+Start: 2026-06-16T19:47:44+0300
+HOST: DESKTOP-I0DHHPT Loss%   Snt   Last   Avg  Best  Wrst StDev
+  1.|-- localhost        0.0%     5    0.0   0.0   0.0   0.0   0.0

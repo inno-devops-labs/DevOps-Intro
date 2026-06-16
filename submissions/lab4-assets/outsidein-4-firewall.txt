@@ -1,0 +1,1 @@
+$ sudo iptables -L -n -v 2>/dev/null || sudo nft list ruleset 2>/dev/null || true

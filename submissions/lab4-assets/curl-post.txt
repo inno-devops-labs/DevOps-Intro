@@ -1,0 +1,23 @@
+Note: Unnecessary use of -X or --request, POST is already inferred.
+*   Trying 127.0.0.1:8080...
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Connected to localhost (127.0.0.1) port 8080 (#0)
+> POST /notes HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/7.82.0
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 39
+> 
+} [39 bytes data]
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 201 Created
+< Content-Type: application/json
+< Date: Tue, 16 Jun 2026 16:46:12 GMT
+< Content-Length: 92
+< 
+{ [92 bytes data]
+100   131  100    92  100    39  15219   6451 --:--:-- --:--:-- --:--:-- 26200
+* Connection #0 to host localhost left intact
+{"id":6,"title":"trace me","body":"in flight","created_at":"2026-06-16T16:46:12.62574443Z"}
