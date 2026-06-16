@@ -37,5 +37,19 @@ Permission shows what GH workflow can do with repository. Principle - least priv
 
 | Scenario | Wall-clock |
 |----------|------------|
-| Baseline | 39 s|
-| With chache | 
+| Baseline | 39s |
+| With chache | 40s |
+| With matrix | 1.42s |
+
+I did the following optimisations:
+- caching
+- paralel execution
+
+### f 
+Caching dependencies using a key derived from go.sum ensures deterministic and reproducible build environments by locking the exact dependency graph. In contrast, caching build artifacts is generally less reliable because the generated binaries may depend on the runner’s hardware, compiler version, or system configuration, making them unsafe to reuse across different environments.
+
+### g 
+Setting fail-fast: false allows every job in the matrix to run to completion, even if some jobs fail, providing a complete view of all existing issues. By comparison, fail-fast: true is often preferable during active development or pull request validation, as it terminates the workflow after the first failure, reducing resource consumption and accelerating feedback.
+
+### h
+A potential security concern is cache poisoning, where an attacker attempts to inject malicious artifacts into a cache through a pull request. GitHub addresses this risk through strict cache isolation: workflows triggered by pull requests may read caches associated with the target branch, but they cannot create, modify, or overwrite caches belonging to protected branches.
