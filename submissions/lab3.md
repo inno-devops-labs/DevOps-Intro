@@ -23,7 +23,7 @@ SHA pinning protects against supply-chain attacks that exploit mutable tags or b
 `permissions`: controls what the `GITHUB_TOKEN` can do in a GitHub Actions workflow. It lets you set access levels for resources such as repository contents, pull requests, and packages.
 
 **e) GitLab path: stage vs job; what `dependencies:` adds**
-In GitLab CI, a stage is a pipeline phase (for example, build, test, or deploy), while a job is a specific task that runs within a stage. even though stage ordering already sequences them.
+In GitLab CI, a stage is a pipeline phase (for example, build, test, or deploy), while a job is a specific task that runs within a stage. Jobs in the same stage run in parallel, and the next stage only starts once the current one passes, so `stages:` controls execution order. `dependencies:` is separate: it controls artifact flow, listing which earlier jobs' artifacts a job downloads (`dependencies: []` downloads none). So stages decide when a job runs, while `dependencies:` decides what data it pulls in, even though stage ordering already sequences them.
 
 ### Evidence
 
