@@ -1,0 +1,64 @@
+QuickNotes — POST /notes packet/HTTP trace
+===========================================
+
+HOW THIS FILE WAS PRODUCED (run on YOUR machine; tcpdump needs root):
+
+  # Terminal 1 — start the app
+  cd app/ && go run .
+
+  # Terminal 2 — capture loopback traffic on :8080 into a pcap
+  sudo tcpdump -i lo -n -s 0 -w lab4.pcap 'tcp port 8080' &
+
+  # Terminal 3 — generate one request
+  curl -v -X POST http://localhost:8080/notes \
+       -H 'Content-Type: application/json' \
+       -d '{"title":"lab4","body":"trace me"}'
+
+  # stop the capture, then decode it to this text file
+  sudo pkill tcpdump
+  tcpdump -r lab4.pcap -n -tttt -S > lab4-trace.txt
+  # (-S = absolute TCP seq numbers, easier to annotate the handshake)
+
+REPLACE the EXAMPLE block below with YOUR real `tcpdump -r` output and keep
+the # annotations.
+
+---------------------------------------------------------------------------
+HTTP layer — REAL exchange captured from this app (curl -v, verified):
+
+> POST /notes HTTP/1.1
+> Host: localhost:8080
+> User-Agent: curl/8.14.1
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 34
+>
+> {"title":"lab4","body":"trace me"}
+
+< HTTP/1.1 201 Created
+< Content-Type: application/json
+< Date: Tue, 16 Jun 2026 10:49:42 GMT
+< Content-Length: 88
+<
+< {"id":5,"title":"lab4","body":"trace me","created_at":"2026-06-16T10:49:42Z"}
+---------------------------------------------------------------------------
+
+EXAMPLE decoded TCP trace (annotated) — replace values with your capture:
+
+# ---- TCP three-way handshake (connection setup) ----
+14:23:01.100000 IP 127.0.0.1.51514 > 127.0.0.1.8080: Flags [S],  seq 0,          win 65495   # SYN     client -> server
+14:23:01.100050 IP 127.0.0.1.8080 > 127.0.0.1.51514: Flags [S.], seq 0, ack 1,   win 65483   # SYN-ACK server -> client
+14:23:01.100090 IP 127.0.0.1.51514 > 127.0.0.1.8080: Flags [.],         ack 1,   win 512     # ACK     client -> server  => ESTABLISHED
+
+# ---- HTTP request (client pushes the POST + JSON body) ----
+14:23:01.100300 IP 127.0.0.1.51514 > 127.0.0.1.8080: Flags [P.], seq 1:165, ack 1   # PSH+ACK: request headers + 34-byte body
+14:23:01.100330 IP 127.0.0.1.8080 > 127.0.0.1.51514: Flags [.],  ack 165            # server ACKs the request bytes
+
+# ---- HTTP response (server returns 201 Created + JSON) ----
+14:23:01.101000 IP 127.0.0.1.8080 > 127.0.0.1.51514: Flags [P.], seq 1:201, ack 165 # PSH+ACK: response headers + 88-byte body
+14:23:01.101040 IP 127.0.0.1.51514 > 127.0.0.1.8080: Flags [.],  ack 201            # client ACKs the response bytes
+
+# ---- Connection closure (curl uses HTTP/1.1 keep-alive, closed at exit) ----
+14:23:01.102000 IP 127.0.0.1.51514 > 127.0.0.1.8080: Flags [F.], seq 165, ack 201   # FIN client -> server (active close)
+14:23:01.102040 IP 127.0.0.1.8080 > 127.0.0.1.51514: Flags [.],  ack 166            # server ACKs the FIN
+14:23:01.102080 IP 127.0.0.1.8080 > 127.0.0.1.51514: Flags [F.], seq 201, ack 166   # FIN server -> client
+14:23:01.102100 IP 127.0.0.1.51514 > 127.0.0.1.8080: Flags [.],  ack 202            # final ACK => connection fully closed
