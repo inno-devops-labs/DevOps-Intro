@@ -16,11 +16,13 @@ Workflow file: `.github/workflows/ci.yml`
 
 ### Green CI run
 
-<!-- TODO: paste link to a green Actions run after pushing feature/lab3 -->
+https://github.com/Hidancloud/DevOps-Intro/actions/runs/27641204235 (full optimized pipeline, all 5 jobs green)
 
 ### Deliberate failure + fix
 
-<!-- TODO: paste failed run link/log after breaking handlers_test.go, then fix commit link -->
+<!-- Completed manually during Task 1 — add failed run link/screenshot if not already saved -->
+
+Broke `app/handlers_test.go`, pushed, confirmed CI failed and merge was blocked. Reverted in a follow-up commit; pipeline green again.
 
 ### Branch protection
 
@@ -61,15 +63,35 @@ Tag-based action references (`@v4`, `@v4.2.2`) are mutable — a compromised mai
 5. **Bonus:** `GOFLAGS=-buildvcs=false` — skips VCS metadata embedding when clone history is shallow
 6. **Bonus:** `timeout-minutes: 10` per job — fails fast instead of hanging on a stuck runner
 
+Measured with temporary workflow commits on `feature/lab3` (see `a56f0da`, `d4c74bb`, `b98b0d8`). Wall-clock = slowest parallel job per run.
+
 ### Timing table
 
-| Scenario | Wall-clock |
-|----------|-----------|
-| Baseline (no cache, single Go version, no path filter) | <!-- TODO: XX s --> |
-| With cache | <!-- TODO: XX s --> |
-| With cache + matrix | <!-- TODO: XX s --> |
+| Scenario | Wall-clock | Run link |
+|----------|-----------|----------|
+| Baseline (no cache, single Go 1.24, no path filter) | **66 s** | https://github.com/Hidancloud/DevOps-Intro/actions/runs/27640921680 |
+| With cache (single Go 1.24, no matrix) | **32 s** | https://github.com/Hidancloud/DevOps-Intro/actions/runs/27641058845 |
+| With cache + matrix (Go 1.23 & 1.24, path filter) | **28 s** | https://github.com/Hidancloud/DevOps-Intro/actions/runs/27641204235 |
 
-<!-- Measure from GitHub Actions UI. Temporarily disable each optimization in a commit to get baseline numbers. -->
+Per-job breakdown (baseline vs cached single-version):
+
+| Job | Baseline | With cache |
+|-----|----------|------------|
+| vet | 58 s | 21 s |
+| test | 62 s | 32 s |
+| lint | 66 s | 23 s |
+
+### Path filter demonstration
+
+Workflow `paths` filter:
+
+```yaml
+paths:
+  - "app/**"
+  - ".github/workflows/**"
+```
+
+A PR that changes **only** files outside these paths (e.g. only `labs/lab3.md` or `README.md` on a branch with no other changes) will not trigger CI. On an **open PR that already includes** `app/**` or workflow changes, GitHub still runs CI on subsequent pushes because the PR's overall diff matches the filter — this is expected GitHub behavior.
 
 ### Design questions (Task 2)
 
@@ -93,21 +115,25 @@ An attacker on an unprotected branch could write a poisoned cache (e.g. maliciou
 
 | Optimization applied | Before (s) | After (s) | Saving |
 |----------------------|-----------:|----------:|-------:|
-| Go module cache (`setup-go cache`) | <!-- TODO --> | <!-- TODO --> | <!-- TODO --> |
-| Path filter (skip docs-only) | <!-- TODO --> | <!-- TODO --> | <!-- TODO --> |
-| `concurrency` cancel-in-progress | <!-- TODO --> | <!-- TODO --> | <!-- TODO --> |
-| **Total wall-clock** | **<!-- TODO -->** | **<!-- TODO -->** | **<!-- TODO -->** |
+| Go module cache (`setup-go cache`) | 66 | 32 | **-34 s** |
+| Build matrix (1.23 + 1.24 parallel) | 32 (1 ver) | 28 (2 ver) | **-4 s** wall-clock* |
+| Path filter (docs-only PRs) | full run | 0 (skipped) | **~28 s** per skip |
+| **Total wall-clock (full pipeline)** | **66** | **28** | **-38 s** |
 
-### Per-step profile
+\*Matrix adds a second Go version but jobs run in parallel; wall-clock stayed ~28 s because cache kept setup fast and the slowest job (`test` with `-race`) dominates.
 
-<!-- TODO: fill from Actions UI after green run -->
+### Per-step profile (run 27641204235)
 
-| Job | Runner start | Setup / cache | Work (vet/test/lint) | Cleanup |
-|-----|-------------|---------------|----------------------|---------|
-| vet | | | | |
-| test | | | | |
-| lint | | | | |
+| Job | Runner start | Setup / cache | Work | Cleanup |
+|-----|-------------|---------------|------|---------|
+| vet (1.23) | 1 s | 1 s (Go setup) | 16 s (`go vet`) | 1 s |
+| vet (1.24) | 1 s | 1 s | 14 s | 0 s |
+| test (1.23) | 1 s | 1 s | **23 s** (`go test -race`) | 1 s |
+| test (1.24) | 1 s | 1 s | 19 s | 0 s |
+| lint | 1 s | 1 s (checkout) | **18 s** (golangci-lint) | 1 s |
+
+Runner startup is ~1 s; with cache hits Go setup is ~0–1 s. Dominant cost is the work step, not checkout or cleanup.
 
 ### Bottleneck analysis
 
-<!-- TODO: 4-6 sentences after reviewing CI timings -->
+The slowest step is **`go test -race`** (~19–23 s per matrix cell), because the race detector instruments memory accesses and roughly doubles test runtime. `golangci-lint` is second (~18 s) as it runs multiple analyzers over the whole module. Runner startup and cached Go setup are negligible (~1–2 s each). To shorten CI without touching the pipeline, QuickNotes would need faster tests (fewer integration-style tests, smaller fixtures) or splitting lint to only changed packages. I would stop optimizing this pipeline around **30 s** — it is well under the 90 s bonus target, branch protection is enforced, and further gains require disproportionate complexity (custom runner images, test sharding) for a small Go service.
