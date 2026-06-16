@@ -6,11 +6,13 @@ on:
     paths:
       - "app/**"
       - ".github/workflows/ci.yml"
+      - "submissions/**"
   pull_request:
     branches: [main]
     paths:
       - "app/**"
       - ".github/workflows/ci.yml"
+      - "submissions/**"
 
 permissions:
   contents: read
