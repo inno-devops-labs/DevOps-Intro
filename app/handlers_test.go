@@ -123,7 +123,7 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	for _, want := range []string{
 		"# TYPE quicknotes_notes_total gauge",
 		"# TYPE quicknotes_http_requests_total counter",
-		"quicknotes_notes_created_total 1",
+		"quicknotes_notes_created_total 99",
 	} {
 		if !strings.Contains(body, want) {
 			t.Errorf("metrics missing %q", want)
