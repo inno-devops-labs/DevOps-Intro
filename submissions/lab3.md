@@ -69,19 +69,19 @@ To prove the gate works, a deliberate break was pushed and then reverted.
 +	if got["notes"].(float64) != 99 {
 ```
 
-- Failed run (red): see CI screenshot `lab3-ci-failed.png` — the `test` job fails with `notes count: 1`, the `ci-ok` job goes red, and the PR's **Merge** button is blocked.
+- Failed run (red): see CI screenshot ![falied-run](image-1.png) — the `test` job fails with `notes count: 1`, the `ci-ok` job goes red, and the PR's **Merge** button is blocked.
 - Fix commit reverted the change; the next run is green.
 
 Links:
 
-- Green run: `<PASTE GREEN CI URL HERE>`
-- Failed run: `<PASTE RED CI URL HERE>`
-- Break commit: `<PASTE BREAK COMMIT URL HERE>`
-- Fix commit: `<PASTE FIX COMMIT URL HERE>`
+- Green run: `https://github.com/fleter/DevOps-Intro/actions/runs/27642905853/job/81747422451?pr=1`
+- Failed run: `https://github.com/fleter/DevOps-Intro/actions/runs/27642421944/job/81745768854?pr=1`
+- Break commit: `https://github.com/fleter/DevOps-Intro/pull/1/changes/92df171ce15b9d254a27493dc4627d7fd26c0e89`
+- Fix commit: `https://github.com/fleter/DevOps-Intro/pull/1/changes/4f2818f73bcfed9cf10876b606a1b03a41dfeccd`
 
 ### 1.6 Branch protection
 
-Screenshot: `lab3-branch-protection.png`.
+Screenshot: ![image](image.png)
 
 Settings applied to the fork's `main` (Settings → Branches → Add rule):
 
@@ -119,11 +119,11 @@ Measured from the GitHub Actions UI (wall-clock per job, median of 3 runs):
 
 | Scenario | Wall-clock |
 |----------|-----------:|
-| Baseline (no cache, single Go version, no path filter) | `<XX>` s |
-| With cache | `<XX>` s |
-| With cache + matrix (parallel jobs, wall-clock = max cell) | `<XX>` s |
+| Baseline (no cache, single Go version, no path filter) | 39 s |
+| With cache | 68 s |
+| With cache + matrix (parallel jobs, wall-clock = max cell) | 50 s |
 
-> Fill these from the real UI numbers after the runs complete. On a zero-dependency module, expect the three rows to be close; that closeness is the finding, not a failure (see §2.1 note and design question f).
+> On a zero-dependency module, the three rows are close (and baseline is even fastest). This is expected: QuickNotes has no `go.sum` and no third-party dependencies, so the module cache has nothing to store and `cache: true` adds overhead without saving download time. The wall-clock variation is dominated by runner provisioning (~20-30 s) and Go toolchain download, not by the actual vet/test/lint work (sub-second). See §2.1 and design question f for the full explanation.
 
 ### 2.5 Design questions
 
