@@ -1,0 +1,32 @@
+=== 2.1  Start instance #1 (takes :8080) ===
+instance #1: go-pid=1795, listeners on :8080 = 1
+
+=== 2.1  Start instance #2 on the SAME port (must fail) ===
+instance #2 exit code = 1
+--- exact error ---
+2026/06/16 21:04:17 quicknotes listening on :8080 (notes loaded: 8)
+2026/06/16 21:04:17 listen: listen tcp :8080: bind: address already in use
+exit status 1
+
+=== 2.2  OUTSIDE-IN CHAIN ===
+### 1) is it running?   ps -ef | grep quicknotes
+aboba       1795    1792 45 21:04 pts/2    00:00:00 go run .
+aboba       1898    1795  0 21:04 pts/2    00:00:00 /home/aboba/.cache/go-build/7d/7d215502e255ad20200a610375c249a2b4a323ed30f0ae6eeba8fafdc3dc3c39-d/quicknotes
+
+### 2) is it listening?  ss -tlnp | grep 8080
+LISTEN 0      4096                *:8080            *:*    users:(("quicknotes",pid=1898,fd=3))
+
+### 3) reachable from host?  curl /health
+HTTP 200
+
+### 4) firewall blocking?  iptables/nft  (needs sudo; run separately if empty here)
+(could not read firewall non-interactively — see note in submission)
+
+### 5) DNS?  dig +short localhost  (+ /etc/hosts)
+127.0.0.1
+/etc/hosts: 127.0.0.1	localhost ::1     ip6-localhost ip6-loopback 
+
+=== 2.3  REPAIR: kill the conflicting #1, restart, re-verify ===
+after repair, /health = {"notes":8,"status":"ok"}
+
+=== DONE ===

@@ -1,0 +1,24 @@
+=== start QuickNotes (:8080) and TLS proxy (:8443) ===
+listeners: 8080=1  8443=1
+proxy.log: 2026/06/16 21:11:05 TLS proxy listening on :8443 -> http://127.0.0.1:8080
+
+=== capture handshake on lo:8443 ===
+--- curl -vk https://localhost:8443/health (verbose -> lab4-tls-curl.txt) ---
+{"notes":8,"status":"ok"}
+
+=== certificate chain (openssl s_client -showcerts) ===
+subject=CN = localhost
+issuer=CN = localhost
+notBefore=Jun 16 18:11:03 2026 GMT
+notAfter=Jun 17 18:11:03 2026 GMT
+
+=== negotiated session (openssl s_client summary) ===
+Verification error: self-signed certificate
+New, TLSv1.3, Cipher is TLS_AES_128_GCM_SHA256
+Server public key is 2048 bit
+Verify return code: 18 (self-signed certificate)
+    Protocol  : TLSv1.3
+    Cipher    : TLS_AES_128_GCM_SHA256
+    Verify return code: 18 (self-signed certificate)
+
+=== DONE. pcap: -rwxrwxrwx 1 aboba aboba 4786 Jun 16 21:11 /mnt/c/study/DEVOPS/DevOps-Intro/submissions/lab4-tls.pcap ===
