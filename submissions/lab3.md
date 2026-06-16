@@ -37,7 +37,9 @@ Enabled rules:
 
 - Require status checks to pass before merging
 - Require branches to be up to date before merging
-- Required checks: `vet`, `test`, `lint`
+- Required checks for Task 1: `vet`, `test`, `lint`
+
+After Task 2, the workflow uses a matrix for `vet` and `test`, so I should update branch protection to require `ci-ok`. This is more stable than requiring matrix job names one by one.
 
 Evidence:
 
@@ -78,3 +80,40 @@ The workflow has:
 - Pinned runner: `ubuntu-24.04`
 - Pinned action SHAs
 - Least-privilege `permissions: contents: read`
+
+## Task 2 Optimizations
+
+I applied these optimizations:
+
+- Enabled GitHub Actions caching through `actions/setup-go`
+- Used `app/go.mod` as the cache dependency file, because this project has no `go.sum`
+- Added a build matrix for `vet` and `test` on Go `1.23.10` and `1.24.0`
+- Set `fail-fast: false` for the matrix
+- Added a `ci-ok` aggregation job, so branch protection can require one stable check name
+- Added path filters, so docs-only changes do not run the pipeline
+
+## Timing Table
+
+| Scenario | Wall-clock |
+|----------|------------|
+| Baseline (no cache, single Go version, no path filter) | 37 s |
+| With cache | TODO |
+| With cache + matrix | TODO |
+
+## Task 2 Notes
+
+This repository has no third-party Go dependencies. There is no `require` block in `app/go.mod`, and there is no `go.sum` file. Because of that, caching gives only a small benefit here. The Go module cache has almost nothing to store, so most of the total time still comes from runner startup, checkout, and downloading the Go toolchain.
+
+## Task 2 Design Questions
+
+### f) Why cache `go.sum`-keyed inputs and not build outputs?
+
+We cache dependency inputs because they are deterministic. If `go.sum` or, in this repository, `go.mod` does not change, we expect the same dependency set again. Build outputs are less stable because they depend on the OS, architecture, Go version, build flags, and other environment details. Caching inputs is safer and more reusable.
+
+### g) What does `fail-fast: false` change in a matrix run, and when do you actually want `fail-fast: true`?
+
+`fail-fast: false` means one failed matrix job does not stop the others. This is useful when you want the full picture, for example to see whether Go `1.23` fails, Go `1.24` fails, or both fail. `fail-fast: true` is better when extra jobs would only waste time or money after the first failure, and you do not need more diagnostic information.
+
+### h) What is the risk of an attacker writing a cache from a malicious PR that protected branches later read?
+
+The main risk is cache poisoning. An attacker may try to save bad files into a cache and hope that trusted workflows later restore and use them. GitHub reduces this risk with cache scope rules. A cache created by a pull request run is scoped to the pull request merge ref, so the base branch and other pull requests cannot restore it. Still, caches should never contain secrets, and workflows should treat caches as untrusted data.
