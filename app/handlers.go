@@ -133,7 +133,7 @@ func (s *Server) handleCreateNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.notesCreated.Add(1)
-	writeJSON(w, http.StatusCreated, n)
+	writeJSON(w, http.StatusOK, n)    
 }
 
 func (s *Server) handleDeleteNote(w http.ResponseWriter, r *http.Request) {
