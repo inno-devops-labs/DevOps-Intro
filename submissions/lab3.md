@@ -25,7 +25,7 @@ auditable input: upgrades become an explicit, reviewable PR instead of a
 surprise.
 
 b) Why split vet + test + lint into separate units?
-Three reasons:
+Reasons:
 
 - Parallelism: independent jobs run on separate runners
 concurrently, so total time ≈ the slowest unit instead of the sum.
@@ -70,6 +70,14 @@ What happened:
   https://github.com/RoukayaZaki/DevOps-Intro/actions/runs/27637683899
 
 So a failing change really is stopped at the gate, and fixing it clears the gate.
+
+Failing checks (the two `test` jobs red, `vet` and `lint` still green):
+
+![CI failing — 3 successful and 2 failing checks](../assets/gate-failing.png)
+
+All checks green after the fix:
+
+![CI passing — 5 successful checks](../assets/gate-passing.png)
 
 ### 1.6 Branch protection
 
@@ -205,15 +213,3 @@ time, and I'd keep it anyway because catching data races is worth the seconds. I
 stop optimizing here: at 42 s the feedback is already faster than a context
 switch, and more tuning would cost more than it saves. Past this point the better
 investment is test coverage, not raw speed.
-
----
-
-## Summary of deliverables
-
-| Item | Status |
-|------|--------|
-| `.github/workflows/ci.yml` (3 units, pinned image, SHA-pinned actions, `permissions`, cache, matrix, path filter) | ✅ done, runs green |
-| Gate blocks a failing PR, passes after fix | ✅ shown (red run, then green) |
-| Branch protection on `main` requiring all checks | ✅ enabled |
-| All design answers (a–h) | ✅ complete |
-| Timing numbers from the Actions UI | ✅ filled in |
