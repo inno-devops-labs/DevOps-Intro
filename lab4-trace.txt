@@ -1,0 +1,43 @@
+20:14:38.597650 IP 127.0.0.1.51824 > 127.0.0.1.8080: Flags [S], seq 3335370418, win 65495, options [mss 65495,sackOK,TS val 1766035711 ecr 0,nop,wscale 7], length 0
+E..<P8@.@............p...............0.........
+iC..........
+20:14:38.597701 IP 127.0.0.1.8080 > 127.0.0.1.51824: Flags [S.], seq 535201973, ack 3335370419, win 65483, options [mss 65495,sackOK,TS val 1766035711 ecr 1766035711,nop,wscale 7], length 0
+E..<..@.@.<............p.............0.........
+iC..iC......
+20:14:38.597752 IP 127.0.0.1.51824 > 127.0.0.1.8080: Flags [.], ack 1, win 512, options [nop,nop,TS val 1766035711 ecr 1766035711], length 0
+E..4P9@.@............p...............(.....
+iC..iC..
+20:14:38.597956 IP 127.0.0.1.51824 > 127.0.0.1.8080: Flags [P.], seq 1:175, ack 1, win 512, options [nop,nop,TS val 1766035711 ecr 1766035711], length 174: HTTP: POST /notes HTTP/1.1
+E...P:@.@............p.....................
+iC..iC..POST /notes HTTP/1.1
+Host: 127.0.0.1:8080
+User-Agent: curl/8.5.0
+Accept: */*
+Content-Type: application/json
+Content-Length: 39
+
+{"title":"trace me","body":"in flight"}
+20:14:38.597960 IP 127.0.0.1.8080 > 127.0.0.1.51824: Flags [.], ack 175, win 511, options [nop,nop,TS val 1766035711 ecr 1766035711], length 0
+E..4..@.@..............p.......a.....(.....
+iC..iC..
+20:14:38.616063 IP 127.0.0.1.8080 > 127.0.0.1.51824: Flags [P.], seq 1:207, ack 175, win 512, options [nop,nop,TS val 1766035729 ecr 1766035711], length 206: HTTP: HTTP/1.1 201 Created
+E.....@.@..<...........p.......a...........
+iC..iC..HTTP/1.1 201 Created
+Content-Type: application/json
+Date: Tue, 16 Jun 2026 17:14:38 GMT
+Content-Length: 93
+
+{"id":7,"title":"trace me","body":"in flight","created_at":"2026-06-16T17:14:38.598761313Z"}
+
+20:14:38.616127 IP 127.0.0.1.51824 > 127.0.0.1.8080: Flags [.], ack 207, win 511, options [nop,nop,TS val 1766035729 ecr 1766035729], length 0
+E..4P;@.@............p.....a.........(.....
+iC..iC..
+20:14:38.616587 IP 127.0.0.1.51824 > 127.0.0.1.8080: Flags [F.], seq 175, ack 207, win 512, options [nop,nop,TS val 1766035730 ecr 1766035729], length 0
+E..4P<@.@............p.....a.........(.....
+iC..iC..
+20:14:38.616709 IP 127.0.0.1.8080 > 127.0.0.1.51824: Flags [F.], seq 207, ack 176, win 512, options [nop,nop,TS val 1766035730 ecr 1766035730], length 0
+E..4..@.@..	...........p.......b.....(.....
+iC..iC..
+20:14:38.616742 IP 127.0.0.1.51824 > 127.0.0.1.8080: Flags [.], ack 208, win 512, options [nop,nop,TS val 1766035730 ecr 1766035730], length 0
+E..4P=@.@............p.....b.........(.....
+iC..iC..
