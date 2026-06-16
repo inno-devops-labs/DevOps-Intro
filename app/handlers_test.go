@@ -94,8 +94,8 @@ func TestCreateNote_RejectsUnknownField(t *testing.T) {
 func TestGetNote_NotFound(t *testing.T) {
 	srv := newTestServer(t)
 	rec := do(t, srv, http.MethodGet, "/notes/999", nil)
-	if rec.Code != http.StatusOK {
-		t.Errorf("expected 200, got %d", rec.Code)
+	if rec.Code != http.StatusNotFound {
+		t.Errorf("expected 404, got %d", rec.Code)
 	}
 }
 
