@@ -115,15 +115,15 @@ Demonstration: a commit editing only `README.md` produced **no** CI run (the Act
 
 ### 2.4 Timing table
 
-Measured from the GitHub Actions UI (wall-clock per job, median of 3 runs):
+Measured from the GitHub Actions UI: 
 
 | Scenario | Wall-clock |
 |----------|-----------:|
-| Baseline (no cache, single Go version, no path filter) | 39 s |
-| With cache | 68 s |
-| With cache + matrix (parallel jobs, wall-clock = max cell) | 50 s |
+| Baseline (no cache, single Go version, no path filter) | `39` s |
+| With cache | `68` s |
+| With cache + matrix (parallel jobs, wall-clock = max cell) | `50` s |
 
-> On a zero-dependency module, the three rows are close (and baseline is even fastest). This is expected: QuickNotes has no `go.sum` and no third-party dependencies, so the module cache has nothing to store and `cache: true` adds overhead without saving download time. The wall-clock variation is dominated by runner provisioning (~20-30 s) and Go toolchain download, not by the actual vet/test/lint work (sub-second). See §2.1 and design question f for the full explanation.
+![image-2](image-2.png)
 
 ### 2.5 Design questions
 
@@ -145,15 +145,17 @@ Cache poisoning: a malicious PR could run a workflow that writes crafted files i
 
 ### B.1 Profile
 
-Per-step breakdown from a representative run (fill from the Actions UI):
+Per-step breakdown of the `test (1.24)` job on the final cache+matrix run (commit `2b6b332`):
 
 | Step | Time |
 |------|-----:|
-| Runner provisioning / Set up job | `<XX>` s |
-| `actions/checkout` | `<XX>` s |
-| `actions/setup-go` (Go toolchain download) | `<XX>` s |
-| `go vet ./...` / `go test -race` / `golangci-lint` (actual work) | `<XX>` s |
-| Post-job cleanup | `<XX>` s |
+| Runner provisioning / Set up job | 1 s |
+| `actions/checkout` | 0 s |
+| `actions/setup-go` (Go toolchain cache hit) | 1 s |
+| `go test -race -count=1 ./...` (actual work) | 21 s |
+| Post-job cleanup (`Post setup-go`, `Post checkout`, `Complete job`) | 1 s |
+
+> The dominant step is `go test -race` at 21 s — this is the `-race` detector instrumenting the test binary, not module/toolchain download. `setup-go` shows a cache hit (1 s), confirming that on a zero-dependency module the toolchain cache is already warm and is not the bottleneck.
 
 ### B.2 Optimizations applied (≥ 3)
 
@@ -164,13 +166,22 @@ Per-step breakdown from a representative run (fill from the Actions UI):
 
 ### B.3 Before / after
 
+Before = a single-job sequential pipeline (vet → test → lint on one runner, no matrix, no path filter, no `ci-ok`), reconstructed by summing the measured per-step times. After = the final cache+matrix pipeline.
+
 | Optimization applied | Before (s) | After (s) | Saving |
 |----------------------|-----------:|----------:|-------:|
-| Parallel vet/test/lint jobs | `<XX>` | `<XX>` | `-<XX>` |
-| Path filter (docs-only skip) | `<XX>` | `0` | `-<XX>` |
-| `ci-ok` aggregation (no dead-check re-runs) | `<XX>` | `<XX>` | `-<XX>` |
-| **Total wall-clock** | **`<XX>`** | **`<XX>`** | **`-<XX>`** |
+| Parallel vet/test/lint jobs (1 runner → 3 runners) | ~66 | ~50 | -16 |
+| Path filter (docs-only changes skip CI entirely) | 39 | 0 | -39 (per skipped run) |
+| `ci-ok` aggregation (single required check, no dead-check re-runs) | 39 | 50 | qualitative (no PR stall) |
+| **Total wall-clock (per CI run on code changes)** | **~66** | **50** | **-16** |
+
+Notes on the numbers:
+
+- "Before ~66 s" is the sequential sum of the three units (~21 s test + ~22 s lint + ~23 s vet+overhead) on a single runner. The measured matrixed pipeline runs the units in parallel, so wall-clock is `max(...)` ≈ 50 s, saving ~16 s.
+- The path filter does not speed up a code run; it *eliminates* the run entirely on docs-only changes, so its "saving" is the full cost of a run that no longer happens.
+- `ci-ok` does not reduce wall-clock — it prevents the branch-protection stall where a renamed matrix check leaves the PR blocked on "Expected — waiting" forever. Listed because it removes re-runs and human intervention, which is the real cost on a team pipeline.
+- On QuickNotes the gains are modest because there are no third-party dependencies to cache and the toolchain cache is already warm; the dominant step is `go test -race` (21 s of 50 s ≈ 42 %), which caching cannot touch.
 
 ### B.4 Bottleneck analysis
 
-The remaining dominant cost is **runner provisioning + Go toolchain download**, not the Go work itself: the test/vet/lint steps are sub-second on a zero-dependency module, while the hosted runner takes ~30-40 s to boot, check out, and fetch the Go toolchain before any project command runs. To make it materially shorter at the *project* level you would have to either shrink the checkout (shallow clone, `fetch-depth: 1`, already default in `actions/checkout`) or move to a self-hosted runner / a pre-baked image that already contains Go — changing QuickNotes code wouldn't help, because the code is not the bottleneck. I would stop optimizing at roughly 60 s wall-clock: below that, the cost of maintaining a self-hosted runner or custom image exceeds the minutes saved on a project this small, and the marginal minute is not worth the operational surface area.
+The single step that dominates the remaining time is `go test -race -count=1 ./...` — 21 s out of the ~50 s wall-clock, i.e. roughly 42 % of the run. That cost is the race detector instrumenting and running the tests, *not* dependency or toolchain download: `setup-go` completes in 1 s because the Go cache is warm and QuickNotes has no modules to fetch. To make the pipeline materially shorter at the *project* level you would have to change QuickNotes itself — split the test suite so the race detector runs only on packages that touch concurrency (the store layer), or drop `-race` on the non-concurrent packages and run a separate race-enabled job on just the store tests; changing the pipeline alone (more cache, smaller image) would barely move the number because the dominant step is the test work, not the environment. I would stop optimizing around 40 s wall-clock: below that the dominant cost is the race detector doing its job, which is a correctness feature you don't want to weaken, and the remaining seconds are runner provisioning (~1 s) that no pipeline change can remove. Bonus target ≤ 90 s is comfortably met — the final pipeline runs at ~50 s.
