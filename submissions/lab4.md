@@ -99,7 +99,7 @@ Expected — that's why the lab guards it with `|| true`.
 
 ### 1.4 What I'd check first on a 502
 
-A 502 means something, QuickNotes (a proxy / load balancer) got a
+A 502 means something in front of QuickNotes (a proxy / load balancer) got a
 connection but couldn't get a valid response from the app behind it, so the
 problem is almost never the proxy — it's the upstream. I'd work the same
 outside-in chain: first `ss -tlnp | grep :8080` to confirm the app is actually
