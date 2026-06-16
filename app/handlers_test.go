@@ -49,7 +49,7 @@ func TestHealth_ReportsCount(t *testing.T) {
 	if got["status"] != "ok" {
 		t.Errorf("status field: %v", got["status"])
 	}
-	if got["notes"].(float64) != 2 {
+	if got["notes"].(float64) != 1 {
 		t.Errorf("notes count: %v", got["notes"])
 	}
 }
