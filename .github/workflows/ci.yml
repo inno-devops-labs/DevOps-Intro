@@ -3,8 +3,14 @@ name: CI
 on:
   push:
     branches: [main]
+    paths:
+      - 'app/**'
+      - '.github/workflows/**'
   pull_request:
     branches: [main]
+    paths:
+      - 'app/**'
+      - '.github/workflows/**'
 
 permissions:
   contents: read
@@ -12,11 +18,15 @@ permissions:
 jobs:
   vet:
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ['1.23', '1.24']
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
       - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5  # v5.5.0
         with:
-          go-version: '1.24'
+          go-version: ${{ matrix.go-version }}
           cache: true
           cache-dependency-path: app/go.mod
       - name: go vet
@@ -25,11 +35,15 @@ jobs:
 
   test:
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ['1.23', '1.24']
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
       - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5  # v5.5.0
         with:
-          go-version: '1.24'
+          go-version: ${{ matrix.go-version }}
           cache: true
           cache-dependency-path: app/go.mod
       - name: go test
@@ -49,3 +63,14 @@ jobs:
         with:
           version: v2.5.0
           working-directory: app
+
+  # Aggregation job — single required check for branch protection. Survives
+  # matrix renames (e.g. 'test (1.23)') without needing protection-rule edits.
+  ci-ok:
+    if: always()
+    needs: [vet, test, lint]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: aggregate
+        run: |
+          test "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" = "false"
