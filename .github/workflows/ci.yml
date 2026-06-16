@@ -1,22 +1,13 @@
 name: CI
 
+# Baseline measurement: no path filter, no cache, single Go version
 on:
   push:
     branches:
       - main
-    paths:
-      - "app/**"
-      - ".github/workflows/**"
   pull_request:
     branches:
       - main
-    paths:
-      - "app/**"
-      - ".github/workflows/**"
-
-concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -25,12 +16,6 @@ jobs:
   vet:
     name: vet
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
-
-    strategy:
-      fail-fast: false
-      matrix:
-        go-version: ["1.23", "1.24"]
 
     defaults:
       run:
@@ -43,24 +28,14 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.5.0
         with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-          cache-dependency-path: app/go.sum
+          go-version: "1.24"
 
       - name: Run go vet
         run: go vet ./...
-        env:
-          GOFLAGS: -buildvcs=false
 
   test:
     name: test
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
-
-    strategy:
-      fail-fast: false
-      matrix:
-        go-version: ["1.23", "1.24"]
 
     defaults:
       run:
@@ -73,19 +48,14 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.5.0
         with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-          cache-dependency-path: app/go.sum
+          go-version: "1.24"
 
       - name: Run tests
         run: go test -race -count=1 ./...
-        env:
-          GOFLAGS: -buildvcs=false
 
   lint:
     name: lint
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
 
     steps:
       - name: Checkout repository
