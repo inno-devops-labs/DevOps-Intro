@@ -1,6 +1,6 @@
 # Lab 3 — CI/CD: PR-Gated Pipeline for QuickNotes
 
-**Student:** Mahmoud Hassan (`selysecr332`)  
+    Mahmoud Hassan (`selysecr332`)  
 **Path:** GitHub Actions (default — GitHub account available, matches Labs 1–2 workflow)
 
 ---
@@ -111,7 +111,6 @@ _Not started — complete after Task 1+2 are green._
 | **Course** (`feature/lab3` → `inno-devops-labs/main`) | <https://github.com/inno-devops-labs/DevOps-Intro/pull/1049> |
 | **Fork** (`feature/lab3-fork` → `selysecr332/main`) | <https://github.com/selysecr332/DevOps-Intro/pull/3> |
 
-**Moodle:** submit both URLs before the deadline.
 
 ---
 
