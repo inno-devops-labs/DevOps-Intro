@@ -41,10 +41,10 @@ Tag-based action references (`@v4`) are mutable — a compromised maintainer acc
 
 | Step | Status | Notes |
 |------|--------|-------|
-| Deliberate break commit | _TODO after push_ | e.g. wrong expected value in `handlers_test.go` |
-| Red CI run link | _TODO_ | |
-| Fix / revert commit | _TODO_ | |
-| Green CI run link | _TODO_ | |
+| Deliberate break commit | ✅ Done | `2bc342a` on `feature/lab3-fork` and `d1c82e4` on `feature/lab3` (changed expected 404 -> 200 in `TestGetNote_NotFound`) |
+| Red CI run link | ✅ Done | PR checks page: <https://github.com/selysecr332/DevOps-Intro/pull/3/checks> (failed checks at commit `2bc342a`), screenshot: `submissions/screenshots/cl_red.png` |
+| Fix / revert commit | ✅ Done | `84c0006` on `feature/lab3-fork` and `0273db1` on `feature/lab3` |
+| Green CI run link | ✅ Done | PR checks page: <https://github.com/selysecr332/DevOps-Intro/pull/3/checks> (all checks passed at commit `84c0006`), screenshot: `submissions/screenshots/cl_green.png` |
 
 ### 1.6 Branch protection
 
@@ -58,7 +58,8 @@ Screenshot: _TODO — `submissions/screenshots/Lab_3/branch-protection.png`_
 
 ### 1.7 Green CI run
 
-Link: _TODO — paste Actions run URL after first green workflow on `feature/lab3`_
+- Fork PR green checks: <https://github.com/selysecr332/DevOps-Intro/pull/3/checks>
+- Course PR: <https://github.com/inno-devops-labs/DevOps-Intro/pull/1049>
 
 ---
 
@@ -107,8 +108,8 @@ _Not started — complete after Task 1+2 are green._
 
 | PR | URL |
 |----|-----|
-| **Course** (`feature/lab3` → `inno-devops-labs/main`) | _TODO_ |
-| **Fork** (`feature/lab3` → `selysecr332/main`) | _TODO_ |
+| **Course** (`feature/lab3` → `inno-devops-labs/main`) | <https://github.com/inno-devops-labs/DevOps-Intro/pull/1049> |
+| **Fork** (`feature/lab3-fork` → `selysecr332/main`) | <https://github.com/selysecr332/DevOps-Intro/pull/3> |
 
 **Moodle:** submit both URLs before the deadline.
 
@@ -120,8 +121,8 @@ _Not started — complete after Task 1+2 are green._
 
 - [x] `.github/workflows/ci.yml` with vet + test + lint
 - [x] Pinned runner + action SHAs; `permissions: contents: read`
-- [ ] CI green on `feature/lab3`
-- [ ] Deliberate failure → blocked → fix → green
+- [x] CI green on fork PR (`#3`)
+- [x] Deliberate failure → blocked → fix → green (documented with `cl_red.png` and `cl_green.png`)
 - [ ] Branch protection with `ci-ok` required
 - [x] Design questions a–d answered
 
@@ -133,8 +134,8 @@ _Not started — complete after Task 1+2 are green._
 
 ### Submission
 
-- [ ] Course PR opened
-- [ ] Fork PR opened
+- [x] Course PR opened (`#1049`)
+- [x] Fork PR opened (`#3`)
 - [ ] Both URLs on Moodle
 
 ### Bonus (2 pts)
