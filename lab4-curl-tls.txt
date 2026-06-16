@@ -1,0 +1,171 @@
+* Host localhost:8443 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [::1]:8443...
+* Connected to localhost (::1) port 8443
+* ALPN: curl offers h2,http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+} [314 bytes data]
+* (304) (IN), TLS handshake, Server hello (2):
+{ [122 bytes data]
+* (304) (IN), TLS handshake, Unknown (8):
+{ [19 bytes data]
+* (304) (IN), TLS handshake, Certificate (11):
+{ [927 bytes data]
+* (304) (IN), TLS handshake, CERT verify (15):
+{ [79 bytes data]
+* (304) (IN), TLS handshake, Finished (20):
+{ [36 bytes data]
+* (304) (OUT), TLS handshake, Finished (20):
+} [36 bytes data]
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256 / [blank] / UNDEF
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: [NONE]
+*  start date: Jun 16 11:13:22 2026 GMT
+*  expire date: Jun 16 23:13:22 2026 GMT
+*  issuer: CN=Caddy Local Authority - ECC Intermediate
+*  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://localhost:8443/health
+* [HTTP/2] [1] [:method: GET]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: localhost:8443]
+* [HTTP/2] [1] [:path: /health]
+* [HTTP/2] [1] [user-agent: curl/8.7.1]
+* [HTTP/2] [1] [accept: */*]
+> GET /health HTTP/2
+> Host: localhost:8443
+> User-Agent: curl/8.7.1
+> Accept: */*
+>
+* Request completely sent off
+< HTTP/2 200
+< alt-svc: h3=":8443"; ma=2592000
+< content-type: application/json
+< date: Tue, 16 Jun 2026 11:34:45 GMT
+< via: 1.1 Caddy
+< content-length: 26
+<
+{ [26 bytes data]
+
+100    26  100    26    0     0    719      0 --:--:-- --:--:-- --:--:--   742
+* Connection #0 to host localhost left intact
+{"notes":4,"status":"ok"}
+* Host localhost:8443 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [::1]:8443...
+* Connected to localhost (::1) port 8443
+* ALPN: curl offers h2,http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+} [314 bytes data]
+* (304) (IN), TLS handshake, Server hello (2):
+{ [122 bytes data]
+* (304) (IN), TLS handshake, Unknown (8):
+{ [19 bytes data]
+* (304) (IN), TLS handshake, Certificate (11):
+{ [927 bytes data]
+* (304) (IN), TLS handshake, CERT verify (15):
+{ [80 bytes data]
+* (304) (IN), TLS handshake, Finished (20):
+{ [36 bytes data]
+* (304) (OUT), TLS handshake, Finished (20):
+} [36 bytes data]
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256 / [blank] / UNDEF
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: [NONE]
+*  start date: Jun 16 11:13:22 2026 GMT
+*  expire date: Jun 16 23:13:22 2026 GMT
+*  issuer: CN=Caddy Local Authority - ECC Intermediate
+*  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://localhost:8443/health
+* [HTTP/2] [1] [:method: GET]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: localhost:8443]
+* [HTTP/2] [1] [:path: /health]
+* [HTTP/2] [1] [user-agent: curl/8.7.1]
+* [HTTP/2] [1] [accept: */*]
+> GET /health HTTP/2
+> Host: localhost:8443
+> User-Agent: curl/8.7.1
+> Accept: */*
+>
+* Request completely sent off
+< HTTP/2 200
+< alt-svc: h3=":8443"; ma=2592000
+< content-type: application/json
+< date: Tue, 16 Jun 2026 11:34:45 GMT
+< via: 1.1 Caddy
+< content-length: 26
+<
+{ [26 bytes data]
+
+100    26  100    26    0     0   4785      0 --:--:-- --:--:-- --:--:--  5200
+* Connection #0 to host localhost left intact
+{"notes":4,"status":"ok"}
+* Host localhost:8443 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [::1]:8443...
+* Connected to localhost (::1) port 8443
+* ALPN: curl offers h2,http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+} [314 bytes data]
+* (304) (IN), TLS handshake, Server hello (2):
+{ [122 bytes data]
+* (304) (IN), TLS handshake, Unknown (8):
+{ [19 bytes data]
+* (304) (IN), TLS handshake, Certificate (11):
+{ [927 bytes data]
+* (304) (IN), TLS handshake, CERT verify (15):
+{ [80 bytes data]
+* (304) (IN), TLS handshake, Finished (20):
+{ [36 bytes data]
+* (304) (OUT), TLS handshake, Finished (20):
+} [36 bytes data]
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256 / [blank] / UNDEF
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: [NONE]
+*  start date: Jun 16 11:13:22 2026 GMT
+*  expire date: Jun 16 23:13:22 2026 GMT
+*  issuer: CN=Caddy Local Authority - ECC Intermediate
+*  SSL certificate verify result: unable to get local issuer certificate (20), continuing anyway.
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://localhost:8443/health
+* [HTTP/2] [1] [:method: GET]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: localhost:8443]
+* [HTTP/2] [1] [:path: /health]
+* [HTTP/2] [1] [user-agent: curl/8.7.1]
+* [HTTP/2] [1] [accept: */*]
+> GET /health HTTP/2
+> Host: localhost:8443
+> User-Agent: curl/8.7.1
+> Accept: */*
+>
+* Request completely sent off
+< HTTP/2 200
+< alt-svc: h3=":8443"; ma=2592000
+< content-type: application/json
+< date: Tue, 16 Jun 2026 11:34:45 GMT
+< via: 1.1 Caddy
+< content-length: 26
+<
+{ [26 bytes data]
+
+100    26  100    26    0     0   5409      0 --:--:-- --:--:-- --:--:--  6500
+* Connection #0 to host localhost left intact
+{"notes":4,"status":"ok"}
