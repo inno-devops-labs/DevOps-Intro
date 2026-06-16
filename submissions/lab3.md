@@ -13,7 +13,7 @@
 File: `.github/workflows/ci.yml`
 
 The pipeline defines four jobs:
-- **vet** — runs `go vet ./...` in `app/`, across a Go 1.23 × 1.24 matrix
+- **vet** — runs `go vet ./...` in `app/`, across a Go 1.24 × 1.25 matrix
 - **test** — runs `go test -race -count=1 ./...` in `app/`, same matrix
 - **lint** — runs `golangci-lint v2.5.0` in `app/` against Go 1.24
 - **ci-ok** — aggregation gate; required by branch protection so the matrix can change freely without updating protection settings
@@ -22,30 +22,24 @@ All third-party actions are pinned to full 40-character commit SHAs. `permission
 
 ### Green CI run
 
-<!-- TODO: paste link to a green Actions run after pushing, e.g.:
-https://github.com/1r444444/DevOps-Intro/actions/runs/XXXXXXXX
--->
+https://github.com/1r444444/DevOps-Intro/actions/runs/27611110266
 
 ### Deliberate failure and fix (Task 1.5)
 
-<!-- TODO: after you push and get a green run:
-1. Edit app/handlers_test.go to break a test (e.g. change an expected status code)
-2. Push — show the red run URL here
-3. Revert with a follow-up commit — show the green run URL
-4. Add a screenshot of the PR blocked from merging
--->
+Changed `http.StatusCreated` (201) to `http.StatusOK` (200) in `TestCreateNote_RoundTrip` inside `app/handlers_test.go`. The `test (1.24)` and `test (1.25)` jobs both failed, causing `ci-ok` to fail and the PR to be blocked from merging.
 
-**Red run (broken commit):** <!-- URL -->
+**Red run (broken commit):** https://github.com/1r444444/DevOps-Intro/actions/runs/27611401643
 
-**Fix commit:** <!-- URL -->
+**Fix commit:** restored the correct `http.StatusCreated`; green run: https://github.com/1r444444/DevOps-Intro/actions/runs/27611487440
 
 **Screenshot of blocked PR:**
 
-<!-- paste screenshot or describe what you saw -->
+<!-- TODO: add screenshot from GitHub showing the PR blocked with red checks -->
 
 ### Branch protection screenshot
 
-<!-- Settings → Branches → rule for `main` requiring ci-ok, vet (1.23), vet (1.24), test (1.23), test (1.24), lint -->
+<!-- TODO: add screenshot of Settings → Branches → rule for main with ci-ok as required check -->
+![alt text](image.png)
 
 ---
 
@@ -86,11 +80,11 @@ An attacker compromised the `tj-actions/changed-files` GitHub Actions repository
 
 | Scenario | Wall-clock |
 |---|---|
-| Baseline (no cache, single Go 1.24, no path filter) | <!-- TODO: XX s --> |
-| With cache (`cache: true`) | <!-- TODO: XX s --> |
-| With cache + matrix (Go 1.23 + 1.24 in parallel) | <!-- TODO: XX s --> |
+| Baseline (cache miss — first ever run, Go 1.24+1.25 matrix) | ~51 s |
+| With cache (second run, same matrix, cache restored) | ~43 s |
+| With cache + matrix (Go 1.24 + 1.25 in parallel, warm cache) | ~56 s |
 
-> Note: QuickNotes has zero third-party dependencies (`app/go.mod` has no `require` block, no `go.sum`). The module cache has nothing to store, so the total job wall-clock barely moves between "no cache" and "cache" rows. The saving shows up in the per-step breakdown of `setup-go` — specifically the module download step, which is essentially a no-op here. On a real project with hundreds of dependencies that step often takes 20-40 s and caching eliminates it entirely.
+> Note: QuickNotes has zero third-party dependencies (`app/go.mod` has no `require` block, no `go.sum`). The module cache has nothing to store, so the total job wall-clock barely moves between the "cache miss" and "cache hit" rows (~8 s difference, within runner variance). Nearly all elapsed time is dominated by runner provisioning and `go test -race` compilation — neither of which the module cache can help with. On a real project with hundreds of dependencies the module download step alone can take 20–40 s; caching would eliminate that entirely. The matrix (2 Go versions in parallel) adds no wall-clock cost since the jobs run simultaneously — the bottleneck remains the slowest single job (~31 s for `test`).
 
 ### Task 2 Design Questions
 
@@ -112,13 +106,15 @@ A PR from a fork could write a poisoned cache entry (e.g. a tampered module or b
 
 ### Per-step profiling
 
-<!-- TODO: fill in after running the pipeline with timing data from the Actions UI -->
+Data from run https://github.com/1r444444/DevOps-Intro/actions/runs/27611487440 (warm cache):
 
-| Job | Runner start | Setup Go | Module download | Actual work | Cleanup |
-|-----|---|---|---|---|---|
-| vet (1.24) | <!-- s --> | <!-- s --> | <!-- s --> | <!-- s --> | <!-- s --> |
-| test (1.24) | <!-- s --> | <!-- s --> | <!-- s --> | <!-- s --> | <!-- s --> |
-| lint | <!-- s --> | <!-- s --> | <!-- s --> | <!-- s --> | <!-- s --> |
+| Job | Runner start | checkout | setup-go | Actual work | Cleanup |
+|-----|---:|---:|---:|---:|---:|
+| vet (1.24) | 1 s | 1 s | 1 s | 4 s (`go vet`) | 1 s |
+| vet (1.25) | 1 s | 1 s | 2 s | 5 s (`go vet`) | 0 s |
+| test (1.24) | 0 s | 0 s | 2 s | 22 s (`go test -race`) | 1 s |
+| test (1.25) | 2 s | 1 s | 3 s | 22 s (`go test -race`) | 0 s |
+| lint | 1 s | 0 s | 2 s | 7 s (golangci-lint) | 1 s |
 
 ### Additional optimizations applied (≥ 3 beyond Task 2)
 
@@ -140,21 +136,20 @@ README changes, lab write-ups, and submission documents never affect code correc
 
 ### Before/after timing table
 
+All figures from measured CI runs (27611110266 = first stable run; 27611487440 = warm-cache run).
+
 | Optimization | Before (s) | After (s) | Saving |
 |---|---:|---:|---:|
-| Aggregation job (no protection churn) | — | — | organizational |
-| `GOFLAGS=-buildvcs=false` | <!-- XX --> | <!-- XX --> | <!-- -XX --> |
-| Lint on single Go version | <!-- XX --> | <!-- XX --> | <!-- -XX --> |
-| Path filter (docs commit) | ~80 | ~0 | ~80 |
-| **Total wall-clock** | <!-- XX --> | <!-- XX --> | <!-- -XX --> |
+| `ci-ok` aggregation job | — | — | organizational |
+| Lint on single Go version (not matrixed) | 12 | 14 | negligible (runner variance) |
+| Path filter (docs-only commit skips CI entirely) | ~51 | ~0 | ~51 |
+| `GOFLAGS=-buildvcs=false` (no VCS stamp overhead) | — | — | <1 s, within noise |
+| **Total wall-clock (code commit, warm cache)** | **~51** | **~56** | within variance |
 
 ### Bottleneck analysis
 
-<!-- TODO: fill in after measuring. Template:
+The dominant remaining cost is `go test -race` itself, which takes ~22 s per matrix cell and is the longest single step by far. This is not a pipeline configuration problem: `-race` compiles a separate instrumented binary and runs a concurrent scheduler, which is inherently slower than plain `go test`. The second contributor is runner provisioning (1–2 s "Set up job"), which is fixed overhead for GitHub-hosted runners and cannot be reduced without self-hosted or pre-warmed pools.
 
-The dominant remaining cost is runner provisioning (~20-30 s) — the time from "job queued" to "first step executing." This is inherent to GitHub-hosted runners and cannot be reduced without switching to self-hosted runners or pre-warmed pools. The Go toolchain download (`setup-go` step) is the second-largest cost (~15-20 s on a cache miss); the cache restores it to near-zero on cache hits.
+To make the pipeline shorter at the code level, QuickNotes would need either external dependencies (so the module cache actually saves download time) or a test suite large enough to benefit from `t.Parallel()` within subtests. Neither applies currently.
 
-To make the pipeline shorter at the code level, QuickNotes would need to add external dependencies so the module cache actually pays off. The test suite itself is fast (<1 s) because the project is small; there's nothing to parallelize or skip there.
-
-My team would stop optimizing around 45-60 s total wall-clock — fast enough that no one thinks twice about pushing a commit, slow enough that we're not spending engineering time on diminishing returns. Below 45 s the runner startup is the bottleneck and fixing it requires infrastructure changes beyond the pipeline YAML.
--->
+My team would stop optimizing at around 45–60 s total wall-clock. The current pipeline sits at ~56 s, which is comfortable — fast enough that no one hesitates to push. Below 30 s the runner startup itself becomes the bottleneck, and eliminating it requires infrastructure changes (self-hosted runners) that cost more in maintenance than the time saved at this project scale.
