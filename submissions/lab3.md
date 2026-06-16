@@ -97,8 +97,8 @@ I applied these optimizations:
 | Scenario | Wall-clock |
 |----------|------------|
 | Baseline (no cache, single Go version, no path filter) | 37 s |
-| With cache | TODO |
-| With cache + matrix | TODO |
+| With cache | 53 s |
+| With cache + matrix | 45 s |
 
 ## Task 2 Notes
 
