@@ -28,18 +28,17 @@ https://github.com/1r444444/DevOps-Intro/actions/runs/27611110266
 
 Changed `http.StatusCreated` (201) to `http.StatusOK` (200) in `TestCreateNote_RoundTrip` inside `app/handlers_test.go`. The `test (1.24)` and `test (1.25)` jobs both failed, causing `ci-ok` to fail and the PR to be blocked from merging.
 
-**Red run (broken commit):** https://github.com/1r444444/DevOps-Intro/actions/runs/27611401643
+**Red run (broken commit):** https://github.com/1r444444/DevOps-Intro/actions/runs/27613625839
 
-**Fix commit:** restored the correct `http.StatusCreated`; green run: https://github.com/1r444444/DevOps-Intro/actions/runs/27611487440
+**Fix commit:** restored the correct `http.StatusCreated`; green run: https://github.com/1r444444/DevOps-Intro/actions/runs/27612646201
 
 **Screenshot of blocked PR:**
 
-<!-- TODO: add screenshot from GitHub showing the PR blocked with red checks -->
+![Blocked PR — ci-ok required check failing](image_2.png)
 
 ### Branch protection screenshot
 
-<!-- TODO: add screenshot of Settings → Branches → rule for main with ci-ok as required check -->
-![alt text](image.png)
+![Branch protection ruleset — ci-ok required](image.png)
 
 ---
 
