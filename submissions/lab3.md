@@ -186,7 +186,7 @@ The slowest step after optimization is still **`go test -race`** in the test mat
 
 - [x] Course PR opened (`#1049`)
 - [x] Fork PR opened (`#3`)
-- [ ] Both URLs on Moodle
+- [x] Both URLs on Moodle
 
 ### Bonus (2 pts)
 
