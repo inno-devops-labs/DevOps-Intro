@@ -177,3 +177,209 @@ There are no `systemd --user` journal entries for `quicknotes`. This is expected
 ### 502 debugging reflection
 
 If QuickNotes returned `502 Bad Gateway`, I would first check the component in front of QuickNotes, such as a reverse proxy, load balancer, or gateway, because a 502 usually means the gateway could not get a valid response from the upstream service. I would verify that QuickNotes is actually running, confirm it is listening on the expected address and port with `ss -tlnp`, and test the upstream directly with `curl http://localhost:8080/health`. If the app is not reachable, I would inspect process logs for crashes, bind failures, or configuration errors. If the app is reachable locally, I would then check the proxy upstream address, routing, firewall rules, and DNS configuration.
+
+## Task 2
+
+### Broken deploy reproduction
+
+Commands:
+
+```bash
+cd app/
+ADDR=:8080 go run . &
+PID1=$!
+sleep 1
+ADDR=:8080 go run . 2>&1 | tee /tmp/qn-broken.log &
+PID2=$!
+sleep 2
+cat /tmp/qn-broken.log
+ps -ef | grep quicknotes | grep -v grep
+ps -ef | grep "go run" | grep -v grep
+```
+
+Output:
+
+```text
+[3] 2913573
+2026/06/16 10:26:01 quicknotes listening on :8080 (notes loaded: 8)
+
+[4] 2914079
+2026/06/16 10:26:26 quicknotes listening on :8080 (notes loaded: 8)
+2026/06/16 10:26:26 listen: listen tcp :8080: bind: address already in use
+exit status 1
+
+[4]+  Done                    ADDR=:8080 go run . 2>&1 | tee /tmp/qn-broken.log
+
+2026/06/16 10:26:26 quicknotes listening on :8080 (notes loaded: 8)
+2026/06/16 10:26:26 listen: listen tcp :8080: bind: address already in use
+exit status 1
+
+mostafa  2913671 2913573  0 10:26 pts/3    00:00:00 /home/mostafa/.cache/go-build/32/32655a38a659cde499c37fabd7e81ec7a161a2e7297b91b6bb17f272b23aa937-d/quicknotes
+mostafa  2913573 2899005  2 10:26 pts/3    00:00:02 /snap/go/11200/bin/go run .
+```
+
+Decision:
+
+The broken deploy was reproduced successfully. The first QuickNotes instance started on port `8080`. The second instance attempted to bind to the same port and failed with `listen tcp :8080: bind: address already in use`.
+
+### Outside-in debugging chain
+
+#### 1. Is the process running?
+
+Commands:
+
+```bash
+ps -ef | grep quicknotes | grep -v grep
+ps -ef | grep "go run" | grep -v grep
+```
+
+Output:
+
+```text
+mostafa  2913671 2913573  0 10:26 pts/3    00:00:00 /home/mostafa/.cache/go-build/32/32655a38a659cde499c37fabd7e81ec7a161a2e7297b91b6bb17f272b23aa937-d/quicknotes
+mostafa  2913573 2899005  2 10:26 pts/3    00:00:02 /snap/go/11200/bin/go run .
+```
+
+Decision:
+
+One QuickNotes process is still running. The failed second startup exited, but the first `go run .` wrapper and its compiled `quicknotes` child process remain active.
+
+#### 2. Is it listening?
+
+Command:
+
+```bash
+ss -tlnp | grep 8080
+```
+
+Output:
+
+```text
+LISTEN 0      4096               *:8080             *:*    users:(("quicknotes",pid=2913671,fd=3))
+```
+
+Decision:
+
+Port `8080` is already owned by the running `quicknotes` process. This confirms that the second process failed because the address was already in use.
+
+#### 3. Is it reachable from the host?
+
+Commands:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8080/health
+curl -s http://localhost:8080/health
+```
+
+Output:
+
+```text
+200
+{"notes":8,"status":"ok"}
+```
+
+Decision:
+
+The active QuickNotes instance is reachable from the host and returns a healthy response. The issue is not local reachability to the already-running service.
+
+#### 4. Is a firewall blocking it?
+
+Command:
+
+```bash
+sudo iptables -L -n -v 2>/dev/null || sudo nft list ruleset 2>/dev/null || true
+```
+
+Output excerpt:
+
+```text
+Chain INPUT (policy ACCEPT 39M packets, 61G bytes)
+ pkts bytes target     prot opt in     out     source               destination
+  39M   61G LIBVIRT_INP  0    --  *      *       0.0.0.0/0            0.0.0.0/0
+
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+  14M   14G DOCKER-USER  0    --  *      *       0.0.0.0/0            0.0.0.0/0
+  14M   14G DOCKER-FORWARD  0    --  *      *       0.0.0.0/0            0.0.0.0/0
+    0     0 LIBVIRT_FWX  0    --  *      *       0.0.0.0/0            0.0.0.0/0
+    0     0 LIBVIRT_FWI  0    --  *      *       0.0.0.0/0            0.0.0.0/0
+    0     0 LIBVIRT_FWO  0    --  *      *       0.0.0.0/0            0.0.0.0/0
+
+Chain OUTPUT (policy ACCEPT 28M packets, 23G bytes)
+ pkts bytes target     prot opt in     out     source               destination
+  28M   23G LIBVIRT_OUT  0    --  *      *       0.0.0.0/0            0.0.0.0/0
+
+Chain DOCKER-USER (1 references)
+ pkts bytes target     prot opt in     out     source               destination
+  14M   14G RETURN     0    --  *      *       0.0.0.0/0            0.0.0.0/0
+```
+
+Decision:
+
+The firewall output shows default `ACCEPT` policies for `INPUT` and `OUTPUT`, and the localhost health check already succeeded. A firewall block is not the cause of this failure.
+
+#### 5. Does DNS resolve localhost?
+
+Command:
+
+```bash
+dig +short localhost
+```
+
+Output:
+
+```text
+127.0.0.1
+```
+
+Decision:
+
+`localhost` resolves to `127.0.0.1`, so local name resolution is working. DNS is not the cause of the failed startup.
+
+### Repair and re-verify
+
+Commands:
+
+```bash
+ss -tlnp | grep 8080
+kill 2913671
+sleep 1
+ss -tlnp | grep 8080 || echo "nothing listening on 8080"
+ADDR=:8080 go run . &
+PID1=$!
+sleep 1
+ss -tlnp | grep 8080
+curl -s http://localhost:8080/health
+```
+
+Output:
+
+```text
+LISTEN 0      4096               *:8080             *:*    users:(("quicknotes",pid=2913671,fd=3))
+2026/06/16 10:33:18 shutting down
+nothing listening on 8080
+
+[3] 2918953
+2026/06/16 10:33:31 quicknotes listening on :8080 (notes loaded: 8)
+
+LISTEN 0      4096               *:8080             *:*    users:(("quicknotes",pid=2919053,fd=3))
+{"notes":8,"status":"ok"}
+```
+
+Decision:
+
+The conflicting listener was stopped, port `8080` was confirmed free, QuickNotes restarted cleanly, and `/health` returned a valid response.
+
+### Root cause
+
+The second QuickNotes instance failed because another QuickNotes process was already listening on TCP port `8080`. The exact root-cause error was:
+
+```text
+listen: listen tcp :8080: bind: address already in use
+```
+
+### Mini-postmortem
+
+The broken deploy was caused by two QuickNotes instances trying to bind to the same TCP port, `:8080`. This is a systemic deployment risk because process startup can fail when port ownership is not coordinated, old processes are left running, or service managers do not enforce a single active instance. The application code was not the root problem; the runtime environment already had the required port occupied.
+
+This kind of failure can be prevented with service supervision and deployment checks. A `systemd` unit can manage one authoritative process, stop old instances cleanly, restart failed services, and expose logs through `journalctl`. Pre-flight checks such as `ss -tlnp | grep 8080` can detect port conflicts before rollout. Health checks can confirm that the intended instance is serving traffic after restart.
