@@ -62,7 +62,9 @@ On fork `selysecr332/DevOps-Intro` → **Settings → Branches → `main`**:
 - Require branches up to date
 - **Required check:** `ci-ok` only (matrix renames `vet`/`test` to `vet (1.23)` etc.; aggregation job stays stable)
 
-Screenshot: _TODO — `submissions/screenshots/lab_3/branch-protection.png`_
+Branch protection rule created for `main` (Settings → Branches).
+
+![Branch protection rule for main](screenshots/lab_3/branch-protection.png)
 
 ### 1.7 Green CI run
 
@@ -130,7 +132,7 @@ _Not started — complete after Task 1+2 are green._
 - [x] Pinned runner + action SHAs; `permissions: contents: read`
 - [x] CI green on fork PR (`#3`)
 - [x] Deliberate failure → blocked → fix → green (screenshots in `screenshots/lab_3/cl_red.png` and `cl_green.png`)
-- [ ] Branch protection with `ci-ok` required
+- [x] Branch protection with `ci-ok` required (rule created for `main`)
 - [x] Design questions a–d answered
 
 ### Task 2 (4 pts)
