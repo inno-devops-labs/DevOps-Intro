@@ -88,9 +88,14 @@ Branch protection rule created for `main` (Settings → Branches).
 
 | Scenario | Wall-clock |
 |----------|-----------|
-| Baseline (no cache, single Go version, no path filter) | _TODO_ s |
-| With cache | _TODO_ s |
-| With cache + matrix | _TODO_ s |
+| Baseline (no cache, single Go version, no path filter) | 47 s |
+| With cache | 41 s |
+| With cache + matrix | 54 s |
+
+Measured from fork Actions runs on `feature/lab3-fork`:
+- Baseline run: `27618105353`
+- Cache-only run: `27620629290`
+- Cache+matrix run: `27620789400`
 
 ### 2.5 Design questions
 
@@ -138,7 +143,7 @@ _Not started — complete after Task 1+2 are green._
 ### Task 2 (4 pts)
 
 - [x] Cache, matrix, path filter in workflow
-- [ ] Timing table filled from real runs
+- [x] Timing table filled from real runs
 - [x] Design questions f–h answered
 
 ### Submission
