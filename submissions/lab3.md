@@ -115,7 +115,7 @@ For reference, a stage is a logical phase of a GitLab pipeline, while jobs are t
 
 3. **Aggregation job (`ci-ok`)** — A final job depends on all matrix variants plus `lint` and fails if any upstream job failed or was cancelled. Branch protection requires only `ci-ok`, so matrix job names can change without updating protection rules.
 
-4. **Path filter** — The workflow triggers only when files under `app/` or `.github/workflows/` change. README-only edits skip CI entirely.
+4. **Path filter** — The workflow triggers only when files under `app/` or `.github/workflows/` change. README-only edits or to lab documents for example skip CI entirely.
 
 ### Branch Protection Update
 
@@ -127,7 +127,7 @@ This avoids the "Expected — Waiting for status to be reported" problem describ
 
 ### Path Filter Demonstration
 
-** draft to check ci first **
+In this PR #3 (feature/lab3), CI re-ran after my submission-only edit commit because the path filter evaluates the entire PR diff, and that PR also modifies .github/workflows/ci.yml and app/. 
 
 ### Timing Measurements
 
