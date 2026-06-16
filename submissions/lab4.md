@@ -216,6 +216,20 @@ HTTP/2 200
 
 The pcap shows the TCP handshake followed by encrypted TLS records on port `8443`.
 
+### Wireshark decode
+
+Filtered capture on port `8443`:
+
+![TLS capture overview](../docs/screenshots/lab4-tls-overview.png)
+
+ClientHello (`TLSv1.3`, SNI `localhost` visible in packet list):
+
+![ClientHello](../docs/screenshots/lab4-tls-clienthello.png)
+
+ServerHello (`TLSv1.3`, then Change Cipher Spec and encrypted Application Data):
+
+![ServerHello](../docs/screenshots/lab4-tls-serverhello.png)
+
 Certificate chain from `openssl s_client -connect localhost:8443 -servername localhost -showcerts`:
 
 ```text
