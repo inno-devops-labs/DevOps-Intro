@@ -42,9 +42,17 @@ Tag-based action references (`@v4`) are mutable — a compromised maintainer acc
 | Step | Status | Notes |
 |------|--------|-------|
 | Deliberate break commit | ✅ Done | `2bc342a` on `feature/lab3-fork` and `d1c82e4` on `feature/lab3` (changed expected 404 -> 200 in `TestGetNote_NotFound`) |
-| Red CI run link | ✅ Done | PR checks page: <https://github.com/selysecr332/DevOps-Intro/pull/3/checks> (failed checks at commit `2bc342a`), screenshot: `submissions/screenshots/cl_red.png` |
+| Red CI run link | ✅ Done | PR checks page: <https://github.com/selysecr332/DevOps-Intro/pull/3/checks> (failed checks at commit `2bc342a`) |
 | Fix / revert commit | ✅ Done | `84c0006` on `feature/lab3-fork` and `0273db1` on `feature/lab3` |
-| Green CI run link | ✅ Done | PR checks page: <https://github.com/selysecr332/DevOps-Intro/pull/3/checks> (all checks passed at commit `84c0006`), screenshot: `submissions/screenshots/cl_green.png` |
+| Green CI run link | ✅ Done | PR checks page: <https://github.com/selysecr332/DevOps-Intro/pull/3/checks> (all checks passed at commit `84c0006`) |
+
+**Red run (commit `2bc342a`):**
+
+![CI failed — deliberate break](screenshots/lab_3/cl_red.png)
+
+**Green run (commit `84c0006`):**
+
+![CI recovered after fix](screenshots/lab_3/cl_green.png)
 
 ### 1.6 Branch protection
 
@@ -54,7 +62,7 @@ On fork `selysecr332/DevOps-Intro` → **Settings → Branches → `main`**:
 - Require branches up to date
 - **Required check:** `ci-ok` only (matrix renames `vet`/`test` to `vet (1.23)` etc.; aggregation job stays stable)
 
-Screenshot: _TODO — `submissions/screenshots/Lab_3/branch-protection.png`_
+Screenshot: _TODO — `submissions/screenshots/lab_3/branch-protection.png`_
 
 ### 1.7 Green CI run
 
@@ -121,7 +129,7 @@ _Not started — complete after Task 1+2 are green._
 - [x] `.github/workflows/ci.yml` with vet + test + lint
 - [x] Pinned runner + action SHAs; `permissions: contents: read`
 - [x] CI green on fork PR (`#3`)
-- [x] Deliberate failure → blocked → fix → green (documented with `cl_red.png` and `cl_green.png`)
+- [x] Deliberate failure → blocked → fix → green (screenshots in `screenshots/lab_3/cl_red.png` and `cl_green.png`)
 - [ ] Branch protection with `ci-ok` required
 - [x] Design questions a–d answered
 
