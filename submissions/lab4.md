@@ -1,28 +1,11 @@
 # Lab 4 — OS & Networking: Trace, Debug, and Read the Substrate
 
-My host is Windows, so I ran the whole lab inside **WSL2 (Ubuntu 24.04)**, which
-is a real Linux kernel with a real loopback interface — so `tcpdump -i lo`, `ss`,
-`dig`, and `mtr` all behave exactly as the lab expects. Go 1.26 and the net tools
-(`tcpdump`, `iproute2`, `dnsutils`, `mtr`) are installed in that distro.
-
-Two small substitutions, both equivalent to what the lab asks:
-- For the Bonus I used **socat** as the TLS-terminating reverse proxy instead of
-  Caddy (Caddy needs an external apt repo; socat is in Ubuntu's repos and does the
-  same job — terminate TLS on `:8443`, forward to `:8080`).
-- I decoded the handshake with **tshark** (Wireshark's CLI) instead of the
-  Wireshark GUI, so the evidence is text I can paste here rather than screenshots.
-
-Captured artifacts are in [`lab4-artifacts/`](lab4-artifacts/): `lab4-trace.pcap`,
-`lab4-trace.txt`, `lab4-tls.pcap`, `tls-sclient.txt`.
-
----
-
 ## Task 1 — Trace a Request End-to-End
 
 ### 1.1 Start QuickNotes + capture + one POST
 
 App came up: `quicknotes listening on :8080 (notes loaded: 8)`. The single
-request (`curl -v -X POST .../notes`) returned **201 Created**:
+request (`curl -v -X POST .../notes`) returned 201 Created:
 
 ```
 > POST /notes HTTP/1.1
@@ -116,7 +99,7 @@ Expected — that's why the lab guards it with `|| true`.
 
 ### 1.4 What I'd check first on a 502
 
-A 502 means something *in front of* QuickNotes (a proxy / load balancer) got a
+A 502 means something, QuickNotes (a proxy / load balancer) got a
 connection but couldn't get a valid response from the app behind it, so the
 problem is almost never the proxy — it's the upstream. I'd work the same
 outside-in chain: first `ss -tlnp | grep :8080` to confirm the app is actually
@@ -134,7 +117,7 @@ refused/closed, a silent timeout means it accepted and never replied.
 
 ### 2.1 Reproduce the break
 
-Instance #1 took `:8080`. Instance #2, started on the **same** port, died
+Instance #1 took `:8080`. Instance #2, started on the same port, died
 immediately with exit code 1:
 
 ```
@@ -192,15 +175,15 @@ $ curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8080/health
 
 ### 2.4 Root cause + blameless mini-postmortem
 
-**Root cause:** `bind: address already in use` — the new instance tried to bind
+Root cause: `bind: address already in use` — the new instance tried to bind
 `:8080` while the old one still held it, so `ListenAndServe` failed and the
 process exited.
 
-**Postmortem (blameless).** Nothing here was a careless mistake; it's a systemic
+Postmortem (blameless). Nothing here was a careless mistake; it's a systemic
 gap. A process that owns a port keeps owning it until it fully exits, and a naive
 "start the new one" deploy has no step that guarantees the old one is gone first.
 The failure is also quiet from the outside: health checks keep returning 200
-because the *old* process is still serving, so a dashboard looking only at
+because the old process is still serving, so a dashboard looking only at
 `/health` would show all-green while the new version never shipped. What prevents
 this class of failure is tooling, not vigilance: a real process supervisor
 (systemd, a container runtime, Kubernetes) that stops the old instance and waits
@@ -209,7 +192,7 @@ instance binds a *different* port and traffic is cut over only after its health
 check passes (blue-green / rolling). A pre-start check (`ss -tlnp | grep :8080`)
 that fails fast with a clear message would also have turned a silent no-op deploy
 into an obvious error. The lesson is to make "is the port really free?" an
-explicit, automated gate rather than an assumption. *(~190 words.)*
+explicit, automated gate rather than an assumption.
 
 ---
 
@@ -218,7 +201,7 @@ explicit, automated gate rather than an assumption. *(~190 words.)*
 socat terminated TLS on `:8443` with a self-signed cert for `localhost` and
 proxied to `:8080`. I captured `lab4-tls.pcap` and decoded it with tshark.
 
-**ClientHello** (what curl offered):
+ClientHello (what curl offered):
 ```
 Handshake Type: Client Hello (1)
   (record-layer legacy version: TLS 1.0 — frozen for middlebox compatibility)
@@ -228,7 +211,7 @@ Handshake Type: Client Hello (1)
     TLS_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, ...
 ```
 
-**ServerHello** (what the server chose):
+ServerHello (what the server chose):
 ```
 Handshake Type: Server Hello (2)
   legacy version field: TLS 1.2 (0x0303)
@@ -236,7 +219,7 @@ Handshake Type: Server Hello (2)
   Cipher Suite: TLS_AES_256_GCM_SHA384 (0x1302)
 ```
 
-**Certificate chain** (`openssl s_client`, full output in `tls-sclient.txt`):
+Certificate chain (`openssl s_client`, full output in `tls-sclient.txt`):
 ```
 Certificate chain
  0 s:CN = localhost
@@ -245,12 +228,12 @@ New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
 Verify return code: 18 (self-signed certificate)
 ```
 A one-link chain (the leaf is its own issuer — self-signed), negotiated as
-**TLS 1.3** with an AES-256-GCM cipher. curl's trace confirms the 1.3 flow:
+TLS 1.3 with an AES-256-GCM cipher. curl's trace confirms the 1.3 flow:
 ClientHello → ServerHello → Encrypted Extensions → Certificate → CERT verify →
 Finished.
 
-**Which negotiation step kills TLS 1.0 / 1.1 in 2026?** The
-**`supported_versions` extension**, introduced by TLS 1.3 (RFC 8446). The version
+Which negotiation step kills TLS 1.0 / 1.1 in 2026? The
+`supported_versions` extension, introduced by TLS 1.3 (RFC 8446). The version
 in the record/legacy field is permanently pinned at "TLS 1.2" so old middleboxes
 don't choke — the *actual* version is negotiated only through this extension. A
 2026 client (curl/OpenSSL here) simply doesn't list 1.0 or 1.1 in
@@ -259,13 +242,3 @@ the table. Even if a client tried to fall back to a 1.0 record-layer `ClientHell
 current libraries reject it outright. TLS 1.0/1.1 weren't "turned off" by one
 switch — they were dropped from the version-negotiation extension and from
 libraries' allowed-version floors.
-
----
-
-## Summary
-
-| Task | Evidence |
-|------|----------|
-| 1 — trace end-to-end | pcap + decoded `lab4-trace.txt`: handshake, POST+body, 201+JSON, FIN close; all 5 debug commands; 502 reflection |
-| 2 — broken deploy | `bind: address already in use` reproduced; outside-in chain (ps/ss/curl/firewall/DNS); repair to 200; blameless postmortem |
-| Bonus — TLS | ClientHello (SNI + offered versions + ciphers), ServerHello (TLS 1.3 + cipher), self-signed chain; TLS 1.0/1.1 deprecation explained |
