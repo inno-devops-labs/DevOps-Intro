@@ -4,9 +4,15 @@ on:
   push:
     branches:
       - main
+    paths:
+      - app/**
+      - .github/workflows/ci.yml
   pull_request:
     branches:
       - main
+    paths:
+      - app/**
+      - .github/workflows/ci.yml
 
 permissions:
   contents: read
@@ -24,6 +30,12 @@ jobs:
     name: vet (go ${{ matrix.go-version }})
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version:
+          - 1.23.x
+          - 1.24.x
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -31,9 +43,10 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
         with:
-          go-version: 1.24.x
+          go-version: ${{ matrix.go-version }}
           cache: true
           cache-dependency-path: |
+            app/go.sum
             app/go.mod
 
       - name: Run go vet
@@ -44,6 +57,12 @@ jobs:
     name: test (go ${{ matrix.go-version }})
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version:
+          - 1.23.x
+          - 1.24.x
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -51,9 +70,10 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
         with:
-          go-version: 1.24.x
+          go-version: ${{ matrix.go-version }}
           cache: true
           cache-dependency-path: |
+            app/go.sum
             app/go.mod
 
       - name: Run race tests
@@ -74,6 +94,7 @@ jobs:
           go-version: 1.24.x
           cache: true
           cache-dependency-path: |
+            app/go.sum
             app/go.mod
 
       - name: Run golangci-lint
