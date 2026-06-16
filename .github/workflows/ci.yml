@@ -1,6 +1,6 @@
 name: CI
 
-# Baseline measurement: no path filter, no cache, single Go version
+# Cache measurement: module cache on, single Go version, no path filter
 on:
   push:
     branches:
@@ -29,6 +29,8 @@ jobs:
         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.5.0
         with:
           go-version: "1.24"
+          cache: true
+          cache-dependency-path: app/go.sum
 
       - name: Run go vet
         run: go vet ./...
@@ -49,6 +51,8 @@ jobs:
         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.5.0
         with:
           go-version: "1.24"
+          cache: true
+          cache-dependency-path: app/go.sum
 
       - name: Run tests
         run: go test -race -count=1 ./...
