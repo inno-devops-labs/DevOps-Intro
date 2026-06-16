@@ -1,0 +1,78 @@
+22:26:03.768337 IP6 ::1.35392 > ::1.8080: Flags [S], seq 2609277124, win 65476, options [mss 65476,sackOK,TS val 2165058868 ecr 0,nop,wscale 7], length 0
+`..=.(.@.................................@....h..........0.........
+..-4........
+22:26:03.768391 IP6 ::1.8080 > ::1.35392: Flags [S.], seq 1357679227, ack 2609277125, win 65464, options [mss 65476,sackOK,TS val 2165058868 ecr 2165058868,nop,wscale 7], length 0
+`....(.@...................................@P..{..h......0.........
+..-4..-4....
+22:26:03.768406 IP6 ::1.35392 > ::1.8080: Flags [.], ack 1, win 512, options [nop,nop,TS val 2165058868 ecr 2165058868], length 0
+`..=. .@.................................@....h.P..|.....(.....
+..-4..-4
+22:26:03.768747 IP6 ::1.35392 > ::1.8080: Flags [P.], seq 1:175, ack 1, win 512, options [nop,nop,TS val 2165058869 ecr 2165058868], length 174: HTTP: POST /notes HTTP/1.1
+`..=...@.................................@....h.P..|...........
+..-5..-4POST /notes HTTP/1.1
+Host: localhost:8080
+User-Agent: curl/8.5.0
+Accept: */*
+Content-Type: application/json
+Content-Length: 39
+
+{"title":"trace me","body":"in flight"}
+22:26:03.768752 IP6 ::1.8080 > ::1.35392: Flags [.], ack 175, win 511, options [nop,nop,TS val 2165058869 ecr 2165058869], length 0
+`.... .@...................................@P..|..is.....(.....
+..-5..-5
+22:26:03.784747 IP6 ::1.8080 > ::1.35392: Flags [P.], seq 1:207, ack 175, win 512, options [nop,nop,TS val 2165058885 ecr 2165058869], length 206: HTTP: HTTP/1.1 201 Created
+`......@...................................@P..|..is...........
+..-E..-5HTTP/1.1 201 Created
+Content-Type: application/json
+Date: Tue, 16 Jun 2026 19:26:03 GMT
+Content-Length: 93
+
+{"id":9,"title":"trace me","body":"in flight","created_at":"2026-06-16T19:26:03.770537887Z"}
+
+22:26:03.784794 IP6 ::1.35392 > ::1.8080: Flags [.], ack 207, win 511, options [nop,nop,TS val 2165058885 ecr 2165058885], length 0
+`..=. .@.................................@....isP..J.....(.....
+..-E..-E
+22:26:03.785140 IP6 ::1.35392 > ::1.8080: Flags [F.], seq 175, ack 207, win 512, options [nop,nop,TS val 2165058885 ecr 2165058885], length 0
+`..=. .@.................................@....isP..J.....(.....
+..-E..-E
+22:26:03.785262 IP6 ::1.8080 > ::1.35392: Flags [F.], seq 207, ack 176, win 512, options [nop,nop,TS val 2165058885 ecr 2165058885], length 0
+`.... .@...................................@P..J..it.....(.....
+..-E..-E
+22:26:03.785303 IP6 ::1.35392 > ::1.8080: Flags [.], ack 208, win 512, options [nop,nop,TS val 2165058885 ecr 2165058885], length 0
+`..=. .@.................................@....itP..K.....(.....
+..-E..-E
+22:26:13.528745 IP6 ::1.35164 > ::1.8080: Flags [S], seq 2848796881, win 65476, options [mss 65476,sackOK,TS val 2165066684 ecr 0,nop,wscale 7], length 0
+`..&.(.@.................................\....0..........0.........
+..K.........
+22:26:13.528766 IP6 ::1.8080 > ::1.35164: Flags [S.], seq 2128901973, ack 2848796882, win 65464, options [mss 65476,sackOK,TS val 2165066684 ecr 2165066684,nop,wscale 7], length 0
+`....(.@...................................\~.wU..0......0.........
+..K...K.....
+22:26:13.528777 IP6 ::1.35164 > ::1.8080: Flags [.], ack 1, win 512, options [nop,nop,TS val 2165066684 ecr 2165066684], length 0
+`..&. .@.................................\....0.~.wV.....(.....
+..K...K.
+22:26:13.528867 IP6 ::1.35164 > ::1.8080: Flags [P.], seq 1:84, ack 1, win 512, options [nop,nop,TS val 2165066684 ecr 2165066684], length 83: HTTP: POST /notes HTTP/1.1
+`..&.s.@.................................\....0.~.wV.....{.....
+..K...K.POST /notes HTTP/1.1
+Host: localhost:8080
+User-Agent: curl/8.5.0
+Accept: */*
+
+
+22:26:13.528872 IP6 ::1.8080 > ::1.35164: Flags [.], ack 84, win 511, options [nop,nop,TS val 2165066684 ecr 2165066684], length 0
+`.... .@...................................\~.wV..1%.....(.....
+..K...K.
+22:26:13.529406 IP6 ::1.8080 > ::1.35164: Flags [P.], seq 1:148, ack 84, win 512, options [nop,nop,TS val 2165066685 ecr 2165066684], length 147: HTTP: HTTP/1.1 400 Bad Request
+`......@...................................\~.wV..1%...........
+..K...K.HTTP/1.1 400 Bad Request
+Content-Type: application/json
+Date: Tue, 16 Jun 2026 19:26:13 GMT
+Content-Length: 30
+
+{"error":"invalid JSON body"}
+
+22:26:13.529438 IP6 ::1.35164 > ::1.8080: Flags [.], ack 148, win 511, options [nop,nop,TS val 2165066685 ecr 2165066685], length 0
+`..&. .@.................................\....1%~.w......(.....
+..K...K.
+22:26:13.529634 IP6 ::1.35164 > ::1.8080: Flags [F.], seq 84, ack 148, win 512, options [nop,nop,TS val 2165066685 ecr 2165066685], length 0
+`..&. .@.................................\....1%~.w......(.....
+..K...K.
