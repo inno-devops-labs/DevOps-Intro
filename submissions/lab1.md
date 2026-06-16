@@ -108,7 +108,10 @@ Date:   Wed Jun 17 01:02:52 2026 +0800
 ```
 
 ### Verified badge screenshot
+![alt text](image.png)
 
+
+The PR description was filled with the same sections as `.github/pull_request_template.md`. GitHub did not auto-populate it because the PR targets the upstream repository, and GitHub loads templates from the base repository.
 ### Why signed commits matter
 
 Signed commits provide provenance: reviewers can verify that a commit was really created by the expected author and was not silently forged under someone else's identity. This matters because modern software supply chains depend on trust between maintainers, contributors, and automation. The xz-utils backdoor incident in March 2024 showed how damaging it is when malicious changes blend into a trusted workflow, so stronger authenticity signals such as verified signatures reduce the chance of that trust being abused.
@@ -118,6 +121,8 @@ Signed commits provide provenance: reviewers can verify that a commit was really
 The repository includes a pull request template at `.github/pull_request_template.md`. The lab PR uses this template so the description contains the required Goal, Changes, Testing, and Checklist sections.
 
 ### PR evidence
+![alt text](image-1.png)
+
 
 ## Task 3. GitHub Community
 
