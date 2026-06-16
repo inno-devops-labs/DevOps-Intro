@@ -2,7 +2,7 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [main, feature/lab3]
   pull_request:
     branches: [main]
     paths:
