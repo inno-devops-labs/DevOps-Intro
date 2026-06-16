@@ -19,14 +19,8 @@ permissions:
 
 jobs:
   vet:
-    name: vet (${{ matrix.go-version }})
+    name: vet
     runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        go-version:
-          - '1.23.10'
-          - '1.24.0'
     defaults:
       run:
         working-directory: app
@@ -37,7 +31,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff  # v5.6.0
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: '1.24.0'
           cache: true
           cache-dependency-path: app/go.mod
 
@@ -45,14 +39,8 @@ jobs:
         run: go vet ./...
 
   test:
-    name: test (${{ matrix.go-version }})
+    name: test
     runs-on: ubuntu-24.04
-    strategy:
-      fail-fast: false
-      matrix:
-        go-version:
-          - '1.23.10'
-          - '1.24.0'
     defaults:
       run:
         working-directory: app
@@ -63,7 +51,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff  # v5.6.0
         with:
-          go-version: ${{ matrix.go-version }}
+          go-version: '1.24.0'
           cache: true
           cache-dependency-path: app/go.mod
 
