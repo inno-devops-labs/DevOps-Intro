@@ -138,7 +138,112 @@ in."
 
 ## Task 2 — Make It Fast and Smart
 
-<!-- TODO: cache, matrix (1.23/1.24), path filters, timing table, answers f/g/h -->
+### Optimizations applied
+
+**1. Caching the Go build cache.**
+This module has **zero external dependencies and no `go.sum`** (`go list -m all`
+prints only `quicknotes`). So `setup-go`'s built-in `cache: true` is unusable —
+it needs a `go.sum` to compute its key and would error. The only thing worth
+caching here is the **build cache** (`~/.cache/go-build`): compiled stdlib +
+package objects. I cache it with `actions/cache`, keyed on
+`hashFiles('app/go.mod', 'app/**/*.go')` plus the Go version, with a
+`restore-keys` prefix fallback. The cache is verifiable in the repo's
+**Actions → Caches** list as `Linux-go1.24-…` (≈20 MB) and as a *"Cache restored
+from key…"* line in the run log.
+
+- ![Cache created / hit](img/lab3-s6-cache-hit.png) <!-- S6 -->
+
+**2. Build matrix over Go 1.23 + 1.24.**
+`vet` and `test` run as a `strategy.matrix` over both Go versions with
+`fail-fast: false`, so a failure on one toolchain doesn't cancel the other and I
+can see exactly which version broke. `lint` stays single-version (1.24) — linting
+isn't toolchain-sensitive here. The cache key includes `${{ matrix.go }}` so the
+two versions keep separate caches.
+
+Adding the matrix changes the status-check names (`vet (1.23)`, `vet (1.24)`,
+`test (1.23)`, `test (1.24)`), so I updated branch protection on `main` to
+require all four matrix cells plus `lint`:
+
+- ![Branch protection with matrix checks](img/lab3-s8-branch-protection-matrix.png) <!-- S8 -->
+
+
+**3. Path filters.**
+`on.push.paths` / `on.pull_request.paths` restrict CI to `app/**` and
+`.github/workflows/ci.yml`. A docs-only change (e.g. editing a README) no longer
+burns CI minutes. Demonstrated with a throwaway PR (`docs/skip-demo`) that edits
+only `README.md` — no CI jobs run on it:
+
+- ![Docs-only PR skips CI](img/lab3-s7-path-filter-skip.png) <!-- S7 -->
+
+Known trade-off: with **strict required checks**, a docs-only PR that skips CI
+also can't auto-merge — the required checks sit in `Expected` forever. A
+production fix is a tiny "always-runs" guard job that reports success when paths
+don't match; for this lab the skip demonstration is enough.
+
+### Timing table
+
+Wall-clock from the CI UI (runner variance is high for a job this small, so
+treat these as ±10 s — the lab's "measure the median" caveat applies hard here):
+
+| Scenario | Wall-clock |
+|----------|-----------|
+| Baseline (no cache, single Go 1.24, no path filter) | 39 s |
+| With cache (single Go 1.24, warm cache) | 45 s |
+| With cache + matrix (Go 1.23 + 1.24, warm cache) | 43 s |
+
+**Reading the numbers — the honest result:** caching gives **no net speedup
+here, and is marginally slower**. The project compiles in seconds because it has
+no dependencies, so the time saved by restoring compiled objects is smaller than
+the overhead of downloading + unpacking + re-uploading a ~20 MB cache. The matrix
+*doubles the work* (two Go versions) yet barely moves wall-clock (45 → 43 s)
+because the cells run **in parallel** — that's the matrix doing its job, not a
+measurement error. For a real service with dozens of dependencies the cache row
+would drop dramatically; for QuickNotes the right call would be to **drop the
+cache** and keep only the matrix + path filter. The skill the lab teaches —
+"measure before you optimize" — pays off precisely by exposing an optimization
+that isn't one.
+
+### 2.5 Design questions
+
+**f) Why cache `go.sum`-keyed inputs and not build outputs?**
+
+`go.sum` pins every dependency to an exact content hash, so it's a *deterministic
+input*: the cache key changes only when dependencies actually change, and a
+restored cache is guaranteed to match the exact module set the build will use.
+Build *outputs* (linked binaries, arbitrary artifacts) are a bad cache key
+because they can differ across toolchain versions, build flags, timestamps, and
+host — key on them and you risk restoring stale or mismatched artifacts that
+silently corrupt a build. Go's own build cache (`GOCACHE`) is the one "output"
+that *is* safe to cache, because Go internally content-addresses each entry by a
+hash of all its inputs (source, compiler version, flags) and only reuses an entry
+when those inputs match exactly. In this repo there's no `go.sum` (zero deps), so
+I key on `hashFiles(go.mod, **/*.go)` — the deterministic inputs — and rely on
+Go's content-addressed build cache for correctness.
+
+**g) What does `fail-fast: false` change, and when do you want `fail-fast: true`?**
+
+With the default `fail-fast: true`, the moment one matrix cell fails GitHub
+**cancels all the other cells**. That's bad for a version matrix: if `test
+(1.23)` fails you never learn whether `1.24` also fails — you lose the signal
+that tells you "this is a 1.23-specific regression." `fail-fast: false` lets
+every cell finish, so the matrix becomes a diagnostic. You want `fail-fast: true`
+when you *don't* care which cell failed and want to save time/CI minutes — e.g. a
+large or expensive matrix where any single failure blocks the merge anyway, so
+the first failure is enough signal and running the rest is wasted spend.
+
+**h) Risk of an attacker writing a cache from a malicious PR that protected branches later read?**
+
+This is **cache poisoning**: a PR (possibly from a fork) runs CI, writes a cache
+entry, and if a protected branch or a later PR restores that cache by matching
+its key, it executes/trusts attacker-controlled bytes — a poisoned build cache
+could ship a tampered binary, a poisoned module cache could inject malicious
+code. GitHub mitigates this by **scoping caches to branches**: a workflow can
+only restore caches created in its own branch, its PR base branch, or the default
+branch — and a PR's cache cannot be read by the default/protected branch. So a
+malicious PR can't silently plant a cache that `main`'s protected pipeline will
+later consume. (See GitHub Docs → *Caching dependencies to speed up workflows →
+"Restrictions for accessing a cache"*; Lecture 3 phrased it as "GitHub now
+restricts cache writes to the default branch.")
 
 ## Bonus — Pipeline Performance Investigation
 
