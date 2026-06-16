@@ -383,3 +383,141 @@ listen: listen tcp :8080: bind: address already in use
 The broken deploy was caused by two QuickNotes instances trying to bind to the same TCP port, `:8080`. This is a systemic deployment risk because process startup can fail when port ownership is not coordinated, old processes are left running, or service managers do not enforce a single active instance. The application code was not the root problem; the runtime environment already had the required port occupied.
 
 This kind of failure can be prevented with service supervision and deployment checks. A `systemd` unit can manage one authoritative process, stop old instances cleanly, restart failed services, and expose logs through `journalctl`. Pre-flight checks such as `ss -tlnp | grep 8080` can detect port conflicts before rollout. Health checks can confirm that the intended instance is serving traffic after restart.
+
+## Bonus Task
+
+### HTTPS layer
+
+QuickNotes only serves HTTP directly on port `8080`, so I added Caddy as a TLS-terminating reverse proxy on port `8443`.
+
+Commands:
+
+```bash
+echo 'localhost:8443 {
+  reverse_proxy localhost:8080
+}' | sudo tee /etc/caddy/Caddyfile
+
+sudo systemctl restart caddy
+sudo systemctl status caddy --no-pager
+```
+
+Output excerpt:
+
+```text
+caddy.service - Caddy
+Loaded: loaded (/usr/lib/systemd/system/caddy.service; enabled; preset: enabled)
+Active: active (running) since Tue 2026-06-16 10:50:33 MSK
+Main PID: 2930518 (caddy)
+```
+
+Decision:
+
+Caddy started successfully and listened as the HTTPS reverse proxy for `localhost:8443`.
+
+### HTTPS health check
+
+Command:
+
+```bash
+curl -vk https://localhost:8443/health
+```
+
+Output excerpt:
+
+```text
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* SSL connection using TLSv1.3 / TLS_AES_128_GCM_SHA256 / X25519 / id-ecPublicKey
+* ALPN: server accepted h2
+< HTTP/2 200
+< server: Caddy
+{"notes":8,"status":"ok"}
+```
+
+Decision:
+
+The HTTPS request completed successfully. Caddy terminated TLS, negotiated `TLSv1.3` with cipher suite `TLS_AES_128_GCM_SHA256`, and proxied the request to QuickNotes.
+
+### TLS packet capture
+
+Commands:
+
+```bash
+sudo tcpdump -i lo -nn -s 0 -w lab4-tls.pcap 'tcp port 8443' &
+TCPDUMP_PID=$!
+
+curl -vk https://localhost:8443/health
+
+sudo kill $TCPDUMP_PID
+wait $TCPDUMP_PID 2>/dev/null
+```
+
+The resulting capture file is `lab4-tls.pcap`.
+
+### ClientHello
+
+Screenshot:
+
+![ClientHello packet in Wireshark](../images/lab4/client_hello.png)
+
+Annotation:
+
+- The ClientHello is visible in Wireshark as `Client Hello (SNI=localhost)`.
+- The client connects to Caddy on `localhost:8443`.
+- The Server Name Indication extension identifies the requested hostname as `localhost`.
+- The ClientHello advertises supported TLS versions and cipher suites, allowing the server to choose a mutually supported TLS version and cipher.
+
+### ServerHello
+
+Screenshot:
+
+![ServerHello packet in Wireshark](../images/lab4/server_hello.png)
+
+Annotation:
+
+- The ServerHello is visible in Wireshark after the matching ClientHello.
+- The negotiated protocol is `TLSv1.3`.
+- The selected cipher suite is `TLS_AES_128_GCM_SHA256`.
+- The selected temporary key exchange group is `X25519`, matching the `curl -vk` and `openssl s_client` output.
+
+### Certificate chain
+
+Command:
+
+```bash
+openssl s_client -connect localhost:8443 -servername localhost -showcerts </dev/null 2>&1 | tee lab4-tls-cert-chain.txt
+```
+
+Output excerpt:
+
+```text
+Certificate chain
+ 0 s:
+   i:CN = Caddy Local Authority - ECC Intermediate
+   a:PKEY: id-ecPublicKey, 256 (bit); sigalg: ecdsa-with-SHA256
+   v:NotBefore: Jun 16 07:45:40 2026 GMT; NotAfter: Jun 16 19:45:40 2026 GMT
+ 1 s:CN = Caddy Local Authority - ECC Intermediate
+   i:CN = Caddy Local Authority - 2026 ECC Root
+   a:PKEY: id-ecPublicKey, 256 (bit); sigalg: ecdsa-with-SHA256
+   v:NotBefore: Jun 16 07:45:40 2026 GMT; NotAfter: Jun 23 07:45:40 2026 GMT
+---
+Server certificate
+subject=
+issuer=CN = Caddy Local Authority - ECC Intermediate
+---
+Server Temp Key: X25519, 253 bits
+---
+SSL handshake has read 1268 bytes and written 375 bytes
+Verification error: unable to get local issuer certificate
+---
+New, TLSv1.3, Cipher is TLS_AES_128_GCM_SHA256
+Verify return code: 20 (unable to get local issuer certificate)
+```
+
+Decision:
+
+The certificate chain is Caddy's local development certificate chain. The verification warning is expected because the local Caddy root certificate is not trusted by the host certificate store. The TLS handshake still completed successfully.
+
+### TLS 1.0 and TLS 1.1 deprecation
+
+TLS 1.0 and TLS 1.1 are rejected during the protocol-version negotiation part of the handshake. The client advertises supported versions in the ClientHello, and the server selects an acceptable version in the ServerHello. In this capture, the server selected `TLSv1.3`; a client that only supported TLS 1.0 or TLS 1.1 would fail during negotiation before any HTTP request reached QuickNotes.
