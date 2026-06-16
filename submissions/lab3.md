@@ -61,6 +61,8 @@ An attacker compromised the `tj-actions/changed-files` GitHub Actions repository
 
 `permissions:` scopes what the auto-generated `GITHUB_TOKEN` (the per-run credential injected into every workflow) is allowed to do. By default GitHub grants broad permissions (read + write on many APIs). Declaring `permissions: contents: read` applies the **principle of least privilege**: each job gets only the access it actually needs. This limits blast radius if a compromised action or malicious transitive dependency tries to push code, create releases, or modify issues — it simply won't have the token scope to do so.
 
+**e) GitLab path — N/A (GitHub Actions path chosen)**
+
 ---
 
 ## Task 2 — Make It Fast and Smart
@@ -69,9 +71,9 @@ An attacker compromised the `tj-actions/changed-files` GitHub Actions repository
 
 1. **Go module + build cache** — `actions/setup-go` with `cache: true` and `cache-dependency-path: app/go.mod`. Caches `$GOPATH/pkg/mod` (module cache) and `$HOME/.cache/go-build` (build cache) keyed on `go.mod`. On subsequent runs with an unchanged `go.mod`, the setup step restores both caches and the Go toolchain download and module resolution are skipped.
 
-2. **Build matrix (Go 1.24 + 1.25)** — `strategy.matrix.go: ['1.24', '1.25']` on `vet` and `test` jobs, with `fail-fast: false`. Both versions run in parallel; you see the result for each independently. `lint` runs only on 1.24 (golangci-lint's minimum supported version). Go 1.23 was excluded because `app/go.mod` declares `go 1.24` as the minimum; Go 1.23 refuses to run a module that requires a higher toolchain version.
+2. **Build matrix (Go 1.24 + 1.25)** — `strategy.matrix.go: ['1.24', '1.25']` on `vet` and `test` jobs, with `fail-fast: false`. Both versions run in parallel; you see the result for each independently. `lint` runs only on 1.24 (golangci-lint's minimum supported version). The lab suggests `1.23 + 1.24`, but `app/go.mod` declares `go 1.24` as the minimum toolchain version; Go 1.23 with `GOTOOLCHAIN=local` (the `setup-go` v6 default) refuses to build a module that requires a higher Go version and the run fails immediately. Using `1.24 + 1.25` gives the same "catch toolchain-specific regressions" value without a guaranteed failure on every run.
 
-3. **Path filter** — `on.push.paths` and `on.pull_request.paths` restrict triggers to `app/**` and `.github/workflows/ci.yml`. A commit that only touches `README.md`, `labs/`, or `submissions/` will not trigger the pipeline at all, saving CI minutes.
+3. **Path filter** — `on.push.paths` and `on.pull_request.paths` restrict triggers to `app/**` and `.github/workflows/ci.yml`. A commit that only touches `README.md`, `labs/`, or `submissions/` will not trigger the pipeline at all, saving CI minutes. **Demonstrated:** commit `docs(lab3): demonstrate path filter — docs-only push skips CI` in this branch touches only `submissions/lab3.md`; the Actions tab shows no workflow run triggered for that push.
 
 4. **`ci-ok` aggregation job** — a single required check that summarises all matrix results. Branch protection only needs to require `ci-ok`; when the matrix grows (e.g. adding Go 1.25), protection settings need no update.
 
