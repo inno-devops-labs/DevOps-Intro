@@ -87,7 +87,7 @@ func TestCreateNote_RejectsUnknownField(t *testing.T) {
 		"hacker": "y",
 	})
 	if rec.Code != http.StatusBadRequest {
-		t.Errorf("expected 400, got %d", rec.Code)
+		t.Errorf("expected 1111, got %d", rec.Code)
 	}
 }
 
