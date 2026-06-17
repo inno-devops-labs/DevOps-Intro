@@ -61,7 +61,7 @@ func TestCreateNote_RoundTrip(t *testing.T) {
 		"body":  "hello",
 	})
 	if rec.Code != http.StatusCreated {
-		t.Fatalf("expected 205, got %d: %s", rec.Code, rec.Body.String())
+		t.Fatalf("expected 200, got %d: %s", rec.Code, rec.Body.String())
 	}
 	var n Note
 	if err := json.NewDecoder(rec.Body).Decode(&n); err != nil {
@@ -87,7 +87,7 @@ func TestCreateNote_RejectsUnknownField(t *testing.T) {
 		"hacker": "y",
 	})
 	if rec.Code != http.StatusBadRequest {
-		t.Errorf("expected 1111, got %d", rec.Code)
+		t.Errorf("expected 400, got %d", rec.Code)
 	}
 }
 
@@ -129,9 +129,5 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 			t.Errorf("metrics missing %q", want)
 		}
 	}
-
-func TestAlwaysFails(t *testing.T) {
-	t.Fatalf("this test always fails")
-}
 }
 
