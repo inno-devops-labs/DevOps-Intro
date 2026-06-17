@@ -1,13 +1,13 @@
 
 ## Goal
 <!-- What does this PR accomplish? 1 sentence. -->
-Complete lab 1 DevOps
+Complete lab 3 DevOps
 
 ## Changes
 * Add SSH key (github profile + locally)
 * New branch feature/lab1
 * Start submission lab1
-* Finish submission lab1
+* Added submissions/lab3.md
 
 ## Testing
 <!-- How did you verify it? -->

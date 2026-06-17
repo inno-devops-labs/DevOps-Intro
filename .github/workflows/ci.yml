@@ -1,0 +1,83 @@
+name: PR Gate CI
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'app/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'app/**'
+      - '.github/workflows/ci.yml'
+
+permissions:
+  contents: read   # only read
+
+jobs:
+  # ---------- vet ----------
+  vet:
+    name: go vet
+    runs-on: ubuntu-24.04   # runner version
+    strategy:
+      matrix:
+        go-version: [ '1.23', '1.24' ]
+      fail-fast: false
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - name: Setup Go
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1e1932a34a  # v5.3.0
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+      - name: Run go vet
+        run: go vet ./...
+
+  # ---------- test ----------
+  test:
+    name: go test -race
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        go-version: [ '1.23', '1.24' ]
+      fail-fast: false
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - name: Setup Go
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1e1932a34a  # v5.3.0
+        with:
+          go-version: ${{ matrix.go-version }}
+          cache: true
+      - name: Run tests with race detector
+        run: go test -race -count=1 ./...
+
+  # ---------- lint ----------
+  lint:
+    name: golangci-lint
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+      - name: Setup Go
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1e1932a34a  # v5.3.0
+        with:
+          go-version: '1.24'
+          cache: true
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@55c2c1448f86e01eaae002a5a3a9624417608d84  # v6.5.0
+        with:
+          version: v2.5.0
+          working-directory: app
+          args: --timeout=5m
