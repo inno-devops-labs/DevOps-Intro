@@ -1,6 +1,6 @@
 # Lab 4 — OS & Networking: Trace, Debug, and Read the Substrate
 
-**Student:** Mahmoud Hassan (`selysecr332`)  
+     Mahmoud Hassan (`selysecr332`)  
 **Environment:** Windows 11 + **WSL2 Ubuntu** (Go 1.24.4, `tcpdump`, `ss`, `dig`, `mtr`)
 
 ---
@@ -167,9 +167,82 @@ Single instance on `:8080` restored; health returns **200**.
 
 ---
 
-## Bonus — TLS handshake (optional)
+## Bonus — TLS handshake decode
 
-_Not attempted._
+### B.1 HTTPS layer (Caddy → QuickNotes)
+
+Caddy v2.9.1 (binary from GitHub releases) terminates TLS on `:8443` and reverse-proxies to QuickNotes on `:8080`.
+
+**`app/Caddyfile`:**
+
+```
+{
+	auto_https off
+}
+
+localhost:8443 {
+	tls /tmp/lab4-cert.pem /tmp/lab4-key.pem {
+		protocols tls1.2 tls1.3
+	}
+	reverse_proxy localhost:8080
+}
+```
+
+Setup (WSL):
+
+```bash
+# QuickNotes on :8080
+cd app && ADDR=:8080 go run .
+
+# Self-signed cert + Caddy
+openssl req -x509 -newkey rsa:2048 -keyout /tmp/lab4-key.pem -out /tmp/lab4-cert.pem \
+  -days 365 -nodes -subj "/CN=localhost"
+/tmp/caddy run --config Caddyfile --adapter caddyfile
+```
+
+### B.2 Capture
+
+```bash
+sudo tcpdump -i lo -nn -s 0 -w lab4-tls.pcap 'tcp port 8443' &
+curl -vk https://localhost:8443/health
+```
+
+**`curl -vk` result (TLS 1.3 path):**
+
+```
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+* SSL connection using TLSv1.3 / TLS_AES_128_GCM_SHA256 / X25519 / RSASSA-PSS
+* Server certificate: subject: CN=localhost; issuer: CN=localhost (self-signed)
+< HTTP/2 200
+{"notes":9,"status":"ok"}
+```
+
+Decoded handshake excerpt: `submissions/lab4-tls-handshake.txt` (`openssl s_client -msg`).
+
+### B.3 ClientHello / ServerHello / cert chain
+
+| Message | What it shows |
+|---------|----------------|
+| **ClientHello** | Max version `03 03` (TLS 1.2+), **SNI** `localhost` (bytes `6c 6f 63 61 6c 68 6f 73 74`), cipher suites offered (`c0 2f` ECDHE-RSA-AES128-GCM-SHA256, `c0 30`, `13 01` TLS 1.3 suites, etc.) |
+| **ServerHello** | Selected version `03 03`, cipher **`c0 2f`** (ECDHE-RSA-AES128-GCM-SHA256), session ticket extension |
+| **Certificate** | Single self-signed leaf: `CN=localhost`, RSA 2048, valid 2026-06-17 → 2027-06-17 |
+
+**Cert chain (`openssl s_client -showcerts`):**
+
+```
+Certificate chain
+ 0 s:CN = localhost
+   i:CN = localhost
+   a:PKEY: rsaEncryption, 2048 (bit); sigalg: RSA-SHA256
+```
+
+(Default `curl` negotiates **TLS 1.3**; forcing `-tls1_2` shows the ServerHello cipher `ECDHE-RSA-AES128-GCM-SHA256` in the excerpt file.)
+
+### B.4 Which step kills TLS 1.0 / 1.1 in 2026?
+
+**The ServerHello / version negotiation step** (or an immediate `handshake_failure` alert before it). Caddy is configured with `protocols tls1.2 tls1.3` — the server will not complete a handshake at TLS 1.0 or 1.1 even if a legacy client advertises those versions in ClientHello. In 2026 this matches production reality: RFC 8996 deprecated TLS 1.0/1.1, major browsers removed them years ago, and PCI-DSS forbids them for card data. The client may still *offer* old cipher suites in ClientHello, but the server’s **version + cipher selection in ServerHello** (or refusal) is where 1.0/1.1 die — only TLS 1.2/1.3 proceeds.
 
 ---
 
@@ -208,4 +281,7 @@ _Not attempted._
 
 ### Bonus (2 pts)
 
-- [ ] Not attempted
+- [x] Caddy HTTPS reverse proxy on `:8443`
+- [x] TLS handshake captured/decoded (`curl -vk`, `openssl s_client -msg`)
+- [x] ClientHello + ServerHello + cert chain documented
+- [x] TLS 1.0/1.1 deprecation reasoning (ServerHello / min-protocol gate)

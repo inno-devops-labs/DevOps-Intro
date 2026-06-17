@@ -1,0 +1,10 @@
+{
+	auto_https off
+}
+
+localhost:8443 {
+	tls /tmp/lab4-cert.pem /tmp/lab4-key.pem {
+		protocols tls1.2 tls1.3
+	}
+	reverse_proxy localhost:8080
+}
