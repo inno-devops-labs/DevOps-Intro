@@ -16,11 +16,16 @@ a.frolova@innopolis.university
 
 ![alt text](i1.png)
 
+Ссылка: https://github.com/kicchhi/DevOps-Intro/actions/runs/27698317745
+---
 
 Сломанный тест:
 
 ![alt text](i2.png)
 ![alt text](i3.png)
+
+Ссылка: 
+--- https://github.com/kicchhi/DevOps-Intro/actions/runs/27698554738
 
 Восстановленный тест:
 
@@ -28,6 +33,7 @@ a.frolova@innopolis.university
 ![alt text](image-2.png)
 
 Ссылка: https://github.com/kicchhi/DevOps-Intro/actions/runs/27698833264
+---
 
 
 ### Branch protection
