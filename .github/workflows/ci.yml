@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  vet:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: ./app
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - uses: actions/setup-go@f111f3307d8244194c0a4379ba9fa029d8561b18
+        with:
+          go-version: '1.24'
+          cache: true
+      - run: go vet ./...
+
+  test:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: ./app
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - uses: actions/setup-go@f111f3307d8244194c0a4379ba9fa029d8561b18
+        with:
+          go-version: '1.24'
+          cache: true
+      - run: go test -race -count=1 ./...
+
+  lint:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: ./app
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - uses: actions/setup-go@f111f3307d8244194c0a4379ba9fa029d8561b18
+        with:
+          go-version: '1.24'
+          cache: true
+      - uses: golangci/golangci-lint-action@v6.2.0
+        with:
+          version: v2.5.0
+          working-directory: ./app
