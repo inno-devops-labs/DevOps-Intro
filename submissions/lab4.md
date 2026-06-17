@@ -203,3 +203,100 @@ Service restored. All 7 notes intact.
 **What's systemic about this failure:** Port conflicts are not the fault of any individual deploy action. They are a predictable consequence of missing process lifecycle management. When a service is started manually (via `go run .` or a bare shell command), there is no mechanism to guarantee the previous instance has stopped before the new one starts. This pattern appears in rolling deploys, restart-on-crash scripts, and CI/CD pipelines that shell out to start services without waiting for a clean shutdown signal. The failure mode is deterministic and repeatable, yet it surfaces as a runtime error rather than a deploy-time gate.
 
 **What tooling could prevent it:** Registering QuickNotes as a systemd unit eliminates this entirely - `systemctl restart quicknotes` performs a clean stop before starting, and `BindsTo=` and `Conflicts=` directives can make port ownership explicit. Alternatively, a pre-start `ExecStartPre=/bin/sh -c 'fuser -k 8080/tcp || true'` guard evicts any stale holder before bind. At the infrastructure level, a deploy system that queries `ss -tlnp` and gates on a clean port before proceeding would catch this before any process even tries to start.
+
+---
+
+## Bonus Task - Decode the TLS Handshake
+
+### B.1 Setup: Add an HTTPS layer
+
+Caddy v2.10.2 was already installed. A minimal Caddyfile was created at `~/lab4-caddy/Caddyfile`:
+
+```
+localhost:8443 {
+  reverse_proxy localhost:8080
+}
+```
+
+Caddy was started with `sudo -b caddy run --config Caddyfile`. On first start, Caddy automatically generated a local ECC root CA, issued an intermediate CA, and signed a leaf certificate for `localhost`. The root was installed into the NSS trust store (Firefox/Chrome databases).
+
+---
+
+### B.2 Capture the TLS handshake: curl -vk output (annotated)
+
+The full handshake was captured by running `curl -vk https://localhost:8443/health`:
+
+```
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+  -> ClientHello — curl offers TLS 1.3, proposes cipher suites, sends SNI="localhost",
+    ALPN: h2, http/1.1
+
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+  -> ServerHello — Caddy selects TLS 1.3, chooses TLS_AES_128_GCM_SHA256
+
+* TLSv1.3 (IN), TLS change cipher, Change cipher spec (1):
+  -> Caddy signals switch to encrypted record layer
+
+* TLSv1.3 (IN), TLS handshake, Encrypted Extensions (8):
+  -> Server sends ALPN confirmation (h2 accepted) and other extensions — now encrypted
+
+* TLSv1.3 (IN), TLS handshake, Certificate (11):
+  -> Caddy sends its certificate chain (leaf + intermediate)
+
+* TLSv1.3 (IN), TLS handshake, CERT verify (15):
+  -> Server proves it holds the private key via ECDSA signature
+
+* TLSv1.3 (IN), TLS handshake, Finished (20):
+  -> Server sends Finished MAC — handshake authenticated
+
+* TLSv1.3 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.3 (OUT), TLS handshake, Finished (20):
+  -> Client confirms Finished — secure channel established
+
+* SSL connection using TLSv1.3 / TLS_AES_128_GCM_SHA256 / x25519 / id-ecPublicKey
+  -> Negotiated: TLS 1.3, AES-128-GCM cipher, X25519 key exchange, EC public key
+
+* ALPN: server accepted h2
+  -> HTTP/2 is active over this TLS session
+```
+
+---
+
+### B.3 Certificate Chain - openssl s_client output
+
+```
+$ openssl s_client -connect localhost:8443 -servername localhost -showcerts </dev/null
+
+depth=2 CN=Caddy Local Authority - 2026 ECC Root       ← root CA (self-signed)
+depth=1 CN=Caddy Local Authority - ECC Intermediate    ← intermediate CA
+depth=0                                                ← leaf cert for localhost
+
+Certificate chain:
+  Cert 0 (leaf):
+    Subject: (empty — localhost is in SAN extension)
+    Issuer:  CN=Caddy Local Authority - ECC Intermediate
+    Key:     EC prime256v1 (256-bit)
+    SigAlg:  ecdsa-with-SHA256
+    Valid:   Jun 15 10:14:57 2026 GMT → Jun 15 22:14:57 2026 GMT  (12-hour leaf!)
+    SAN:     localhost
+
+  Cert 1 (intermediate):
+    Subject: CN=Caddy Local Authority - ECC Intermediate
+    Issuer:  CN=Caddy Local Authority - 2026 ECC Root
+    Key:     EC prime256v1 (256-bit)
+    SigAlg:  ecdsa-with-SHA256
+    Valid:   Jun 15 10:14:55 2026 GMT → Jun 22 10:14:55 2026 GMT  (7-day intermediate)
+
+TLS session:
+  Protocol:    TLSv1.3
+  Cipher:      TLS_AES_128_GCM_SHA256
+  Key exchange: X25519 (253-bit ephemeral)
+  Peer sig:    ecdsa_secp256r1_sha256
+  Verification: OK
+```
+
+---
+
+### B.4 Which negotiation step kills TLS 1.0 / 1.1 in 2026?
+
+The killing blow happens inside the **ClientHello**, in the `supported_versions` extension introduced by TLS 1.3 (RFC 8446). In TLS 1.2 and earlier, the protocol version was carried in the ClientHello record header itself, which allowed servers to downgrade freely. TLS 1.3 moved version negotiation into an explicit `supported_versions` extension, the client lists exactly which versions it accepts, and the server must pick one from that list. Modern clients (curl 8.15.0, all current browsers, OpenSSL 3.x) no longer include TLS 1.0 or TLS 1.1 in this list at all, they have been formally deprecated by RFC 8996 (March 2021) and disabled by default in all major TLS libraries. Even if a server advertised TLS 1.0 support, a 2026 client would ignore it entirely. In this capture, the ServerHello responded with `supported_versions: TLS 1.3`, confirming that the negotiation never even considered the deprecated versions.
