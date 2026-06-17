@@ -3,7 +3,7 @@
 Frolova AI, M25R0-01
 a.frolova@innopolis.university
 
-Ссылка на PR: 
+Ссылка на PR: https://github.com/inno-devops-labs/DevOps-Intro/pull/1113
 
 Данная лабораторная работа выполнена на **Windows 10/11** с использованием следующих инструментов:
 
