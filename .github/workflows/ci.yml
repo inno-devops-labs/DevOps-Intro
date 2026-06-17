@@ -17,7 +17,7 @@ jobs:
         working-directory: ./app
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-      - uses: actions/setup-go@f111f3307d8244194c0a4379ba9fa029d8561b18
+      - uses: actions/setup-go@4a2405e6aebff6aabd8e43618539aa35cf90ac92
         with:
           go-version: '1.24'
           cache: true
@@ -30,7 +30,7 @@ jobs:
         working-directory: ./app
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-      - uses: actions/setup-go@f111f3307d8244194c0a4379ba9fa029d8561b18
+      - uses: actions/setup-go@4a2405e6aebff6aabd8e43618539aa35cf90ac92
         with:
           go-version: '1.24'
           cache: true
@@ -43,7 +43,7 @@ jobs:
         working-directory: ./app
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-      - uses: actions/setup-go@f111f3307d8244194c0a4379ba9fa029d8561b18
+      - uses: actions/setup-go@4a2405e6aebff6aabd8e43618539aa35cf90ac92
         with:
           go-version: '1.24'
           cache: true
