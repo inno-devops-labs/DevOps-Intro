@@ -191,3 +191,182 @@ First, I would verify whether the application process is running.
 Then I would check whether port 8080 is listening and whether the `/health` endpoint is reachable locally. 
 After that, I would inspect firewall rules and finally verify DNS resolution. 
 This approach starts from the visible symptom and gradually moves deeper into the networking stack until the root cause is identified.
+
+## Task 2 — Outside-In Debugging on a Broken Deploy
+
+### 2.1 Run a broken instance
+
+I intentionally reproduced a deployment issue by attempting to start two QuickNotes instances on the same port.
+
+Commands & output:
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ ADDR=:8080 go run . &
+PID1=$!
+sleep 1
+ADDR=:8080 go run . 2>&1 | tee /tmp/qn-broken.log &
+PID2=$!
+sleep 2
+
+[1] 18945
+2026/06/17 03:44:46 quicknotes listening on :8080 (notes loaded: 6)
+[2] 18987 18988
+2026/06/17 03:44:47 quicknotes listening on :8080 (notes loaded: 6)
+2026/06/17 03:44:47 listen: listen tcp :8080: bind: address already in use
+exit status 1
+[2]  + exit 1     ADDR=:8080 go run . 2>&1 | 
+       done       tee /tmp/qn-broken.log
+```
+The second instance failed because port 8080 was already occupied.
+
+---
+
+### 2.2 Walk the outside-in chain
+
+#### 2.2.1 Is it running?
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ ps -ef | grep quicknotes
+p4in       18981   18945  0 03:44 pts/1    00:00:00 /home/p4in/.cache/go-build/48/489573023c1b5e6ea74459040e9c79402473017848c70526b5c8a2f33f07dec5-d/quicknotes
+p4in       19056    5430  0 03:45 pts/1    00:00:00 grep --color=auto quicknotes
+```
+QuickNotes is already running.
+
+#### 2.2.2 Is it listening?
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ ss -tlnp | grep 8080
+LISTEN 0      4096               *:8080             *:*    users:(("quicknotes",pid=18981,fd=3))
+```
+Port 8080 is already occupied.
+
+#### 2.2.3 Reachable from host?
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8080/health
+200
+```
+The application is healthy and reachable.
+
+#### 2.2.4 Firewall blocking?
+
+No, the firewall has docker rules applied after installation, there is nothing related to the task here.
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ sudo iptables -L -n -v 2>/dev/null || sudo nft list ruleset 2>/dev/null || true
+[sudo] password for p4in: 
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 DOCKER-USER  all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+    0     0 DOCKER-FORWARD  all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain DOCKER (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 DROP       all  --  !docker0 docker0  0.0.0.0/0            0.0.0.0/0           
+
+Chain DOCKER-BRIDGE (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 DOCKER     all  --  *      docker0  0.0.0.0/0            0.0.0.0/0           
+
+Chain DOCKER-CT (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 ACCEPT     all  --  *      docker0  0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+
+Chain DOCKER-FORWARD (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 DOCKER-CT  all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+    0     0 DOCKER-ISOLATION-STAGE-1  all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+    0     0 DOCKER-BRIDGE  all  --  *      *       0.0.0.0/0            0.0.0.0/0           
+    0     0 ACCEPT     all  --  docker0 *       0.0.0.0/0            0.0.0.0/0           
+
+Chain DOCKER-ISOLATION-STAGE-1 (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 DOCKER-ISOLATION-STAGE-2  all  --  docker0 !docker0  0.0.0.0/0            0.0.0.0/0           
+
+Chain DOCKER-ISOLATION-STAGE-2 (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 DROP       all  --  *      docker0  0.0.0.0/0            0.0.0.0/0           
+
+Chain DOCKER-USER (1 references)
+ pkts bytes target     prot opt in     out     source               destination 
+```
+Firewall rules do not block access to the application.
+
+#### 2.2.5 DNS?
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ dig +short localhost
+127.0.0.1
+```
+DNS resolution works correctly.
+---
+
+### 2.3 Repair + re-verify
+
+I initially followed the lab instructions and executed:
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ kill $PID1
+sleep 1
+ADDR=:8080 go run . &
+sleep 1
+curl -s http://localhost:8080/health
+
+[1]  + terminated  ADDR=:8080 go run .
+[1] 19125
+2026/06/17 03:48:17 quicknotes listening on :8080 (notes loaded: 6)
+2026/06/17 03:48:17 listen: listen tcp :8080: bind: address already in use
+exit status 1
+[1]  + exit 1     ADDR=:8080 go run .
+{"notes":6,"status":"ok"}
+```
+
+However, this only terminated the `go run` wrapper process.
+The spawned `quicknotes` binary remained active and continued listening on port 8080.
+I then identified the actual process and terminated it.
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ ss -tlnp | grep 8080
+LISTEN 0      4096               *:8080             *:*    users:(("quicknotes",pid=18981,fd=3))
+                                                                                                                 
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ ps -ef | grep quicknotes | grep -v grep
+p4in       18981       1  0 03:44 pts/1    00:00:00 /home/p4in/.cache/go-build/48/489573023c1b5e6ea74459040e9c79402473017848c70526b5c8a2f33f07dec5-d/quicknotes
+                                                                                                                  
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ kill 18981                                                       
+2026/06/17 03:55:14 shutting down
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ ss -tlnp | grep 8080 
+                                                                                                                  
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro/app]
+└─$ ADDR=:8080 go run . &
+sleep 1
+curl -s http://localhost:8080/health
+
+[1] 19260
+2026/06/17 03:55:27 quicknotes listening on :8080 (notes loaded: 6)
+{"notes":6,"status":"ok"}
+```
+---
+
+### 2.4 Postmortem
+
+Root cause: a second QuickNotes instance attempted to bind to a TCP port that was already occupied.
+This is a systemic issue rather than an individual mistake because duplicate application instances can occur during deployments, restarts, or automation workflows.
+This type of failure can be prevented by using process supervisors such as systemd, health checks, deployment automation, and orchestration tools that verify port availability before launching new application instances.
+
+
+
