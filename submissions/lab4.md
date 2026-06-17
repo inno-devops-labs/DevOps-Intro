@@ -112,3 +112,94 @@ QuickNotes is not registered as a systemd user service - it is running directly 
 ### 1.4 502 Debug Reflection
 
 A 502 Bad Gateway means a proxy (e.g. Caddy, nginx) is up but got a bad or no response from the upstream, in this case QuickNotes. The first thing to check is whether QuickNotes is actually running: `ps -ef | grep quicknotes` or `ss -tlnp | grep :8080`. If nothing is listening, that's your answer immediately. If it is listening, try hitting it directly with `curl -s http://localhost:8080/health` to bypass the proxy entirely; a clean 200 there means the proxy is misconfigured (wrong upstream port, wrong address), while a timeout or connection refused points to the app being overloaded or crashed. Finally, `journalctl -u quicknotes -n 50` would surface panic messages.
+
+---
+
+## Task 2 - Outside-In Debugging on a Broken Deploy
+
+### 2.1 Run a broken instance
+
+Two additional QuickNotes instances were launched targeting `:8080`, which was already held by the instance started in Task 1. Both failed immediately:
+
+```
+2026/06/15 19:44:59 quicknotes listening on :8080 (notes loaded: 7)
+2026/06/15 19:44:59 listen: listen tcp :8080: bind: address already in use
+exit status 1
+```
+
+Root cause captured: `bind: address already in use`.
+
+---
+
+### 2.2 Walk the outside-in chain
+
+**1) Is any quicknotes process running?**
+```
+$ ps -ef | grep quicknotes | grep -v grep
+.cache/go-build/0a/0aa05a27653e4463904407bc4fca682b044335fe063006487a91b9764a9e8226-d/quicknotes
+```
+Decision: yes, a process exists. The new instances exited but the original is still alive.
+
+---
+
+**2) Is it listening on 8080?**
+```
+$ ss -tlnp | grep 8080
+LISTEN 0      4096       *:8080       *:*    users:(("quicknotes",pid=56977,fd=3))
+```
+Decision: PID 56977 is holding the port. That's why both new instances couldn't bind. Proceed to verify it's actually healthy.
+
+---
+
+**3) Is it responding from the host?**
+```
+$ curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8080/health
+200
+```
+Decision: the existing instance is healthy. The port conflict is the only problem — nothing is broken at the application layer.
+
+---
+
+**4) Is a firewall blocking anything?**
+```
+$ sudo iptables -L -n -v
+Chain INPUT  (policy ACCEPT)
+Chain OUTPUT (policy ACCEPT)
+Chain FORWARD (policy ACCEPT)
+```
+Decision: default policy is ACCEPT on all chains; no DROP or REJECT rules near port 8080. Firewall is not the issue.
+
+---
+
+**5) DNS resolves localhost?**
+```
+$ dig +short localhost
+127.0.0.1
+```
+Decision: DNS is fine. All five layers checked. The failure is purely the port conflict at bind time.
+
+---
+
+### 2.3 Repair + Re-verify
+
+Killed the conflicting instance (PID 56977) and started a fresh one:
+
+```
+$ kill 56977 && sleep 1 && go run . &
+2026/06/15 19:51:20 quicknotes listening on :8080 (notes loaded: 7)
+
+$ curl -s http://localhost:8080/health
+{"notes":7,"status":"ok"}
+```
+
+Service restored. All 7 notes intact.
+
+---
+
+### 2.4 Blameless Mini-Postmortem
+
+**Root cause:** `listen tcp :8080: bind: address already in use` - a second process attempted to bind a port already held by a running instance.
+
+**What's systemic about this failure:** Port conflicts are not the fault of any individual deploy action. They are a predictable consequence of missing process lifecycle management. When a service is started manually (via `go run .` or a bare shell command), there is no mechanism to guarantee the previous instance has stopped before the new one starts. This pattern appears in rolling deploys, restart-on-crash scripts, and CI/CD pipelines that shell out to start services without waiting for a clean shutdown signal. The failure mode is deterministic and repeatable, yet it surfaces as a runtime error rather than a deploy-time gate.
+
+**What tooling could prevent it:** Registering QuickNotes as a systemd unit eliminates this entirely - `systemctl restart quicknotes` performs a clean stop before starting, and `BindsTo=` and `Conflicts=` directives can make port ownership explicit. Alternatively, a pre-start `ExecStartPre=/bin/sh -c 'fuser -k 8080/tcp || true'` guard evicts any stale holder before bind. At the infrastructure level, a deploy system that queries `ss -tlnp` and gates on a clean port before proceeding would catch this before any process even tries to start.
