@@ -129,5 +129,9 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 			t.Errorf("metrics missing %q", want)
 		}
 	}
+
+func TestAlwaysFails(t *testing.T) {
+	t.Fatalf("this test always fails")
+}
 }
 
