@@ -228,4 +228,97 @@ g) Snapshotting is an antipattern when snapshots become long-lived operational s
 
 ## Bonus Task
 
-Not claimed. I attempted the VM cold-boot measurement after the required tasks with `vagrant halt` followed by a timed `vagrant up`, but on this host the VM powered on without presenting an SSH banner, so the cold-boot number was not reliable. I restored the verified `quicknotes-clean` snapshot afterward and confirmed the VM was healthy again. The usable post-restore idle VM numbers were `957Mi` total RAM with `190Mi` used, `124` guest processes, and a `6.21 GiB` VirtualBox VM directory, but I am not submitting the bonus comparison table because the required cold-boot and Docker side-by-side baseline was not completed cleanly.
+### B.1 Vagrant VM baseline
+
+The VM was already provisioned, so the boot measurement below is a normal boot, not the first box download/provisioning run.
+
+```text
+$ time vagrant halt
+VM_HALT_SECONDS=8.901
+
+$ time vagrant up --provider=virtualbox
+VM_UP_SECONDS=36.339
+
+$ vagrant ssh -c 'go version'
+go version go1.24.5 linux/amd64
+
+$ vagrant ssh -c 'curl -s http://localhost:8080/health'
+{"notes":4,"status":"ok"}
+
+$ curl -s http://localhost:18080/health
+{"notes":4,"status":"ok"}
+```
+
+Idle RAM:
+
+```text
+$ vagrant ssh -c 'free -h'
+               total        used        free      shared  buff/cache   available
+Mem:           957Mi       179Mi       470Mi       0.0Ki       307Mi       638Mi
+Swap:          2.0Gi          0B       2.0Gi
+```
+
+Process count:
+
+```text
+$ vagrant ssh -c 'ps -A --no-headers | wc -l'
+113
+```
+
+Disk size:
+
+```text
+$ du -sh "C:\Users\bear_\VirtualBox VMs\quicknotes-lab5"
+6.44 GiB
+```
+
+### B.2 Docker container baseline
+
+I used the lab-provided `golang:1.24` container command, mounted the same `app/` directory, and exposed it on host port `28080`. The first `docker run` pulled the image; that pull time is not counted as cold start.
+
+```text
+$ docker run -d -p 28080:8080 -v 'C:\GitProjects\DevOps-Intro\app:/src' -w /src golang:1.24 sh -c 'go build -o /tmp/qn && /tmp/qn'
+CONTAINER_ID=f21e3a1e8178680ab9f9082354d4a33c2e4e328df1333270ab6ab3e56cc51fa1
+
+$ curl -s http://localhost:28080/health
+{"notes":6,"status":"ok"}
+
+$ docker stop f21e3a1e8178
+$ time docker start f21e3a1e8178
+DOCKER_START_SECONDS=0.282
+
+$ curl -s http://localhost:28080/health
+{"notes":6,"status":"ok"}
+```
+
+Idle RAM:
+
+```text
+$ docker stats --no-stream
+8.23MiB / 7.682GiB
+```
+
+Process count:
+
+```text
+$ docker top f21e3a1e8178
+DOCKER_PROCESS_COUNT=2
+```
+
+Image size:
+
+```text
+$ docker images golang:1.24 --format '{{.Size}}'
+1.32GB
+```
+
+### B.3 Comparison
+
+| Dimension             | Vagrant VM | Docker container |
+|-----------------------|-----------:|-----------------:|
+| Cold start            |    36.339s |           0.282s |
+| Idle RAM              |      179Mi |          8.23MiB |
+| On-disk size          |   6.44 GiB |           1.32GB |
+| Process count (guest) |        113 |                2 |
+
+The biggest gap is startup time: the VM has to boot a full guest OS, while Docker only restarts an already-created container process tree. RAM is also much lower for the container because it shares the host kernel instead of carrying a full init system, SSH service, journald, networking stack, and other guest daemons. A VM is the right tool when kernel isolation, full OS behavior, or cross-OS testing matters; a container is the better fit for packaging and running one stateless service quickly. This data explains why containers won the 2014-2020 stateless microservice era: the operational unit became smaller, faster to replace, and cheaper to pack densely on the same hardware. VMs still matter for stronger boundaries and complete machine simulation, but they are heavier than needed for a simple QuickNotes API process.
