@@ -3,8 +3,14 @@ name: CI
 on:
   push:
     branches: [main]
+    paths:
+          - 'app/**'
+          - '.github/workflows/*.yml'
   pull_request:
     branches: [main]
+    paths:
+          - 'app/**'
+          - '.github/workflows/*.yml'
 
 permissions:
   contents: read
@@ -22,19 +28,23 @@ jobs:
           go-version: '1.24'
           cache: true
       - run: go vet ./...
+test:
+  runs-on: ubuntu-24.04
+  strategy:
+    matrix:
+      go-version: ['1.23', '1.24']
+    fail-fast: false
+  defaults:
+    run:
+      working-directory: ./app
+  steps:
+    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+    - uses: actions/setup-go@4a2405e6aebff6aabd8e43618539aa35cf90ac92
+      with:
+        go-version: ${{ matrix.go-version }}
+        cache: true
+    - run: go test -race -count=1 ./...
 
-  test:
-    runs-on: ubuntu-24.04
-    defaults:
-      run:
-        working-directory: ./app
-    steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-      - uses: actions/setup-go@4a2405e6aebff6aabd8e43618539aa35cf90ac92
-        with:
-          go-version: '1.24'
-          cache: true
-      - run: go test -race -count=1 ./...
 
   lint:
     runs-on: ubuntu-24.04
