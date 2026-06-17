@@ -91,9 +91,20 @@ git config --global commit.gpgsign true
 git config --global tag.gpgsign true
 ```
 
-Tell the platform your SSH key is a **signing key**:
-- GitHub: Settings → SSH and GPG keys → **New SSH key**, key type **Signing Key**
-- GitLab: Profile → SSH Keys → tick "Usage type: Authentication & signing"
+Now register the key on the platform. GitHub treats **Authentication** and **Signing** as *separate* roles for the same key, so you add it under both:
+
+- **Authentication Key** — lets you `clone` / `fetch` / `push` over SSH (`git@github.com:…`). If you cloned over HTTPS, or have never seen `ssh -T git@github.com` greet you by name, you don't have one configured yet — add it now or the `upstream` SSH remote will fail in Lab 2.
+- **Signing Key** — gives your commits the **Verified** badge.
+
+- 🐙 GitHub: Settings → SSH and GPG keys → **New SSH key** → add the **same** `~/.ssh/id_ed25519.pub` **twice**, once with Key type **Authentication Key** and once with **Signing Key**.
+- 🦊 GitLab: Profile → SSH Keys → a single key with **Usage type: Authentication & signing** covers both.
+
+Confirm authentication works before moving on:
+
+```bash
+ssh -T git@github.com
+# expect: Hi YOUR_USERNAME! You've successfully authenticated...
+```
 
 ### 1.4: Make a Signed Commit
 
@@ -303,7 +314,8 @@ In `submissions/lab1.md`:
 ## Common Pitfalls
 
 - 🪤 **PR template doesn't auto-populate** — make sure the template is on `main` *before* opening the PR
-- 🪤 **Commits show "Unverified"** — the SSH key must be added as a *Signing Key* on GitHub (not just an authentication key)
+- 🪤 **Commits show "Unverified"** — the key must also be added as a **Signing Key** on GitHub; an Authentication Key alone won't verify commits (they're separate roles — see §1.3)
+- 🪤 **`git@github.com: Permission denied (publickey)` on clone/fetch/push** — the *reverse* gap: your key is registered for signing but not as an **Authentication Key**. Add it as Authentication too (§1.3) and confirm with `ssh -T git@github.com`. Quick unblock for the *public* upstream: `git remote set-url upstream https://github.com/inno-devops-labs/DevOps-Intro.git`
 - 🪤 **`git push` rejected on `main`** — that's the bonus rule working as designed; push to `feature/lab1` instead
 - 🪤 **`gpg.format=ssh` ignored** — confirm Git ≥ 2.34: `git --version`
 - 🪤 **Pushed to the wrong branch** — `git switch feature/lab1` before `git push`
