@@ -368,5 +368,230 @@ Root cause: a second QuickNotes instance attempted to bind to a TCP port that wa
 This is a systemic issue rather than an individual mistake because duplicate application instances can occur during deployments, restarts, or automation workflows.
 This type of failure can be prevented by using process supervisors such as systemd, health checks, deployment automation, and orchestration tools that verify port availability before launching new application instances.
 
+## Bonus Task — Decode the TLS Handshake
+
+### B.1 Add an HTTPS layer
+
+I installed Caddy and configured it as a TLS-terminating reverse proxy in front of QuickNotes.
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ echo 'localhost:8443 {
+  reverse_proxy localhost:8080
+}' | sudo tee /etc/caddy/Caddyfile
+[sudo] password for p4in: 
+localhost:8443 {
+  reverse_proxy localhost:8080
+}
+```
+The Caddy service was restarted successfully and began serving HTTPS traffic.
+---
+
+### B.2 Capture the TLS handshake
+
+I captured TLS traffic on the loopback interface.
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ sudo tcpdump -i lo -nn -s 0 -w lab4-tls.pcap 'tcp port 8443' &
+TCPDUMP_PID=$!
+[1] 22588
+tcpdump: listening on lo, link-type EN10MB (Ethernet), snapshot length 262144 bytes
+```
+
+I then generated HTTPS traffic through Caddy.
+
+Command:
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ curl -vk https://localhost:8443/health
+```
+Response (cropped):
+
+```text
+* [HTTP/2] [1] [user-agent: curl/8.19.0]
+* [HTTP/2] [1] [accept: */*]
+> GET /health HTTP/2
+> Host: localhost:8443
+> User-Agent: curl/8.19.0
+> Accept: */*
+> 
+* Request completely sent off
+* TLSv1.3 (IN), TLS handshake, Newsession Ticket (4):
+< HTTP/2 200 
+< alt-svc: h3=":8443"; ma=2592000
+< content-type: application/json
+< date: Wed, 17 Jun 2026 11:17:26 GMT
+< via: 1.1 Caddy
+< content-length: 26
+< 
+{"notes":6,"status":"ok"}
+* Connection #0 to host localhost:8443 left intact
+```
+This confirmed that the request path was:
+
+```text
+curl->https://localhost:8443->Caddy reverse proxy->http://localhost:8080->QuickNotes
+```
+---
+### B.3 Decode with Wireshark
+
+#### ClientHello
+
+The ClientHello packet was inspected in Wireshark.
+
+Observed values:
+
+* Server Name Indication (SNI): `localhost`
+* Multiple cipher suites were offered
+* Supported TLS versions: `TLS 1.3`, `TLS 1.2`
+
+![Clienthello](client-hello.png)
+
+#### Supported Versions
+
+The `supported_versions` extension was inspected separately.
+
+Observed values:
+
+* `TLS 1.3`
+* `TLS 1.2`
+
+![ClienthelloVer](clienthellosupportedversions.png)
+
+
+#### ServerHello
+
+The ServerHello packet selected:
+
+* TLS version: `TLS 1.3`
+* Cipher suite: `TLS_AES_128_GCM_SHA256`
+
+![Serverhello](serverhello.png)
+---
+
+### Certificate chain
+
+Certificate information was obtained using command:
+
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ openssl s_client -connect localhost:8443 -showcerts -servername localhost </dev/null
+```
+The certificate chain consisted of:
+
+1. A leaf certificate issued by `Caddy Local Authority - ECC Intermediate`
+2. An intermediate certificate issued by `Caddy Local Authority - 2026 ECC Root`
+
+full output:
+```text
+Connecting to ::1
+CONNECTED(00000003)
+depth=1 CN=Caddy Local Authority - ECC Intermediate
+verify error:num=20:unable to get local issuer certificate
+verify return:1
+depth=0 
+verify return:1
+---
+Certificate chain
+ 0 s:
+   i:CN=Caddy Local Authority - ECC Intermediate
+   a:PKEY: EC, (prime256v1); sigalg: ecdsa-with-SHA256
+   v:NotBefore: Jun 17 10:20:15 2026 GMT; NotAfter: Jun 17 22:20:15 2026 GMT
+-----BEGIN CERTIFICATE-----
+MIIBvTCCAWSgAwIBAgIRAM376UZX+FqYtZ9ptW2CcMswCgYIKoZIzj0EAwIwMzEx
+MC8GA1UEAxMoQ2FkZHkgTG9jYWwgQXV0aG9yaXR5IC0gRUNDIEludGVybWVkaWF0
+ZTAeFw0yNjA2MTcxMDIwMTVaFw0yNjA2MTcyMjIwMTVaMAAwWTATBgcqhkjOPQIB
+BggqhkjOPQMBBwNCAARqhg4dOTRkWPK8ARwXX7LSWFptJ6y5s8xYGIaWZu11u8Hi
+lWexOCZAX2gDvmZC7K8nVMlEfI0JaW4eDjSOUsqxo4GLMIGIMA4GA1UdDwEB/wQE
+AwIHgDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwHQYDVR0OBBYEFCIQ
+iBLhFtDGWeQw1ARek9i5dOIvMB8GA1UdIwQYMBaAFLl7aRsN+SP5lxXKQDMg2AoF
+Yt7NMBcGA1UdEQEB/wQNMAuCCWxvY2FsaG9zdDAKBggqhkjOPQQDAgNHADBEAiBE
+9fIliaxHjypzRgpThN2xVF5U5O5RD94IHmATXzGHfQIgQLHFG3i9AKsDkIaCouB1
+jw0l2cUpYq1CnoBpFqm1lNk=
+-----END CERTIFICATE-----
+ 1 s:CN=Caddy Local Authority - ECC Intermediate
+   i:CN=Caddy Local Authority - 2026 ECC Root
+   a:PKEY: EC, (prime256v1); sigalg: ecdsa-with-SHA256
+   v:NotBefore: Jun 17 10:20:15 2026 GMT; NotAfter: Jun 24 10:20:15 2026 GMT
+-----BEGIN CERTIFICATE-----
+MIIBxzCCAW2gAwIBAgIQRJkL7QA13msusOUzwN6v1zAKBggqhkjOPQQDAjAwMS4w
+LAYDVQQDEyVDYWRkeSBMb2NhbCBBdXRob3JpdHkgLSAyMDI2IEVDQyBSb290MB4X
+DTI2MDYxNzEwMjAxNVoXDTI2MDYyNDEwMjAxNVowMzExMC8GA1UEAxMoQ2FkZHkg
+TG9jYWwgQXV0aG9yaXR5IC0gRUNDIEludGVybWVkaWF0ZTBZMBMGByqGSM49AgEG
+CCqGSM49AwEHA0IABJj5eDo7gVL4Z9s4xMvRihEFvG/TnAYAI//ggAbHiJ0O44M5
+aMlCXRgyXVJqJDYVehc1xPs0x9TxxeqTaVpuj/ajZjBkMA4GA1UdDwEB/wQEAwIB
+BjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdDgQWBBS5e2kbDfkj+ZcVykAzINgK
+BWLezTAfBgNVHSMEGDAWgBR2/9wnQh1f0eG9UHcj9nH5mH3NWDAKBggqhkjOPQQD
+AgNIADBFAiB+KF7Bu1JTHArL+h8n1addzjEChqtKXi1aCMv1/4M3QQIhALBdStFX
+en/EIaj+50WHES9gcl+Y9Ql97wzAS3W2ioFL
+-----END CERTIFICATE-----
+---
+Server certificate
+subject=
+issuer=CN=Caddy Local Authority - ECC Intermediate
+---
+No client certificate CA names sent
+Peer signing digest: SHA256
+Peer signature type: ecdsa_secp256r1_sha256
+Peer Temp Key: X25519, 253 bits
+---
+SSL handshake has read 1271 bytes and written 1740 bytes
+Verification error: unable to get local issuer certificate
+---
+New, TLSv1.3, Cipher is TLS_AES_128_GCM_SHA256
+Protocol: TLSv1.3
+Server public key is 256 bit
+This TLS version forbids renegotiation.
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+Early data was not sent
+Verify return code: 20 (unable to get local issuer certificate)
+---
+---
+Post-Handshake New Session Ticket arrived:
+SSL-Session:
+    Protocol  : TLSv1.3
+    Cipher    : TLS_AES_128_GCM_SHA256
+    Session-ID: 7D9CC433ACDB2EF39F4BA4E68324AA0A4D011F6C2CADB48D1861B17E410FED3A
+    Session-ID-ctx: 
+    Resumption PSK: 320BFC5391FB3A468ED381CA0EAEB51F6F9C5053CD6AF6D79977C2F4953C3F53
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    TLS session ticket lifetime hint: 604800 (seconds)
+    TLS session ticket:
+    0000 - 07 2f 5c 5c 11 12 0e cc-b4 62 45 74 c9 74 05 5b   ./\\.....bEt.t.[
+    0010 - 7e 61 7c bd 1c c3 82 07-58 ab fa 4b 1f 34 9e 15   ~a|.....X..K.4..
+    0020 - 54 52 92 f0 cf 93 50 30-fc fd 6d f4 3b 9b 4d 36   TR....P0..m.;.M6
+    0030 - 96 7c 15 d1 32 87 b9 c4-b2 c4 f8 b7 7c a5 d2 bd   .|..2.......|...
+    0040 - 4c 5a 91 ee 07 e4 0a 5b-de 71 fb 87 3b 9d 9b 9f   LZ.....[.q..;...
+    0050 - 86 03 2b 55 5b fa d5 1b-ba 30 c9 c4 32 46 38 2e   ..+U[....0..2F8.
+    0060 - 85 d4 4a 5e 4e 2f af 6e-45                        ..J^N/.nE
+
+    Start Time: 1781696052
+    Timeout   : 7200 (sec)
+    Verify return code: 20 (unable to get local issuer certificate)
+    Extended master secret: no
+    Max Early Data: 0
+---
+read R BLOCK
+DONE
+```
+is expected because Caddy generated a local self-signed certificate authority that is not trusted by the system OpenSSL certificate store.
+
+---
+
+### TLS 1.0 / 1.1 deprecation
+
+TLS 1.0 and TLS 1.1 are effectively excluded during the ClientHello negotiation step.
+
+Modern clients advertise supported protocol versions through the `supported_versions` extension and no longer offer TLS 1.0 or TLS 1.1. Therefore, these legacy protocols cannot be negotiated by the server in 2026.
+
+The `TLS 1.2 (0x0303)` value visible inside the ClientHello packet is a legacy compatibility field and does not indicate that TLS 1.2 was selected.
+
+Screenshot 2 shows the `Supported Versions` extension inside the `ClientHello` packet. This is the negotiation step that effectively disables TLS 1.0 and TLS 1.1 in 2026. Modern clients advertise only TLS 1.3 and TLS 1.2, therefore the server cannot negotiate TLS 1.0 or TLS 1.1.
 
 
