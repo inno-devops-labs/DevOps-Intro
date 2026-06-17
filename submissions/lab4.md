@@ -246,17 +246,6 @@ Certificate chain
 
 ---
 
-## Submission — Pull requests
-
-| PR | URL |
-|----|-----|
-| **Course** (`feature/lab4` → `inno-devops-labs/main`) | _TODO_ |
-| **Fork** (`feature/lab4` → `selysecr332/main`) | _TODO_ |
-
-**Moodle:** submit both URLs before the deadline.
-
----
-
 ## Lab 4 completion checklist
 
 ### Task 1 (6 pts)
@@ -272,12 +261,6 @@ Certificate chain
 - [x] Outside-in chain documented
 - [x] Repair verified
 - [x] Mini-postmortem written
-
-### Submission
-
-- [ ] Course PR opened
-- [ ] Fork PR opened
-- [ ] Both URLs on Moodle
 
 ### Bonus (2 pts)
 
