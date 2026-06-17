@@ -1,0 +1,230 @@
+<h1>Task 1</h1>
+
+```sudo tcpdump -r '/mnt/c/Users/Sovva/Desktop/DevOps-Intro/lab4-trace.pcap' -nn -A | tee lab4-trace.txt```
+
+reading from file /mnt/c/Users/Sovva/Desktop/DevOps-Intro/lab4-trace.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+19:11:19.932815 IP 127.0.0.1.42566 > 127.0.0.1.8080: Flags [S], seq 3179416048, win 65495, options [mss 65495,sackOK,TS val 2461922435 ecr 0,nop,wscale 7], length 0
+E..<..@.@.(..........F....      ..........0.........
+............
+19:11:19.932821 IP 127.0.0.1.8080 > 127.0.0.1.42566: Flags [R.], seq 0, ack 3179416049, win 0, length 0
+E..(..@.@.<............F......  .P...$...
+19:11:19.932861 IP6 ::1.40002 > ::1.8080: Flags [S], seq 2374255427, win 65476, options [mss 65476,sackOK,TS val 2676338689 ecr 0,nop,wscale 7], length 0
+`.~..(.@.................................B....CC.........0.........
+............
+19:11:19.932866 IP6 ::1.8080 > ::1.40002: Flags [R.], seq 0, ack 2374255428, win 0, length 0
+`.k9...@...................................B......CDP.......
+19:12:26.641138 IP 127.0.0.1.41710 > 127.0.0.1.8080: Flags [S], seq 509650619, win 65495, options [mss 65495,sackOK,TS val 2461989143 ecr 0,nop,wscale 7], length 0
+E..<1.@.@.
+..............`...........0.........
+............
+19:12:26.641142 IP 127.0.0.1.8080 > 127.0.0.1.41710: Flags [R.], seq 0, ack 509650620, win 0, length 0
+E..(..@.@.<..................`..P...*3..
+19:12:26.641165 IP6 ::1.32816 > ::1.8080: Flags [S], seq 630744336, win 65476, options [mss 65476,sackOK,TS val 2676405397 ecr 0,nop,wscale 7], length 0
+`       .d.(.@.................................0..%.e..........0.........
+............
+19:12:26.641168 IP6 ::1.8080 > ::1.32816: Flags [R.], seq 0, ack 630744337, win 0, length 0
+`.$....@...................................0....%.e.P.......
+19:12:43.027807 IP 127.0.0.1.41602 > 127.0.0.1.8080: Flags [S], seq 851489407, win 65495, options [mss 65495,sackOK,TS val 2462005530 ecr 0,nop,wscale 7], length 0
+E..<.y@.@..@............2............0.........
+..9.........
+19:12:43.027811 IP 127.0.0.1.8080 > 127.0.0.1.41602: Flags [R.], seq 0, ack 851489408, win 0, length 0
+E..(..@.@.<.................2...P...
+{..
+19:12:43.027836 IP6 ::1.34804 > ::1.8080: Flags [S], seq 3910870731, win 65476, options [mss 65476,sackOK,TS val 2676421784 ecr 0,nop,wscale 7], length 0
+`..Q.(.@......................................&..........0.........
+............
+19:12:43.027839 IP6 ::1.8080 > ::1.34804: Flags [R.], seq 0, ack 3910870732, win 0, length 0
+`......@..........................................&.P.......
+19:12:54.413810 IP 127.0.0.1.52472 > 127.0.0.1.8080: Flags [S], seq 1293846705, win 65495, options [mss 65495,sackOK,TS val 2462016916 ecr 0,nop,wscale 7], length 0
+E..<.H@.@.[q............M............0.........
+..e.........
+19:12:54.413816 IP 127.0.0.1.8080 > 127.0.0.1.52472: Flags [R.], seq 0, ack 1293846706, win 0, length 0
+E..(..@.@.<.................M...P....t..
+19:12:54.413855 IP6 ::1.50118 > ::1.8080: Flags [S], seq 971549680, win 65476, options [mss 65476,sackOK,TS val 2676433170 ecr 0,nop,wscale 7], length 0
+`.|s.(.@....................................9............0.........
+..!.........
+19:12:54.413860 IP6 ::1.8080 > ::1.50118: Flags [R.], seq 0, ack 971549681, win 0, length 0
+`.+f...@........................................9...P.......
+19:13:30.465338 IP 127.0.0.1.45936 > 127.0.0.1.8080: Flags [S], seq 499019428, win 65495, options [mss 65495,sackOK,TS val 2462052968 ecr 0,nop,wscale 7], length 0
+E..<c.@.@............p....n..........0.........
+...h........
+19:13:30.465343 IP 127.0.0.1.8080 > 127.0.0.1.45936: Flags [R.], seq 0, ack 499019429, win 0, length 0
+E..(..@.@.<............p......n.P...Rj..
+19:13:30.465371 IP6 ::1.45326 > ::1.8080: Flags [S], seq 2488604191, win 65476, options [mss 65476,sackOK,TS val 2676469222 ecr 0,nop,wscale 7], length 0
+`.J .(.@.....................................U...........0.........
+............
+19:13:30.465375 IP6 ::1.8080 > ::1.45326: Flags [R.], seq 0, ack 2488604192, win 0, length 0
+`../...@.........................................U. P.......
+21:33:29.974894 IP 127.0.0.1.54142 > 127.0.0.1.8080: Flags [S], seq 289262757, win 65495, options [mss 65495,sackOK,TS val 2470452477 ecr 0,nop,wscale 7], length 0
+E..<.$@.@............~...=...........0.........
+.@..........
+21:33:29.974902 IP 127.0.0.1.8080 > 127.0.0.1.54142: Flags [S.], seq 2132570133, ack 289262758, win 65483, options [mss 65495,sackOK,TS val 2470452477 ecr 2470452477,nop,wscale 7], length 0
+E..<..@.@.<............~..p..=.......0.........
+.@...@......
+21:33:29.974907 IP 127.0.0.1.54142 > 127.0.0.1.8080: Flags [.], ack 1, win 512, options [nop,nop,TS val 2470452477 ecr 2470452477], length 0
+E..4.%@.@............~...=....p......(.....
+.@...@..
+21:33:29.974939 IP 127.0.0.1.54142 > 127.0.0.1.8080: Flags [P.], seq 1:176, ack 1, win 512, options [nop,nop,TS val 2470452477 ecr 2470452477], length 175: HTTP: POST /notes HTTP/1.1
+E....&@.@............~...=....p............
+.@...@..POST /notes HTTP/1.1
+Host: localhost:8080
+User-Agent: curl/7.81.0
+Accept: */*
+Content-Type: application/json
+Content-Length: 39
+
+{"title":"trace me","body":"in flight"}
+21:33:29.974940 IP 127.0.0.1.8080 > 127.0.0.1.54142: Flags [.], ack 176, win 511, options [nop,nop,TS val 2470452477 ecr 2470452477], length 0
+E..4.+@.@.$............~..p..=.U.....(.....
+.@...@..
+21:33:29.980128 IP 127.0.0.1.8080 > 127.0.0.1.54142: Flags [P.], seq 1:207, ack 176, win 512, options [nop,nop,TS val 2470452482 ecr 2470452477], length 206: HTTP: HTTP/1.1 201 Created
+E....,@.@.#............~..p..=.U...........
+.@...@..HTTP/1.1 201 Created
+Content-Type: application/json
+Date: Wed, 17 Jun 2026 18:33:29 GMT
+Content-Length: 93
+
+{"id":5,"title":"trace me","body":"in flight","created_at":"2026-06-17T18:33:29.975704318Z"}
+
+21:33:29.980139 IP 127.0.0.1.54142 > 127.0.0.1.8080: Flags [.], ack 207, win 511, options [nop,nop,TS val 2470452482 ecr 2470452482], length 0
+E..4.'@.@............~...=.U..p......(.....
+.@...@..
+21:33:29.980234 IP 127.0.0.1.54142 > 127.0.0.1.8080: Flags [F.], seq 176, ack 207, win 512, options [nop,nop,TS val 2470452482 ecr 2470452482], length 0
+E..4.(@.@............~...=.U..p......(.....
+.@...@..
+21:33:29.980286 IP 127.0.0.1.8080 > 127.0.0.1.54142: Flags [F.], seq 207, ack 177, win 512, options [nop,nop,TS val 2470452482 ecr 2470452482], length 0
+E..4.-@.@.$............~..p..=.V.....(.....
+.@...@..
+21:33:29.980293 IP 127.0.0.1.54142 > 127.0.0.1.8080: Flags [.], ack 208, win 512, options [nop,nop,TS val 2470452482 ecr 2470452482], length 0
+E..4.)@.@............~...=.V..p......(.....
+.@...@..
+21:34:41.834814 IP 127.0.0.1.47718 > 127.0.0.1.8080: Flags [S], seq 1421564529, win 65495, options [mss 65495,sackOK,TS val 2470524337 ecr 0,nop,wscale 7], length 0
+E..<g+@.@............f..T.Zq.........0.........
+.A5.........
+21:34:41.834822 IP 127.0.0.1.8080 > 127.0.0.1.47718: Flags [S.], seq 2578938132, ack 1421564530, win 65483, options [mss 65495,sackOK,TS val 2470524337 ecr 2470524337,nop,wscale 7], length 0
+E..<..@.@.<............f..y.T.Zr.....0.........
+.A5..A5.....
+21:34:41.834828 IP 127.0.0.1.47718 > 127.0.0.1.8080: Flags [.], ack 1, win 512, options [nop,nop,TS val 2470524337 ecr 2470524337], length 0
+E..4g,@.@............f..T.Zr..y......(.....
+.A5..A5.
+21:34:41.834861 IP 127.0.0.1.47718 > 127.0.0.1.8080: Flags [P.], seq 1:176, ack 1, win 512, options [nop,nop,TS val 2470524337 ecr 2470524337], length 175: HTTP: POST /notes HTTP/1.1
+E...g-@.@............f..T.Zr..y............
+.A5..A5.POST /notes HTTP/1.1
+Host: localhost:8080
+User-Agent: curl/7.81.0
+Accept: */*
+Content-Type: application/json
+Content-Length: 39
+
+{"title":"trace me","body":"in flight"}
+21:34:41.834863 IP 127.0.0.1.8080 > 127.0.0.1.47718: Flags [.], ack 176, win 511, options [nop,nop,TS val 2470524337 ecr 2470524337], length 0
+E..4.i@.@..X...........f..y.T.[!.....(.....
+.A5..A5.
+21:34:41.839333 IP 127.0.0.1.8080 > 127.0.0.1.47718: Flags [P.], seq 1:207, ack 176, win 512, options [nop,nop,TS val 2470524341 ecr 2470524337], length 206: HTTP: HTTP/1.1 201 Created
+E....j@.@..............f..y.T.[!...........
+.A5..A5.HTTP/1.1 201 Created
+Content-Type: application/json
+Date: Wed, 17 Jun 2026 18:34:41 GMT
+Content-Length: 93
+
+{"id":6,"title":"trace me","body":"in flight","created_at":"2026-06-17T18:34:41.835071034Z"}
+
+21:34:41.839349 IP 127.0.0.1.47718 > 127.0.0.1.8080: Flags [.], ack 207, win 511, options [nop,nop,TS val 2470524342 ecr 2470524341], length 0
+E..4g.@.@............f..T.[!..y....tcpdump: pcap_loop: truncated dump file; tried to read 16 header bytes, only got 2
+..(.....
+.A5..A5.
+21:34:41.839506 IP 127.0.0.1.47718 > 127.0.0.1.8080: Flags [F.], seq 176, ack 207, win 512, options [nop,nop,TS val 2470524342 ecr 2470524341], length 0
+E..4g/@.@............f..T.[!..y......(.....
+.A5..A5.
+
+```ss -tlnp | grep :8080```
+
+LISTEN 0      4096               *:8080            *:*    users:(("quicknotes",pid=17972,fd=3))
+
+```ip route show```
+
+default via 172.29.0.1 dev eth0 proto kernel 
+172.29.0.0/20 dev eth0 proto kernel scope link src 172.29.1.206 
+
+```mtr -rwc 5 localhost```
+
+Start: 2026-06-17T21:40:31+0300
+HOST: DESKTOP-5IK3AVO Loss%   Snt   Last   Avg  Best  Wrst StDev
+  1.|-- localhost        0.0%     5    0.0   0.0   0.0   0.0   0.0
+
+```dig +short example.com @1.1.1.1```
+
+172.66.147.243
+104.20.23.154
+
+```journalctl --user -u quicknotes -n 20 || true```
+-- No entries --
+
+
+```what would you check first if QuickNotes returned 502?```
+
+Check logs, metrics (if we have). Commands:
+ 
+ * <b>ss --tulnp </b> - for check worked process, ports, service, network sockets
+ * <b>htop</b> - for monitoring CPU, RAM, process, hardware, uptime, tasks, etc.
+
+
+<h1>Task 2</h1>
+
+```ADDR=:8080 go run . & PID1=$!```
+
+60505
+
+
+```ADDR=:8080 go run . 2>&1 | tee /tmp/qn-broken.log & PID2=$!```
+
+60645
+2026/06/17 22:16:40 quicknotes listening on :8080 (notes loaded: 6)
+2026/06/17 22:16:40 listen: listen tcp :8080: bind: address already in use
+
+```ps -ef | grep "go run" | grep -v grep```
+sovva      60505     350  0 22:16 pts/0    00:00:00 go run .
+
+```ps -ef | grep quicknotes```
+sovva      60555   60505  0 22:16 pts/0    00:00:00 /home/sovva/.cache/go-build/2c/2cd7be73141e97a246ae4b4915a627a9b587f70c01aaaa6a881dfee0c09b54d7-d/quicknotes
+sovva      61508     350  0 22:19 pts/0    00:00:00 grep --color=auto quicknotes
+
+```ss -tlnp | grep 8080```
+
+LISTEN 0      4096               *:8080            *:*    users:(("quicknotes",pid=60555,fd=3))
+
+```curl -s -o /dev/null -w "%{http_code}\n" http://localhost:8080/health```
+
+200
+
+```sudo iptables -L -n -v 2>/dev/null || sudo nft list ruleset 2>/dev/null || true```
+
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination         
+
+```dig +short localhost```
+
+127.0.0.1
+
+
+```sleep 1```
+
+Terminated              ADDR=:8080 go run .
+
+```ADDR=:8080 go run . & sleep 1```
+
+62116
+2026/06/17 22:21:18 quicknotes listening on :8080 (notes loaded: 6)
+2026/06/17 22:21:18 listen: listen tcp :8080: bind: address already in use
+exit status 1
+Exit 1                  ADDR=:8080 go run .
+
+```curl -s http://localhost:8080/health```
+
+{"notes":6,"status":"ok"}
