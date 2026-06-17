@@ -13,28 +13,28 @@ on:
       - '.github/workflows/ci.yml'
 
 permissions:
-  contents: read   # минимальные права – только чтение содержимого
+  contents: read   # минимальные права
 
 jobs:
   # ---------- vet ----------
   vet:
     name: go vet
-    runs-on: ubuntu-24.04          # фиксированная версия раннера
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         go-version: [ '1.23', '1.24' ]
-      fail-fast: false             # не останавливать остальные при ошибке
+      fail-fast: false
     defaults:
       run:
         working-directory: app
     steps:
       - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683   # v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
       - name: Setup Go
-        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32   # v5.3.0
+        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32  # v5.3.0
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true               # кеширование модулей и сборок
+          cache: true
       - name: Run go vet
         run: go vet ./...
 
@@ -51,9 +51,9 @@ jobs:
         working-directory: app
     steps:
       - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683    # v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
       - name: Setup Go
-        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32    # v5.3.0
+        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32  # v5.3.0
         with:
           go-version: ${{ matrix.go-version }}
           cache: true
@@ -69,15 +69,15 @@ jobs:
         working-directory: app
     steps:
       - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683    # v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
       - name: Setup Go
-        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32    # v5.3.0
+        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32  # v5.3.0
         with:
-          go-version: '1.24'      # линтер запускаем на одной версии (можно и на двух)
+          go-version: '1.24'      # достаточно одной версии для линтера
           cache: true
+      - name: Install golangci-lint v2.5.0
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | \
+            sh -s -- -b $(go env GOPATH)/bin v2.5.0
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@55c2c1448f86e01eaae002a5a3a9624417608d84    # v6.5.0
-        with:
-          version: v2.5.0         # жёстко закреплённая версия линтера
-          working-directory: app
-          args: --timeout=5m
+        run: golangci-lint run ./...
