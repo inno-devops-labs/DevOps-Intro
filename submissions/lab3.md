@@ -4,7 +4,7 @@ Frolova AI,    M25-RO-01
 
 a.frolova@innopolis.university
 
-Ссылка на PR: 
+Ссылка на PR: https://github.com/inno-devops-labs/DevOps-Intro/pull/1113
 
 **Path:** GitHub Actions. Выбран по той причине, что я постоянно пользуюсь GitHub для демонстрации и хранения проектов.
 
