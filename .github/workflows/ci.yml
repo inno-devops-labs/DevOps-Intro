@@ -1,4 +1,4 @@
-name: PR Gate CI
+name: PR Gate
 
 on:
   push:
@@ -13,17 +13,17 @@ on:
       - '.github/workflows/ci.yml'
 
 permissions:
-  contents: read   # only read
+  contents: read   # минимальные права – только чтение содержимого
 
 jobs:
   # ---------- vet ----------
   vet:
     name: go vet
-    runs-on: ubuntu-24.04   # runner version
+    runs-on: ubuntu-24.04          # фиксированная версия раннера
     strategy:
       matrix:
         go-version: [ '1.23', '1.24' ]
-      fail-fast: false
+      fail-fast: false             # не останавливать остальные при ошибке
     defaults:
       run:
         working-directory: app
@@ -34,7 +34,7 @@ jobs:
         uses: actions/setup-go@f111f3307d8850f501ac008e886eec1e1932a34a  # v5.3.0
         with:
           go-version: ${{ matrix.go-version }}
-          cache: true
+          cache: true               # кеширование модулей и сборок
       - name: Run go vet
         run: go vet ./...
 
@@ -73,11 +73,11 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@f111f3307d8850f501ac008e886eec1e1932a34a  # v5.3.0
         with:
-          go-version: '1.24'
+          go-version: '1.24'      # линтер запускаем на одной версии (можно и на двух)
           cache: true
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@55c2c1448f86e01eaae002a5a3a9624417608d84  # v6.5.0
         with:
-          version: v2.5.0
+          version: v2.5.0         # жёстко закреплённая версия линтера
           working-directory: app
           args: --timeout=5m
