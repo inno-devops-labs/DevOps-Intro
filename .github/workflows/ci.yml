@@ -3,8 +3,14 @@ name: CI
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'app/**'
+      - '.github/workflows/ci.yml'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'app/**'
+      - '.github/workflows/ci.yml'
 
 permissions:
   contents: read
@@ -15,7 +21,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        go-version: [ '1.24' ]
+        go-version: [ '1.23', '1.24' ]
       fail-fast: false
     steps:
       - name: Checkout code
@@ -37,7 +43,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        go-version: [ '1.24' ]
+        go-version: [ '1.23', '1.24' ]
       fail-fast: false
     steps:
       - name: Checkout code
