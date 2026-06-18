@@ -1,4 +1,4 @@
-	# Lab 5 — Virtualization: QuickNotes in a Vagrant VM
+#### Lab 5 Submission
 
 ## Task 1 — Vagrant Up + Run QuickNotes Inside
 
@@ -20,13 +20,17 @@ Vagrant.configure("2") do |config|
     vb.memory = 1024
     vb.cpus = 2
   end
-  
+
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update
-    apt-get install -y wget curl golang-go
+    apt-get install -y wget curl
+    
+    wget https://go.dev/dl/go1.24.5.linux-amd64.tar.gz
+    tar -C /usr/local -xzf go1.24.5.linux-amd64.tar.gz
+    echo 'export PATH=/usr/local/go/bin:$PATH' >> /home/vagrant/.bashrc
     
     cd /home/vagrant/app
-    go build -o /home/vagrant/app/server .
+    /usr/local/go/bin/go build -o /home/vagrant/app/server .
     nohup /home/vagrant/app/server > /home/vagrant/server.log 2>&1 &
     
     echo "Server started on port 8080"
@@ -88,7 +92,7 @@ time vagrant snapshot restore working
 
 # Verify recovery
 vagrant ssh -c 'go version'
-# go version go1.18.1 linux/amd64
+# go version go1.24.5 linux/amd64
 
 # Verify server is running
 curl -s http://localhost:18080/health
