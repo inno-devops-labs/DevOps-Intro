@@ -63,3 +63,53 @@ I used the shell provisioner. It's the simplest approach for installing Go and b
 d) Why pin Go to 1.24.5:
 The Vagrantfile installs golang-go from Ubuntu repos, which provides Go 1.24.x. Pinning to 1.24.5 specifically ensures reproducibility — if 1.24 resolves to different patch versions over time, builds could break. 1.24.5 guarantees exactly the same version for everyone.
 
+
+
+## Task 2 — Snapshots: Save, Break, Restore
+
+### Commands Run
+
+```bash
+# Save snapshot
+vagrant snapshot save working
+
+# Break the VM — remove Go
+vagrant ssh
+sudo rm -rf /usr/local/go
+sudo apt remove -y golang-go
+exit
+
+# Verify it's broken
+vagrant ssh -c 'go version'
+# Command 'go' not found
+
+# Restore from snapshot with timing
+time vagrant snapshot restore working
+
+# Verify recovery
+vagrant ssh -c 'go version'
+# go version go1.18.1 linux/amd64
+
+# Verify server is running
+curl -s http://localhost:18080/health
+# {"status":"ok","notes":4}
+
+
+Restore Time
+real    0m20.016s
+user    0m3.634s
+sys     0m2.044s
+
+Design Questions
+e) Snapshots are not backups:
+
+Snapshots are stored on the same host disk and depend on the original VM disk. If the host disk fails, the snapshot is lost along with the VM. Backups are independent copies stored on separate media or off-site, which survive hardware failures.
+
+f) Copy-on-write:
+
+Copy-on-write means each snapshot only stores changes (deltas) from the previous state, not a full copy of the disk. With 10 snapshots, disk usage grows with each change, but slower than 10 full copies would. With 1 snapshot, disk usage is just the base disk plus one delta file.
+
+g) When is snapshotting an antipattern:
+
+Long snapshot chains (10+) are an antipattern because they degrade VM performance — each read must traverse the chain backwards. They also increase the risk of corruption, and deleting a middle snapshot can be expensive and time-consuming.
+
