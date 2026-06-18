@@ -117,3 +117,19 @@ g) When is snapshotting an antipattern:
 
 Long snapshot chains (10+) are an antipattern because they degrade VM performance — each read must traverse the chain backwards. They also increase the risk of corruption, and deleting a middle snapshot can be expensive and time-consuming.
 
+##Bonus Task
+
+| Dimension              | Vagrant VM | Docker container |
+|------------------------|-----------:|-----------------:|
+| Cold start             | 33.5s     | 0.38s            |
+| Idle RAM               | 161 MiB   | 2.43 MiB         |
+| On-disk size           | 4.1 GB    | 2.21 MB          |
+| Process count (guest)  | 104       | 2                |
+
+Analysis:
+
+The most surprising number was the idle RAM — the container uses ~66x less memory than the VM (2.43 MiB vs 161 MiB). This makes sense because containers share the host kernel, while VMs run a full OS stack.
+
+For stateless microservices, containers are clearly the right tool: fast cold start (0.38s vs 33.5s), minimal resource footprint, and easy to scale. VMs are better for workloads that need full OS isolation, custom kernels, or long-running stateful services where you want guaranteed resource allocation.
+
+The data explains why containers won the 2014-2020 era for stateless microservices — they provide near-VM isolation with almost zero overhead. At scale, the difference in memory and startup time translates to massive cost savings in cloud environments. You can run 10x more containers than VMs on the same hardware, and restart failed containers in under half a second instead of waiting 30+ seconds for a VM to boot.
