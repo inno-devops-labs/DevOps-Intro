@@ -2,9 +2,9 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  # Bento 22.04 — built for VirtualBox 7.0.x (stable download; pin avoids broken latest)
-  config.vm.box = "bento/ubuntu-22.04"
-  config.vm.box_version = "202407.23.0"
+  # Ubuntu 22.04 LTS — reliable download on Vagrant Cloud (bento URLs often 404)
+  config.vm.box = "ubuntu/jammy64"
+  config.vm.box_version = "20241002.0.0"
   config.vm.hostname = "quicknotes-vm"
   config.vm.boot_timeout = 600
   config.ssh.connect_timeout = 120
