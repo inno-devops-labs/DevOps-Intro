@@ -15,7 +15,16 @@ Provisioner: [`vagrant/provision-go.sh`](../vagrant/provision-go.sh)
 ### 1.1 `vagrant up` (first 10 lines)
 
 ```text
-<!-- paste first 10 lines after vagrant up -->
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Checking if box 'ubuntu/jammy64' version '20241002.0.0' is up to date...
+==> default: Clearing any previously set forwarded ports...
+==> default: Clearing any previously set network interfaces...
+==> default: Preparing network interfaces based on configuration...
+    default: Adapter 1: nat
+==> default: Forwarding ports...
+    default: 8080 (guest) => 18080 (host) (adapter 1)
+    default: 22 (guest) => 2222 (host) (adapter 1)
+==> default: Running 'pre-boot' VM customizations...
 ```
 
 ### 1.2 Verify Go + QuickNotes
@@ -30,17 +39,26 @@ vagrant ssh -c 'curl -s http://localhost:8080/health'
 ```
 
 ```text
-<!-- paste go version + in-guest curl output -->
+$ vagrant ssh -c "go version"
+go version go1.24.5 linux/amd64
+
+$ vagrant ssh -c "cd /home/vagrant/quicknotes/app && go build -o /tmp/qn"
+$ vagrant ssh -c "nohup env ADDR=:8080 /tmp/qn > /tmp/qn.log 2>&1 &"
+
+$ vagrant ssh -c "curl -s http://localhost:8080/health"
+{"notes":9,"status":"ok"}
 ```
 
 **From host (port forward):**
 
-```bash
-curl -s http://127.0.0.1:18080/health
+```powershell
+Invoke-RestMethod http://127.0.0.1:18080/health
 ```
 
 ```text
-<!-- paste host curl output -->
+notes status
+----- ------
+    9 ok
 ```
 
 ### 1.3 Design questions (Task 1)
@@ -87,19 +105,24 @@ vagrant ssh -c 'go version'
 **Break verification (broken):**
 
 ```text
-<!-- paste go version failure -->
+$ vagrant ssh -c "go version"
+bash: line 1: go: command not found
 ```
 
 **Restore timing:**
 
 ```text
-<!-- paste time vagrant snapshot restore output -->
+$ Measure-Command { vagrant snapshot restore clean-quicknotes }
+
+TotalSeconds      : 26.1888969
+TotalMilliseconds : 26188.8969
 ```
 
 **Recovery verification:**
 
 ```text
-<!-- paste go version after restore -->
+$ vagrant ssh -c "go version"
+go version go1.24.5 linux/amd64
 ```
 
 ### 2.2 Design questions (Task 2)
@@ -120,16 +143,18 @@ When snapshots become a **long-lived dependency** instead of ephemeral cattle: d
 
 ## Bonus — VM vs container baseline (optional)
 
+**Measurement session:** Windows 11, same laptop, 2026-06-19. VM: `quicknotes-lab5` (1 vCPU cap / 1024 MB RAM). Docker: `golang:1.24` running QuickNotes on port 28080.
+
 | Dimension | Vagrant VM | Docker container |
 |-----------|----------:|-----------------:|
-| Cold start | _TODO_ | _TODO_ |
-| Idle RAM | _TODO_ | _TODO_ |
-| On-disk size | _TODO_ | _TODO_ |
-| Process count (guest) | _TODO_ | _TODO_ |
+| Cold start | ~127 s (`vagrant halt` → `vagrant up --no-provision`, SSH ready) | 0.32 s (`docker stop` → `docker start`) |
+| Idle RAM | 172 MiB used (`free -h` in guest) | 22.81 MiB (`docker stats --no-stream`) |
+| On-disk size | 2.97 GB (`~/VirtualBox VMs/quicknotes-lab5`) | 1.32 GB (`golang:1.24` image) |
+| Process count (guest) | 107 (`ps -A --no-headers \| wc -l`) | 5 (`ps` inside container) |
 
 **Trade-off analysis (4–5 sentences):**
 
-_TODO after measurements._
+The gap in cold start (~127 s vs under 1 s) and idle RAM (172 MiB vs ~23 MiB) was the biggest surprise — the container runs only QuickNotes plus a thin runtime, while the VM boots a full Ubuntu userspace with systemd, sshd, and background services. Process count (107 vs 5) shows the same story: a VM is a pet with an entire OS to babysit; a container is cattle scoped to one workload. VMs are the right tool when you need kernel isolation, a specific OS image, or legacy apps that expect a full machine (this lab’s VirtualBox + Ansible path in Lab 7). Containers won the 2014–2020 microservices era because stateless services could be packed densely, restarted in seconds, and patched by replacing images — Heartbleed-style incidents pushed teams away from long-lived pets toward reproducible, disposable units. For QuickNotes alone, Docker is far cheaper; for teaching full-machine DevOps (snapshots, SSH, provisioning), the VM cost is intentional.
 
 ---
 
@@ -137,22 +162,22 @@ _TODO after measurements._
 
 ### Task 1 (6 pts)
 
-- [ ] `Vagrantfile` at repo root meets all requirements
-- [ ] `vagrant up` + Go 1.24.x inside VM
-- [ ] `curl http://127.0.0.1:18080/health` from host → 200
-- [ ] Design questions a–d answered
-- [ ] `vagrant up` log + curl outputs pasted
+- [x] `Vagrantfile` at repo root meets all requirements
+- [x] `vagrant up` + Go 1.24.x inside VM
+- [x] `curl http://127.0.0.1:18080/health` from host → 200
+- [x] Design questions a–d answered
+- [x] `vagrant up` log + curl outputs pasted
 
 ### Task 2 (4 pts)
 
-- [ ] Snapshot save → break → restore demonstrated
-- [ ] Restore `time` output captured
-- [ ] Design questions e–g answered
+- [x] Snapshot save → break → restore demonstrated
+- [x] Restore `time` output captured
+- [x] Design questions e–g answered
 
 ### Bonus (2 pts)
 
-- [ ] Comparison table with real numbers
-- [ ] Written trade-off analysis
+- [x] Comparison table with real numbers
+- [x] Written trade-off analysis
 
 ### Submission
 

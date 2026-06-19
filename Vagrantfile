@@ -6,8 +6,8 @@ Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/jammy64"
   config.vm.box_version = "20241002.0.0"
   config.vm.hostname = "quicknotes-vm"
-  config.vm.boot_timeout = 600
-  config.ssh.connect_timeout = 120
+  config.vm.boot_timeout = 1200
+  config.ssh.connect_timeout = 60
   config.ssh.keep_alive = true
   config.ssh.insert_key = false
 
@@ -27,6 +27,9 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--ioapic", "on"]
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
     vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+    # Avoid serial-console stalls that block SSH on some Windows + VirtualBox setups
+    vb.customize ["modifyvm", :id, "--uartmode1", "disconnected"]
+    vb.customize ["modifyvm", :id, "--audio", "none"]
   end
 
   config.vm.provision "shell", path: "vagrant/provision-go.sh"
