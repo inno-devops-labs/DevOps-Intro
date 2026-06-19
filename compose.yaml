@@ -1,0 +1,30 @@
+services:
+  quicknotes:
+    build:
+      context: ./app
+    image: quicknotes:lab6
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/seed.json"
+    volumes:
+      - quicknotes-data:/data
+    healthcheck:
+      test: ["CMD", "/healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  quicknotes-data:
