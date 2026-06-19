@@ -6,6 +6,9 @@ Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/jammy64"
   config.vm.box_version = "20241002.0.0"
   config.vm.hostname = "quicknotes-vm"
+  config.vm.boot_timeout = 600
+  config.ssh.connect_timeout = 120
+  config.ssh.keep_alive = true
 
   config.vm.network "forwarded_port",
     guest: 8080,
@@ -20,6 +23,9 @@ Vagrant.configure("2") do |config|
     vb.name = "quicknotes-lab5"
     vb.memory = 1024
     vb.cpus = 2
+    vb.customize ["modifyvm", :id, "--ioapic", "on"]
+    vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+    vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
   end
 
   config.vm.provision "shell", path: "vagrant/provision-go.sh"
