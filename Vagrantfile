@@ -2,13 +2,14 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  # Ubuntu 22.04 LTS — official box still published (24.04 noble has no ubuntu/* box)
-  config.vm.box = "ubuntu/jammy64"
-  config.vm.box_version = "20241002.0.0"
+  # Bento 22.04 — built for VirtualBox 7.0.x (stable download; pin avoids broken latest)
+  config.vm.box = "bento/ubuntu-22.04"
+  config.vm.box_version = "202407.23.0"
   config.vm.hostname = "quicknotes-vm"
   config.vm.boot_timeout = 600
   config.ssh.connect_timeout = 120
   config.ssh.keep_alive = true
+  config.ssh.insert_key = false
 
   config.vm.network "forwarded_port",
     guest: 8080,
