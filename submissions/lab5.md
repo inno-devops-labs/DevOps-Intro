@@ -131,3 +131,24 @@ Each snapshot stores only the changes (deltas) from the previous state. Ten snap
 g) When is snapshotting an antipattern?
 
 Long chains of snapshots (more than 3) degrade performance because the VM has to traverse the chain to read data. They also consume significant disk space and are not suitable for production environments.
+
+## Bonus Task — VM vs Container Resource Baseline
+
+### Measurements
+
+| Dimension              | Vagrant VM | Docker container |
+|------------------------|-----------:|-----------------:|
+| Cold start             |     13.64s |             2.78s |
+| Idle RAM               |    166 MiB |          117.5 MiB |
+| On-disk size           |   2.37 GB |            903 MB |
+| Process count (guest)  |       104 |                2 |
+
+*Note: Docker image size shown is for the `golang:1.24` base image; multiple sizes appear due to other images on the system.*
+
+### Analysis
+
+The data clearly shows why containers won the 2014–2020 era for stateless microservices. The Docker container starts **~5× faster** than the VM, uses **~30% less RAM**, and has **~2.6× smaller on-disk footprint**. The VM also runs **52× more processes**, reflecting the full OS overhead of a virtualized system.
+
+These numbers highlight the key architectural difference: VMs virtualize **hardware**, while containers share the **host kernel**. For stateless workloads that need rapid scaling and resource efficiency, containers are the superior choice. However, for **stateful workloads** that require strong isolation, dedicated resources, or legacy OS support, VMs remain the right tool.
+
+This explains industry trends: containers power modern microservices (Kubernetes, serverless), while VMs continue to host databases, legacy enterprise applications, and multi-tenant workloads where isolation is critical.
