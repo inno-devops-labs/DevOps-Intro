@@ -1,0 +1,6 @@
+# local runtime state — never bake host data into the build context
+data/
+# build artifacts / local binaries
+quicknotes
+*.pcap
+*.txt
