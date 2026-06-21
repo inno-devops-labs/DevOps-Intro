@@ -1,0 +1,19 @@
+groups:
+  - name: quicknotes
+    rules:
+      # Symptom alert: sustained high error ratio. The 5m `for:` gate means a
+      # single 4xx burst won't page — only an error rate above 5% held for 5
+      # minutes does.
+      - alert: QuickNotesHighErrorRate
+        expr: |
+          sum(rate(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+            /
+          sum(rate(quicknotes_http_requests_total[5m]))
+            > 0.05
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "QuickNotes error rate above 5%"
+          description: "5xx/4xx responses are >5% of requests, sustained 5m."
+          runbook: "docs/runbook/high-error-rate.md"
