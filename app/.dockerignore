@@ -1,0 +1,7 @@
+# keep the build context small and cache-friendly
+data/
+quicknotes
+*.exe
+*_test.go
+Dockerfile
+.dockerignore
