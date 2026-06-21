@@ -126,3 +126,94 @@ The screenshot below demonstrates:
 - Successful response from `curl.exe http://localhost:18080/health` on the Windows host
 
 ![Task 1 verification](proof1.png)
+
+## Task 2 — Snapshots: Save, Break, Restore
+
+### 2.1 Snapshot workflow
+
+i created a snapshot:
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> vagrant snapshot save clean-working
+
+==> default: Snapshotting the machine as 'clean-working'...
+==> default: Snapshot saved! You can restore the snapshot at any time by
+==> default: using `vagrant snapshot restore`. You can delete it using
+==> default: `vagrant snapshot delete`.
+```
+
+i broke the VM by removing Go:
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> vagrant ssh -c "sudo rm -rf /usr/local/go && echo removed-go"
+removed-go
+```
+
+Verified that Go is unavailable:
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> vagrant ssh -c "/usr/local/go/bin/go version"
+bash: line 1: /usr/local/go/bin/go: No such file or directory
+```
+
+And restored the snapshot:
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> vagrant snapshot restore clean-working
+
+==> default: Forcing shutdown of VM...
+==> default: Restoring the snapshot 'clean-working'...
+==> default: Machine booted and ready!
+```
+![Task 2 verification](proof2.png)
+
+Measure restore time:
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> Measure-Command { vagrant snapshot restore clean-working }
+Days              : 0
+Hours             : 0
+Minutes           : 0
+Seconds           : 26
+Milliseconds      : 90
+Ticks             : 260900374
+TotalDays         : 0,000301968025462963
+TotalHours        : 0,00724723261111111
+TotalMinutes      : 0,434833956666667
+TotalSeconds      : 26,0900374
+TotalMilliseconds : 26090,0374
+```
+
+RESTORE_SECONDS = 26.09
+
+Verify recovery:
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> vagrant ssh -c "/usr/local/go/bin/go version"
+go version go1.24.5 linux/amd64
+```
+
+List snapshots:
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> vagrant snapshot list
+clean-working
+```
+
+### 2.2 Design questions
+
+#### e) Why are snapshots not backups?
+
+Snapshots are stored on the same physical disk as the virtual machine and depend on VirtualBox files. 
+If the host machine fails, the disk is damaged, or the VM directory is deleted, the snapshots will be lost as well. 
+Snapshots help recover from mistakes made inside the guest operating system, but they do not replace proper backups.
+
+#### f) How does copy-on-write affect storage usage?
+
+Snapshots use a copy-on-write mechanism. 
+Instead of copying the entire virtual disk, VirtualBox stores only the changes made after each snapshot. 
+As a result, multiple snapshots consume much less storage than several full VM copies.
+
+#### g) When is snapshotting an antipattern?
+
+Using long chains of snapshots is an antipattern. 
+Large snapshot chains increase disk usage, reduce performance, 
+and make VM management more difficult. Snapshots should not replace reproducible infrastructure or proper backup strategies.
+
+### Result
+
+The VM was successfully restored to its previous state after intentionally removing the Go installation.
+The snapshot restoration took approximately 26.09 seconds.
