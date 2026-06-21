@@ -157,7 +157,37 @@ catch a *bad* change before it deploys, not just the fact that *a* change exists
 
 ## Bonus — `ansible-pull` GitOps loop
 
-<BONUS_OUT>
+Inside the VM I installed a oneshot `ansible-pull.service` and an
+`ansible-pull.timer` (`OnBootSec=1min`, `OnUnitActiveSec=5min`). The service runs:
+
+```
+/usr/bin/ansible-pull -U https://github.com/RoukayaZaki/DevOps-Intro.git \
+  -C feature/lab7 -i ansible/inventory-local.ini ansible/playbook.yaml
+```
+
+`systemctl list-timers`:
+```
+NEXT                        LEFT      LAST                        UNIT                ACTIVATES
+Sun 2026-06-21 17:41:03 UTC 4min 16s  Sun 2026-06-21 17:36:03 UTC ansible-pull.timer  ansible-pull.service
+```
+
+**Convergence observed (no `ansible-playbook` from my host):**
+
+| event | time (UTC) |
+|-------|-----------|
+| pushed `listen_addr: :8085` to `feature/lab7` | 17:37:20 |
+| timer fired → `ansible-pull` ran | 17:41:08 |
+| VM unit reconciled to `ADDR=:8085` | 17:41:33 |
+
+~4 minutes end-to-end, within the 5-minute window. The pull's journal showed
+`TASK [Render the systemd unit] changed` + the restart handler, `changed=2`. (A
+benign `WARNING: Could not match supplied host pattern ... quicknotes-vm` appears
+because `ansible-pull` defaults `--limit` to the hostname; the play matched
+`localhost` from the inventory and ran fine.) I then pushed `:8080` back, and the
+next timer cycle reconciled the VM to `:8080` automatically — drift correction in
+both directions.
+
+### B.4 Design questions
 
 ### B.4 Design questions
 
