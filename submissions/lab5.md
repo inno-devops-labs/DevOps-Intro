@@ -217,3 +217,121 @@ and make VM management more difficult. Snapshots should not replace reproducible
 
 The VM was successfully restored to its previous state after intentionally removing the Go installation.
 The snapshot restoration took approximately 26.09 seconds.
+
+## Bonus Task — VM vs Container Resource Baseline
+
+### B.1 Vagrant VM measurements
+
+Commands used:
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> $boot = Measure-Command {
+>>     vagrant halt
+>>     vagrant up
+}
+$boot.TotalSeconds
+101,7083255
+
+PS C:\Users\P4IN\DevOps-Intro> vagrant ssh -c "free -h"
+Mem:           961Mi       290Mi       603Mi       968Ki       208Mi       670Mi
+Swap:          2.9Gi          0B       2.9Gi
+
+PS C:\Users\P4IN\DevOps-Intro> vagrant ssh -c "ps -A --no-headers | wc -l"
+157
+
+PS C:\Users\P4IN\DevOps-Intro> $size = (
+>>     Get-ChildItem "$env:USERPROFILE\VirtualBox VMs\quicknotes-vm" -Recurse |
+>>     Measure-Object -Property Length -Sum
+>> ).Sum
+PS C:\Users\P4IN\DevOps-Intro> "{0:N2} GB" -f ($size / 1GB)
+2,98 GB
+```
+
+Conclusion table:
+```text
+Cold start: 101.71 s
+Idle RAM: 290 MiB
+Process count: 157
+On-disk size: 2.98 GB
+```
+
+### B.2 Docker container measurements
+
+The container was launched using:
+
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> docker run -d -p 28080:8080 -v "${PWD}\app:/src" -w /src golang:1.24 sh -c 'go build -o /tmp/qn . && /tmp/qn'
+```
+
+Verification:
+
+
+Verification:
+
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> curl.exe http://localhost:28080/health
+{"notes":4,"status":"ok"}
+```
+
+Commands used:
+
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> docker ps
+CONTAINER ID   IMAGE         COMMAND                  CREATED          STATUS          PORTS                                           NAMES
+9d53fbd0b81e   golang:1.24   "sh -c 'go build -o …"   14 seconds ago   Up 12 seconds   0.0.0.0:28080->8080/tcp, [::]:280
+```
+
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> docker stats --no-stream
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O       PIDS
+9d53fbd0b81e   brave_vaughan   0.00%     26.21MiB / 15.47GiB   0.17%     1.75kB / 616B   4.1kB / 795kB   9
+```
+
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> docker top 9d53fbd0b81e
+root                530                 507                 0                   18:18               ?                   root                2586                530                 0                   18:18               ?                   00:00:00            /tmp/qn
+```
+
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> docker images --format "{{.Repository}} {{.Tag}} {{.Size}}"
+hello-world latest 25.9kB
+golang 1.24 1.32GB
+```
+
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> $start = Measure-Command {
+>>     docker stop 9d53fbd0b81e
+>>     docker start 9d53fbd0b81e
+>> }
+PS C:\Users\P4IN\DevOps-Intro> $start.TotalSeconds
+1,6373541
+```
+
+Measured values:
+
+```text
+Cold start: 1.64 s
+Idle RAM: 26.21 MiB
+Process count: 2
+On-disk size: 1.32 GB
+```
+
+### B.3 Comparison
+
+| Dimension             | Vagrant VM | Docker container |
+| --------------------- | ---------: | ---------------: |
+| Cold start            |   101.71 s |           1.64 s |
+| Idle RAM              |    290 MiB |        26.21 MiB |
+| On-disk size          |    2.98 GB |          1.32 GB |
+| Process count (guest) |        157 |                2 |
+
+### Analysis
+
+The biggest surprise was the difference in startup time and resource usage. 
+The Docker container starts almost instantly and consumes significantly less memory than the virtual machine.
+
+Virtual machines are more suitable when a complete operating system, stronger isolation, 
+or a different kernel is required. Containers are better suited for lightweight applications, microservices, and stateless workloads.
+
+The measurements explain why containers became popular between 2014 and 2020 for stateless microservices. 
+Containers are faster to start, use fewer resources, and allow many services to run on the same hardware.
+Virtual machines remain useful when full OS isolation is necessary, while containers are more efficient for deploying individual applications.
