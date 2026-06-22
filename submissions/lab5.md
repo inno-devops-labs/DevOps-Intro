@@ -181,6 +181,10 @@ The gap in cold start (~127 s vs under 1 s) and idle RAM (172 MiB vs ~23 MiB) wa
 
 ### Submission
 
-- [ ] Course PR opened (`feature/lab5` → `inno-devops-labs/main`)
-- [ ] Fork PR opened (`feature/lab5-fork` → `selysecr332/main`)
-- [ ] Both URLs on Moodle
+- [x] Course PR opened (`feature/lab5` → `inno-devops-labs/main`)  
+  **https://github.com/inno-devops-labs/DevOps-Intro/pull/1146**  
+  ![Course PR](../screenshots/lab_5/check1.png)
+- [x] Fork PR opened (`feature/lab5-fork` → `selysecr332/main`)  
+  **https://github.com/selysecr332/DevOps-Intro/pull/6**  
+  ![Fork PR](../screenshots/lab_5/check_5.png)
+
