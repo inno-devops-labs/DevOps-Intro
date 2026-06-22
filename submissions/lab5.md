@@ -151,3 +151,126 @@ I used the shell provisioner to install Go, build QuickNotes, and create the sys
 #### d) Why pin Go to a specific point release (`1.24.5`) instead of `1.24`?
 
 Pinning Go to `1.24.5` makes the VM more reproducible. If the provisioner only requested `1.24`, two students could run the same lab at different times and receive different patch releases. A specific point release keeps the build environment stable and makes validation output easier to compare.
+
+## Task 2 - Snapshots: Save, Break, Restore
+
+### Commands and output
+
+Initial host health check before taking the snapshot:
+
+```bash
+curl -s http://localhost:18080/health
+```
+
+```json
+{"notes":4,"status":"ok"}
+```
+
+Snapshot save:
+
+```bash
+vagrant snapshot save quicknotes-clean
+```
+
+```text
+==> default: Snapshotting the machine as 'quicknotes-clean'...
+==> default: Snapshot saved! You can restore the snapshot at any time by
+==> default: using `vagrant snapshot restore`. You can delete it using
+==> default: `vagrant snapshot delete`.
+```
+
+Snapshot list:
+
+```bash
+vagrant snapshot list
+```
+
+```text
+==> default:
+quicknotes-clean
+```
+
+Deliberately breaking the VM by removing the Go installation and Go command links:
+
+```bash
+vagrant ssh -c 'sudo rm -rf /usr/local/go /usr/local/bin/go /usr/local/bin/gofmt'
+```
+
+Verification that the VM is broken:
+
+```bash
+vagrant ssh -c 'go version'
+```
+
+```text
+bash: line 1: go: command not found
+```
+
+Timed restore from the snapshot:
+
+```bash
+time vagrant snapshot restore quicknotes-clean
+```
+
+```text
+==> default: Forcing shutdown of VM...
+==> default: Restoring the snapshot 'quicknotes-clean'...
+==> default: Checking if box 'ubuntu/jammy64' version '20241002.0.0' is up to date...
+==> default: Resuming suspended VM...
+==> default: Booting VM...
+==> default: Waiting for machine to boot. This may take a few minutes...
+    default: SSH address: 127.0.0.1:2222
+    default: SSH username: vagrant
+    default: SSH auth method: private key
+==> default: Machine booted and ready!
+==> default: Machine already provisioned. Run `vagrant provision` or use the `--provision`
+==> default: flag to force provisioning. Provisioners marked to run always will still run.
+
+real    0m20.208s
+user    0m2.349s
+sys     0m1.848s
+```
+
+Verification after restore:
+
+```bash
+vagrant ssh -c 'go version'
+```
+
+```text
+go version go1.24.5 linux/amd64
+```
+
+Health check from inside the VM after restore:
+
+```bash
+vagrant ssh -c 'curl -s http://localhost:8080/health'
+```
+
+```json
+{"notes":4,"status":"ok"}
+```
+
+Health check from the host after restore:
+
+```bash
+curl -s http://localhost:18080/health
+```
+
+```json
+{"notes":4,"status":"ok"}
+```
+
+### Design questions
+
+#### e) Snapshots are not backups
+
+Snapshots are not backups because they usually depend on the same VM storage and host machine as the original VM. If the host disk fails, the VM directory is deleted, or the snapshot chain is corrupted, the snapshot may be lost with the VM. A real backup should be stored separately and should still be usable after failure of the original host or storage.
+
+#### f) Copy-on-write
+
+Copy-on-write means VirtualBox does not immediately duplicate the full VM disk when a snapshot is created. Instead, it keeps the original disk state and stores only the disk blocks that change after the snapshot. Ten snapshots can use much less space than ten full VM copies at first, but disk usage grows as more changes are made across the snapshot chain.
+
+#### g) When is snapshotting an antipattern?
+
+Snapshotting is an antipattern when long chains of snapshots become a substitute for reproducible provisioning and configuration management. Long snapshot chains can consume increasing disk space, slow down VM operations, and make recovery more fragile. For infrastructure work, it is usually better to rebuild a machine from code than to preserve one manually changed VM forever.
