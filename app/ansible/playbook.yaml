@@ -5,7 +5,7 @@
   gather_facts: false
 
   vars:
-    listen_addr: ":8081"
+    listen_addr: ":8080"
     data_path: "/var/lib/quicknotes/notes.json"
 
   tasks:
