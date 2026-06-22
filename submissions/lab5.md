@@ -262,8 +262,6 @@ The container was launched using:
 PS C:\Users\P4IN\DevOps-Intro> docker run -d -p 28080:8080 -v "${PWD}\app:/src" -w /src golang:1.24 sh -c 'go build -o /tmp/qn . && /tmp/qn'
 ```
 
-Verification:
-
 
 Verification:
 
