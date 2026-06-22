@@ -1,0 +1,56 @@
+---
+- name: Deploy QuickNotes to VM
+  hosts: quicknotes_vm
+  become: true
+  gather_facts: false
+
+  vars:
+    listen_addr: ":8081"
+    data_path: "/var/lib/quicknotes/notes.json"
+
+  tasks:
+    - name: 1. Create system user quicknotes
+      user:
+        name: quicknotes
+        system: true
+        shell: /usr/sbin/nologin
+        create_home: false
+
+    - name: 2. Ensure data directory exists with right permissions
+      file:
+        path: /var/lib/quicknotes
+        state: directory
+        owner: quicknotes
+        group: quicknotes
+        mode: "0750"
+
+    - name: 3. Copy binary to /usr/local/bin
+      copy:
+        src: files/quicknotes
+        dest: /usr/local/bin/quicknotes
+        owner: root
+        group: root
+        mode: "0755"
+      notify: restart quicknotes
+
+    - name: 4. Template systemd unit
+      template:
+        src: templates/quicknotes.service.j2
+        dest: /etc/systemd/system/quicknotes.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify: restart quicknotes
+
+    - name: 5. Enable and start service
+      systemd:
+        name: quicknotes
+        enabled: true
+        state: started
+        daemon_reload: true
+
+  handlers:
+    - name: restart quicknotes
+      systemd:
+        name: quicknotes
+        state: restarted
