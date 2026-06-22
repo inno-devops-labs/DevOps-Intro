@@ -62,3 +62,66 @@ Output: `{"notes":6,"status":"ok"}`
 Input: `vagrant ssh -c 'curl http://localhost:8080/health'`
 
 Output: `{"notes":6,"status":"ok"}`
+
+# Task 2
+
+## Breaking and restoring VM
+
+1. Take a snapshot of the working VM, give it a meaningful name
+
+Action: `vagrant snapshot save quicknotes-vm-stable`
+
+2. Break the VM deliberately
+
+Action: `vagrant ssh -c 'sudo rm -rf /usr/local/go'`
+
+3. Verify it's broken with a command that proves it
+
+Action: `vagrant ssh -c 'go version'`
+Output: 
+```
+bash: line 1: go: command not found
+```
+
+4. Restore from the snapshot
+
+Action: `vagrant snapshot restore quicknotes-vm-stable`
+
+5. Verify recovery
+
+Action: `vagrant ssh -c 'go version'`
+Output: `go version go1.24.5 linux/arm64`
+
+6. Time the restore
+
+Action: `time vagrant snapshot restore quicknotes-vm-stable`
+Output:
+```
+==> default: Forcing shutdown of VM...
+==> default: Restoring the snapshot 'quicknotes-vm-stable'...
+==> default: Checking if box 'bento/ubuntu-22.04' version '202510.26.0' is up to date...
+==> default: Resuming suspended VM...
+==> default: Booting VM...
+==> default: Waiting for machine to boot. This may take a few minutes...
+    default: SSH address: 127.0.0.1:2222
+    default: SSH username: vagrant
+    default: SSH auth method: private key
+==> default: Machine booted and ready!
+==> default: Machine already provisioned. Run `vagrant provision` or use the `--provision`
+==> default: flag to force provisioning. Provisioners marked to run always will still run.
+vagrant snapshot restore quicknotes-vm-stable  1.45s user 1.00s system 18% cpu 13.421 total
+```
+
+## Design questions
+
+1. Snapshots are not backups. Explain why in 2-3 sentences — what failure modes is a snapshot useless for?
+
+Answer: Snapshots are saved states of the VM disk. Firstly, if there was an error in the VM at the moment of the snapshot, it won't help to get rid of it. Secondly, snapshots are stored on the same disk the VM is running on — if that disk is broken, snapshots will be also lost. Thirdly, if someone runs `vagrant destroy`, snapshots will be lost too.
+
+2. Copy-on-write: Vagrant snapshots are copy-on-write under VirtualBox. What does that mean for disk usage when you take 10 snapshots vs 1?
+
+Answer: copy-on-write approach means that snapshot is not a copy of the disk, but delta from the previous snapshot. The problem is that if we save 10 snapshots that contain adding, deleting and other operations with data, in sum it will contain several times bigger info than only 1 equivalent of disk data. But if we have only 1 snapshot, it means we have the amount of data needed to save the state, not more.
+
+3. When is snapshotting an antipattern?
+
+Answer: Snapshotting is an antipattern when it substitutes reproducible provisioning — if the Vagrantfile can rebuild the VM cleanly, `vagrant destroy -f && vagrant up` is the correct approach. It is also an antipattern when used on a running database (the filesystem may be mid-write, producing an inconsistent snapshot), or when a long chain of snapshots is treated as incremental backups (they are not — disk usage and restore time grow with each delta, and a single disk failure loses everything).
