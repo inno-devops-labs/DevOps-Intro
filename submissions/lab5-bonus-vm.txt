@@ -1,0 +1,29 @@
+### cold boot: vagrant halt, then timed vagrant up (boot only, already provisioned)
+==> default: Attempting graceful shutdown of VM...
+Bringing machine 'default' up with 'hyperv' provider...
+==> default: Verifying Hyper-V is enabled...
+==> default: Verifying Hyper-V is accessible...
+    default: Configuring the VM...
+    default: Setting VM Enhanced session transport type to disabled/default (VMBus)
+==> default: Starting the machine...
+==> default: Waiting for the machine to report its IP address...
+    default: Timeout: 120 seconds
+    default: IP: 172.20.82.144
+==> default: Waiting for machine to boot. This may take a few minutes...
+    default: SSH address: 172.20.82.144:22
+    default: SSH username: vagrant
+    default: SSH auth method: private key
+==> default: Machine booted and ready!
+==> default: Setting hostname...
+==> default: Machine already provisioned. Run `vagrant provision` or use the `--provision`
+==> default: flag to force provisioning. Provisioners marked to run always will still run.
+BOOT_SECONDS = 35,6
+### idle RAM (free -h)
+               total        used        free      shared  buff/cache   available
+Mem:           892Mi       193Mi       403Mi       4.0Mi       294Mi       563Mi
+Swap:          2.0Gi          0B       2.0Gi
+### process count (ps -A | wc -l)
+126
+### VM disk image size (diff + parent chain)
+VM_DISK_GB = 8,55  (disk: C:\study\DEVOPS\DevOps-Intro\.vagrant\machines\default\hyperv\Virtual Hard Disks\generic-ubuntu2204-hyperv-x64_8975FEE7-F9D8-4101-AED9-CCAA64C2ABD2.avhdx)
+### DONE - results in submissions/lab5-bonus-vm.txt
