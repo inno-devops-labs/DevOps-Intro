@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"errors"
+	"flag"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -12,38 +15,57 @@ import (
 )
 
 func main() {
+	// Healthcheck mode: `quicknotes -healthcheck` performs an HTTP GET against
+	// the app's own /health endpoint and exits 0 (healthy) or 1 (unhealthy).
+	// This lets a distroless image (which has no shell, curl, or wget) run a
+	// container HEALTHCHECK by invoking the same binary that's already present.
+	healthcheck := flag.Bool("healthcheck", false, "probe /health and exit 0/1")
+	flag.Parse()
+	if *healthcheck {
+		port := os.Getenv("ADDR")
+		if port == "" {
+			port = ":8080"
+		}
+		resp, err := http.Get("http://localhost" + port + "/health")
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "healthcheck: %v\n", err)
+			os.Exit(1)
+		}
+		defer resp.Body.Close()
+		io.Copy(io.Discard, resp.Body)
+		if resp.StatusCode != http.StatusOK {
+			fmt.Fprintf(os.Stderr, "healthcheck: status %d\n", resp.StatusCode)
+			os.Exit(1)
+		}
+		os.Exit(0)
+	}
+
 	addr := envOrDefault("ADDR", ":8080")
 	dataPath := envOrDefault("DATA_PATH", "data/notes.json")
 	seedPath := envOrDefault("SEED_PATH", "seed.json")
-
 	if err := ensureSeeded(dataPath, seedPath); err != nil {
 		log.Fatalf("seed: %v", err)
 	}
-
 	store, err := NewStore(dataPath)
 	if err != nil {
 		log.Fatalf("store: %v", err)
 	}
-
 	server := NewServer(store)
 	srv := &http.Server{
 		Addr:              addr,
 		Handler:           server.Routes(),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
-
 	go func() {
 		log.Printf("quicknotes listening on %s (notes loaded: %d)", addr, store.Count())
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("listen: %v", err)
 		}
 	}()
-
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 	<-stop
 	log.Println("shutting down")
-
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {

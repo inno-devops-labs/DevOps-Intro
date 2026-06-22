@@ -1,0 +1,42 @@
+﻿services:
+  # One-shot init: fixes ownership of the named volume so the nonroot app
+  # (UID 65532) can write to /data. Runs to completion before quicknotes starts.
+  init-data:
+    image: busybox:1.36
+    command: ["sh", "-c", "chown -R 65532:65532 /data"]
+    volumes:
+      - quicknotes-data:/data
+    restart: "no"
+
+  quicknotes:
+    build: ./app
+    image: quicknotes:lab6
+    depends_on:
+      init-data:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/seed.json"
+    volumes:
+      - quicknotes-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/quicknotes", "-healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    user: "65532:65532"
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  quicknotes-data:
