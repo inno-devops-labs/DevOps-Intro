@@ -240,3 +240,198 @@ This matters for security because fewer packages means a smaller attack surface 
 This makes the binary smaller, but the cost is reduced debugging information.
 
 `-trimpath` removes local filesystem paths from the compiled binary. This improves reproducibility because the binary does not contain machine-specific build paths. The cost is that stack traces and debug information may contain less detailed local path information.
+
+## Task 2 - Compose + Healthcheck + Persistent Volume
+
+### compose.yaml
+
+`compose.yaml`:
+
+```yaml
+services:
+  quicknotes:
+    build:
+      context: ./app
+    image: quicknotes:lab6
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/app/seed.json"
+    volumes:
+      - quicknotes-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  quicknotes-data:
+```
+
+The service builds from `./app`, tags the image as `quicknotes:lab6`, publishes port `8080`, mounts the named volume at `/data`, passes the required environment variables, and uses `restart: unless-stopped`.
+
+The healthcheck uses a small static Go binary copied into the distroless image at `/healthcheck`. The binary calls `http://127.0.0.1:8080/health` and exits non-zero if the request fails or returns a non-200 status.
+
+### Compose startup verification
+
+Command:
+
+```bash
+docker compose up --build -d
+```
+
+Relevant output:
+
+```text
+[+] Running 4/4
+ ✔ quicknotes                             Built                                 0.0s
+ ✔ Network devops-intro_default           Created                               0.0s
+ ✔ Volume "devops-intro_quicknotes-data"  Created                               0.0s
+ ✔ Container devops-intro-quicknotes-1    Started                               0.2s
+```
+
+Command:
+
+```bash
+docker compose ps
+```
+
+Output:
+
+```text
+NAME                        IMAGE             COMMAND         SERVICE      CREATED       STATUS                            PORTS
+devops-intro-quicknotes-1   quicknotes:lab6   "/quicknotes"   quicknotes   5 seconds ago Up 4 seconds (health: starting)   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+```
+
+Command:
+
+```bash
+curl -s http://localhost:8080/health
+```
+
+Output:
+
+```json
+{"notes":4,"status":"ok"}
+```
+
+The application starts successfully through Docker Compose and serves the `/health` endpoint.
+
+### Persistence test
+
+Command:
+
+```bash
+curl -X POST -H 'Content-Type: application/json' \
+  -d '{"title":"durable","body":"survive a restart"}' \
+  http://localhost:8080/notes
+```
+
+Output:
+
+```json
+{"id":5,"title":"durable","body":"survive a restart","created_at":"2026-06-22T20:41:45.049409159Z"}
+```
+
+Command:
+
+```bash
+curl -s http://localhost:8080/notes | grep durable
+```
+
+Output:
+
+```json
+[{"id":4,"title":"Endpoint cheat-sheet","body":"GET /notes  GET /notes/{id}  POST /notes  DELETE /notes/{id}  GET /health  GET /metrics","created_at":"2026-01-15T10:15:00Z"},{"id":5,"title":"durable","body":"survive a restart","created_at":"2026-06-22T20:41:45.049409159Z"},{"id":1,"title":"Welcome to QuickNotes","body":"This is the project you'll containerize, deploy, monitor, and harden across all 10 labs.","created_at":"2026-01-15T10:00:00Z"},{"id":2,"title":"Read app/main.go first","body":"Start by understanding the entry point — env vars, signal handling, graceful shutdown.","created_at":"2026-01-15T10:05:00Z"},{"id":3,"title":"DevOps mantra","body":"If it hurts, do it more often.","created_at":"2026-01-15T10:10:00Z"}]
+```
+
+Command:
+
+```bash
+docker compose down
+```
+
+Output:
+
+```text
+[+] Running 2/2
+ ✔ Container devops-intro-quicknotes-1  Removed                                 0.2s
+ ✔ Network devops-intro_default         Removed                                 0.2s
+```
+
+Command:
+
+```bash
+docker compose up -d
+sleep 3
+curl -s http://localhost:8080/notes | grep durable
+```
+
+Output:
+
+```json
+[{"id":5,"title":"durable","body":"survive a restart","created_at":"2026-06-22T20:41:45.049409159Z"},{"id":1,"title":"Welcome to QuickNotes","body":"This is the project you'll containerize, deploy, monitor, and harden across all 10 labs.","created_at":"2026-01-15T10:00:00Z"},{"id":2,"title":"Read app/main.go first","body":"Start by understanding the entry point — env vars, signal handling, graceful shutdown.","created_at":"2026-01-15T10:05:00Z"},{"id":3,"title":"DevOps mantra","body":"If it hurts, do it more often.","created_at":"2026-01-15T10:10:00Z"},{"id":4,"title":"Endpoint cheat-sheet","body":"GET /notes  GET /notes/{id}  POST /notes  DELETE /notes/{id}  GET /health GET /metrics","created_at":"2026-01-15T10:15:00Z"}]
+```
+
+The `durable` note survived `docker compose down` followed by `docker compose up -d`, which confirms the named volume kept `notes.json`.
+
+Command:
+
+```bash
+docker compose down -v
+```
+
+Output:
+
+```text
+[+] Running 3/3
+ ✔ Container devops-intro-quicknotes-1  Removed                                 0.1s
+ ✔ Volume devops-intro_quicknotes-data  Removed                                 0.0s
+ ✔ Network devops-intro_default         Removed                                 0.2s
+```
+
+Command:
+
+```bash
+docker compose up -d
+sleep 3
+curl -s http://localhost:8080/notes | grep durable
+```
+
+Output:
+
+```text
+
+```
+
+After `docker compose down -v`, `grep durable` produced no output. This confirms that deleting the named volume removed the persisted note data.
+
+### Design question e: Distroless has no shell. How do you healthcheck it?
+
+The final image is based on `gcr.io/distroless/static:nonroot`, so it does not include a shell, `curl`, `wget`, or package manager tools. Because of that, a shell-form healthcheck such as `CMD-SHELL curl ...` cannot work.
+
+This Compose file uses an exec-form healthcheck:
+
+```yaml
+healthcheck:
+  test: ["CMD", "/healthcheck"]
+```
+
+`/healthcheck` is a small static Go binary built in the Dockerfile and copied into the runtime image. It sends an HTTP request to `http://127.0.0.1:8080/health` from inside the container and exits with status `0` only when QuickNotes returns HTTP 200. This keeps the final image distroless while still providing an application-level healthcheck.
+
+### Design question f: Why does `volumes: [quicknotes-data:/data]` survive `docker compose down`?
+
+`quicknotes-data` is a named Docker volume. Docker Compose removes containers and the default network when running `docker compose down`, but it does not remove named volumes by default because volumes are intended to hold persistent state.
+
+The volume is destroyed when `docker compose down -v` is used, or when the volume is removed directly with a Docker volume removal command. In the persistence test, the note survived normal `down` and `up`, but disappeared after `docker compose down -v`.
+
+### Design question g: `depends_on` without `condition: service_healthy`
+
+`depends_on` without `condition: service_healthy` only waits for the dependency container to be started. It does not wait for the application inside the container to finish initialization or pass its healthcheck.
+
+The bug this can cause is startup ordering without readiness. For example, a dependent service might try to call QuickNotes immediately after the QuickNotes container starts, while the HTTP server is not ready yet. That can cause connection failures, failed migrations, failed startup checks, or retry loops even though the dependency container technically exists.
