@@ -435,3 +435,180 @@ The volume is destroyed when `docker compose down -v` is used, or when the volum
 `depends_on` without `condition: service_healthy` only waits for the dependency container to be started. It does not wait for the application inside the container to finish initialization or pass its healthcheck.
 
 The bug this can cause is startup ordering without readiness. For example, a dependent service might try to call QuickNotes immediately after the QuickNotes container starts, while the HTTP server is not ready yet. That can cause connection failures, failed migrations, failed startup checks, or retry loops even though the dependency container technically exists.
+
+## Bonus Task - The 6 Security Defaults
+
+### Hardened compose.yaml snippet
+
+`services.quicknotes` in `compose.yaml`:
+
+```yaml
+quicknotes:
+  build:
+    context: ./app
+  image: quicknotes:lab6
+  ports:
+    - "8080:8080"
+  environment:
+    ADDR: ":8080"
+    DATA_PATH: "/data/notes.json"
+    SEED_PATH: "/app/seed.json"
+  volumes:
+    - quicknotes-data:/data
+  tmpfs:
+    - /tmp:size=16m,mode=1777
+  read_only: true
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD", "/healthcheck"]
+    interval: 10s
+    timeout: 3s
+    retries: 3
+    start_period: 5s
+```
+
+The service applies all Compose-level hardening defaults required for the bonus task: all Linux capabilities are dropped, the root filesystem is read-only, `/tmp` is provided as tmpfs, and `no-new-privileges` is enabled. The `/data` named volume remains writable so QuickNotes can persist `notes.json`.
+
+### Startup verification after hardening
+
+Command:
+
+```bash
+docker compose down
+docker compose up --build -d
+docker compose ps
+curl -s http://localhost:8080/health
+```
+
+Relevant output:
+
+```text
+[+] Running 3/3
+ ✔ quicknotes                           Built                                   0.0s
+ ✔ Network devops-intro_default         Created                                 0.0s
+ ✔ Container devops-intro-quicknotes-1  Started                                 0.2s
+
+NAME                        IMAGE             COMMAND         SERVICE      CREATED         STATUS                            PORTS
+devops-intro-quicknotes-1   quicknotes:lab6   "/quicknotes"   quicknotes   3 seconds ago   Up 3 seconds (health: starting)   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+
+{"notes":4,"status":"ok"}
+```
+
+The application still starts and serves `/health` after the security defaults are applied.
+
+### Verification 1: USER nonroot
+
+Command:
+
+```bash
+docker inspect quicknotes:lab6 --format '{{ .Config.User }}'
+```
+
+Output:
+
+```text
+nonroot:nonroot
+```
+
+This confirms the image is configured to run as the nonroot distroless user.
+
+### Verification 2: Distroless base and no shell available
+
+Command:
+
+```bash
+docker compose exec quicknotes sh
+```
+
+Output:
+
+```text
+OCI runtime exec failed: exec failed: unable to start container process: exec: "sh": executable file not found in $PATH: unknown
+```
+
+This confirms the runtime image does not include a shell. That is expected for `gcr.io/distroless/static:nonroot` and reduces the tools available inside the container if it is compromised.
+
+### Verification 3: Capabilities dropped
+
+Command:
+
+```bash
+CID=$(docker compose ps -q quicknotes)
+docker inspect "$CID" --format '{{ .HostConfig.CapDrop }}'
+```
+
+Output:
+
+```text
+[ALL]
+```
+
+This confirms Docker started the container with all Linux capabilities dropped. QuickNotes does not need extra capabilities to bind to port `8080` or write to `/data`.
+
+### Verification 4: Read-only root filesystem
+
+Command:
+
+```bash
+docker inspect "$CID" --format '{{ .HostConfig.ReadonlyRootfs }}'
+```
+
+Output:
+
+```text
+true
+```
+
+This confirms the container root filesystem is mounted read-only. The final distroless image has no shell or `touch` binary, so a direct `docker compose exec quicknotes touch /etc/test` write test cannot run in the final image. The Docker host configuration confirms the read-only root filesystem is enforced, while `/data` remains writable through the named volume.
+
+### Verification 5: no-new-privileges
+
+Command:
+
+```bash
+docker inspect "$CID" --format '{{ .HostConfig.SecurityOpt }}'
+```
+
+Output:
+
+```text
+[no-new-privileges:true]
+```
+
+This confirms the container is started with `no-new-privileges`, so processes inside the container cannot gain additional privileges through setuid or similar privilege escalation paths.
+
+### Trivy scan
+
+Command:
+
+```bash
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+  aquasec/trivy:0.59.1 image --severity HIGH,CRITICAL --no-progress \
+  quicknotes:lab6
+```
+
+Relevant output:
+
+```text
+quicknotes:lab6 (debian 13.5)
+=============================
+Total: 0 (HIGH: 0, CRITICAL: 0)
+
+healthcheck (gobinary)
+======================
+Total: 12 (HIGH: 12, CRITICAL: 0)
+
+quicknotes (gobinary)
+=====================
+Total: 12 (HIGH: 12, CRITICAL: 0)
+```
+
+Trivy found no HIGH or CRITICAL vulnerabilities in the distroless Debian base layer. It did report 12 HIGH vulnerabilities in each Go binary from the Go standard library version used to build the image, and no CRITICAL vulnerabilities. The scan was run once locally as requested; Lab 9 will wire this into CI.
+
+### Most security per line of YAML
+
+The best security per line of YAML is `cap_drop: [ALL]` because it removes kernel-level privileges that the application does not need. QuickNotes only needs to listen on port `8080` and write to `/data`, so keeping extra Linux capabilities would add risk without adding useful behavior. `read_only: true` is also high value because it prevents writes to the image filesystem and forces persistent state into explicit mounts. Together, these settings reduce both the available privilege and the writable surface of the container with only a few lines of configuration.

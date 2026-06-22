@@ -11,6 +11,13 @@ services:
       SEED_PATH: "/app/seed.json"
     volumes:
       - quicknotes-data:/data
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "/healthcheck"]
