@@ -274,3 +274,135 @@ Copy-on-write means VirtualBox does not immediately duplicate the full VM disk w
 #### g) When is snapshotting an antipattern?
 
 Snapshotting is an antipattern when long chains of snapshots become a substitute for reproducible provisioning and configuration management. Long snapshot chains can consume increasing disk space, slow down VM operations, and make recovery more fragile. For infrastructure work, it is usually better to rebuild a machine from code than to preserve one manually changed VM forever.
+
+## Bonus Task - VM vs Container Resource Baseline
+
+### Vagrant VM measurements
+
+Cold boot:
+
+```bash
+time vagrant halt
+time vagrant up
+```
+
+```text
+real    0m8.304s
+user    0m1.464s
+sys     0m0.932s
+
+real    0m26.550s
+user    0m3.506s
+sys     0m2.995s
+```
+
+Idle RAM:
+
+```bash
+vagrant ssh -c 'free -h'
+```
+
+```text
+               total        used        free      shared  buff/cache   available
+Mem:           957Mi       176Mi       578Mi       0.0Ki       202Mi       634Mi
+Swap:             0B          0B          0B
+```
+
+Process count:
+
+```bash
+vagrant ssh -c 'ps -A --no-headers | wc -l'
+```
+
+```text
+107
+```
+
+Disk size:
+
+```bash
+du -sh ~/VirtualBox\ VMs/quicknotes-lab5
+```
+
+```text
+3.5G    /home/mostafa/VirtualBox VMs/quicknotes-lab5
+```
+
+### Docker container measurements
+
+Container start command:
+
+```bash
+docker run -d --name qn-lab5-bonus -p 28080:8080 \
+  -v "$PWD/app:/src" \
+  -w /src \
+  golang:1.24 \
+  sh -c 'go build -o /tmp/qn && DATA_PATH=/tmp/notes.json SEED_PATH=/src/seed.json /tmp/qn'
+```
+
+Health check:
+
+```bash
+curl -s http://localhost:28080/health
+```
+
+```json
+{"notes":4,"status":"ok"}
+```
+
+Cold start:
+
+```bash
+docker stop qn-lab5-bonus
+time docker start qn-lab5-bonus
+```
+
+```text
+qn-lab5-bonus
+
+real    0m0.216s
+user    0m0.016s
+sys     0m0.008s
+```
+
+Idle RAM:
+
+```bash
+docker stats qn-lab5-bonus --no-stream
+```
+
+```text
+CONTAINER ID   NAME            CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O   PIDS
+4f077f5d760a   qn-lab5-bonus   0.00%     6.742MiB / 15.31GiB   0.04%     4.52kB / 126B   0B / 0B     8
+```
+
+Process count:
+
+```bash
+docker top qn-lab5-bonus | tail -n +2 | wc -l
+```
+
+```text
+2
+```
+
+On-disk image size:
+
+```bash
+docker images golang:1.24 --format '{{.Size}}'
+```
+
+```text
+894MB
+```
+
+### Comparison
+
+| Dimension             | Vagrant VM | Docker container |
+|-----------------------|-----------:|-----------------:|
+| Cold start            |    26.550s |           0.216s |
+| Idle RAM              |      176Mi |         6.742MiB |
+| On-disk size          |       3.5G |            894MB |
+| Process count (guest) |        107 |                2 |
+
+The biggest surprise was the startup-time difference: the Docker container restarted in less than a second, while the VM needed about 26.5 seconds to boot. The RAM and process-count numbers also show the cost of a full guest operating system, because the VM runs Ubuntu and system services while the container only runs the shell wrapper and QuickNotes process. A VM is the right tool when I need strong isolation, a full OS environment, kernel-level differences, or a server-like target for configuration management. A container is the better tool for stateless microservices because it starts quickly, consumes fewer resources, and packages the application runtime without booting a separate operating system. These measurements help explain why containers became popular from 2014 to 2020 for stateless services: teams could run and scale many lightweight application instances faster and cheaper than full VMs.
