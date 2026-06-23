@@ -1,0 +1,47 @@
+services:
+  quicknotes-init:
+    image: busybox:1.36
+    command: ["sh", "-c", "mkdir -p /data && chown -R 65532:65532 /data"]
+    volumes:
+      - quicknotes-data:/data
+
+  quicknotes:
+    build:
+      context: ./app
+    image: quicknotes:lab6
+    depends_on:
+      quicknotes-init:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/seed.json"
+    volumes:
+      - quicknotes-data:/data
+    user: "65532:65532"
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  quicknotes-health:
+    image: curlimages/curl:8.11.1
+    depends_on:
+      - quicknotes
+    command:
+      - sh
+      - -c
+      - |
+        while true; do
+          curl -fsS http://quicknotes:8080/health && sleep 30 || sleep 2
+        done
+    restart: unless-stopped
+
+volumes:
+  quicknotes-data:
