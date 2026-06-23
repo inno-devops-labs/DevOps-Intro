@@ -130,3 +130,86 @@ I used the `shell` provisioner. For a single VM and one focused task, which is i
 #### d) Why pin `1.24.5` instead of `1.24`
 
 Pinning `1.24.5` makes the environment reproducible because every student gets the exact same compiler build, patches, and behavior. A floating `1.24` reference can silently resolve to different point releases over time, which can change bug fixes, security patches, or module resolution behavior and make results differ between machines or between submission dates.
+
+## Task 2
+
+### Exact commands run
+
+```bash
+vagrant snapshot save task2-go-1-24-5-working
+vagrant ssh -c "sudo rm -rf /usr/local/go /usr/local/bin/go /usr/local/bin/gofmt"
+vagrant ssh -c 'go version'
+time vagrant snapshot restore task2-go-1-24-5-working
+vagrant ssh -c 'go version'
+```
+
+### Snapshot save output
+
+```text
+==> default: Snapshotting the machine as 'task2-go-1-24-5-working'...
+==> default: Snapshot saved! You can restore the snapshot at any time by
+==> default: using `vagrant snapshot restore`. You can delete it using
+==> default: `vagrant snapshot delete`.
+```
+
+### Broken state verification
+
+```text
+bash: line 1: go: command not found
+```
+
+### Restore time output
+
+```text
+==> default: Forcing shutdown of VM...
+==> default: Restoring the snapshot 'task2-go-1-24-5-working'...
+==> default: Resuming suspended VM...
+==> default: Booting VM...
+==> default: Waiting for machine to boot. This may take a few minutes...
+  default: SSH address: 127.0.0.1:2222
+  default: SSH username: vagrant
+  default: SSH auth method: private key
+==> default: Machine booted and ready!
+==> default: Machine already provisioned. Run `vagrant provision` or use the `--provision`
+==> default: flag to force provisioning. Provisioners marked to run always will still run.
+vagrant snapshot restore task2-go-1-24-5-working  1.31s user 0.76s system 16% cpu 12.770 total
+```
+
+### Recovery verification
+
+```text
+go version go1.24.5 linux/arm64
+```
+
+### Design answers
+
+#### e) Why snapshots are not backups
+
+Snapshots are tied to the same underlying VM disk chain and usually to the same host storage, so they do not protect you from host disk failure, accidental deletion of the VM files, or corruption of the entire VirtualBox VM directory. They are also a poor answer to broader disaster scenarios such as losing the laptop or damaging the base image metadata, because the snapshot disappears with the machine state it depends on.
+
+#### f) Copy-on-write and disk usage
+
+With copy-on-write snapshots, taking a snapshot does not duplicate the entire disk immediately. Instead, each snapshot preserves a point-in-time base and only stores blocks that change afterward. That means 10 snapshots do not cost 10 full VM disks up front, but they still accumulate extra delta files over time, and long-lived or heavily changed VMs can consume substantial disk space.
+
+#### g) When snapshotting becomes an antipattern
+
+Snapshotting becomes an antipattern when you build long chains of snapshots and start depending on them as a workflow instead of keeping environments reproducible from code. Long chains increase storage overhead, slow management operations, make recovery history harder to reason about, and create fragile stateful systems where nobody is sure which snapshot is the real source of truth.
+
+## Bonus Task
+
+### Comparison table
+
+| Dimension | Vagrant VM | Docker container |
+| --- | ---: | ---: |
+| Cold start | 19.662 s | 0.172 s |
+| Idle RAM | 214 MiB used of 824 MiB | 7.77 MiB |
+| On-disk size | 3.3G | 1.32GB |
+| Process count (guest) | 105 | 2 |
+
+### Measurement notes
+
+VM measurements came from `time vagrant up`, `vagrant ssh -c 'free -h'`, `vagrant ssh -c 'ps -A --no-headers | wc -l'`, and `du -sh "$HOME/VirtualBox VMs/quicknotes-lab5"`. Docker measurements came from `docker stop lab5-qn-bonus && time docker start lab5-qn-bonus`, `docker stats --no-stream`, `docker top lab5-qn-bonus`, and `docker images golang:1.24 --format 'IMAGE={{.Repository}}:{{.Tag}} SIZE={{.Size}}'`.
+
+### Analysis
+
+The biggest (but expectable) surprise was the gap in startup latency and background overhead: the container restarted in 0.172 seconds, while the VM took 19.662 seconds to boot, and the container used only 7.77 MiB of RAM versus 214 MiB already consumed inside the guest OS. The VM is the right tool when you need stronger OS-level isolation, a full init/system environment, or realistic testing of machine-level provisioning and configuration management. The container is the right tool for fast, repeatable packaging of a single stateless service where host-kernel sharing is acceptable and startup speed matters. These measurements show why containers dominated the 2014-2020 stateless microservice wave: they are dramatically cheaper to start, smaller to distribute, and lighter to run, so dense scheduling and rapid rollout are much easier than with full virtual machines.
