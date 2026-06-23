@@ -130,31 +130,39 @@ curl -s http://localhost:18080/health             # from the host
 ## Task 1 — Verification
 
 ### First 10 lines of `vagrant up`
-
-```text
-TODO: paste the first 10 lines of `vagrant up` output here
-(box download / boot / provisioning start).
 ```
-
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Box 'bento/ubuntu-24.04' could not be found. Attempting to find and install...
+    default: Box Provider: virtualbox
+    default: Box Version: >= 0
+==> default: Loading metadata for box 'bento/ubuntu-24.04'
+    default: URL: https://vagrantcloud.com/api/v2/vagrant/bento/ubuntu-24.04
+==> default: Adding box 'bento/ubuntu-24.04' (v202510.26.0) for provider: virtualbox (amd64)
+    default: Downloading: https://vagrantcloud.com/bento/boxes/ubuntu-24.04/versions/202510.26.0/providers/virtualbox/amd64/vagrant.box
+    default:
+```
 ### `go version` inside the VM
 
 ```text
 $ vagrant ssh -c 'go version'
-TODO: paste output here (expected: go version go1.24.5 linux/amd64)
+go version go1.24.5 linux/amd64
 ```
 
 ### `curl /health` from inside the VM
 
 ```text
 $ vagrant ssh -c 'curl -s http://localhost:8080/health'
-TODO: paste output here (expected: {"notes":4,"status":"ok"})
+{"notes":4,"status":"ok"}
 ```
 
 ### `curl /health` from the host (via port forward)
 
 ```text
-$ curl -i http://localhost:18080/health
-TODO: paste output here (expected: HTTP/1.1 200 OK and {"notes":4,"status":"ok"})
+$ curl.exe -I http://localhost:18080/health
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Tue, 23 Jun 2026 20:27:05 GMT
+Content-Length: 26
 ```
 
 ### Design questions
@@ -207,10 +215,21 @@ time vagrant snapshot restore clean-quicknotes
 vagrant ssh -c 'go version'                      # expect: go1.24.5 again
 ```
 
-### Restore time output
-
-```text
-TODO: paste the `time vagrant snapshot restore clean-quicknotes` output here.
+### Restore time output: 
+snapshot save clean-quicknotes
+Measure-Command { vagrant snapshot restore clean-quicknotes } 
+```
+Days              : 0
+Hours             : 0
+Minutes           : 0
+Seconds           : 16
+Milliseconds      : 402
+Ticks             : 164027437
+TotalDays         : 0,000189846570601852
+TotalHours        : 0,00455631769444444
+TotalMinutes      : 0,273379061666667
+TotalSeconds      : 16,4027437
+TotalMilliseconds : 16402,7437
 ```
 
 ### Design questions
@@ -230,26 +249,5 @@ ten snapshots can be much smaller than one full clone.
 **g) When snapshotting is an antipattern.** Long snapshot chains: every disk
 read has to walk the chain of deltas, which degrades performance, and the chain
 grows fragile and large over time. Snapshots should be used transiently — take,
-restore, then **delete** — not as a permanent layered history or a substitute
+restore, then delete — not as a permanent layered history or a substitute
 for proper image rebuilds.
-
-## Bonus — VM vs container resource baseline
-
-> TODO: collect these numbers on the same hardware in one session. The Docker
-> baseline uses:
-> `docker run -d -p 28080:8080 -v "$PWD/app:/src" -w /src golang:1.24 sh -c 'go build -o /tmp/qn && /tmp/qn'`
-
-| Dimension              | Vagrant VM | Docker container |
-|------------------------|-----------:|-----------------:|
-| Cold start             |       TODO |             TODO |
-| Idle RAM               |       TODO |             TODO |
-| On-disk size           |       TODO |             TODO |
-| Process count (guest)  |       TODO |             TODO |
-
-Trade-off analysis (write 4–5 sentences after collecting the numbers): TODO.
-
-## Notes
-
-- `.vagrant/` is git-ignored (already in the repo `.gitignore`); only the
-  `Vagrantfile` and this report are committed.
-- This lab feeds Lab 7: the Ansible playbook there will target this VM.
