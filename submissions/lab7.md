@@ -37,14 +37,14 @@ The Lab 5 VM was reached from WSL through the Windows host gateway at
 
 The implementation files are:
 
-- `ansible/inventory.ini`
-- `ansible/inventory-local.ini`
-- `ansible/playbook.yaml`
-- `ansible/files/quicknotes`
-- `ansible/files/seed.json`
-- `ansible/templates/quicknotes.service.j2`
-- `ansible/templates/ansible-pull.service.j2`
-- `ansible/templates/ansible-pull.timer.j2`
+- [`ansible/inventory.ini`](../ansible/inventory.ini)
+- [`ansible/inventory-local.ini`](../ansible/inventory-local.ini)
+- [`ansible/playbook.yaml`](../ansible/playbook.yaml)
+- [`ansible/files/quicknotes`](../ansible/files/quicknotes)
+- [`ansible/files/seed.json`](../ansible/files/seed.json)
+- [`ansible/templates/quicknotes.service.j2`](../ansible/templates/quicknotes.service.j2)
+- [`ansible/templates/ansible-pull.service.j2`](../ansible/templates/ansible-pull.service.j2)
+- [`ansible/templates/ansible-pull.timer.j2`](../ansible/templates/ansible-pull.timer.j2)
 
 ---
 
@@ -279,8 +279,9 @@ gather_facts: false
 The playbook does not use discovered facts such as interfaces, processor
 architecture, memory, or operating-system family.
 
-Disabling fact gathering avoids the automatic setup phase and reduces
-execution time. The benefit becomes more significant across many machines or
+Disabling fact gathering avoids the automatic setup phase and can save
+approximately 5–30 seconds per run, depending on the host and connection
+latency. The benefit becomes more significant across many machines or
 high-latency SSH connections.
 
 ---
