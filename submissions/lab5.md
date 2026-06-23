@@ -112,3 +112,85 @@ There is no `go1.24.linux-amd64.tar.gz` — the Go distribution only publishes s
 More importantly, idempotency breaks without a fixed version: if the provisioner runs today and installs `1.24.4`, then the upstream "latest 1.24" advances to `1.24.5`, a second `vagrant provision` would detect a mismatch and re-download which wastes bandwidth and time. Pinning to `1.24.5` means the idempotency guard (`grep -q "go1.24.5"`) is deterministic. It also ensures every student gets the exact same binary regardless of when they run `vagrant up`, which is essential for reproducible course infrastructure.
 
 ---
+
+## Task 2: Snapshots — Save, Break, Restore
+
+### Commands and outputs
+
+#### 1. Take a snapshot:
+```bash
+vagrant snapshot save clean-go-install
+```
+```bash
+==> default: Snapshotting the machine as 'clean-go-install'...
+==> default: Snapshot saved!
+```
+#### 2. Break the VM (Wipe Go):
+```bash
+vagrant ssh -c 'sudo rm -rf /usr/local/go'
+```
+(Completed with no output)
+
+#### 3. Verify it's broken:
+```bash
+vagrant ssh -c 'go version'
+```
+
+```bash
+Exit code 127
+vagrant : bash: line 1: go: command not found
+At line:1 char:106
++ ... SCodeProjects\DevOps-Intro"; vagrant ssh -c 'go version' 2>&1; Write- ...
++                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (bash: line 1: go: command not found:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Exit code: 127
+```
+
+
+#### 4. Time the restore:
+
+```powershell
+Measure-Command { vagrant snapshot restore clean-go-install }
+```
+```
+==> default: Forcing shutdown of VM...
+==> default: Restoring the snapshot 'clean-go-install'...
+
+Progress: 0%
+==> default: Checking if box 'bento/ubuntu-24.04' version '202510.26.0' is up to date...
+==> default: Resuming suspended VM...
+==> default: Booting VM...
+==> default: Waiting for machine to boot. This may take a few minutes...
+    default: SSH address: 127.0.0.1:2222
+    default: SSH username: vagrant
+    default: SSH auth method: private key
+==> default: Machine booted and ready!
+==> default: Machine already provisioned. Run `vagrant provision` or use the `--provision`
+==> default: flag to force provisioning. Provisioners marked to run always will still run.
+
+Restore time: 23.549s
+```
+
+#### 5. Verify recovery:
+```bash
+vagrant ssh -c '/usr/local/go/bin/go version'
+```
+```bash
+go version go1.24.5 linux/amd64
+```
+
+### Design questions
+
+**e) Snapshots are not backups. Explain why in 2-3 sentences — what failure modes is a snapshot useless for?**
+
+A snapshot is stored on the same physical disk as the VM, so a disk failure destroys both simultaneously. Snapshots also can't protect against logical corruption that predates the snapshot and restoring brings back the already-broken state. They are host-local with no off-site copy, offering no protection against fire, theft, or ransomware.
+
+**f) Copy-on-write: Vagrant snapshots are copy-on-write under VirtualBox. What does that mean for disk usage when you take 10 snapshots vs 1?**
+
+After the first snapshot the base VMDK becomes immutable; each subsequent snapshot adds a differencing image recording only changed blocks. With 1 snapshot the diff is near-empty. With 10, disk usage grows by the cumulative delta of all 10 states (potentially several GB), and restore time lengthens as VirtualBox must replay the entire diff chain.
+
+**g) When is snapshotting an antipattern?**
+
+Long snapshot chains degrade I/O performance because VirtualBox reads through every level of the diff chain on each disk access, and migration becomes difficult since all ancestor diffs must travel with the VM. In production, VMs should be cattle — destroyed and rebuilt from a versioned base image (Packer/cloud AMI) rather than kept alive through accumulated snapshots.
