@@ -165,4 +165,4 @@ Distroless base is clean; remaining findings are in the **compiled Go stdlib** (
   **https://github.com/inno-devops-labs/DevOps-Intro/pull/1157**
 - [x] Fork PR (`feature/lab6-fork` → `selysecr332/main`)  
   **https://github.com/selysecr332/DevOps-Intro/pull/7**
-- [ ] Both URLs on Moodle
+- [x] Both URLs on Moodle
