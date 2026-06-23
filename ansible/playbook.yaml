@@ -13,7 +13,7 @@
     quicknotes_listen_addr: ":8080"
     quicknotes_data_path: /var/lib/quicknotes/notes.json
     quicknotes_seed_path: /var/lib/quicknotes/seed.json
-    quicknotes_restart_delay: 5s
+    quicknotes_restart_delay: 6s
 
     ansible_pull_venv: /opt/ansible-pull-venv
     ansible_pull_checkout: /var/lib/ansible-pull
