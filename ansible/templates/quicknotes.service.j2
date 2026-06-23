@@ -1,0 +1,17 @@
+[Unit]
+Description=QuickNotes API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User={{ qn_user }}
+WorkingDirectory={{ qn_data_dir }}
+Environment=ADDR={{ listen_addr }}
+Environment=DATA_PATH={{ data_path }}
+Environment=SEED_PATH={{ seed_path }}
+ExecStart={{ qn_bin }}
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

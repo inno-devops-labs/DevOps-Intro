@@ -1,0 +1,70 @@
+---
+- name: Deploy QuickNotes
+  hosts: quicknotes
+  become: true            # run as root (privilege escalation)
+  gather_facts: false     # this play uses no facts — skipping speeds it up
+
+  vars:
+    qn_user: quicknotes
+    qn_data_dir: /var/lib/quicknotes
+    qn_bin: /usr/local/bin/quicknotes
+    # Variables the systemd unit is rendered from:
+    listen_addr: ":8080"
+    data_path: "/var/lib/quicknotes/notes.json"
+    seed_path: "/var/lib/quicknotes/seed.json"
+
+  tasks:
+    - name: Create system user without a login shell
+      ansible.builtin.user:
+        name: "{{ qn_user }}"
+        system: true
+        shell: /usr/sbin/nologin
+        create_home: false
+
+    - name: Create data directory (0750, owned by quicknotes)
+      ansible.builtin.file:
+        path: "{{ qn_data_dir }}"
+        state: directory
+        owner: "{{ qn_user }}"
+        group: "{{ qn_user }}"
+        mode: "0750"
+
+    - name: Deploy the QuickNotes binary
+      ansible.builtin.copy:
+        src: files/quicknotes
+        dest: "{{ qn_bin }}"
+        owner: root
+        group: root
+        mode: "0755"
+      notify: Restart quicknotes          # handler runs only if the binary changed
+
+    - name: Install the seed file
+      ansible.builtin.copy:
+        src: files/seed.json
+        dest: "{{ seed_path }}"
+        owner: "{{ qn_user }}"
+        group: "{{ qn_user }}"
+        mode: "0640"
+
+    - name: Render the systemd unit from the template
+      ansible.builtin.template:
+        src: templates/quicknotes.service.j2
+        dest: /etc/systemd/system/quicknotes.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart quicknotes          # handler runs only if the unit changed
+
+    - name: Enable and start the service
+      ansible.builtin.systemd:
+        name: quicknotes
+        enabled: true
+        state: started
+        daemon_reload: true
+
+  handlers:
+    - name: Restart quicknotes
+      ansible.builtin.systemd:
+        name: quicknotes
+        state: restarted
+        daemon_reload: true
