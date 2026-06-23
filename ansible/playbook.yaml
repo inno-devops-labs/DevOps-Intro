@@ -1,0 +1,144 @@
+---
+- name: Deploy QuickNotes to the Lab 5 VM
+  hosts: quicknotes_vm
+  become: true
+  gather_facts: false
+
+  vars:
+    quicknotes_user: quicknotes
+    quicknotes_group: quicknotes
+    quicknotes_data_dir: /var/lib/quicknotes
+    quicknotes_binary_path: /usr/local/bin/quicknotes
+    quicknotes_unit_path: /etc/systemd/system/quicknotes.service
+    quicknotes_listen_addr: ":8080"
+    quicknotes_data_path: /var/lib/quicknotes/notes.json
+    quicknotes_seed_path: /var/lib/quicknotes/seed.json
+    quicknotes_restart_delay: 5s
+
+    ansible_pull_venv: /opt/ansible-pull-venv
+    ansible_pull_checkout: /var/lib/ansible-pull
+    ansible_pull_repo_url: https://github.com/tivdzualubem/DevOps-Intro.git
+    ansible_pull_branch: feature/lab7
+
+  tasks:
+    - name: Ensure the QuickNotes system group exists
+      ansible.builtin.group:
+        name: "{{ quicknotes_group }}"
+        system: true
+        state: present
+
+    - name: Ensure the QuickNotes system user exists
+      ansible.builtin.user:
+        name: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        system: true
+        create_home: false
+        shell: /usr/sbin/nologin
+        state: present
+
+    - name: Ensure the QuickNotes data directory exists
+      ansible.builtin.file:
+        path: "{{ quicknotes_data_dir }}"
+        state: directory
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        mode: "0750"
+
+    - name: Copy the QuickNotes binary
+      ansible.builtin.copy:
+        src: files/quicknotes
+        dest: "{{ quicknotes_binary_path }}"
+        owner: root
+        group: root
+        mode: "0755"
+      notify: Restart QuickNotes
+
+    - name: Copy the QuickNotes seed data
+      ansible.builtin.copy:
+        src: files/seed.json
+        dest: "{{ quicknotes_seed_path }}"
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        mode: "0640"
+
+    - name: Render the QuickNotes systemd unit
+      ansible.builtin.template:
+        src: templates/quicknotes.service.j2
+        dest: "{{ quicknotes_unit_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart QuickNotes
+
+    - name: Enable and start QuickNotes
+      ansible.builtin.systemd:
+        name: quicknotes
+        enabled: true
+        state: started
+        daemon_reload: true
+      when: not ansible_check_mode
+
+    - name: Install Ansible pull prerequisites
+      ansible.builtin.apt:
+        name:
+          - git
+          - python3-pip
+          - python3-venv
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install Ansible Core in an isolated virtual environment
+      ansible.builtin.pip:
+        name: ansible-core==2.17.14
+        virtualenv: "{{ ansible_pull_venv }}"
+        virtualenv_command: /usr/bin/python3 -m venv
+
+    - name: Ensure the Ansible pull checkout directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_pull_checkout }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Render the Ansible pull service
+      ansible.builtin.template:
+        src: templates/ansible-pull.service.j2
+        dest: /etc/systemd/system/ansible-pull.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart Ansible pull timer
+
+    - name: Render the Ansible pull timer
+      ansible.builtin.template:
+        src: templates/ansible-pull.timer.j2
+        dest: /etc/systemd/system/ansible-pull.timer
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart Ansible pull timer
+
+    - name: Enable and start the Ansible pull timer
+      ansible.builtin.systemd:
+        name: ansible-pull.timer
+        enabled: true
+        state: started
+        daemon_reload: true
+      when: not ansible_check_mode
+
+  handlers:
+    - name: Restart QuickNotes
+      ansible.builtin.systemd:
+        name: quicknotes
+        state: restarted
+        daemon_reload: true
+      when: not ansible_check_mode
+
+    - name: Restart Ansible pull timer
+      ansible.builtin.systemd:
+        name: ansible-pull.timer
+        state: restarted
+        daemon_reload: true
+      when: not ansible_check_mode
