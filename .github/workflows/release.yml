@@ -1,0 +1,42 @@
+name: release
+
+# Task 1: a semver tag push builds QuickNotes and publishes it to ghcr.io.
+on:
+  push:
+    tags: ["v*"]
+
+# Least privilege: read the code, write packages (ghcr). Nothing else.
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  push-image:
+    name: build-and-push
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.2.2
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee  # v4.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Derive image tags
+        id: meta
+        uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9  # v6.1.0
+        with:
+          images: ghcr.io/${{ github.repository }}/quicknotes
+          tags: |
+            type=semver,pattern={{version}}   # e.g. v0.1.0 -> 0.1.0 (immutable)
+            type=raw,value=latest             # convenience pointer
+
+      - name: Build and push
+        uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf  # v7.2.0
+        with:
+          context: ./app
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
