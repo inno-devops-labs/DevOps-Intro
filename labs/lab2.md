@@ -223,6 +223,7 @@ git bisect reset
 
 ## Common Pitfalls
 
+- 🪤 **`git@github.com: Permission denied (publickey)` on `git fetch upstream`** — *not* a remote-config bug (the error is at the SSH layer, before Git reads the repo). Your key isn't registered for **authentication** on GitHub — and a **Signing Key** (Lab 1) does *not* count for auth, they're separate roles. Add the same `~/.ssh/id_ed25519.pub` as an **Authentication Key** (Lab 1 §1.3), verify with `ssh -T git@github.com`, then re-run. To unblock right now, the public upstream fetches over HTTPS with no key: `git remote set-url upstream https://github.com/inno-devops-labs/DevOps-Intro.git`
 - 🪤 **`reset --hard` without committing first** — your *uncommitted* edits really *are* gone (reflog only saves committed work). Always check `git status` first
 - 🪤 **`tag -v` says "no signature"** — you used `git tag NAME` instead of `git tag -a -s NAME -m "..."`
 - 🪤 **Rebase conflicts** — resolve, then `git rebase --continue`. Never `git rebase --skip` unless you know what you're skipping
