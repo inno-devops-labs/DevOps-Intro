@@ -1,0 +1,21 @@
+services:
+  quicknotes:
+    image: quicknotes:lab6
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    volumes:
+      - quicknotes-data:/data:rw
+    healthcheck:
+      test: ["CMD", "/bin/httpcheck", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  quicknotes-data:  
+    
