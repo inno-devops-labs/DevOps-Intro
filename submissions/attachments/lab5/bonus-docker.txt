@@ -1,0 +1,44 @@
+### docker run + health
+Unable to find image 'golang:1.24' locally
+1.24: Pulling from library/golang
+4f4fb700ef54: Pulling fs layer
+f5657497bb46: Pulling fs layer
+1bd4defc8c5e: Pulling fs layer
+cace8fbd9245: Pulling fs layer
+4861de398575: Pulling fs layer
+bc8128ce97cc: Pulling fs layer
+54074bf53650: Pulling fs layer
+4f4fb700ef54: Already exists
+92c659d51fe6: Download complete
+ddc4441be3dc: Download complete
+54074bf53650: Download complete
+cace8fbd9245: Download complete
+1bd4defc8c5e: Download complete
+1bd4defc8c5e: Pull complete
+cace8fbd9245: Pull complete
+bc8128ce97cc: Download complete
+bc8128ce97cc: Pull complete
+4861de398575: Download complete
+4861de398575: Pull complete
+f5657497bb46: Download complete
+4f4fb700ef54: Pull complete
+54074bf53650: Pull complete
+f5657497bb46: Pull complete
+Digest: sha256:d2d2bc1c84f7e60d7d2438a3836ae7d0c847f4888464e7ec9ba3a1339a1ee804
+Status: Downloaded newer image for golang:1.24
+dec5f1c8a6cd3f230f5dad338e96b92bb61846d97bacc961302936975cc7bdff
+{"notes":5,"status":"ok"}
+
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT    MEM %     NET I/O         BLOCK I/O       PIDS
+dec5f1c8a6cd   lab5-qn   0.00%     22.09MiB / 7.75GiB   0.28%     2.23kB / 574B   156kB / 786kB   9
+docker top lines: 3
+image size: 1.33GB
+lab5-qn
+### docker cold start
+lab5-qn
+real 0.07
+user 0.00
+sys 0.00
+{"notes":5,"status":"ok"}
+
+lab5-qn

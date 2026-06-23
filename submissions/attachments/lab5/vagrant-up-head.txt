@@ -1,0 +1,10 @@
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Importing base box 'bento/ubuntu-24.04'...
+[KProgress: 10%[KProgress: 20%[KProgress: 30%[KProgress: 90%[K==> default: Matching MAC address for NAT networking...
+==> default: Checking if box 'bento/ubuntu-24.04' version '202510.26.0' is up to date...
+==> default: Setting the name of the VM: devops-intro-quicknotes
+Vagrant is currently configured to create VirtualBox synced folders with
+the `SharedFoldersEnableSymlinksCreate` option enabled. If the Vagrant
+guest is not trusted, you may want to disable this option. For more
+information on this option, please refer to the VirtualBox manual:
+

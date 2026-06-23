@@ -1,0 +1,6 @@
+### go version
+go version go1.24.5 linux/arm64
+### curl inside guest
+{"notes":5,"status":"ok"}
+### curl host :18080
+{"notes":5,"status":"ok"}
