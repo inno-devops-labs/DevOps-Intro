@@ -2,7 +2,7 @@
 
 ## Task 1: Vagrant Up + Run QuickNotes Inside
 
-- [**Vagrant File**](https://sre.google/books/)
+- [**Vagrant File**](https://github.com/sparrow12345/DevOps-Intro/blob/feature/lab5/Vagrantfile)
 
 - **First 10 output lines:**
 
@@ -32,3 +32,35 @@
     could silently break the VM. Pinning the exact point release `1.24.5` makes `vagrant up` deterministic.
 
 ## Task 2: Save, Break, Restore
+
+- **Save:**
+
+  ![Save snapshot](src/lab05_snapshot_save.png)
+
+- **Break + Verify:**
+
+  ![Break VM](src/lab05_snapshot_break.png)
+
+- **Restore:**
+
+  ![Restore snapshot](src/lab05_snapshot_restore.png)
+
+- **Verify:**
+
+  ![Verify snapshot restore](src/lab05_snapshot_verify.png)
+
+- **Design questions:**
+
+  - **What failure modes is a snapshot useless for?**
+
+    A snapshot lives on the same disk with the VM, so it's useless if the disk of the hosting device breaks, get infected with a ransomware or get stolen ...
+    A snapshot is just a rollback point on the live volume, to go back to certain timestamp in the VM's life.
+
+  - **Vagrant snapshots are copy-on-write under VirtualBox. What does that mean for disk usage when you take 10 snapshots vs 1?**
+
+    Under VirtualBox a snapshot freezes the current disk and writes only subsequent changes to a differencing image. So 10 snapshots don't cost 10× the VM size, each costs only the delta written between it and the next, plus a little metadata.
+    Also taking a snapshot is near-instant and cheap, the cost grows with how much you change afterward, not with how many snapshots you hold.
+
+  - **When is snapshotting an antipattern?**
+
+    Long snapshot chains. Every read has to walk the chain of differencing images, so deep chains slow disk I/O and balloon storage as deltas accumulate, a corrupt link can invalidate everything after it. Snapshots are for short-lived "checkpoint before a risky change, then commit or roll back" use, not as a backup strategy, a version-control substitute, or something you let pile up for weeks.
