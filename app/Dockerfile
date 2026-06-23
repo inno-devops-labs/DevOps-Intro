@@ -9,12 +9,20 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /quicknotes
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/quicknotes .
+
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/healthcheck ./cmd/healthcheck
+
+RUN mkdir -p /out/data
 
 # Runtime stage
 FROM gcr.io/distroless/static:nonroot
 
-COPY --from=builder /quicknotes /quicknotes
+COPY --from=builder /out/quicknotes /quicknotes
+
+COPY --from=builder /out/healthcheck /healthcheck
+
+COPY --from=builder --chown=nonroot:nonroot /out/data /data
 
 COPY seed.json /seed.json
 

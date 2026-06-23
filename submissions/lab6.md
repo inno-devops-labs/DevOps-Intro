@@ -202,4 +202,139 @@ removes local filesystem paths from the compiled binary, improving reproducibili
 
 The trade-off is that debugging becomes more difficult because debugging symbols and source paths are unavailable.
 
+## Task 2 — Compose + Healthcheck + Persistent Volume
 
+### 2.1 Сompose.yaml
+
+```yaml
+services:
+  quicknotes:
+    build:
+      context: ./app
+
+    image: quicknotes:lab6
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/seed.json"
+
+    volumes:
+      - quicknotes-data:/data
+
+    healthcheck:
+      test: ["CMD", "/healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+    restart: unless-stopped
+
+volumes:
+  quicknotes-data:
+```
+
+### 2.2 Persistence test
+
+Persistence test
+Step 1 — I created a note
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> Invoke-RestMethod `
+>>   -Method POST `
+>>   -Uri http://localhost:8080/notes `
+>>   -ContentType "application/json" `
+>>   -Body '{"title":"durable","body":"survive a restart"}'
+id title   body              created_at
+-- -----   ----              ----------
+ 5 durable survive a restart 2026-06-23T03:02:48.817913812Z
+```
+
+Verifying note exists:
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> Invoke-RestMethod http://localhost:8080/notes
+id title                  body
+-- -----                  ----
+ 5 durable                survive a restart
+```
+
+Step 2 — I restarted without deleting volume
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> docker compose down
+PS C:\Users\P4IN\DevOps-Intro> docker compose up -d
+```
+Verifying note still exists:
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> Invoke-RestMethod http://localhost:8080/notes
+id title                  body
+-- -----                  ----
+ 5 durable                survive a restart
+```
+Result: Data persisted across container recreation.
+
+Step 3 — I restarted with deleting volume
+
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> docker compose down -v
+PS C:\Users\P4IN\DevOps-Intro> docker compose up -d
+```
+
+Verifying note is gone:
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> Invoke-RestMethod http://localhost:8080/notes
+id title
+-- -----
+ 1 Welcome to QuickNotes
+ 2 Read app/main.go first
+ 3 DevOps mantra
+ 4 Endpoint cheat-sheet
+```
+Result: Data was removed together with the named volume.
+
+### 2.3 Healthcheck
+
+QuickNotes runs inside a distroless image, which does not contain a shell, curl, wget or other debugging utilities. 
+Therefore, a separate Go program (app/cmd/healthcheck/main.go) was created and included in the Docker image.
+The healthcheck binary sends an HTTP request to http://127.0.0.1:8080/health 
+and exits with code 0 only when the application is healthy.
+
+Container status:
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> docker compose ps
+NAME                        IMAGE             COMMAND         SERVICE      CREATED         STATUS                            PORTS
+devops-intro-quicknotes-1   quicknotes:lab6   "/quicknotes"   quicknotes   3 seconds ago   Up 2 seconds (health: starting)   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+```
+Health status:
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> docker inspect devops-intro-quicknotes-1 --format "{{.State.Health.Status}}"
+healthy
+```
+### 2.4 Design questions
+
+#### e) Distroless has no shell. How do you healthcheck it? Pick a strategy; explain.
+
+At first, I tried to use a regular Docker healthcheck, but distroless images do not contain a shell,
+curl or wget utilities, so this approach would not work.
+I decided to create a small separate Go program (cmd/healthcheck) and include it in the Docker image.
+This binary performs an HTTP GET request to http://127.0.0.1:8080/health and exits with code 0 only if the application responds successfully.
+
+Then Docker Compose uses this binary in:
+```yaml
+healthcheck:
+  test: ["CMD", "/healthcheck"]
+```
+This solution is lightweight, side-effect free and fully compatible with distroless images.
+
+#### f) Why does `volumes: [quicknotes-data:/data]` survive `docker compose down`? And what destroys it?
+
+Named volumes are managed separately from containers and networks. `docker compose down`
+removes containers and networks but preserves named volumes. The volume is deleted only when `docker compose down -v` is executed.
+
+#### g) `depends_on` without `condition: service_healthy` — what does it actually wait for? What's the bug it can cause?
+
+`depends_on` only waits until the dependent container is started, not until the application inside it is ready to serve requests.
+This can create a race condition where another service starts too early and fails because the application is not yet healthy.
+Using `condition: service_healthy` prevents this issue.
