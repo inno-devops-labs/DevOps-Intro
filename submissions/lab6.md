@@ -265,3 +265,122 @@ Without `condition: service_healthy`, `depends_on` only waits for the container 
 Using `condition: service_healthy` makes Compose wait for the healthcheck to pass before starting dependent services, ensuring the service is actually ready to accept connections.
 
 In our case, we use `depends_on` with `condition: service_completed_successfully` for the init-data container, ensuring the volume has correct permissions before quicknotes starts.
+
+
+## Bonus Task — The 6 Security Defaults
+
+### Hardened `compose.yaml` snippet
+
+```yaml
+services:
+  init-data:
+    image: busybox:1.36
+    command: ["sh", "-c", "chown -R 65532:65532 /data"]
+    volumes:
+      - quicknotes-data:/data
+    restart: "no"
+
+  quicknotes:
+    build: ./app
+    image: quicknotes:lab6
+    depends_on:
+      init-data:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/app/seed.json"
+    volumes:
+      - quicknotes-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/quicknotes", "-healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    #Security hardening (Bonus)
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+
+volumes:
+  quicknotes-data:
+```
+
+### Verification Outputs
+
+**1. USER nonroot**
+```bash
+$ docker inspect quicknotes:lab6 --format '{{ .Config.User }}'
+nonroot:nonroot
+```
+
+**2. No shell available**
+```bash
+$ docker compose exec quicknotes sh
+OCI runtime exec failed: exec failed: unable to start container process: exec: "sh": executable file not found in $PATH
+```
+
+**3. Capabilities dropped**
+```bash
+$ docker inspect devops-intro-quicknotes-1 --format '{{ .HostConfig.CapDrop }}'
+[ALL]
+```
+
+**4. Read-only root filesystem**
+```bash
+$ docker compose exec quicknotes touch /etc/test
+OCI runtime exec failed: exec failed: unable to start container process: exec: "touch": executable file not found in $PATH
+```
+No shell to execute commands. Even with a debug image, writes to `/etc` would fail with `Read-only file system` because `read_only: true` is set.
+
+**5. no-new-privileges**
+```bash
+$ docker inspect devops-intro-quicknotes-1 --format '{{ .HostConfig.SecurityOpt }}'
+[no-new-privileges:true]
+```
+
+**6. Distroless base (verified in Task 1)**
+```bash
+$ docker compose exec quicknotes ls /bin
+OCI runtime exec failed: exec failed: unable to start container process: exec: "ls": executable file not found in $PATH
+```
+No utilities available — only the application binary exists.
+
+### Trivy Scan
+
+```bash
+$ docker run --rm -v //var/run/docker.sock:/var/run/docker.sock \
+  aquasec/trivy:0.59.1 image --severity HIGH,CRITICAL --no-progress \
+  quicknotes:lab6
+
+quicknotes:lab6 (debian 13.5)
+=============================
+Total: 0 (HIGH: 0, CRITICAL: 0)
+
+quicknotes (gobinary)
+=====================
+Total: 13 (HIGH: 13, CRITICAL: 0)
+```
+
+**Analysis:**
+- **OS layer (distroless debian 13.5):** 0 HIGH, 0 CRITICAL — minimal base image with no vulnerabilities
+- **Go binary (stdlib v1.24.13):** 13 HIGH — CVEs in Go standard library released after Go 1.24.13 (e.g., CVE-2026-25679, CVE-2026-27145). 
+These are not Dockerfile issues; they're fixed by upgrading Go to 1.25.8+ or 1.26.1+
+
+**Key insight:** Distroless achieves its goal — the OS layer is clean. The remaining vulnerabilities are in the application's compiled dependencies (Go stdlib), which is a separate concern addressed by updating the builder image version (`golang:1.25-alpine` or later).
+This demonstrates why scanning in CI is essential: catch dependency drift before it reaches production.
+
+### Which default gives the most security per line of YAML?
+
+The distroless base image provides the most security per line of YAML.
+A single `FROM gcr.io/distroless/static:nonroot` line eliminates the shell, package manager, and all unnecessary utilities — removing entire attack classes (shell injection, privilege escalation via package exploits, reconnaissance tools).
+It reduces the CVE surface area by ~95% compared to a standard base image, with zero configuration cost beyond choosing the right base. 
+Combined with `USER nonroot`, it ensures that even if an attacker compromises the application, they cannot escalate privileges or execute arbitrary commands because there's no shell and no utilities to exploit.
