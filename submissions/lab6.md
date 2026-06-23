@@ -26,9 +26,12 @@ RUN CGO_ENABLED=0 go build \
     -o /healthcheck \
     ./healthcheck
 
+RUN mkdir /data
+
 
 FROM gcr.io/distroless/static:nonroot
 
+COPY --from=builder --chown=65532:65532 /data /data
 COPY --from=builder /qn /qn
 COPY --from=builder /healthcheck /healthcheck
 COPY --from=builder /build/seed.json /seed.json
@@ -44,20 +47,42 @@ ENTRYPOINT ["/qn"]
 ### `docker images quicknotes:lab6`
 
 ```
-[OUTPUT]
+REPOSITORY   TAG       IMAGE ID       CREATED          SIZE
+quicknotes   lab6      cbdeef4afc56   38 seconds ago   21.6MB
 ```
 
-### `docker inspect quicknotes:lab6 | jq '.[0].Config'` excerpt
+### `docker inspect quicknotes:lab6` — Config excerpt
 
 ```json
-[OUTPUT]
+{
+  "User": "65532",
+  "ExposedPorts": {
+    "8080/tcp": {}
+  },
+  "Entrypoint": [
+    "/qn"
+  ],
+  "Healthcheck": {
+    "Interval": 10000000000,
+    "Retries": 3,
+    "StartPeriod": 5000000000,
+    "Test": [
+      "CMD",
+      "/healthcheck"
+    ],
+    "Timeout": 3000000000
+  }
+}
 ```
 
 ### Builder base image size (for comparison)
 
 ```
-[OUTPUT — docker images golang:1.24-alpine]
+REPOSITORY   TAG           IMAGE ID       CREATED        SIZE
+golang       1.24-alpine   8bee1901f1e5   4 months ago   388MB
 ```
+
+Builder: **388 MB** → final image: **21.6 MB** (94% reduction via multi-stage build)
 
 ### Design Questions
 
@@ -138,7 +163,8 @@ curl -s http://localhost:8080/notes | grep durable
 ```
 
 ```
-[OUTPUT]
+{"id":5,"title":"durable","body":"survive a restart","created_at":"2026-06-23T11:55:39.929656839Z"}
+{"id":5,"title":"durable","body":"survive a restart","created_at":"2026-06-23T11:55:39.929656839Z"}
 ```
 
 ```bash
@@ -150,7 +176,7 @@ curl -s http://localhost:8080/notes | grep durable
 ```
 
 ```
-[OUTPUT]
+{"id":5,"title":"durable","body":"survive a restart","created_at":"2026-06-23T11:55:39.929656839Z"}
 ```
 
 ```bash
@@ -162,7 +188,7 @@ curl -s http://localhost:8080/notes | grep durable || echo "note gone (expected)
 ```
 
 ```
-[OUTPUT]
+note gone (expected)
 ```
 
 ### Design Questions

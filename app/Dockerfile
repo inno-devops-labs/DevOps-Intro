@@ -19,9 +19,12 @@ RUN CGO_ENABLED=0 go build \
     -o /healthcheck \
     ./healthcheck
 
+RUN mkdir /data
+
 
 FROM gcr.io/distroless/static:nonroot
 
+COPY --from=builder --chown=65532:65532 /data /data
 COPY --from=builder /qn /qn
 COPY --from=builder /healthcheck /healthcheck
 COPY --from=builder /build/seed.json /seed.json
