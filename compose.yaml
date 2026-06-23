@@ -1,0 +1,24 @@
+services:
+  quicknotes:
+    build: ./app
+    image: quicknotes:lab6
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/seed.json"
+    volumes:
+      # Named volume: QuickNotes' notes.json persists across down && up.
+      - quicknotes-data:/data
+    healthcheck:
+      # Distroless has no shell — run the static helper binary directly (exec form).
+      test: ["CMD", "/healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+
+volumes:
+  quicknotes-data:
