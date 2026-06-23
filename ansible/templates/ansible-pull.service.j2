@@ -9,4 +9,4 @@ User=root
 Group=root
 WorkingDirectory={{ ansible_pull_checkout }}
 Environment="ANSIBLE_NOCOLOR=1"
-ExecStart={{ ansible_pull_venv }}/bin/ansible-pull -U {{ ansible_pull_repo_url }} -C {{ ansible_pull_branch }} -d {{ ansible_pull_checkout }} -i {{ ansible_pull_checkout }}/ansible/inventory-local.ini {{ ansible_pull_checkout }}/ansible/playbook.yaml
+ExecStart=/usr/bin/ansible-pull -U {{ ansible_pull_repo_url }} -C {{ ansible_pull_branch }} -d {{ ansible_pull_checkout }} -i {{ ansible_pull_checkout }}/ansible/inventory-local.ini {{ ansible_pull_checkout }}/ansible/playbook.yaml

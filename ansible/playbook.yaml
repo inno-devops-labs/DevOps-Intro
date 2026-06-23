@@ -15,7 +15,6 @@
     quicknotes_seed_path: /var/lib/quicknotes/seed.json
     quicknotes_restart_delay: 6s
 
-    ansible_pull_venv: /opt/ansible-pull-venv
     ansible_pull_checkout: /var/lib/ansible-pull
     ansible_pull_repo_url: https://github.com/tivdzualubem/DevOps-Intro.git
     ansible_pull_branch: feature/lab7
@@ -78,21 +77,20 @@
         daemon_reload: true
       when: not ansible_check_mode
 
-    - name: Install Ansible pull prerequisites
+    - name: Enable the Ubuntu Universe repository
+      ansible.builtin.apt_repository:
+        repo: "deb http://archive.ubuntu.com/ubuntu jammy universe"
+        filename: universe
+        state: present
+
+    - name: Install Ansible pull prerequisites from Ubuntu packages
       ansible.builtin.apt:
         name:
+          - ansible
           - git
-          - python3-pip
-          - python3-venv
         state: present
         update_cache: true
         cache_valid_time: 3600
-
-    - name: Install Ansible Core in an isolated virtual environment
-      ansible.builtin.pip:
-        name: ansible-core==2.17.14
-        virtualenv: "{{ ansible_pull_venv }}"
-        virtualenv_command: /usr/bin/python3 -m venv
 
     - name: Ensure the Ansible pull checkout directory exists
       ansible.builtin.file:
