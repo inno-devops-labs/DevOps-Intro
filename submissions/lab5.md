@@ -6,7 +6,7 @@
 
 ```ruby
 Vagrant.configure("2") do |config|
-  config.vm.box      = "ubuntu/jammy64"
+  config.vm.box      = "perk/ubuntu-2204-arm64"
   config.vm.hostname = "quicknotes-vm"
 
   config.vm.network "forwarded_port",
@@ -14,24 +14,30 @@ Vagrant.configure("2") do |config|
     host:    18080,
     host_ip: "127.0.0.1"
 
-  config.vm.synced_folder "./app", "/home/vagrant/app"
+  config.vm.synced_folder "./app", "/home/vagrant/app", type: "rsync",
+    rsync__exclude: [".git/", "data/", "quicknotes"]
 
-  config.vm.provider "virtualbox" do |vb|
-    vb.name   = "quicknotes-vm"
-    vb.cpus   = 2
-    vb.memory = 1024
+  config.vm.provider "qemu" do |qe|
+    qe.arch       = "aarch64"
+    qe.machine    = "virt,accel=hvf,highmem=off"
+    qe.cpu        = "host"
+    qe.net_device = "virtio-net-pci"
+    qe.memory     = "1024"
+    qe.smp        = "cpus=2"
   end
 
   config.vm.provision "shell", privileged: true, inline: <<-SHELL
     set -euo pipefail
     GO_VERSION="1.24.5"
-    GO_TARBALL="go${GO_VERSION}.linux-amd64.tar.gz"
+    GO_TARBALL="go${GO_VERSION}.linux-arm64.tar.gz"
     GO_URL="https://go.dev/dl/${GO_TARBALL}"
 
     if /usr/local/go/bin/go version 2>/dev/null | grep -q "go${GO_VERSION}"; then
       echo "Go ${GO_VERSION} already installed, skipping."
       exit 0
     fi
+
+    echo "nameserver 8.8.8.8" > /etc/resolv.conf
 
     echo ">>> Installing Go ${GO_VERSION}..."
     apt-get update -qq
@@ -54,18 +60,29 @@ end
 ### First 10 lines of `vagrant up`
 
 ```
-[OUTPUT]
+Bringing machine 'default' up with 'qemu' provider...
+==> default: Checking if box 'perk/ubuntu-2204-arm64' version '20250702' is up to date...
+==> default: Starting the instance...
+==> default: Waiting for machine to boot. This may take a few minutes...
+    default: SSH address: 127.0.0.1:50022
+    default: SSH username: vagrant
+    default: SSH auth method: private key
+    default: Warning: Connection reset. Retrying...
+    default: Warning: Remote connection disconnect. Retrying...
+==> default: Machine booted and ready!
+==> default: Setting hostname...
+==> default: Rsyncing folder: /Users/irina/Desktop/summer semester 2 year/DevOps-Intro/app/ => /home/vagrant/app
+==> default: Machine already provisioned. Run `vagrant provision` to re-run.
 ```
 
 ### `curl` from inside the VM
 
 ```bash
-vagrant ssh -c 'cd /home/vagrant/app && /usr/local/go/bin/go build -o /tmp/qn . && /tmp/qn &'
-vagrant ssh -c 'sleep 2 && curl -s http://localhost:8080/health'
+vagrant ssh -c 'cd /home/vagrant/app && nohup /tmp/qn > /tmp/qn.log 2>&1 & sleep 3 && curl -s http://localhost:8080/health'
 ```
 
 ```
-[OUTPUT]
+{"notes":4,"status":"ok"}
 ```
 
 ### `curl` from the host (via port forward)
@@ -75,14 +92,14 @@ curl -s http://localhost:18080/health
 ```
 
 ```
-[OUTPUT]
+{"notes":4,"status":"ok"}
 ```
 
 ### Design Questions
 
 **a) Synced folders — which type and why?**
 
-I used VirtualBox shared folders (the Vagrant default — no `type:` argument needed). This is the simplest option: the `ubuntu/jammy64` box ships with VirtualBox Guest Additions pre-installed, so no extra setup is required. The trade-off is I/O speed: VirtualBox shared folders are slower than NFS, especially for many small files or intensive file-watching workloads, because every filesystem call crosses the host–guest boundary through the VirtualBox kernel module. NFS would be faster but requires an NFS daemon on the host and `root`-level NFS exports, which adds friction for a course lab. `rsync` would be unidirectional (host → guest only) and would not reflect in-guest changes back to the host without `vagrant rsync-auto`.
+I used **rsync** (`type: "rsync"`). On Apple Silicon with the QEMU provider, VirtualBox shared folders are unavailable (no Guest Additions), and NFS requires root-level exports on the host. Rsync works over the existing SSH connection with no extra daemons. The trade-off is that it is **unidirectional** — changes sync from host to guest at `vagrant up` time (and on demand with `vagrant rsync`), but edits made inside the guest are not reflected back on the host automatically. For a read-only code mount (building Go inside the VM) this is a non-issue. NFS would give bidirectional, live sync with better performance for large trees, but the host setup overhead is not justified here.
 
 **b) NAT vs Bridged vs Host-only — which network mode?**
 
@@ -102,50 +119,57 @@ Go's official download server (`go.dev/dl/`) does not serve a floating tag like 
 
 ### Commands run
 
-**1. Take a clean snapshot after the app is running:**
+**1. Take a clean snapshot:**
 
 ```bash
-vagrant snapshot save clean-go-install
+vagrant halt
+qemu-img snapshot -c clean-go-install .vagrant/machines/default/qemu/vq_Ttb3NMInTpE/linked-box.img
+qemu-img snapshot -l .vagrant/machines/default/qemu/vq_Ttb3NMInTpE/linked-box.img
 ```
 
 ```
-[OUTPUT]
+==> default: Stopping the instance...
+Snapshot list:
+ID      TAG               VM_SIZE                DATE        VM_CLOCK     ICOUNT
+1       clean-go-install      0 B 2026-06-23 14:22:22  0000:00:00.000          0
 ```
 
 **2. Break the VM — wipe the Go installation:**
 
 ```bash
+vagrant up --no-provision
 vagrant ssh -c 'sudo rm -rf /usr/local/go && sudo rm -f /etc/profile.d/golang.sh'
 ```
 
 **3. Verify it's broken:**
 
 ```bash
-vagrant ssh -c 'go version'
+vagrant ssh -c '/usr/local/go/bin/go version'
 ```
 
 ```
-[OUTPUT — expected: "go: command not found" or similar error]
+bash: line 1: /usr/local/go/bin/go: No such file or directory
 ```
 
 **4. Restore from the snapshot (timed):**
 
 ```bash
-time vagrant snapshot restore clean-go-install
+vagrant halt && time qemu-img snapshot -a clean-go-install .vagrant/machines/default/qemu/vq_Ttb3NMInTpE/linked-box.img
 ```
 
 ```
-[OUTPUT including real/user/sys time]
+==> default: Stopping the instance...
+qemu-img snapshot -a clean-go-install   0.02s user 0.02s system 81% cpu 0.053 total
 ```
 
 **5. Verify recovery:**
 
 ```bash
-vagrant ssh -c 'go version'
+vagrant up --no-provision && vagrant ssh -c '/usr/local/go/bin/go version'
 ```
 
 ```
-[OUTPUT — expected: go1.24.5 linux/amd64]
+go version go1.24.5 linux/arm64
 ```
 
 ### Design Questions
@@ -162,43 +186,3 @@ VirtualBox snapshots use a differencing (CoW) disk chain. When you take a snapsh
 
 Long snapshot chains are an antipattern in production because read performance degrades with each additional layer: VirtualBox must traverse every differencing disk in the chain to assemble the current block. For a VM that has accumulated dozens of snapshots over months, disk I/O can slow dramatically. Snapshotting is also an antipattern when it replaces *immutable infrastructure* thinking: if the VM is treated as a pet (never rebuilt from code, only snapshot-and-pray), the snapshot chain becomes the sole safety net — and it lives on the same host. The correct solution for production is cattle-style replacement from a versioned provisioning script (like the Vagrantfile itself) rather than preserving a fragile long-lived VM state.
 
----
-
-## Bonus — VM vs Container Resource Baseline
-
-### Measurements
-
-**Vagrant VM (idle, after `vagrant up` with provisioning done):**
-
-```bash
-time vagrant halt && time vagrant up --no-provision   # cold boot only
-vagrant ssh -c 'free -h'
-vagrant ssh -c 'ps -A --no-headers | wc -l'
-du -sh ~/VirtualBox\ VMs/quicknotes-vm/
-```
-
-**Docker container (same QuickNotes):**
-
-```bash
-docker run -d --name qn-bench -p 28080:8080 \
-  -v "$PWD/app:/src" -w /src golang:1.24 \
-  sh -c 'go build -o /tmp/qn && /tmp/qn'
-
-docker stop qn-bench && time docker start qn-bench
-docker stats qn-bench --no-stream
-docker top qn-bench
-docker images golang:1.24 --format '{{.Size}}'
-```
-
-### Comparison Table
-
-| Dimension             | Vagrant VM | Docker container |
-|-----------------------|-----------:|-----------------:|
-| Cold start            |          ? |                ? |
-| Idle RAM              |          ? |                ? |
-| On-disk size          |          ? |                ? |
-| Process count (guest) |          ? |                ? |
-
-### Analysis
-
-[4-5 sentences to be filled in after running the measurements above. Expected observations: the VM cold start takes 30-60 seconds vs under 1 second for a stopped container; idle RAM will be ~200-400 MB for the VM (full kernel + init system) vs ~10-30 MB for the container; the Ubuntu box image is several GB vs ~1 GB for golang:1.24; process count in the VM will be 80-120 (full OS) vs 3-5 in the container. The data explains why containers became dominant for stateless microservices: faster startup, lower memory density, and a much smaller on-disk footprint enable far higher process density per host.]
