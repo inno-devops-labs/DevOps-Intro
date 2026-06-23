@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # ---- builder stage: full Go toolchain, produces a static stripped binary ----
-FROM golang:1.24 AS build
+FROM golang:1.26 AS build
 WORKDIR /src
 
 # go.mod first (no go.sum: QuickNotes has zero third-party deps) so this layer

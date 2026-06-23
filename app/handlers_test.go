@@ -35,6 +35,24 @@ func do(t *testing.T, srv *Server, method, target string, body any) *httptest.Re
 	return rec
 }
 
+func TestSecurityHeaders_PresentOnAllRoutes(t *testing.T) {
+	srv := newTestServer(t)
+	// exercised through Routes(), so it fails if the securityHeaders
+	// middleware is removed from the chain.
+	rec := do(t, srv, http.MethodGet, "/notes", nil)
+	want := map[string]string{
+		"X-Content-Type-Options":  "nosniff",
+		"X-Frame-Options":         "DENY",
+		"Content-Security-Policy": "default-src 'none'",
+		"Cache-Control":           "no-store",
+	}
+	for k, v := range want {
+		if got := rec.Header().Get(k); got != v {
+			t.Errorf("header %s = %q, want %q", k, got, v)
+		}
+	}
+}
+
 func TestHealth_ReportsCount(t *testing.T) {
 	srv := newTestServer(t)
 	_, _ = srv.store.Create("a", "")
