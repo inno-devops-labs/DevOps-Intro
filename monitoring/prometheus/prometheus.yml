@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s      # how often to scrape targets
+  evaluation_interval: 15s  # how often to evaluate alert rules
+
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+scrape_configs:
+  # Scrape QuickNotes by its Compose service name on the metrics port.
+  - job_name: quicknotes
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["quicknotes:8080"]

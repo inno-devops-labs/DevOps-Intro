@@ -1,0 +1,65 @@
+services:
+  quicknotes:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: quicknotes:lab6
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/app/seed.json"
+    volumes:
+      - quicknotes-data:/data
+    healthcheck:
+      # Distroless has no shell/curl, so we exec our own static probe binary.
+      test: ["CMD", "/app/healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 2s
+    restart: unless-stopped
+
+    # --- Bonus: security hardening (six defaults) ---------------------------
+    user: "65532:65532"            # 1) non-root (also baked into the image)
+    cap_drop:                      # 3) drop all Linux capabilities
+      - ALL
+    security_opt:
+      - no-new-privileges:true     # 5) block privilege escalation
+    read_only: true                # 4) read-only root filesystem
+    tmpfs:
+      - /tmp                       #    writable scratch via tmpfs
+    # 2) shell-less image and 6) Trivy scan are verified in submissions/lab6.md.
+
+  # --- Lab 8: monitoring stack --------------------------------------------
+  prometheus:
+    image: prom/prometheus:v3.1.0       # pinned, not :latest
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      quicknotes:
+        condition: service_healthy      # wait until the app is actually ready
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.4.0       # pinned, not :latest
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  quicknotes-data:
+  grafana-data:

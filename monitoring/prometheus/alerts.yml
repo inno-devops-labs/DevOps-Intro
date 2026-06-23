@@ -1,0 +1,18 @@
+groups:
+  - name: quicknotes
+    rules:
+      # Fires when server-side (5xx) errors exceed 5% of all traffic,
+      # sustained for 5 minutes (so a single blip does not page anyone).
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(quicknotes_http_responses_by_code_total{code=~"5.."}[5m]))
+          /
+          sum(rate(quicknotes_http_requests_total[5m]))
+          > 0.05
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "QuickNotes 5xx error ratio above 5%"
+          description: "5xx responses are {{ $value | humanizePercentage }} of traffic over the last 5m."
+          runbook_url: "https://github.com/1AM6ADA/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md"
