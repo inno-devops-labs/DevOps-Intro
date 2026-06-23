@@ -170,3 +170,63 @@ The `shell` provisioner was used because it requires no additional tooling on th
 Pinning to `1.24.4` ensures every `vagrant up` installs the exact same binary. If we specified just `1.24`, a new patch release (e.g. `1.24.5`) could be downloaded next month with subtle behavioural differences, breaking reproducibility.
 
 ---
+
+## Task 2 — Snapshots: Save, Break, Restore
+
+### 2.1 Commands
+
+```text
+$ vagrant snapshot save clean-quicknotes
+==> default: Snapshotting the machine as 'clean-quicknotes'...
+==> default: Snapshot saved! You can restore the snapshot at any time by
+==> default: using `vagrant snapshot restore`. You can delete it using
+==> default: `vagrant snapshot delete`.
+
+$ vagrant ssh -c 'sudo rm -rf /usr/local/go'
+$ vagrant ssh -c '/usr/local/go/bin/go version'
+bash: line 1: /usr/local/go/bin/go: No such file or directory
+
+$ time vagrant snapshot restore clean-quicknotes
+==> default: Forcing shutdown of VM...
+==> default: Restoring the snapshot 'clean-quicknotes'...
+==> default: Checking if box 'ubuntu/jammy64' version '20241002.0.0' is up to date...
+==> default: Resuming suspended VM...
+==> default: Booting VM...
+==> default: Waiting for machine to boot. This may take a few minutes...
+    default: SSH address: 127.0.0.1:2222
+    default: SSH username: vagrant
+    default: SSH auth method: private key
+==> default: Machine booted and ready!
+==> default: Machine already provisioned. Run `vagrant provision` or use the `--provision`
+==> default: flag to force provisioning. Provisioners marked to run always will still run.
+
+real    0m26.571s
+user    0m3.054s
+sys 0m2.494s
+
+
+$ vagrant ssh -c '/usr/local/go/bin/go version'
+go version go1.24.4 linux/amd64
+
+```
+
+### 2.2 Restore time
+
+```text
+real    0m26.571s
+user    0m3.054s
+sys 0m2.494s
+```
+
+### 2.3 Design Questions
+
+**e) Snapshots are not backups: why?**
+A snapshot is stored on the same physical disk as the VM it protects. If the disk fails (hardware fault, accidental deletion, RAID failure), both the VM and all its snapshots are lost simultaneously. A backup, by contrast, lives on a separate medium or location. Snapshots also do not protect against logical corruption, if a bug corrupts data before the snapshot is taken, restoring the snapshot restores the corrupted state.
+
+**f) Copy-on-write: what does it mean for disk usage with 10 snapshots?**
+Copy-on-write means a snapshot does not copy the entire disk at creation time. Instead, it records only the blocks that change after the snapshot is taken. With 1 snapshot, disk overhead is small, only changed blocks are stored. With 10 snapshots, each layer stores its delta from the previous one, forming a chain. Disk usage grows with each snapshot proportional to how much data changed between them. Reading any block may require traversing the entire chain, degrading performance significantly.
+
+**g) When is snapshotting an antipattern?**
+Running a VM on a long chain of snapshots is an antipattern. Each read may require traversing multiple copy-on-write layers to find the original block, causing severe I/O performance degradation. Snapshots are meant to be transient, take one before a risky operation, restore or delete it after. Treating snapshots as a version history system leads to slow VMs and unpredictable disk growth.
+
+---
