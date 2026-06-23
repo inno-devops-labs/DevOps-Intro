@@ -16,6 +16,16 @@ func main() {
 	dataPath := envOrDefault("DATA_PATH", "data/notes.json")
 	seedPath := envOrDefault("SEED_PATH", "seed.json")
 
+	// `quicknotes healthcheck` probes /health on loopback and exits 0/1.
+	// The distroless image has no shell or curl, so the binary checks itself.
+	if len(os.Args) > 1 && os.Args[1] == "healthcheck" {
+		resp, err := http.Get("http://127.0.0.1" + addr + "/health")
+		if err != nil || resp.StatusCode != http.StatusOK {
+			os.Exit(1)
+		}
+		os.Exit(0)
+	}
+
 	if err := ensureSeeded(dataPath, seedPath); err != nil {
 		log.Fatalf("seed: %v", err)
 	}
