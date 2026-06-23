@@ -1,0 +1,5 @@
+data/
+
+quicknotes
+*.exe
+.DS_Store

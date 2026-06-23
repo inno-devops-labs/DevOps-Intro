@@ -1,0 +1,42 @@
+name: quicknotes
+
+services:
+  quicknotes:
+    build:
+      context: ./app          
+      dockerfile: Dockerfile
+    image: quicknotes:lab6     
+    container_name: quicknotes
+
+    ports:
+      - "8080:8080"            
+
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"   
+      SEED_PATH: "/seed.json"         
+
+    volumes:
+      - quicknotes-data:/data  
+
+    healthcheck:
+      test: ["CMD", "/healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+    restart: unless-stopped
+
+   
+    read_only: true            
+    cap_drop:
+      - ALL                    
+    security_opt:
+      - no-new-privileges:true 
+    tmpfs:
+      - /tmp                   
+    
+
+volumes:
+  quicknotes-data:
