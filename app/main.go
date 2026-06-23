@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"errors"
+	"flag"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -12,6 +15,28 @@ import (
 )
 
 func main() {
+
+	healthcheck := flag.Bool("healthcheck", false, "probe /health and exit 0/1")
+	flag.Parse()
+	if *healthcheck {
+		port := os.Getenv("ADDR")
+		if port == "" {
+			port = ":8080"
+		}
+		resp, err := http.Get("http://localhost" + port + "/health")
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "healthcheck: %v\n", err)
+			os.Exit(1)
+		}
+		defer resp.Body.Close()
+		io.Copy(io.Discard, resp.Body)
+		if resp.StatusCode != http.StatusOK {
+			fmt.Fprintf(os.Stderr, "healthcheck: status %d\n", resp.StatusCode)
+			os.Exit(1)
+		}
+		os.Exit(0)
+	}
+	
 	addr := envOrDefault("ADDR", ":8080")
 	dataPath := envOrDefault("DATA_PATH", "data/notes.json")
 	seedPath := envOrDefault("SEED_PATH", "seed.json")
