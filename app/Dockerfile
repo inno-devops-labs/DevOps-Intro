@@ -9,11 +9,13 @@ COPY *.go ./
 COPY seed.json ./
 
 RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/quicknotes .
+RUN mkdir -p /out/data && cp /src/seed.json /out/data/notes.json
 
 FROM gcr.io/distroless/static:nonroot
 
 COPY --from=builder /out/quicknotes /quicknotes
 COPY --from=builder /src/seed.json /seed.json
+COPY --from=builder --chown=65532:65532 /out/data /data
 
 ENV ADDR=:8080 \
     DATA_PATH=/data/notes.json \

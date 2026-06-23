@@ -16,11 +16,13 @@ COPY *.go ./
 COPY seed.json ./
 
 RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/quicknotes .
+RUN mkdir -p /out/data && cp /src/seed.json /out/data/notes.json
 
 FROM gcr.io/distroless/static:nonroot
 
 COPY --from=builder /out/quicknotes /quicknotes
 COPY --from=builder /src/seed.json /seed.json
+COPY --from=builder --chown=65532:65532 /out/data /data
 
 ENV ADDR=:8080 \
     DATA_PATH=/data/notes.json \
@@ -36,7 +38,7 @@ ENTRYPOINT ["/quicknotes"]
 
 ```text
 REPOSITORY   TAG       IMAGE ID       CREATED         SIZE
-quicknotes   lab6      202d7cf66323   8 seconds ago   14.2MB
+quicknotes   lab6      01506b43afce   About a minute ago   14.9MB
 ```
 
 ## `docker inspect` config excerpt
@@ -62,7 +64,7 @@ REPOSITORY   TAG                 IMAGE ID       CREATED         SIZE
 golang       1.24.0-alpine3.21   2d40d4fc278d   16 months ago   385MB
 ```
 
-The final runtime image is `14.2MB`, compared with `385MB` for the builder base image.
+The final runtime image is `14.9MB`, compared with `385MB` for the builder base image.
 
 ## Build and run verification
 
@@ -113,3 +115,96 @@ That matters for CVEs because fewer installed packages means a much smaller atta
 `-ldflags='-s -w'` strips the symbol table and DWARF debug information from the binary. The main benefit is a smaller image. The cost is worse post-build debugging because the binary carries less debug metadata.
 
 `-trimpath` removes local filesystem paths from the compiled binary. That improves reproducibility and avoids leaking machine-specific build paths. The cost is that stack traces and debug output are slightly less informative because absolute source paths are no longer embedded.
+
+# Lab 6 - Task 2
+
+## compose.yaml
+
+File: `compose.yaml`
+
+```yaml
+services:
+  quicknotes:
+    build:
+      context: ./app
+    image: quicknotes:lab6
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: /data/notes.json
+      SEED_PATH: /seed.json
+    volumes:
+      - quicknotes-data:/data
+    healthcheck:
+      test: ["CMD", "/quicknotes", "healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 3s
+    restart: unless-stopped
+
+volumes:
+  quicknotes-data:
+```
+
+## Healthcheck verification
+
+```text
+NAME                        IMAGE             COMMAND         SERVICE      CREATED         STATUS                   PORTS
+devops-intro-quicknotes-1   quicknotes:lab6   "/quicknotes"   quicknotes   5 seconds ago   Up 5 seconds (healthy)   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
+```
+
+## Persistence test output
+
+```text
+$ docker compose up --build -d
+[+] Running 4/4
+ ✔ quicknotes:lab6                        Built
+ ✔ Network devops-intro_default           Created
+ ✔ Volume "devops-intro_quicknotes-data"  Created
+ ✔ Container devops-intro-quicknotes-1    Started
+
+$ curl -s -X POST -H 'Content-Type: application/json' -d '{"title":"durable","body":"survive a restart"}' http://localhost:8080/notes
+{"id":5,"title":"durable","body":"survive a restart","created_at":"2026-06-23T08:35:31.488789635Z"}
+
+$ curl -s http://localhost:8080/notes | grep durable
+[{"id":1,"title":"Welcome to QuickNotes","body":"This is the project you'll containerize, deploy, monitor, and harden across all 10 labs.","created_at":"2026-01-15T10:00:00Z"},{"id":2,"title":"Read app/main.go first","body":"Start by understanding the entry point - env vars, signal handling, graceful shutdown.","created_at":"2026-01-15T10:05:00Z"},{"id":3,"title":"DevOps mantra","body":"If it hurts, do it more often.","created_at":"2026-01-15T10:10:00Z"},{"id":4,"title":"Endpoint cheat-sheet","body":"GET /notes  GET /notes/{id}  POST /notes  DELETE /notes/{id}  GET /health  GET /metrics","created_at":"2026-01-15T10:15:00Z"},{"id":5,"title":"durable","body":"survive a restart","created_at":"2026-06-23T08:35:31.488789635Z"}]
+
+$ docker compose down
+$ docker compose up -d
+
+$ curl -s http://localhost:8080/notes | grep durable
+[{"id":1,"title":"Welcome to QuickNotes","body":"This is the project you'll containerize, deploy, monitor, and harden across all 10 labs.","created_at":"2026-01-15T10:00:00Z"},{"id":2,"title":"Read app/main.go first","body":"Start by understanding the entry point - env vars, signal handling, graceful shutdown.","created_at":"2026-01-15T10:05:00Z"},{"id":3,"title":"DevOps mantra","body":"If it hurts, do it more often.","created_at":"2026-01-15T10:10:00Z"},{"id":4,"title":"Endpoint cheat-sheet","body":"GET /notes  GET /notes/{id}  POST /notes  DELETE /notes/{id}  GET /health  GET /metrics","created_at":"2026-01-15T10:15:00Z"},{"id":5,"title":"durable","body":"survive a restart","created_at":"2026-06-23T08:35:31.488789635Z"}]
+
+$ docker compose down -v
+$ docker compose up -d
+
+$ curl -s http://localhost:8080/notes | grep durable
+durable absent
+```
+
+## Design answers
+
+### e) Distroless has no shell. How do you healthcheck it?
+
+I used a binary that is already in the image: the QuickNotes executable itself. I added a `healthcheck` mode, and Compose runs it with exec form:
+
+```yaml
+healthcheck:
+  test: ["CMD", "/quicknotes", "healthcheck"]
+```
+
+That helper performs an HTTP GET to `http://127.0.0.1:8080/health` and exits non-zero on failure. This works in distroless because it does not require `sh`, `curl`, `wget`, or any package manager.
+
+### f) Why does `volumes: [quicknotes-data:/data]` survive `docker compose down`? What destroys it?
+
+It survives `docker compose down` because named volumes are separate Docker objects from containers and networks. `down` removes the containers and the project network, but it leaves named volumes in place by default.
+
+The volume is destroyed by `docker compose down -v`, or by explicit volume removal such as `docker volume rm devops-intro_quicknotes-data` or a broader cleanup like `docker volume prune`.
+
+### g) What does `depends_on` without `condition: service_healthy` actually wait for? What bug can it cause?
+
+Without `condition: service_healthy`, `depends_on` only waits for the dependent container process to start, not for the application inside it to become ready.
+
+The bug is a startup race: a second service can start immediately after first, try to connect before it is ready to accept requests, and fail with connection errors even though Compose started containers in the declared order.

@@ -4,9 +4,11 @@ import (
 	"context"
 	"errors"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 )
@@ -15,6 +17,13 @@ func main() {
 	addr := envOrDefault("ADDR", ":8080")
 	dataPath := envOrDefault("DATA_PATH", "data/notes.json")
 	seedPath := envOrDefault("SEED_PATH", "seed.json")
+
+	if len(os.Args) > 1 && os.Args[1] == "healthcheck" {
+		if err := runHealthcheck(addr); err != nil {
+			log.Fatal(err)
+		}
+		return
+	}
 
 	if err := ensureSeeded(dataPath, seedPath); err != nil {
 		log.Fatalf("seed: %v", err)
@@ -82,4 +91,29 @@ func dirname(p string) string {
 		}
 	}
 	return "."
+}
+
+func runHealthcheck(addr string) error {
+	hostport := addr
+	if strings.HasPrefix(hostport, ":") {
+		hostport = "127.0.0.1" + hostport
+	} else if host, port, err := net.SplitHostPort(addr); err == nil {
+		if host == "" || host == "0.0.0.0" || host == "::" {
+			host = "127.0.0.1"
+		}
+		hostport = net.JoinHostPort(host, port)
+	}
+
+	client := &http.Client{Timeout: 2 * time.Second}
+	resp, err := client.Get("http://" + hostport + "/health")
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return errors.New("health endpoint returned non-200 status")
+	}
+
+	return nil
 }
