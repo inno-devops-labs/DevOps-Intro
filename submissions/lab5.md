@@ -230,3 +230,22 @@ Copy-on-write means a snapshot does not copy the entire disk at creation time. I
 Running a VM on a long chain of snapshots is an antipattern. Each read may require traversing multiple copy-on-write layers to find the original block, causing severe I/O performance degradation. Snapshots are meant to be transient, take one before a risky operation, restore or delete it after. Treating snapshots as a version history system leads to slow VMs and unpredictable disk growth.
 
 ---
+
+## Bonus Task — VM vs Container Resource Baseline
+
+### Comparison Table
+
+| Dimension | Vagrant VM | Docker container |
+|-----------|----------:|----------------:|
+| Cold start | 40s | 0.27s |
+| Idle RAM | 170 MiB | 6.5 MiB |
+| On-disk size | 2.5 GB | 1.32 GB |
+| Process count (guest) | 105 | 2 |
+
+### Analysis
+
+The most striking number is cold start time, 40 seconds for the VM vs 0.27 seconds for the container, a 148× difference. This is because the VM must boot an entire Linux kernel, initialize hardware emulation, and start dozens of system services before the application can run. The container reuses the host kernel and starts almost instantly.
+
+RAM usage tells the same story: the VM consumes 170 MiB just for the OS overhead (systemd, sshd, udev, and 105 processes), while the container uses only 6.5 MiB for the application itself with 2 processes. For stateless microservices that need to scale horizontally, this density advantage explains why containers won the 2014-2020 era, you can run 25+ container instances in the RAM one VM would consume idle.
+
+The VM's 2.5 GB disk footprint vs the container's 1.32 GB reflects the full OS installation vs just the Go toolchain image. The VM model is the right choice when strong hardware-level isolation is required (multi-tenant clouds, full OS customization) or when the workload needs its own kernel. Containers are the right tool for stateless, short-lived, high-density workloads like microservices and CI jobs.
