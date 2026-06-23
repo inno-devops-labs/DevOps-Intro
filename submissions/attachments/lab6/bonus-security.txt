@@ -1,0 +1,12 @@
+=== USER nonroot
+65532
+=== exec sh (expect fail)
+OCI runtime exec failed: exec failed: unable to start container process: exec: "sh": executable file not found in $PATH
+=== CapDrop
+[ALL]
+=== ReadOnly
+true
+=== SecurityOpt
+[no-new-privileges:true]
+=== read-only root test via busybox
+touch: /etc/test: Read-only file system

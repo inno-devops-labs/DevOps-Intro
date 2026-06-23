@@ -1,0 +1,1 @@
+quicknotes-1  | 2026/06/23 11:29:00 quicknotes listening on :8080 (notes loaded: 4)

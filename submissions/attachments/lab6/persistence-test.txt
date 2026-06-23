@@ -1,0 +1,63 @@
+=== Step 1: POST durable note
+{"id":5,"title":"durable","body":"survive a restart","created_at":"2026-06-23T11:29:23.162316088Z"}
+
+=== grep durable (before down)
+[{"id":3,"title":"DevOps mantra","body":"If it hurts, do it more often.","created_at":"2026-01-15T10:10:00Z"},{"id":4,"title":"Endpoint cheat-sheet","body":"GET /notes  GET /notes/{id}  POST /notes  DELETE /notes/{id}  GET /health  GET /metrics","created_at":"2026-01-15T10:15:00Z"},{"id":5,"title":"durable","body":"survive a restart","created_at":"2026-06-23T11:29:23.162316088Z"},{"id":1,"title":"Welcome to QuickNotes","body":"This is the project you'll containerize, deploy, monitor, and harden across all 10 labs.","created_at":"2026-01-15T10:00:00Z"},{"id":2,"title":"Read app/main.go first","body":"Start by understanding the entry point — env vars, signal handling, graceful shutdown.","created_at":"2026-01-15T10:05:00Z"}]
+
+=== docker compose down (keep volume)
+ Container devops-intro-quicknotes-1 Stopping 
+ Container devops-intro-quicknotes-1 Stopped 
+ Container devops-intro-quicknotes-1 Removing 
+ Container devops-intro-quicknotes-1 Removed 
+ Container devops-intro-volume-init-1 Stopping 
+ Container devops-intro-volume-init-1 Stopped 
+ Container devops-intro-volume-init-1 Removing 
+ Container devops-intro-volume-init-1 Removed 
+ Network devops-intro_default Removing 
+ Network devops-intro_default Removed 
+=== docker compose up -d
+ Network devops-intro_default Creating 
+ Network devops-intro_default Created 
+ Container devops-intro-volume-init-1 Creating 
+ Container devops-intro-volume-init-1 Created 
+ Container devops-intro-quicknotes-1 Creating 
+ Container devops-intro-quicknotes-1 Created 
+ Container devops-intro-volume-init-1 Starting 
+ Container devops-intro-volume-init-1 Started 
+ Container devops-intro-volume-init-1 Waiting 
+ Container devops-intro-volume-init-1 Exited 
+ Container devops-intro-quicknotes-1 Starting 
+ Container devops-intro-quicknotes-1 Started 
+=== grep durable (after up)
+[{"id":4,"title":"Endpoint cheat-sheet","body":"GET /notes  GET /notes/{id}  POST /notes  DELETE /notes/{id}  GET /health  GET /metrics","created_at":"2026-01-15T10:15:00Z"},{"id":5,"title":"durable","body":"survive a restart","created_at":"2026-06-23T11:29:23.162316088Z"},{"id":1,"title":"Welcome to QuickNotes","body":"This is the project you'll containerize, deploy, monitor, and harden across all 10 labs.","created_at":"2026-01-15T10:00:00Z"},{"id":2,"title":"Read app/main.go first","body":"Start by understanding the entry point — env vars, signal handling, graceful shutdown.","created_at":"2026-01-15T10:05:00Z"},{"id":3,"title":"DevOps mantra","body":"If it hurts, do it more often.","created_at":"2026-01-15T10:10:00Z"}]
+
+=== docker compose down -v
+ Container devops-intro-quicknotes-1 Stopping 
+ Container devops-intro-quicknotes-1 Stopped 
+ Container devops-intro-quicknotes-1 Removing 
+ Container devops-intro-quicknotes-1 Removed 
+ Container devops-intro-volume-init-1 Stopping 
+ Container devops-intro-volume-init-1 Stopped 
+ Container devops-intro-volume-init-1 Removing 
+ Container devops-intro-volume-init-1 Removed 
+ Volume devops-intro_quicknotes-data Removing 
+ Network devops-intro_default Removing 
+ Volume devops-intro_quicknotes-data Removed 
+ Network devops-intro_default Removed 
+=== docker compose up -d
+ Network devops-intro_default Creating 
+ Network devops-intro_default Created 
+ Volume devops-intro_quicknotes-data Creating 
+ Volume devops-intro_quicknotes-data Created 
+ Container devops-intro-volume-init-1 Creating 
+ Container devops-intro-volume-init-1 Created 
+ Container devops-intro-quicknotes-1 Creating 
+ Container devops-intro-quicknotes-1 Created 
+ Container devops-intro-volume-init-1 Starting 
+ Container devops-intro-volume-init-1 Started 
+ Container devops-intro-volume-init-1 Waiting 
+ Container devops-intro-volume-init-1 Exited 
+ Container devops-intro-quicknotes-1 Starting 
+ Container devops-intro-quicknotes-1 Started 
+=== grep durable (after down -v) — expect absent
+gone (expected)

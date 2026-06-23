@@ -1,0 +1,4 @@
+REPOSITORY   TAG       SIZE
+quicknotes   lab6      16MB
+quicknotes:lab6 16MB
+golang:1.24-alpine 388MB
