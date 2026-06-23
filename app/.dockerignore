@@ -1,0 +1,6 @@
+data/
+*.pcap
+lab4-trace*
+sudo
+wsl
+.git
