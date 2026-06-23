@@ -211,29 +211,22 @@ services:
   quicknotes:
     build:
       context: ./app
-
     image: quicknotes:lab6
-
     ports:
       - "8080:8080"
-
     environment:
       ADDR: ":8080"
       DATA_PATH: "/data/notes.json"
       SEED_PATH: "/seed.json"
-
     volumes:
       - quicknotes-data:/data
-
     healthcheck:
       test: ["CMD", "/healthcheck"]
       interval: 10s
       timeout: 3s
       retries: 3
       start_period: 5s
-
     restart: unless-stopped
-
 volumes:
   quicknotes-data:
 ```
@@ -297,10 +290,32 @@ Result: Data was removed together with the named volume.
 ### 2.3 Healthcheck
 
 QuickNotes runs inside a distroless image, which does not contain a shell, curl, wget or other debugging utilities. 
-Therefore, a separate Go program (app/cmd/healthcheck/main.go) was created and included in the Docker image.
+Therefore, a separate Go program (app/cmd/healthcheck/main.go) was created.
 The healthcheck binary sends an HTTP request to http://127.0.0.1:8080/health 
 and exits with code 0 only when the application is healthy.
 
+I updated Dockerfile to this:
+```dockerfile
+# Builder stage
+FROM golang:1.24-alpine AS builder
+WORKDIR /src
+COPY go.mod ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/quicknotes .
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/healthcheck ./cmd/healthcheck
+RUN mkdir -p /out/data
+
+# Runtime stage
+FROM gcr.io/distroless/static:nonroot
+COPY --from=builder /out/quicknotes /quicknotes
+COPY --from=builder /out/healthcheck /healthcheck
+COPY --from=builder --chown=nonroot:nonroot /out/data /data
+COPY seed.json /seed.json
+EXPOSE 8080
+USER nonroot
+ENTRYPOINT ["/quicknotes"]
+```
 Container status:
 ```powershell
 PS C:\Users\P4IN\DevOps-Intro> docker compose ps
@@ -338,3 +353,104 @@ removes containers and networks but preserves named volumes. The volume is delet
 `depends_on` only waits until the dependent container is started, not until the application inside it is ready to serve requests.
 This can create a race condition where another service starts too early and fails because the application is not yet healthy.
 Using `condition: service_healthy` prevents this issue.
+
+
+### Bonus Task — The 6 Security Defaults
+
+### B.1 Hardened compose.yaml snippet
+
+I updated parameters in yaml:
+```yaml
+services:
+  quicknotes:
+    build:
+      context: ./app
+    image: quicknotes:lab6
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/seed.json"
+    volumes:
+      - quicknotes-data:/data
+    healthcheck:
+      test: ["CMD", "/healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+```
+
+### B.2 Verification
+
+1. USER nonroot
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> docker inspect quicknotes:lab6 --format "{{.Config.User}}"
+nonroot
+```
+2. No shell available
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> docker compose exec quicknotes sh
+OCI runtime exec failed: exec failed: unable to start container process:
+exec: "sh": executable file not found in $PATH
+```
+Result: distroless images intentionally do not contain a shell.
+
+3. Capabilities dropped
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> docker inspect devops-intro-quicknotes-1 --format "{{.HostConfig.CapDrop}}"
+[ALL]
+```
+4. Read-only root filesystem
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> docker inspect devops-intro-quicknotes-1 --format "{{.HostConfig.ReadonlyRootfs}}"
+true
+```
+The root filesystem is mounted as read-only. Only /data (named volume) and /tmp (tmpfs) remain writable.
+
+5. no-new-privileges
+```powershell
+PS C:\Users\P4IN\DevOps-Intro> docker inspect devops-intro-quicknotes-1 --format "{{.HostConfig.SecurityOpt}}"
+[no-new-privileges:true]
+```
+
+### B.3 Trivy scan
+
+Command:
+```powershell
+docker run --rm `
+  -v //var/run/docker.sock:/var/run/docker.sock `
+  aquasec/trivy:0.59.1 `
+  image --severity HIGH,CRITICAL --no-progress `
+  quicknotes:lab6
+```
+Summary from output:
+```text
+quicknotes:lab6 (debian 13.5)
+Total: 0 (HIGH: 0, CRITICAL: 0)
+
+healthcheck (gobinary)
+Total: 13 (HIGH: 13, CRITICAL: 0)
+
+quicknotes (gobinary)
+Total: 13 (HIGH: 13, CRITICAL: 0)
+```
+
+The Debian base image itself contains no HIGH or CRITICAL vulnerabilities.
+The detected vulnerabilities belong to the Go standard library embedded into the compiled quicknotes and healthcheck binaries.
+
+### B.4 Which default gives the most security per line of YAML?
+Using a distroless image provides the biggest security improvement for the smallest configuration effort.
+It removes shells, package managers, compilers and many unnecessary utilities, significantly reducing the attack surface.
+Running as a non-root user is another highly effective default because even if the application is compromised,
+the attacker receives very limited privileges. Applying all six defaults together creates multiple independent
+security layers instead of relying on a single protection mechanism.

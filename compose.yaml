@@ -23,6 +23,17 @@ services:
       retries: 3
       start_period: 5s
 
+    read_only: true
+
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+
+    cap_drop:
+      - ALL
+
+    security_opt:
+      - no-new-privileges:true
+
     restart: unless-stopped
 
 volumes:
