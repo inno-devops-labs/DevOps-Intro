@@ -14,25 +14,31 @@ See [`app/Dockerfile`](../app/Dockerfile).
 ### `docker images quicknotes:lab6`
 
 ```text
-<!-- paste docker images output after build -->
+IMAGE             ID             DISK USAGE   CONTENT SIZE
+quicknotes:lab6   4a2a4575e34a       22.7MB         5.71MB
 ```
 
 ### `docker inspect` excerpt (User, ExposedPorts, Entrypoint)
 
 ```text
-<!-- paste docker inspect quicknotes:lab6 --format or jq excerpt -->
+$ docker inspect quicknotes:lab6 --format "User={{.Config.User}} Entrypoint={{.Config.Entrypoint}}"
+User=nonroot Entrypoint=[/quicknotes]
 ```
 
 ### Builder base image size (comparison)
 
 ```text
-<!-- paste docker images golang:1.24.5-alpine -->
+quicknotes:lab6          22.7MB
+golang:1.24.5-alpine    394MB
 ```
+
+(~17× smaller runtime image than builder base)
 
 ### Task 1 verification
 
 ```text
-<!-- paste curl /health from docker run -->
+$ Invoke-RestMethod http://127.0.0.1:8080/health
+{"notes":4,"status":"ok"}
 ```
 
 ### Design questions (Task 1)
@@ -59,12 +65,20 @@ Contains CA certs, `/etc/passwd` entry for UID 65532 (`nonroot`), timezone data,
 
 ### `compose.yaml`
 
-See [`compose.yaml`](../compose.yaml) at repo root.
+See [`compose.yaml`](../compose.yaml) at repo root.  
+Note: `vol-init` (busybox) runs once to `chown` the named volume for UID 65532 — required because Docker creates new volumes as root and distroless runs as `nonroot`.
 
 ### Persistence test (present → down → up → present → down -v → up → absent)
 
 ```text
-<!-- paste 3-step test output -->
+# POST durable note
+{"id":5,"title":"durable","body":"survive a restart",...}
+
+# after docker compose down && docker compose up -d (no -v)
+{"id":5,"title":"durable","body":"survive a restart",...}   ✅ still present
+
+# after docker compose down -v && docker compose up -d
+durable absent (expected)   ✅ volume destroyed
 ```
 
 ### Design questions (Task 2)
@@ -88,28 +102,40 @@ Compose only waits for the **container to start**, not for the app inside to be 
 ### Hardened `compose.yaml` snippet
 
 ```yaml
-# cap_drop, read_only, tmpfs, security_opt — see compose.yaml services.quicknotes
+  quicknotes:
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
 ```
+
+(Dockerfile: `USER nonroot`, `gcr.io/distroless/static:nonroot` base)
 
 ### Verification outputs (B.2)
 
 ```text
-<!-- USER nonroot -->
-<!-- exec sh fails -->
-<!-- CapDrop [ALL] -->
-<!-- read-only root test -->
-<!-- SecurityOpt no-new-privileges -->
+USER: nonroot
+exec sh: exec: "sh": executable file not found in $PATH   ✅ no shell
+CapDrop: [ALL]
+SecurityOpt: [no-new-privileges:true]
+ReadonlyRootfs: true
 ```
 
 ### Trivy summary
 
 ```text
-<!-- paste trivy scan output -->
+Distroless base layer: Total: 0 (HIGH: 0, CRITICAL: 0)
+Embedded Go stdlib (v1.24.5): Total: 16 (HIGH: 15, CRITICAL: 1)
 ```
+
+Distroless base is clean; remaining findings are in the **compiled Go stdlib** (fixed in Go 1.24.12+). Lab 9 will wire Trivy into CI.
 
 ### Which default gives the most security per line of YAML?
 
-_TODO after Trivy run — likely `read_only: true` + `cap_drop: ALL`._
+`read_only: true` plus `cap_drop: [ALL]` — two lines that block most container escape and persistence paths. `read_only` prevents runtime package installs and config tampering; dropping all capabilities removes the Linux privilege escalation surface. Distroless + `nonroot` are Dockerfile-level but equally high leverage.
 
 ---
 
@@ -117,21 +143,21 @@ _TODO after Trivy run — likely `read_only: true` + `cap_drop: ALL`._
 
 ### Task 1 (6 pts)
 
-- [ ] Multi-stage Dockerfile, ≤ 25 MB, nonroot, distroless
-- [ ] `docker run` serves `/health`
-- [ ] Design questions a–d answered
-- [ ] Build outputs pasted
+- [x] Multi-stage Dockerfile, ≤ 25 MB, nonroot, distroless
+- [x] `docker run` serves `/health`
+- [x] Design questions a–d answered
+- [x] Build outputs pasted
 
 ### Task 2 (4 pts)
 
-- [ ] `compose.yaml` with volume, healthcheck, env, restart
-- [ ] Persistence test demonstrated
-- [ ] Design questions e–g answered
+- [x] `compose.yaml` with volume, healthcheck, env, restart
+- [x] Persistence test demonstrated
+- [x] Design questions e–g answered
 
 ### Bonus (2 pts)
 
-- [ ] All 6 defaults applied and verified
-- [ ] Trivy scan documented
+- [x] All 6 defaults applied and verified
+- [x] Trivy scan documented
 
 ### Submission
 
