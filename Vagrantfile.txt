@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  # 1. Базовый образ Ubuntu 22.04 (работает быстрее, чем 24.04)
+  config.vm.box = "ubuntu/jammy64"
+
+  # 2. Хостнейм
+  config.vm.hostname = "quicknotes-vm"
+
+  # 3. Проброс порта 18080 хост → 8080 гость
+  config.vm.network "forwarded_port", guest: 8080, host: 18080, host_ip: "127.0.0.1"
+
+  # 4. Синхронизация папки ./app → /home/vagrant/app
+  config.vm.synced_folder "./app", "/home/vagrant/app"
+
+  # 5. Ресурсы: 2 vCPU, 1024 MB RAM
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "1024"
+    vb.cpus = 2
+  end
+
+  # 6. Provisioning: установка Go 1.24.5
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update
+    apt-get install -y wget git
+    wget -q https://go.dev/dl/go1.24.5.linux-amd64.tar.gz
+    tar -C /usr/local -xzf go1.24.5.linux-amd64.tar.gz
+    echo 'export PATH=$PATH:/usr/local/go/bin' >> /home/vagrant/.bashrc
+    echo 'export PATH=$PATH:/usr/local/go/bin' >> /root/.bashrc
+    # для текущей сессии
+    export PATH=$PATH:/usr/local/go/bin
+    go version
+  SHELL
+end
