@@ -8,7 +8,7 @@
     quicknotes_user: quicknotes
     data_dir: /var/lib/quicknotes
     binary_path: /usr/local/bin/quicknotes
-    listen_addr: ":8082"
+    listen_addr: ":8080"
 
   tasks:
     - name: Bootstrap python3 
