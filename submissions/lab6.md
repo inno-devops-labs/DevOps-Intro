@@ -136,12 +136,19 @@ services:
       SEED_PATH: /seed.json
     volumes:
       - quicknotes-data:/data
+    tmpfs:
+      - /tmp
     healthcheck:
       test: ["CMD", "/quicknotes", "healthcheck"]
       interval: 10s
       timeout: 3s
       retries: 3
       start_period: 3s
+    cap_drop:
+      - ALL
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
     restart: unless-stopped
 
 volumes:
@@ -208,3 +215,107 @@ The volume is destroyed by `docker compose down -v`, or by explicit volume remov
 Without `condition: service_healthy`, `depends_on` only waits for the dependent container process to start, not for the application inside it to become ready.
 
 The bug is a startup race: a second service can start immediately after first, try to connect before it is ready to accept requests, and fail with connection errors even though Compose started containers in the declared order.
+
+# Lab 6 - Bonus Task
+
+## Hardened `services.quicknotes` snippet
+
+```yaml
+quicknotes:
+  build:
+    context: ./app
+  image: quicknotes:lab6
+  ports:
+    - "8080:8080"
+  environment:
+    ADDR: ":8080"
+    DATA_PATH: /data/notes.json
+    SEED_PATH: /seed.json
+  volumes:
+    - quicknotes-data:/data
+  tmpfs:
+    - /tmp
+  healthcheck:
+    test: ["CMD", "/quicknotes", "healthcheck"]
+    interval: 10s
+    timeout: 3s
+    retries: 3
+    start_period: 3s
+  cap_drop:
+    - ALL
+  read_only: true
+  security_opt:
+    - no-new-privileges:true
+  restart: unless-stopped
+```
+
+## Verification outputs
+
+### 1) `USER nonroot`
+
+`Dockerfile` already uses `USER 65532:65532`. Runtime proof:
+
+```text
+$ docker inspect quicknotes:lab6 --format '{{json .Config.User}}'
+"65532:65532"
+```
+
+### 2) No shell available
+
+`Dockerfile` already uses the distroless runtime image `gcr.io/distroless/static:nonroot`. Proof:
+
+```text
+$ docker compose exec -T quicknotes sh
+OCI runtime exec failed: exec failed: unable to start container process: exec: "sh": executable file not found in $PATH: unknown
+```
+
+### 3) Capabilities dropped
+
+```text
+$ docker inspect devops-intro-quicknotes-1 --format '{{json .HostConfig.CapDrop}}'
+["ALL"]
+```
+
+### 4) Read-only root filesystem
+
+Because the distroless image has no shell and no `touch` binary, I verified this at the Docker engine level instead of trying to run a fake write test command inside the container:
+
+```text
+$ docker inspect devops-intro-quicknotes-1 --format '{{.HostConfig.ReadonlyRootfs}}'
+true
+```
+
+The writable locations are only the named volume at `/data` and the explicit tmpfs mount at `/tmp`.
+
+### 5) `no-new-privileges`
+
+```text
+$ docker inspect devops-intro-quicknotes-1 --format '{{json .HostConfig.SecurityOpt}}'
+["no-new-privileges:true"]
+```
+
+## Trivy summary
+
+Command used:
+
+```text
+$ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.59.1 image --severity HIGH,CRITICAL --no-progress quicknotes:lab6
+```
+
+Summary:
+
+```text
+quicknotes:lab6 (debian 13.5)
+=============================
+Total: 0 (HIGH: 0, CRITICAL: 0)
+
+quicknotes (gobinary)
+=====================
+Total: 17 (HIGH: 16, CRITICAL: 1)
+```
+
+Interpretation: the distroless static base did its job on the OS side, with zero HIGH/CRITICAL base-image findings. The remaining findings come from the Go binary built with `go1.24.0`, so they are application-runtime issues in the bundled standard library rather than extra packages from the container image.
+
+## Most security per line of YAML
+
+If I had to pick one line, `cap_drop: [ALL]` gives the most security per line of Compose. It removes the default Linux capabilities that many containers do not actually need, which sharply reduces the blast radius of a compromise. `read_only: true` is a close second because it blocks a lot of persistence and tampering paths with one flag, but dropping capabilities is the stronger general hardening default for this app. The real takeaway is that these controls stack well: distroless, nonroot, dropped capabilities, read-only root, and `no-new-privileges` each cover a different failure mode.

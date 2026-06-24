@@ -11,12 +11,19 @@ services:
       SEED_PATH: /seed.json
     volumes:
       - quicknotes-data:/data
+    tmpfs:
+      - /tmp
     healthcheck:
       test: ["CMD", "/quicknotes", "healthcheck"]
       interval: 10s
       timeout: 3s
       retries: 3
       start_period: 3s
+    cap_drop:
+      - ALL
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
     restart: unless-stopped
 
 volumes:
