@@ -1,0 +1,35 @@
+services:
+  quicknotes:
+    image: quicknotes:lab6
+    container_name: quicknotes-lab6
+    restart: unless-stopped
+    user: "0:0"
+    ports:
+      - "8080:8080"
+    volumes:
+      - quicknotes-data:/data
+    environment:
+      - ADDR=:8080
+      - DATA_PATH=/data/notes.json
+      - SEED_PATH=/app/seed.json
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+    # Drop all capabilities
+    cap_drop:
+      - ALL
+    # добавлять ничего не надо, так как приложению не нужны capabilities
+
+    # Read-only root filesystem 
+    read_only: true
+
+    # no-new-privileges
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  quicknotes-data:
