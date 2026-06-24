@@ -4,11 +4,13 @@ Frolova AI, M25RO-01
 
 a.frolova@innopolis.university
 
+Ссылка на PR: https://github.com/inno-devops-labs/DevOps-Intro/pull/1213
+
 ## Task1 - Vagrant Up + Run QuickNotes Inside
 
 ### Vagrantfile
 
-Ссылка на файл: 
+Ссылка на файл: https://github.com/kicchhi/DevOps-Intro/blob/feature/lab5/Vagrantfile
 
 ### Скриншоты
 
