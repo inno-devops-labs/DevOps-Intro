@@ -179,7 +179,7 @@ $ docker run --rm --network devops-intro_default alpine \
 
 ### 2.3 Design Questions
 
-**e) Distroless has no shell — how do you healthcheck it?**
+**e) Distroless has no shell. How do you healthcheck it?**
 The strategy used here is to build a minimal static Go binary (`/healthcheck`) in the builder stage and copy it into the final image alongside the main binary. This tiny program does a single `GET /health`, exits 0 if the response is HTTP 200, and exits 1 on any error. Since it is compiled with `CGO_ENABLED=0` it is fully static and runs fine in `distroless/static` with no shell or libc needed.
 
 Other options considered:
@@ -194,3 +194,92 @@ A named volume (`quicknotes-data:/data`) is managed by Docker independently of t
 Without a condition, `depends_on` only waits for the container to start (i.e. the process to be launched), not for it to be ready to accept connections. The bug this causes: if QuickNotes depends on a database and starts before the DB is accepting connections, it will fail with a connection refused error even though the DB container is "running". The fix is `condition: service_healthy` combined with a proper `healthcheck:` on the dependency then `depends_on` waits for the healthcheck to pass before starting the dependent service.
 
 ---
+
+## Bonus Task - The 6 Security Defaults
+
+### B.1 Hardened compose.yaml (quicknotes service)
+
+```yaml
+services:
+  quicknotes:
+    build:
+      context: ./app
+    image: quicknotes:lab6
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: /data/notes.json
+      SEED_PATH: /seed.json
+    volumes:
+      - quicknotes-data:/data
+    tmpfs:
+      - /tmp
+    healthcheck:
+      test: ["CMD", "/healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    cap_drop:
+      - ALL
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+volumes:
+  quicknotes-data:
+```
+
+### B.2 Verification
+
+**1. USER nonroot - image runs as uid 65532, never root**
+```text
+$ docker inspect quicknotes:lab6 --format '{{ .Config.User }}'
+nonroot
+```
+
+**2. Distroless base - no shell available**
+```text
+$ docker compose exec quicknotes sh
+OCI runtime exec failed: exec failed: unable to start container process:
+exec: "sh": executable file not found in $PATH
+```
+
+**3. All capabilities dropped**
+```text
+$ docker inspect devops-intro-quicknotes-1 --format '{{ .HostConfig.CapDrop }}'
+[ALL]
+```
+
+**4. Read-only root filesystem**
+```text
+$ docker inspect devops-intro-quicknotes-1 --format '{{ .HostConfig.ReadonlyRootfs }}'
+true
+```
+Writing to the root filesystem is blocked at the kernel level. Only the named volume at `/data` and the `tmpfs` at `/tmp` are writable.
+
+**5. no-new-privileges**
+```text
+$ docker inspect devops-intro-quicknotes-1 --format '{{ .HostConfig.SecurityOpt }}'
+[no-new-privileges:true]
+```
+
+### B.3 Trivy scan
+
+```text
+$ trivy image --severity HIGH,CRITICAL --no-progress quicknotes:lab6
+
+quicknotes:lab6 (debian 12)
+============================
+Total: 0 (HIGH: 0, CRITICAL: 0)
+```
+
+Zero HIGH or CRITICAL vulnerabilities. The distroless/static base contains only CA certificates and timezone data, no OS packages, no shell, no utilities, leaving almost no attack surface for CVEs.
+
+### B.4 Analysis, which default gives the most security per line of YAML?
+
+**`read_only: true`** delivers the most security per line. A read-only root filesystem prevents an entire class of attacks: even if an attacker achieves remote code execution, they cannot drop malicious files, install backdoors, modify binaries, or tamper with `/etc`. Combined with `tmpfs: /tmp`, the app still works normally while the rest of the filesystem is immutable. A single boolean in compose.yaml eliminates filesystem-based persistence for any exploit.
+
+`cap_drop: ALL` is a close second, dropping all Linux capabilities means the process cannot open raw sockets, mount filesystems, change file ownership, or load kernel modules, even if it runs as root. Together, `read_only` and `cap_drop: ALL` form the most effective two-line hardening combination available in compose.yaml.
