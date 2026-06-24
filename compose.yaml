@@ -1,0 +1,27 @@
+services:
+  quicknotes:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: quicknotes:lab6
+    container_name: quicknotes
+    ports:
+      - "8080:8080"
+    volumes:
+      - quicknotes-data:/data
+    environment:
+      - ADDR=:8080
+      - DATA_PATH=/data/notes.json
+      - SEED_PATH=/data/seed.json
+    healthcheck:
+      test: ["CMD", "/quicknotes", "-healthcheck"]   # or ["CMD-SHELL", "wget -qO- http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+
+
+volumes:
+  quicknotes-data:
+    name: quicknotes-data
