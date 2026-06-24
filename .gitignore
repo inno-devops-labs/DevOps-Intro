@@ -53,11 +53,13 @@ Thumbs.db
 .claude/
 
 # NOTE: deliberately NOT ignored, because students commit them as lab evidence:
-#   submissions/labN.md        (lab reports)
-#   .github/workflows/*.yml    (Lab 3 CI)
+  submissions/labN.md        (lab reports)
+  .github/workflows/*.yml    (Lab 3 CI)
 #   Dockerfile, compose.yaml   (Lab 6)
 #   ansible/                   (Lab 7)
 #   monitoring/                (Lab 8)
 #   *.sbom.cdx.json, zap-*.html/json, trivy-*.txt   (Lab 9 scan evidence)
 #   flake.nix, flake.lock      (Lab 11)
 #   wasm/main.go, spin.toml, go.sum   (Lab 12)
+
+.vagrant/
