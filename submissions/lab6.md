@@ -4,11 +4,11 @@ Frolova AI, M25RO-01
 
 a.frolova@innopolis.university
 
-Ссылка на PR:
+Ссылка на PR: 
 
 ## Task1 - Dockerfile
 
-Ссылка на Dockerfile: ()
+Ссылка на Dockerfile: (https://github.com/kicchhi/DevOps-Intro/blob/feature/lab6/Dockerfile)
 
 Размер Docker контейнера (размер < 25 MB):
 
@@ -87,7 +87,7 @@ a.frolova@innopolis.university
 
 ### 2.1 compose.yaml
 
-Ссылка на файл compose.yaml:
+Ссылка на файл compose.yaml: https://github.com/kicchhi/DevOps-Intro/blob/feature/lab6/compose.yaml
 
 ### 2.2 Ответы на вопросы
 
