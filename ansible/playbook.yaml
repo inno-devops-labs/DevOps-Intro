@@ -11,6 +11,9 @@
     quicknotes_listen_addr: ":8080"
     quicknotes_data_path: "{{ quicknotes_data_dir }}/notes.json"
     quicknotes_seed_path: "{{ quicknotes_data_dir }}/seed.json"
+    ansible_pull_repo_url: "https://github.com/selysecr332/DevOps-Intro.git"
+    ansible_pull_branch: "feature/lab7"
+    ansible_pull_checkout_dir: "/var/lib/ansible-pull/devops-intro"
 
   handlers:
     - name: restart quicknotes
@@ -64,6 +67,45 @@
     - name: Enable and start QuickNotes service
       ansible.builtin.systemd:
         name: quicknotes
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    - name: Install Ansible and Git for ansible-pull
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        state: present
+        update_cache: true
+
+    - name: Ensure ansible-pull checkout directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_pull_checkout_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Install ansible-pull systemd service
+      ansible.builtin.template:
+        src: ansible-pull.service.j2
+        dest: /etc/systemd/system/ansible-pull.service
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Install ansible-pull systemd timer
+      ansible.builtin.template:
+        src: ansible-pull.timer.j2
+        dest: /etc/systemd/system/ansible-pull.timer
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Enable and start ansible-pull timer
+      ansible.builtin.systemd:
+        name: ansible-pull.timer
         enabled: true
         state: started
         daemon_reload: true
