@@ -29,7 +29,6 @@ $ curl http://localhost:9090/api/v1/targets | python3 -m json.tool | grep health
     Health: up{job="quicknotes"}
 
 ### Dashboard JSON
-```json
 {
   "title": "Golden Signals",
   "panels": [
@@ -54,20 +53,50 @@ $ curl http://localhost:9090/api/v1/targets | python3 -m json.tool | grep health
 }
 
 
-Design Questions
+### Grafana provisioning
 
-a) Pull vs push: Prometheus pulls metrics. This means Prometheus must be able to reach QuickNotes. If Prometheus can't reach it - metrics are missing, no alerts.
+**datasource.yml**
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
 
-b) scrape_interval 5s vs 5m: 5s = too much load, 5m = too slow to detect problems.
+**dashboard.yml**
+apiVersion: 1
+providers:
+  - name: 'Default'
+    orgId: 1
+    folder: ''
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards
 
-c) rate() vs irate(): rate() is better for traffic panel - smooth average over time.
 
-d) Provision from files: Reproducible, version controlled, no manual clicks.
+###Design Questions
+a) Pull vs push: Prometheus pulls. What does that mean for which side (Prometheus or QuickNotes) needs to be reachable? What's the failure mode if Prometheus can't reach QuickNotes?
+
+Prometheus must be able to reach QuickNotes (pull model). QuickNotes doesn't need to know about Prometheus. If Prometheus can't reach QuickNotes - metrics are missing, no alerts, monitoring is blind until connectivity is restored.
+
+b) scrape_interval: 15s is a default. What query problems do you create by setting it to 5s? To 5m?
+
+5s = too much load on services, more network traffic, unnecessary resource usage. 5m = too slow to detect problems, incidents go unnoticed for 5 minutes, SLOs likely violated before detection.
+
+c) PromQL rate() vs irate() vs delta() — which one is right for the Traffic panel and why?
+
+rate() is best for traffic panel - smooth average over time, shows trends clearly. irate() is too spiky, delta() shows total change not per-second rate.
+
+d) Why provision Grafana from files instead of clicking through the UI on every fresh stack?
+
+Reproducible, version controlled in Git, consistent across environments, no manual errors, automated deployments.
 
 
-Task 2
+###Task 2
 
-Alert rule
+##Alert rule
 
 sum(rate(quicknotes_http_errors_total[5m])) / sum(rate(quicknotes_http_requests_total[5m])) > 0.05
 FOR: 5m
@@ -104,10 +133,16 @@ More than 5% of HTTP requests to QuickNotes are failing.
 3. Add preventive measures
 4. Update runbook
 
-Design Questions
+###Design Questions
 
-e) Why 5 minutes sustained? Prevents false alarms from single bursts.
+e) Why "sustained for 5 minutes" instead of "fire immediately on first bad request"?
 
-f) Symptom vs cause alerts: CPU alert is cause alert - worse because high CPU doesn't always mean user impact.
+Prevents false alarms from single bursts. One 4xx error shouldn't wake anyone at 3 AM. Only sustained issues matter.
 
-g) Alert fatigue: If >1% alerts are false positives - too noisy.
+f) Symptom alerts vs cause alerts: the alert above is a symptom alert. What's an example of a cause alert someone might write for QuickNotes? Why is it worse?
+
+CPU alert is a cause alert - worse because high CPU doesn't always mean user impact. Symptom alerts (error ratio) directly measure user experience.
+
+g) Alert fatigue: Lecture 8 cited it as the bigger danger than too few alerts. What's a quantitative threshold ("page X% of the time the user wasn't actually affected") that would mean your alert is too noisy?
+
+If >1-2% alerts are false positives - too noisy. Team starts ignoring pages, misses real incidents.
