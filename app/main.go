@@ -1,85 +1,94 @@
 package main
 
 import (
-	"context"
-	"errors"
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
+type Note struct {
+	ID      int    `json:"id"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
+}
+
+var notes = []Note{
+	{ID: 1, Title: "Welcome", Content: "Welcome to QuickNotes!"},
+	{ID: 2, Title: "Getting Started", Content: "This is your first note"},
+}
+var nextID = 3
+
 func main() {
-	addr := envOrDefault("ADDR", ":8080")
-	dataPath := envOrDefault("DATA_PATH", "data/notes.json")
-	seedPath := envOrDefault("SEED_PATH", "seed.json")
-
-	if err := ensureSeeded(dataPath, seedPath); err != nil {
-		log.Fatalf("seed: %v", err)
+	// Get port from environment variable, default to :8080
+	addr := os.Getenv("ADDR")
+	if addr == "" {
+		addr = ":8080"
 	}
 
-	store, err := NewStore(dataPath)
-	if err != nil {
-		log.Fatalf("store: %v", err)
+	// Get data path from environment variable
+	dataPath := os.Getenv("DATA_PATH")
+	if dataPath == "" {
+		dataPath = "/var/lib/quicknotes"
 	}
 
-	server := NewServer(store)
-	srv := &http.Server{
-		Addr:              addr,
-		Handler:           server.Routes(),
-		ReadHeaderTimeout: 5 * time.Second,
-	}
+	// Routes
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Hello from QuickNotes!\n")
+	})
 
-	go func() {
-		log.Printf("quicknotes listening on %s (notes loaded: %d)", addr, store.Count())
-		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			log.Fatalf("listen: %v", err)
+	http.HandleFunc("/health", healthHandler)
+	http.HandleFunc("/notes", notesHandler)
+	http.HandleFunc("/notes/", noteHandler)
+
+	log.Printf("Server listening on %s (DATA_PATH=%s)", addr, dataPath)
+	log.Fatal(http.ListenAndServe(addr, nil))
+}
+
+func healthHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"status": "ok",
+		"notes":  len(notes),
+	})
+}
+
+func notesHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	switch r.Method {
+	case "GET":
+		json.NewEncoder(w).Encode(notes)
+	case "POST":
+		var note Note
+		if err := json.NewDecoder(r.Body).Decode(&note); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
-	}()
-
-	stop := make(chan os.Signal, 1)
-	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
-	<-stop
-	log.Println("shutting down")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		log.Printf("shutdown: %v", err)
+		note.ID = nextID
+		nextID++
+		notes = append(notes, note)
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(note)
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
-func envOrDefault(k, def string) string {
-	if v, ok := os.LookupEnv(k); ok && v != "" {
-		return v
+func noteHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	// Parse ID from URL
+	var id int
+	if _, err := fmt.Sscanf(r.URL.Path, "/notes/%d", &id); err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		return
 	}
-	return def
-}
 
-func ensureSeeded(dataPath, seedPath string) error {
-	if _, err := os.Stat(dataPath); err == nil {
-		return nil
-	}
-	if err := os.MkdirAll(dirname(dataPath), 0o755); err != nil {
-		return err
-	}
-	seed, err := os.ReadFile(seedPath)
-	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			return os.WriteFile(dataPath, []byte("[]"), 0o644)
-		}
-		return err
-	}
-	return os.WriteFile(dataPath, seed, 0o644)
-}
-
-func dirname(p string) string {
-	for i := len(p) - 1; i >= 0; i-- {
-		if p[i] == '/' {
-			return p[:i]
+	for _, note := range notes {
+		if note.ID == id {
+			json.NewEncoder(w).Encode(note)
+			return
 		}
 	}
-	return "."
+	http.Error(w, "Note not found", http.StatusNotFound)
 }
