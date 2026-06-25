@@ -178,6 +178,7 @@ Setup notes: [`monitoring/docs/bonus-checkly-setup.md`](../monitoring/docs/bonus
 
 ### Submission
 
-- [ ] Course PR (`feature/lab8` → `inno-devops-labs/main`)
-- [ ] Fork PR
-- 
+- [x] Course PR: https://github.com/inno-devops-labs/DevOps-Intro/pull/1222
+- [x] Fork PR: https://github.com/selysecr332/DevOps-Intro/pull/9
+- [ ] Moodle URL
+
