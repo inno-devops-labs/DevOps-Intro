@@ -1,7 +1,7 @@
 # Lab 7 — Configuration Management: Deploy QuickNotes via Ansible
 
 Mahmoud Hassan (`selysecr332`)  
-**Environment:** Windows 11 + Ansible 10.x + Lab 5 Vagrant VM
+**Environment:** Windows 11 + WSL Ansible 2.16.3 + Lab 5 Vagrant VM (`quicknotes-lab5`)
 
 ---
 
@@ -12,12 +12,15 @@ Mahmoud Hassan (`selysecr332`)
 ```text
 ansible/
 ├── inventory.ini
+├── inventory.local.ini
 ├── playbook.yaml
 ├── files/
 │   ├── quicknotes
 │   └── seed.json
 └── templates/
-    └── quicknotes.service.j2
+    ├── quicknotes.service.j2
+    ├── ansible-pull.service.j2
+    └── ansible-pull.timer.j2
 ```
 
 ### `playbook.yaml` / `inventory.ini` / template
@@ -27,14 +30,44 @@ See [`ansible/`](../ansible/) directory.
 ### First run PLAY RECAP
 
 ```text
-<!-- paste after ansible-playbook run -->
+PLAY [Deploy QuickNotes to Lab 5 VM] *******************************************************************
+
+TASK [Ensure quicknotes system user exists] ************************************************************
+changed: [lab5-vm]
+
+TASK [Ensure data directory exists] ********************************************************************
+changed: [lab5-vm]
+
+TASK [Install QuickNotes binary] ***********************************************************************
+changed: [lab5-vm]
+
+TASK [Install seed data file] **************************************************************************
+changed: [lab5-vm]
+
+TASK [Install systemd unit] ****************************************************************************
+changed: [lab5-vm]
+
+TASK [Enable and start QuickNotes service] *************************************************************
+changed: [lab5-vm]
+
+RUNNING HANDLER [restart quicknotes] *******************************************************************
+changed: [lab5-vm]
+
+PLAY RECAP *********************************************************************************************
+lab5-vm                    : ok=7    changed=7    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
 
 ### Health check from host
 
-```text
-<!-- curl http://127.0.0.1:18080/health -->
+```powershell
+PS> Invoke-RestMethod http://127.0.0.1:18080/health
+
+notes status
+----- ------
+    4 ok
 ```
+
+Screenshot: [`submissions/screenshots/lab_7.png`](screenshots/lab_7.png)
 
 ### Design questions (Task 1)
 
@@ -63,19 +96,39 @@ No. This playbook uses only explicit variables and static paths — no `ansible_
 ### Second run (`changed=0`)
 
 ```text
-<!-- paste PLAY RECAP -->
+PLAY RECAP *********************************************************************
+lab5-vm                    : ok=6    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
 
 ### Variable tweak (`listen_addr` → `:9090`)
 
+```bash
+ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml -e quicknotes_listen_addr=:9090
+```
+
 ```text
-<!-- paste PLAY RECAP showing template changed + handler -->
+TASK [Install systemd unit] ****************************************************
+changed: [lab5-vm]
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+changed: [lab5-vm]
+
+PLAY RECAP *********************************************************************
+lab5-vm                    : ok=7    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 ```
 
 ### `--check --diff` preview
 
-```text
-<!-- paste diff output -->
+```bash
+ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml -e quicknotes_listen_addr=:8080 --check --diff
+```
+
+```diff
+--- before: /etc/systemd/system/quicknotes.service
++++ after: .../quicknotes.service.j2
+@@ -8,7 +8,7 @@
+-Environment=ADDR=:9090
++Environment=ADDR=:8080
 ```
 
 ### Design questions (Task 2)
@@ -96,9 +149,49 @@ Every run would rewrite the file (or need manual idempotency guards). Handlers w
 
 ## Bonus — `ansible-pull` GitOps loop
 
+### Added files
+
 ```text
-<!-- TODO: systemd timer + convergence timeline -->
+ansible/
+├── inventory.local.ini          # local connection for pull on VM
+└── templates/
+    ├── ansible-pull.service.j2
+    └── ansible-pull.timer.j2
 ```
+
+Playbook vars: `ansible_pull_repo_url`, `ansible_pull_branch`, `ansible_pull_checkout_dir`.
+
+### `systemctl list-timers | grep ansible-pull`
+
+```text
+Wed 2026-06-24 23:02:39 UTC 3min 31s left  Wed 2026-06-24 22:55:17 UTC 3min 50s ago ansible-pull.timer  ansible-pull.service
+```
+
+Timer is `active`; service unit runs `ansible-pull -U https://github.com/selysecr332/DevOps-Intro.git -C feature/lab7`.
+
+### Convergence timeline (`listen_addr` :8080 → :9191)
+
+| Event | Timestamp (UTC) |
+|-------|-----------------|
+| Git commit + push `761551e` (`quicknotes_listen_addr: ":9191"`) | **2026-06-24 23:38:29** |
+| Next timer fire (`ansible-pull.service` started) | **2026-06-24 23:38:48** |
+| VM reconciled (`changed=2`, template + handler) | **2026-06-24 23:39:36** |
+
+Verified on VM after timer (no manual `ansible-playbook` from host):
+
+```text
+$ grep ADDR /etc/systemd/system/quicknotes.service
+Environment=ADDR=:9191
+```
+
+Journal excerpt:
+
+```text
+2026-06-24T23:39:36 quicknotes-vm ansible-pull[11038]: 127.0.0.1 : ok=12 changed=2 ...
+2026-06-24T23:39:36 quicknotes-vm systemd[1]: Finished GitOps reconcile QuickNotes via ansible-pull.
+```
+
+**Elapsed push → reconcile: ~67 seconds** (next 5-minute timer window).
 
 **h) Security benefit of pull vs push?**
 
@@ -114,26 +207,25 @@ Pull mode: VM initiates outbound HTTPS to Git — no inbound SSH from a control 
 
 ### Task 1 (6 pts)
 
-- [ ] Playbook deploys to Lab 5 VM
-- [ ] `curl :18080/health` works
-- [ ] First-run PLAY RECAP captured
-- [ ] Design questions a–d answered
+- [x] Playbook deploys to Lab 5 VM
+- [x] `curl :18080/health` works
+- [x] First-run PLAY RECAP captured
+- [x] Design questions a–d answered
 
 ### Task 2 (4 pts)
 
-- [ ] Second run `changed=0`
-- [ ] Variable tweak + handler demo
-- [ ] `--check --diff` captured
-- [ ] Design questions e–g answered
+- [x] Second run `changed=0`
+- [x] Variable tweak + handler demo
+- [x] `--check --diff` captured
+- [x] Design questions e–g answered
 
 ### Bonus (2 pts)
 
-- [ ] ansible-pull timer active
-- [ ] Push → VM converges ≤ 5 min
-- [ ] Design questions h–i answered
+- [x] ansible-pull timer active
+- [x] Push → VM converges ≤ 5 min
+- [x] Design questions h–i answered
 
 ### Submission
 
-- [ ] Course PR (`feature/lab7` → `inno-devops-labs/main`)
-- [ ] Fork PR (`feature/lab7-fork` → `selysecr332/main`)
-- [ ] Moodle URLs
+- [x] Course PR (`feature/lab7` → `inno-devops-labs/main`)
+- [x] Fork PR (`feature/lab7-fork` → `selysecr332/main`)
