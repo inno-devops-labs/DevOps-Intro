@@ -67,8 +67,6 @@ notes status
     4 ok
 ```
 
-Screenshot: [`submissions/screenshots/lab_7.png`](screenshots/lab_7.png)
-
 ### Design questions (Task 1)
 
 **a) `command:` vs dedicated modules?**
