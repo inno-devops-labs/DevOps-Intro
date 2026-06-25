@@ -31,7 +31,7 @@ func do(t *testing.T, srv *Server, method, target string, body any) *httptest.Re
 	}
 	req := httptest.NewRequest(method, target, &buf)
 	rec := httptest.NewRecorder()
-	srv.Routes().ServeHTTP(rec, req)
+	srv.Handler().ServeHTTP(rec, req)
 	return rec
 }
 
@@ -128,6 +128,34 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 		if !strings.Contains(body, want) {
 			t.Errorf("metrics missing %q", want)
 		}
+	}
+}
+
+func TestSecurityHeaders_PresentOnResponses(t *testing.T) {
+	srv := newTestServer(t)
+	rec := do(t, srv, http.MethodGet, "/health", nil)
+
+	want := map[string]string{
+		"X-Content-Type-Options":  "nosniff",
+		"X-Frame-Options":         "DENY",
+		"Content-Security-Policy": "default-src 'none'",
+		"Referrer-Policy":         "no-referrer",
+	}
+	for header, value := range want {
+		if got := rec.Header().Get(header); got != value {
+			t.Errorf("%s = %q, want %q", header, got, value)
+		}
+	}
+}
+
+func TestSecurityHeaders_AbsentWithoutMiddleware(t *testing.T) {
+	srv := newTestServer(t)
+	req := httptest.NewRequest(http.MethodGet, "/health", nil)
+	rec := httptest.NewRecorder()
+	srv.Routes().ServeHTTP(rec, req)
+
+	if got := rec.Header().Get("X-Content-Type-Options"); got != "" {
+		t.Fatalf("expected no security headers without middleware, got X-Content-Type-Options=%q", got)
 	}
 }
 
