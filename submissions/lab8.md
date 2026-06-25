@@ -13,11 +13,15 @@ scrape_configs:
     static_configs:
       - targets: ['quicknotes:8080']
 Targets status
+<img width="1629" height="432" alt="image" src="https://github.com/user-attachments/assets/267e4482-f497-4197-869a-019c34525eee" />
+
 $ curl http://localhost:9090/api/v1/targets | python3 -m json.tool | grep health
 "health": "up"
 
 
 Dashboard panels
+<img width="2089" height="369" alt="image" src="https://github.com/user-attachments/assets/65e830fa-4995-45fa-b37d-693563e16f17" />
+
 
     Traffic: rate(quicknotes_http_requests_total[5m])
 
@@ -45,9 +49,13 @@ Alert rule
 sum(rate(quicknotes_http_errors_total[5m])) / sum(rate(quicknotes_http_requests_total[5m])) > 0.05
 FOR: 5m
 severity: page
+### Alert Rule Screenshot
+Alert rule is configured in Grafana. It will fire when error ratio exceeds 5% for 5 minutes.
 
-Alert firing
-
+### Alert rule definition
+sum(rate(quicknotes_http_errors_total[5m])) / sum(rate(quicknotes_http_requests_total[5m])) > 0.05
+FOR: 5m
+severity: page
 
 ### Runbook
 
