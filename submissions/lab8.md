@@ -3,7 +3,7 @@
 ## Task 1 — Prometheus + Grafana (6 pts)
 
 ### Prometheus config
-```yaml
+
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
