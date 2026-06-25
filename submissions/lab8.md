@@ -19,17 +19,40 @@ $ curl http://localhost:9090/api/v1/targets | python3 -m json.tool | grep health
 "health": "up"
 
 
-Dashboard panels
+
+### Dashboard panels
 <img width="2089" height="369" alt="image" src="https://github.com/user-attachments/assets/65e830fa-4995-45fa-b37d-693563e16f17" />
 
-
     Traffic: rate(quicknotes_http_requests_total[5m])
-
     Error Ratio: sum(rate(quicknotes_http_errors_total[5m])) / sum(rate(quicknotes_http_requests_total[5m]))
-
     Notes Count: quicknotes_notes_total
-
     Health: up{job="quicknotes"}
+
+### Dashboard JSON
+```json
+{
+  "title": "Golden Signals",
+  "panels": [
+    {
+      "title": "Traffic (req/s)",
+      "targets": [{"expr": "rate(quicknotes_http_requests_total[5m])"}]
+    },
+    {
+      "title": "Error Ratio",
+      "targets": [{"expr": "sum(rate(quicknotes_http_errors_total[5m])) / sum(rate(quicknotes_http_requests_total[5m]))"}]
+    },
+    {
+      "title": "Notes Count",
+      "targets": [{"expr": "quicknotes_notes_total"}]
+    },
+    {
+      "title": "Service Health",
+      "targets": [{"expr": "up{job=\"quicknotes\"}"}]
+    }
+  ],
+  "schemaVersion": 36
+}
+
 
 Design Questions
 
