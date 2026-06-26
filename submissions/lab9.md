@@ -241,6 +241,8 @@ Added to [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) (from Lab 3 +
 
 Pinned scanner: `golang.org/x/vuln/cmd/govulncheck@v1.1.4` (not `@latest`).
 
+CI uses Go **1.26** for this job (patched stdlib). `setup-go` with `1.24` resolved to an early 1.24.x whose stdlib still has reachable `net/http` CVEs; Go 1.26 passes clean.
+
 ### Red / green demo
 
 **Red** — temporarily added `golang.org/x/text@v0.3.5` and `vuln_demo.go` calling `language.Parse` (GO-2021-0113). Local run (`security/reports/govulncheck-red.txt`):
