@@ -298,6 +298,6 @@ Go stdlib/binary CVEs in the **container image** (distroless OS layer, embedded 
 
 ### Submission
 
-- [ ] Course PR (`feature/lab9` → `inno-devops-labs/main`)
-- [ ] Fork PR
-- [ ] Moodle URL
+- [x] Course PR: https://github.com/inno-devops-labs/DevOps-Intro/pull/1223
+- [x] Fork PR: https://github.com/selysecr332/DevOps-Intro/pull/10
+- [x] Moodle URL submitted
