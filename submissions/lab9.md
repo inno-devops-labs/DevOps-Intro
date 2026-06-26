@@ -211,9 +211,69 @@ You accumulate **unknown real risk** (alert fatigue in reverse), miss patterns t
 
 ---
 
-## Bonus — govulncheck CI gate (optional)
+## Bonus — govulncheck CI gate
 
-Not attempted in this submission. Lab 3 CI workflow lives on `feature/lab3` and was not merged into `feature/lab9`.
+### CI job
+
+Added to [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) (from Lab 3 + new job):
+
+```yaml
+  govulncheck:
+    name: govulncheck
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.2.2
+      - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
+        with:
+          go-version: '1.24'
+          cache: true
+          cache-dependency-path: app/go.mod
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
+      - name: Run govulncheck
+        run: govulncheck ./...
+```
+
+`ci-ok` now depends on `govulncheck` — a failing scan blocks the PR.
+
+Pinned scanner: `golang.org/x/vuln/cmd/govulncheck@v1.1.4` (not `@latest`).
+
+### Red / green demo
+
+**Red** — temporarily added `golang.org/x/text@v0.3.5` and `vuln_demo.go` calling `language.Parse` (GO-2021-0113). Local run (`security/reports/govulncheck-red.txt`):
+
+```text
+Vulnerability #1: GO-2021-0113
+    Out-of-bounds read in golang.org/x/text/language
+  Module: golang.org/x/text@v0.3.5  Fixed in: v0.3.7
+  Example traces: vuln_demo.go calls language.Parse
+Your code is affected by 1 vulnerability from 1 module.
+(exit code 3)
+```
+
+**Green** — removed `vuln_demo.go` and ran `go mod tidy` (`security/reports/govulncheck-green.txt`):
+
+```text
+No vulnerabilities found.
+(exit code 0)
+```
+
+### Design questions (Bonus)
+
+**h) Reachability vs “module has a CVE” — triage workload?**
+
+`govulncheck` only fails when your call graph reaches the vulnerable symbol. A module can list 10 CVEs, but if you never call the affected functions, there is nothing to patch urgently. That cuts triage from “every CVE in go.sum” to “CVEs we can actually trigger,” which is far less noise — but you still need Trivy/image scans for non-Go components.
+
+**i) Why pin the scanner version?**
+
+`@latest` can change DB logic, output format, or detection rules between CI runs, causing flaky or unexplained red builds. Pinning `govulncheck@v1.1.4` makes CI reproducible and upgrades deliberate.
+
+**j) What does govulncheck *not* catch that Trivy would?**
+
+Go stdlib/binary CVEs in the **container image** (distroless OS layer, embedded Go version in compiled binaries), misconfigurations (Dockerfile/compose), secrets in repo, and vulnerabilities in **non-Go** dependencies. Trivy is broader; govulncheck is deeper on Go reachability.
 
 ---
 
@@ -234,7 +294,7 @@ Not attempted in this submission. Lab 3 CI workflow lives on `feature/lab3` and 
 
 ### Bonus (2 pts)
 
-- [ ] govulncheck in CI + demo red/green
+- [x] govulncheck in CI + demo red/green
 
 ### Submission
 
