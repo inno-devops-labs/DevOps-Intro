@@ -241,7 +241,7 @@ Added to [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) (from Lab 3 +
 
 Pinned scanner: `golang.org/x/vuln/cmd/govulncheck@v1.1.4` (not `@latest`).
 
-CI uses Go **1.26** for this job (patched stdlib). `setup-go` with `1.24` resolved to an early 1.24.x whose stdlib still has reachable `net/http` CVEs; Go 1.26 passes clean.
+CI uses Go **1.26.4** for this job (patched stdlib). `setup-go` with `1.24` or `1.26` resolved to early patches whose stdlib still has reachable `net/http` CVEs.
 
 ### Red / green demo
 
