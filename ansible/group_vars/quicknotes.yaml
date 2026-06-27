@@ -9,6 +9,7 @@ quicknotes_seed_src: files/seed.json
 quicknotes_seed_dir: /etc/quicknotes
 quicknotes_seed_path: /etc/quicknotes/seed.json
 quicknotes_listen_addr: ":8080"
+quicknotes_restart_sec: 3s
 quicknotes_service_name: quicknotes
 
 quicknotes_enable_ansible_pull: true

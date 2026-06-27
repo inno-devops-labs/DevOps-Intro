@@ -71,7 +71,7 @@
         - restart quicknotes
 
     - name: Enable and start QuickNotes
-      ansible.builtin.systemd_service:
+      ansible.builtin.systemd:
         name: "{{ quicknotes_service_name }}"
         enabled: true
         state: started
@@ -126,7 +126,7 @@
       when: quicknotes_enable_ansible_pull | bool
 
     - name: Enable and start ansible-pull timer
-      ansible.builtin.systemd_service:
+      ansible.builtin.systemd:
         name: "{{ ansible_pull_timer_name }}"
         enabled: true
         state: started
@@ -135,10 +135,10 @@
 
   handlers:
     - name: reload systemd
-      ansible.builtin.systemd_service:
+      ansible.builtin.systemd:
         daemon_reload: true
 
     - name: restart quicknotes
-      ansible.builtin.systemd_service:
+      ansible.builtin.systemd:
         name: "{{ quicknotes_service_name }}"
         state: restarted
