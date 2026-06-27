@@ -1,0 +1,9 @@
+[Unit]
+Description=Pull and apply QuickNotes Ansible configuration
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+Environment=ANSIBLE_LOCALHOST_WARNING=False
+ExecStart={{ ansible_pull_binary }} -U {{ ansible_pull_repo_url }} -C {{ ansible_pull_branch }} -d {{ ansible_pull_checkout_dir }} -i {{ ansible_pull_inventory_path }} ansible/playbook.yaml

@@ -1,0 +1,21 @@
+---
+quicknotes_user: quicknotes
+quicknotes_group: quicknotes
+quicknotes_binary_src: files/quicknotes
+quicknotes_binary_path: /usr/local/bin/quicknotes
+quicknotes_data_dir: /var/lib/quicknotes
+quicknotes_data_path: /var/lib/quicknotes/notes.json
+quicknotes_seed_src: files/seed.json
+quicknotes_seed_dir: /etc/quicknotes
+quicknotes_seed_path: /etc/quicknotes/seed.json
+quicknotes_listen_addr: ":8080"
+quicknotes_service_name: quicknotes
+
+quicknotes_enable_ansible_pull: true
+ansible_pull_repo_url: "https://github.com/BearAx/DevOps-Intro.git"
+ansible_pull_branch: "feature/lab7"
+ansible_pull_checkout_dir: /opt/quicknotes-ansible-pull
+ansible_pull_inventory_path: /etc/ansible/quicknotes-local.ini
+ansible_pull_binary: /usr/bin/ansible-pull
+ansible_pull_service_name: quicknotes-ansible-pull
+ansible_pull_timer_name: quicknotes-ansible-pull.timer
