@@ -1,0 +1,13 @@
+[Unit]
+Description=ansible-pull GitOps convergence for QuickNotes
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+# Clone the fork at the lab branch and apply the playbook against localhost.
+ExecStart=/usr/bin/ansible-pull \
+  -U https://github.com/tdzdslippen/DevOps-Intro.git \
+  -C feature/lab7 \
+  -i ansible/local-inventory.ini \
+  ansible/playbook.yaml
