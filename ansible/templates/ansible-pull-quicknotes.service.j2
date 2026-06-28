@@ -1,0 +1,10 @@
+[Unit]
+Description=Pull and apply QuickNotes Ansible configuration
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/
+ExecStart=/usr/bin/ansible-pull -U {{ quicknotes_ansible_pull_repo_url }} -C {{ quicknotes_ansible_pull_branch }} -d {{ quicknotes_ansible_pull_workdir }} -i {{ quicknotes_ansible_pull_inventory_path }} ansible/playbook.yaml
+
