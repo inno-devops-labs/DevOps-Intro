@@ -1,0 +1,12 @@
+[Unit]
+Description=QuickNotes ansible-pull reconciliation
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ansible-pull -U {{ quicknotes_pull_repo_url }} -C {{ quicknotes_pull_repo_branch }} -d {{ quicknotes_pull_checkout_dir }} -i {{ quicknotes_pull_inventory_path }} ansible/playbook.yaml
+WorkingDirectory={{ quicknotes_pull_checkout_dir }}
+
+[Install]
+WantedBy=multi-user.target

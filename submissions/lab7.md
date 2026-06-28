@@ -213,3 +213,73 @@ That would throw away most of the unit file and replace it with a single line, s
 #### g) ansible-playbook --check is dry-run. --diff shows changes. What's the bug you'd catch by running --check --diff before a production deploy that you'd miss with plain --check?
 
 `--check` alone tells me that a template task would change, but not what the rendered difference is. `--diff` lets me see the exact line-level mutation before I apply it. In this lab, that means I can verify that only `RestartSec=3s` is changing to `RestartSec=4s`. If I had accidentally pointed the wrong variable into the template and changed `ExecStart`, `DATA_PATH`, or `ADDR` at the same time, plain `--check` would still only say `changed`; `--diff` would expose the unintended drift before it hits the VM.
+
+## Bonus Task — `ansible-pull` GitOps Loop
+
+### Bonus files
+
+- [ansible/playbook.yaml](../ansible/playbook.yaml)
+- [ansible/templates/quicknotes-local.ini.j2](../ansible/templates/quicknotes-local.ini.j2)
+- [ansible/templates/quicknotes-ansible-pull.service.j2](../ansible/templates/quicknotes-ansible-pull.service.j2)
+- [ansible/templates/quicknotes-ansible-pull.timer.j2](../ansible/templates/quicknotes-ansible-pull.timer.j2)
+
+The bonus extends the same playbook so the Lab 5 VM can reconcile itself from my fork via `ansible-pull` every 5 minutes.
+
+### Timer installation
+
+`systemctl list-timers | grep ansible-pull` after the timer-fired reconciliation:
+
+```text
+Sun 2026-06-28 09:09:45 UTC 3min 31s Sun 2026-06-28 09:04:45 UTC 1min 28s ago quicknotes-ansible-pull.timer quicknotes-ansible-pull.service
+```
+
+### Convergence timeline
+
+1. I pushed commit `16ff83ce448340be2718855c3edfc896e73a482a` on branch `feature/lab7` at `2026-06-28T12:01:24+03:00`.
+2. That commit changed `quicknotes_restart_sec` in [ansible/playbook.yaml](../ansible/playbook.yaml) from `3s` to `4s`, giving the VM a template-backed drift to reconcile.
+3. The VM timer fired at `Sun 2026-06-28 09:04:45 UTC`.
+4. The pull service finished at `Sun 2026-06-28 09:04:56 UTC`.
+5. After the timer-driven run, the VM had pulled the same commit and the deployed unit showed `RestartSec=4s`.
+
+### `ansible-pull` service log excerpt
+
+```text
+Jun 28 09:04:45 quicknotes-lab5 systemd[1]: Starting quicknotes-ansible-pull.service - QuickNotes ansible-pull reconciliation...
+Jun 28 09:04:56 quicknotes-lab5 ansible-pull[7804]:     "after": "16ff83ce448340be2718855c3edfc896e73a482a",
+Jun 28 09:04:56 quicknotes-lab5 ansible-pull[7804]:     "before": "c5c5f10e32a4fe05626f9daf3758ba7c8580173e",
+Jun 28 09:04:56 quicknotes-lab5 ansible-pull[7804]: TASK [Install quicknotes systemd unit] *****************************************
+Jun 28 09:04:56 quicknotes-lab5 ansible-pull[7804]: changed: [127.0.0.1]
+Jun 28 09:04:56 quicknotes-lab5 ansible-pull[7804]: RUNNING HANDLER [restart quicknotes] *******************************************
+Jun 28 09:04:56 quicknotes-lab5 ansible-pull[7804]: changed: [127.0.0.1]
+Jun 28 09:04:56 quicknotes-lab5 ansible-pull[7804]: PLAY RECAP *********************************************************************
+Jun 28 09:04:56 quicknotes-lab5 ansible-pull[7804]: 127.0.0.1                  : ok=14   changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+Jun 28 09:04:56 quicknotes-lab5 systemd[1]: Finished quicknotes-ansible-pull.service - QuickNotes ansible-pull reconciliation.
+```
+
+### Reconciled state verification
+
+Inside the VM after the timer fire:
+
+```text
+16ff83ce448340be2718855c3edfc896e73a482a
+RestartSec=4s
+LastTriggerUSec=Sun 2026-06-28 09:04:45 UTC
+```
+
+Host-side health check after the timer-driven reconciliation:
+
+```text
+{"notes":4,"status":"ok"}
+
+HTTP_STATUS=200
+```
+
+### Design answers
+
+#### h) `ansible-pull` is pull mode. What's the security benefit vs the push model where a control node SSHes in?
+
+With `ansible-pull`, the VM makes an outbound connection to fetch desired state instead of exposing an inbound management path from a central control node. That reduces the blast radius of stolen control-node SSH credentials, avoids distributing private SSH access from one orchestrator into every managed machine, and fits stricter firewall models where servers may reach Git over HTTPS but do not accept ad hoc inbound administration from multiple places. The node still needs trust in the repo content, but the trust boundary is narrower than giving a separate control host shell access into the VM.
+
+#### i) What's the same pattern called at the Kubernetes layer, and why is `ansible-pull` a fair simulator at the VM layer?
+
+At the Kubernetes layer this pattern is commonly called GitOps, with tools such as Argo CD or Flux continuously reconciling cluster state from Git. `ansible-pull` is a fair VM-level simulator because the control loop is the same: Git is the source of truth, the target system periodically fetches desired state, compares it to current state, and converges itself without a human pushing imperative changes directly into the node.
