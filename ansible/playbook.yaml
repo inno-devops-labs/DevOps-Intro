@@ -102,7 +102,7 @@
         mode: "0644"
         content: |
           [quicknotes_vm]
-          localhost ansible_connection=local
+          quicknotes-vm ansible_host=127.0.0.1 ansible_connection=local
       when: quicknotes_ansible_pull_enabled | bool
 
     - name: Install ansible-pull service

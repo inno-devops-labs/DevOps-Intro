@@ -32,7 +32,7 @@ qn-vm-1 ansible_host=127.0.0.1 ansible_port=2222 ansible_user=vagrant ansible_ss
     quicknotes_listen_addr: ":8080"
     quicknotes_data_path: /var/lib/quicknotes/notes.json
     quicknotes_seed_path: /var/lib/quicknotes/seed.json
-    quicknotes_restart_sec: 3s
+    quicknotes_restart_sec: 4s
 
   tasks:
     - name: Create QuickNotes system group
@@ -233,7 +233,7 @@ At the Kubernetes layer this pattern is called GitOps, commonly implemented with
 
 ## Bonus - ansible-pull
 
-The playbook includes optional ansible-pull tasks. To enable them, replace `quicknotes_ansible_pull_repo_url` with the fork HTTPS URL and run:
+The playbook includes optional ansible-pull tasks. The repository URL is set to `https://github.com/whynotgm/DevOps-Intro.git`. To enable the timer, run:
 
 ```bash
 ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml \
@@ -243,11 +243,16 @@ ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml \
 Timer evidence:
 
 ```text
-TODO: paste systemctl list-timers | grep ansible-pull
+Sun 2026-06-28 16:59:22 UTC 4min 37s Sun 2026-06-28 16:54:22 UTC      22s ago ansible-pull-quicknotes.timer ansible-pull-quicknotes.service
 ```
 
 Convergence timeline:
 
 ```text
-TODO: paste commit timestamp, next timer fire, and VM state confirmation.
+2026-06-28T19:54:59+03:00 - pushed ea510bf0ae32aa8718c3f510bc89c0ad16fd923c, changing quicknotes_restart_sec from 3s to 4s.
+2026-06-28T16:59:25Z - ansible-pull-quicknotes.service started from the systemd timer.
+2026-06-28T16:59:30Z - ansible-pull reported before=7bb444927b86db7a2174b3bf14d4b36c252787de and after=ea510bf0ae32aa8718c3f510bc89c0ad16fd923c.
+2026-06-28T16:59:30Z - Install QuickNotes systemd unit changed, restart quicknotes handler ran.
+2026-06-28T16:59:51Z - /etc/systemd/system/quicknotes.service showed RestartSec=4s.
+Health remained OK: {"notes":4,"status":"ok"}.
 ```
