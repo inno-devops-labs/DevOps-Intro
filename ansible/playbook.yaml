@@ -12,7 +12,7 @@
     quicknotes_listen_addr: ":8080"
     quicknotes_data_path: /var/lib/quicknotes/notes.json
     quicknotes_seed_path: /var/lib/quicknotes/seed.json
-    quicknotes_restart_sec: 3s
+    quicknotes_restart_sec: 4s
 
     quicknotes_ansible_pull_enabled: false
     quicknotes_ansible_pull_repo_url: "https://github.com/whynotgm/DevOps-Intro.git"
