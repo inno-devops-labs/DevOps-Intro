@@ -131,3 +131,19 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	}
 }
 
+func TestSecurityHeaders_AppliedToRoutes(t *testing.T) {
+	srv := newTestServer(t)
+	rec := do(t, srv, http.MethodGet, "/health", nil)
+	if cache := rec.Header().Get("Cache-Control"); cache != "no-store" {
+		t.Errorf("Expected Cache-Control 'no-store', got %q", cache)
+	}
+	if csp := rec.Header().Get("Content-Security-Policy"); csp != "default-src 'none'" {
+		t.Errorf("Expected CSP 'default-src 'none'', got %q", csp)
+	}
+	if nosniff := rec.Header().Get("X-Content-Type-Options"); nosniff != "nosniff" {
+		t.Errorf("Expected X-Content-Type-Options 'nosniff', got %q", nosniff)
+	}
+	if frame := rec.Header().Get("X-Frame-Options"); frame != "DENY" {
+		t.Errorf("Expected X-Frame-Options 'DENY', got %q", frame)
+	}
+}
