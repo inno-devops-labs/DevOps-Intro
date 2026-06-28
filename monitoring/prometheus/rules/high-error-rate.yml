@@ -1,0 +1,20 @@
+groups:
+  - name: quicknotes.rules
+    rules:
+      - alert: QuickNotesHighErrorRate
+        expr: |
+          (
+            sum(increase(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+            /
+            sum(increase(quicknotes_http_requests_total[5m]))
+          ) > 0.05
+          and
+          sum(increase(quicknotes_http_requests_total[5m])) >= 20
+        for: 5m
+        labels:
+          severity: page
+          service: quicknotes
+        annotations:
+          summary: QuickNotes error ratio is above 5%
+          description: More than 5% of QuickNotes requests have returned 4xx or 5xx responses for at least 5 minutes.
+          runbook: docs/runbook/high-error-rate.md
