@@ -56,7 +56,7 @@ services:
     container_name: grafana
     environment:
       GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_PASSWORD:-please-change-me}"
+      GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_PASSWORD:?set GRAFANA_PASSWORD in .env}"
     volumes:
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
     ports:
