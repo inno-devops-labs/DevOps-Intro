@@ -1,0 +1,19 @@
+[Unit]
+Description={{ service_description }}
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User={{ service_user }}
+Group={{ service_group }}
+WorkingDirectory={{ data_dir }}
+Environment="ADDR={{ listen_addr }}"
+Environment="DATA_PATH={{ data_path }}"
+Environment="SEED_PATH={{ seed_path }}"
+ExecStart={{ binary_path }}
+Restart=on-failure
+RestartSec={{ restart_sec }}
+
+[Install]
+WantedBy=multi-user.target
