@@ -45,10 +45,11 @@ services:
     ports:
       - "9090:9090"
     depends_on:
-      - quicknotes
+      quicknotes:
+        - condition: service_healthy
 
   grafana:
-    image: grafana/grafana:11.4.0
+    image: grafana/grafana:13.0.0
     container_name: grafana
     environment:
       - GF_SECURITY_ADMIN_USER=admin
