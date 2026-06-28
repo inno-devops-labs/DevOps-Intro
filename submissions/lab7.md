@@ -1,6 +1,6 @@
 # Lab 7 Submission
 
-## Task 1
+## Task 1 — Idempotent Deploy to the Lab 5 VM
 
 ### Ansible files
 
@@ -81,3 +81,135 @@ A handler fires only when a task that references it reports `changed`. If multip
 #### d) gather_facts: true is the default. Do you need it for this playbook? What does turning it off save you per run?
 
 No. This playbook does not branch on the OS family, CPU architecture, network interfaces, package manager facts, or any other discovered host metadata. Turning fact gathering off saves one SSH setup step plus the time to run the `setup` module and transfer the fact payload on every run. For a small one-host playbook, that is not dramatic, but it is still avoidable work and makes the deploy loop tighter.
+
+## Task 2 — Prove Idempotency + Selective Re-run
+
+For the selective-change demonstration I used the playbook variable `quicknotes_restart_sec`, which is rendered into the systemd unit as `RestartSec=...`. That let me trigger a template-only change without moving the service off port `8080`.
+
+### Second run: changed=0
+
+```text
+PLAY [Deploy QuickNotes to Lab 5 VM] *******************************************
+
+TASK [Create quicknotes system user] *******************************************
+ok: [lab5-vm]
+
+TASK [Ensure quicknotes data directory exists] *********************************
+ok: [lab5-vm]
+
+TASK [Install quicknotes binary] ***********************************************
+ok: [lab5-vm]
+
+TASK [Install quicknotes seed file] ********************************************
+ok: [lab5-vm]
+
+TASK [Install quicknotes systemd unit] *****************************************
+ok: [lab5-vm]
+
+TASK [Enable and start quicknotes service] *************************************
+ok: [lab5-vm]
+
+PLAY RECAP *********************************************************************
+lab5-vm                    : ok=6    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+### Selective re-run after one variable change
+
+I changed `quicknotes_restart_sec` in [ansible/playbook.yaml](../ansible/playbook.yaml) from `2s` to `3s` and re-ran the playbook.
+
+```text
+PLAY [Deploy QuickNotes to Lab 5 VM] *******************************************
+
+TASK [Create quicknotes system user] *******************************************
+ok: [lab5-vm]
+
+TASK [Ensure quicknotes data directory exists] *********************************
+ok: [lab5-vm]
+
+TASK [Install quicknotes binary] ***********************************************
+ok: [lab5-vm]
+
+TASK [Install quicknotes seed file] ********************************************
+ok: [lab5-vm]
+
+TASK [Install quicknotes systemd unit] *****************************************
+changed: [lab5-vm]
+
+TASK [Enable and start quicknotes service] *************************************
+ok: [lab5-vm]
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+changed: [lab5-vm]
+
+PLAY RECAP *********************************************************************
+lab5-vm                    : ok=7    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+Host-side health check after the restart:
+
+```text
+{"notes":4,"status":"ok"}
+
+HTTP_STATUS=200
+```
+
+### `--check --diff` preview
+
+For the dry-run diff preview, I changed `quicknotes_restart_sec` from `3s` to `4s` locally and ran `ansible-playbook --check --diff`.
+
+```text
+PLAY [Deploy QuickNotes to Lab 5 VM] *******************************************
+
+TASK [Create quicknotes system user] *******************************************
+ok: [lab5-vm]
+
+TASK [Ensure quicknotes data directory exists] *********************************
+ok: [lab5-vm]
+
+TASK [Install quicknotes binary] ***********************************************
+ok: [lab5-vm]
+
+TASK [Install quicknotes seed file] ********************************************
+ok: [lab5-vm]
+
+TASK [Install quicknotes systemd unit] *****************************************
+--- before: /etc/systemd/system/quicknotes.service
++++ after: /Users/axxil/.ansible/tmp/ansible-local-8786tk_qkp82/tmpk7m4ybfj/quicknotes.service.j2
+@@ -13,7 +13,7 @@
+ Environment="SEED_PATH=/var/lib/quicknotes/seed.json"
+ ExecStart=/usr/local/bin/quicknotes
+ Restart=on-failure
+-RestartSec=3s
++RestartSec=4s
+
+ [Install]
+ WantedBy=multi-user.target
+\ No newline at end of file
+
+changed: [lab5-vm]
+
+TASK [Enable and start quicknotes service] *************************************
+skipping: [lab5-vm]
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+skipping: [lab5-vm]
+
+PLAY RECAP *********************************************************************
+lab5-vm                    : ok=5    changed=1    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0
+```
+
+After capturing the preview, I restored the playbook variable to `3s` so the tracked playbook matches the state that is actually deployed in the VM.
+
+### Design answers
+
+#### e) Why does the second run report changed=0? What specifically does the file / template module check to decide?
+
+The second run reports `changed=0` because every managed object on the VM already matches the desired state declared in the playbook. The `file` module checks the target path's existence and metadata such as type, owner, group, and mode; if `/var/lib/quicknotes` is already a directory owned by `quicknotes:quicknotes` with mode `0750`, there is nothing to do. The `template` module renders the Jinja template on the control side and compares the resulting content against the remote file; if the rendered unit file bytes are identical to `/etc/systemd/system/quicknotes.service`, it returns `ok` instead of `changed`.
+
+#### f) What would happen if you used shell: 'echo "ADDR=..." > /etc/systemd/system/quicknotes.service' instead of the template: module? Trace the failure modes
+
+That would throw away most of the unit file and replace it with a single line, so systemd would no longer have a valid service definition. Even if I used a longer shell redirection to write the whole file, I would still lose the template module's built-in comparison, diff support, quoting safety, ownership/mode management, and predictable newline handling. The shell command would usually report a change every run, which would restart the service every time whether the content actually changed or not. It also makes subtle bugs easier: bad escaping, partial writes, missing permissions, or writing an invalid unit that plain `--check` cannot meaningfully preview.
+
+#### g) ansible-playbook --check is dry-run. --diff shows changes. What's the bug you'd catch by running --check --diff before a production deploy that you'd miss with plain --check?
+
+`--check` alone tells me that a template task would change, but not what the rendered difference is. `--diff` lets me see the exact line-level mutation before I apply it. In this lab, that means I can verify that only `RestartSec=3s` is changing to `RestartSec=4s`. If I had accidentally pointed the wrong variable into the template and changed `ExecStart`, `DATA_PATH`, or `ADDR` at the same time, plain `--check` would still only say `changed`; `--diff` would expose the unintended drift before it hits the VM.

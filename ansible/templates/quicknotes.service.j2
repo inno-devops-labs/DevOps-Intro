@@ -13,7 +13,7 @@ Environment="DATA_PATH={{ quicknotes_data_path }}"
 Environment="SEED_PATH={{ quicknotes_seed_path }}"
 ExecStart={{ quicknotes_binary_dest }}
 Restart=on-failure
-RestartSec=2s
+RestartSec={{ quicknotes_restart_sec }}
 
 [Install]
 WantedBy=multi-user.target

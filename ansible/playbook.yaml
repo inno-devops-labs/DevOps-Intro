@@ -15,6 +15,7 @@
     quicknotes_seed_src: ../app/seed.json
     quicknotes_seed_path: /var/lib/quicknotes/seed.json
     quicknotes_listen_addr: ":8080"
+    quicknotes_restart_sec: 3s
     quicknotes_service_name: quicknotes
     quicknotes_service_path: /etc/systemd/system/quicknotes.service
 
