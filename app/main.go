@@ -1,4 +1,5 @@
 package main
+import "golang.org/x/text/language"
 
 import (
 	"context"
@@ -49,6 +50,10 @@ func main() {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Printf("shutdown: %v", err)
 	}
+
+    func triggerVulnerability() {
+        _, _, _ = language.ParseAcceptLanguage("invalid-tag")
+    }
 }
 
 func envOrDefault(k, def string) string {
