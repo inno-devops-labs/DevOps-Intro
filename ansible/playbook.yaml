@@ -12,10 +12,18 @@
     quicknotes_binary_path: /usr/local/bin/quicknotes
     quicknotes_service_name: quicknotes
     quicknotes_service_path: /etc/systemd/system/quicknotes.service
-    quicknotes_addr: ":8080"
+    quicknotes_addr: ":9090"
     quicknotes_data_path: /var/lib/quicknotes/notes.json
     quicknotes_seed_path: /var/lib/quicknotes/seed.json
     quicknotes_restart_backoff: 4
+    quicknotes_git_repo_url: https://github.com/software-engineering-toolkit/DevOps-Intro.git
+    quicknotes_git_branch: feature/lab7
+    ansible_pull_inventory_path: /etc/ansible/quicknotes-local.ini
+    ansible_pull_workdir: /var/lib/ansible-pull/quicknotes
+    ansible_pull_service_name: ansible-pull-quicknotes
+    ansible_pull_timer_name: ansible-pull-quicknotes.timer
+    ansible_pull_service_path: /etc/systemd/system/ansible-pull-quicknotes.service
+    ansible_pull_timer_path: /etc/systemd/system/ansible-pull-quicknotes.timer
 
   tasks:
     - name: Ensure QuickNotes group exists
@@ -64,17 +72,86 @@
       ansible.builtin.meta: flush_handlers
 
     - name: Enable and start QuickNotes service
-      ansible.builtin.systemd_service:
+      ansible.builtin.systemd:
         name: "{{ quicknotes_service_name }}"
+        enabled: true
+        state: started
+
+    - name: Install ansible-pull dependencies
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        update_cache: true
+        cache_valid_time: 3600
+        state: present
+
+    - name: Ensure Ansible configuration directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_pull_inventory_path | dirname }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Ensure ansible-pull working directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_pull_workdir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Create local ansible-pull inventory
+      ansible.builtin.copy:
+        dest: "{{ ansible_pull_inventory_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          [quicknotes]
+          localhost ansible_connection=local
+
+    - name: Render ansible-pull service unit
+      ansible.builtin.template:
+        src: ansible-pull-quicknotes.service.j2
+        dest: "{{ ansible_pull_service_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload systemd
+
+    - name: Render ansible-pull timer unit
+      ansible.builtin.template:
+        src: ansible-pull-quicknotes.timer.j2
+        dest: "{{ ansible_pull_timer_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+      notify:
+        - Reload systemd
+        - Restart ansible-pull timer
+
+    - name: Apply pending ansible-pull unit changes
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start ansible-pull timer
+      ansible.builtin.systemd:
+        name: "{{ ansible_pull_timer_name }}"
         enabled: true
         state: started
 
   handlers:
     - name: Reload systemd
-      ansible.builtin.systemd_service:
+      ansible.builtin.systemd:
         daemon_reload: true
 
     - name: Restart QuickNotes
-      ansible.builtin.systemd_service:
+      ansible.builtin.systemd:
         name: "{{ quicknotes_service_name }}"
+        state: restarted
+
+    - name: Restart ansible-pull timer
+      ansible.builtin.systemd:
+        name: "{{ ansible_pull_timer_name }}"
         state: restarted
