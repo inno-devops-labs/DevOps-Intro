@@ -1,0 +1,238 @@
+# Lab 7 Submission
+
+## Task 1 - Idempotent Deploy to the Lab 5 VM
+
+### `ansible/inventory.ini`
+
+```ini
+[quicknotes]
+lab5 ansible_host=127.0.0.1 ansible_port=2222 ansible_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/default/virtualbox/private_key ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa'
+```
+
+### `ansible/playbook.yaml`
+
+```yaml
+---
+- name: Deploy QuickNotes
+  hosts: quicknotes
+  become: true
+  gather_facts: false
+
+  vars:
+    quicknotes_user: quicknotes
+    quicknotes_group: quicknotes
+    quicknotes_data_dir: /var/lib/quicknotes
+    quicknotes_binary_src: files/quicknotes
+    quicknotes_binary_path: /usr/local/bin/quicknotes
+    quicknotes_service_name: quicknotes
+    quicknotes_service_path: /etc/systemd/system/quicknotes.service
+    quicknotes_addr: ":8080"
+    quicknotes_data_path: /var/lib/quicknotes/notes.json
+    quicknotes_seed_path: /var/lib/quicknotes/seed.json
+    quicknotes_restart_backoff: 2
+
+  tasks:
+    - name: Ensure QuickNotes group exists
+      ansible.builtin.group:
+        name: "{{ quicknotes_group }}"
+        system: true
+
+    - name: Ensure QuickNotes system user exists
+      ansible.builtin.user:
+        name: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        system: true
+        create_home: false
+        home: /nonexistent
+        shell: /usr/sbin/nologin
+
+    - name: Ensure QuickNotes data directory exists
+      ansible.builtin.file:
+        path: "{{ quicknotes_data_dir }}"
+        state: directory
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        mode: "0750"
+
+    - name: Copy QuickNotes binary
+      ansible.builtin.copy:
+        src: "{{ quicknotes_binary_src }}"
+        dest: "{{ quicknotes_binary_path }}"
+        owner: root
+        group: root
+        mode: "0755"
+      notify: Restart QuickNotes
+
+    - name: Render QuickNotes systemd unit
+      ansible.builtin.template:
+        src: quicknotes.service.j2
+        dest: "{{ quicknotes_service_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+      notify:
+        - Reload systemd
+        - Restart QuickNotes
+
+    - name: Apply pending service changes
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start QuickNotes service
+      ansible.builtin.systemd_service:
+        name: "{{ quicknotes_service_name }}"
+        enabled: true
+        state: started
+
+  handlers:
+    - name: Reload systemd
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+
+    - name: Restart QuickNotes
+      ansible.builtin.systemd_service:
+        name: "{{ quicknotes_service_name }}"
+        state: restarted
+```
+
+### `ansible/templates/quicknotes.service.j2`
+
+```ini
+[Unit]
+Description=QuickNotes API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User={{ quicknotes_user }}
+Group={{ quicknotes_group }}
+WorkingDirectory={{ quicknotes_data_dir }}
+Environment=ADDR={{ quicknotes_addr }}
+Environment=DATA_PATH={{ quicknotes_data_path }}
+Environment=SEED_PATH={{ quicknotes_seed_path }}
+ExecStart={{ quicknotes_binary_path }}
+Restart=on-failure
+RestartSec={{ quicknotes_restart_backoff }}
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### Dry run
+
+Command:
+
+```bash
+ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml --check
+```
+
+Output:
+
+```text
+PLAY [Deploy QuickNotes] ************************************************************************
+
+TASK [Ensure QuickNotes group exists] ***********************************************************
+ok: [lab5]
+
+TASK [Ensure QuickNotes system user exists] *****************************************************
+ok: [lab5]
+
+TASK [Ensure QuickNotes data directory exists] **************************************************
+ok: [lab5]
+
+TASK [Copy QuickNotes binary] *******************************************************************
+ok: [lab5]
+
+TASK [Render QuickNotes systemd unit] ***********************************************************
+ok: [lab5]
+
+TASK [Apply pending service changes] ************************************************************
+
+TASK [Enable and start QuickNotes service] ******************************************************
+ok: [lab5]
+
+PLAY RECAP **************************************************************************************
+lab5                       : ok=6    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+### Playbook run
+
+Command:
+
+```bash
+ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml
+```
+
+Output:
+
+```text
+PLAY [Deploy QuickNotes] ************************************************************************
+
+TASK [Ensure QuickNotes group exists] ***********************************************************
+ok: [lab5]
+
+TASK [Ensure QuickNotes system user exists] *****************************************************
+ok: [lab5]
+
+TASK [Ensure QuickNotes data directory exists] **************************************************
+ok: [lab5]
+
+TASK [Copy QuickNotes binary] *******************************************************************
+ok: [lab5]
+
+TASK [Render QuickNotes systemd unit] ***********************************************************
+ok: [lab5]
+
+TASK [Apply pending service changes] ************************************************************
+
+TASK [Enable and start QuickNotes service] ******************************************************
+ok: [lab5]
+
+PLAY RECAP **************************************************************************************
+lab5                       : ok=6    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+### Service verification
+
+Command:
+
+```bash
+curl -s http://localhost:18080/health
+```
+
+Output:
+
+```json
+{"notes":4,"status":"ok"}
+```
+
+### Design questions
+
+#### a) What is the difference between `command:` and dedicated modules?
+
+`command:` runs a command on the remote host exactly as requested. It usually does not know whether the target state is already correct, so it can easily report changes every run or repeat work unnecessarily.
+
+Dedicated modules such as `apt`, `file`, `copy`, `template`, and `systemd_service` understand the state they manage. For example, `file` can check ownership and permissions, `copy` can compare file content and mode, and `systemd_service` can check whether a service is already enabled or running. These modules are idempotent because they only change the host when the current state differs from the requested state.
+
+Idempotency matters because the same playbook should be safe to run repeatedly. A second run should confirm the VM is already configured instead of causing unnecessary service restarts or configuration drift.
+
+#### b) When does `notify:` fire a handler, and when does it not fire?
+
+A handler fires when a task that contains `notify:` reports `changed`. If the task reports `ok`, the handler is not queued.
+
+In this playbook, the restart handler is notified by the binary copy task and the systemd unit template task. That means QuickNotes restarts only when the deployed binary or service unit actually changes. This is the right default because it avoids unnecessary restarts while still applying real deployment changes.
+
+#### c) Where would you put variables for this lab, and why?
+
+The top three useful places for this lab are:
+
+- Playbook `vars`: good for this small lab because the variables are close to the tasks and easy to inspect.
+- `group_vars/quicknotes.yaml`: good if the inventory grows or multiple VMs share the same QuickNotes settings.
+- Role defaults: good if the playbook is later refactored into a reusable role, because defaults provide safe base values that can be overridden by inventory or playbook variables.
+
+For this submission, the variables are in `ansible/playbook.yaml` because the lab is small and has one target group.
+
+#### d) Do you need `gather_facts: true` for this playbook?
+
+No. This playbook does not use facts such as OS version, network interfaces, CPU architecture, memory, or distribution details. Setting `gather_facts: false` saves the setup/facts collection step on each run, which reduces runtime and SSH overhead.
+
+If the playbook later needed OS-specific package names or conditional logic based on the target system, then enabling facts would be useful.
