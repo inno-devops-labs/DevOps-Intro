@@ -17,7 +17,7 @@
     quicknotes_data_dir: /var/lib/quicknotes
     quicknotes_bin_path: /usr/local/bin/quicknotes
     quicknotes_seed_path: /var/lib/quicknotes/seed.json
-    quicknotes_listen_addr: ":9090"
+    quicknotes_listen_addr: ":8080"
 
   tasks:
     - name: Create the quicknotes system user (no login shell)
