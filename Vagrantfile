@@ -9,6 +9,8 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port",
                     guest: 8080, host: 18080,
                     host_ip: "127.0.0.1"
+					
+  config.vm.network "private_network", ip: "192.168.56.10"
 
   config.vm.synced_folder "./app", "/home/vagrant/app",
                           type: "virtualbox",
@@ -18,6 +20,9 @@ Vagrant.configure("2") do |config|
     vb.name   = "quicknotes-vm"
     vb.memory = 1024
     vb.cpus   = 2
+	
+	# Fix for VirtualBox 7.2 + Hyper-V on Windows
+	vb.customize ["modifyvm", :id, "--paravirtprovider", "hyperv"]
   end
 
   #Go 1.24.5
