@@ -419,3 +419,210 @@ It would also be easier to introduce quoting, escaping, or formatting mistakes i
 Plain `--check` can show that a task would change something, but it does not show the exact content of the change. `--check --diff` shows the before and after content, which can catch mistakes before they are applied.
 
 For example, it could reveal a wrong port, an incorrect data path, a missing environment variable, or an accidental edit that removes part of the systemd unit. In this task, the diff clearly showed the intended change from `RestartSec=3` to `RestartSec=4`.
+
+## Bonus Task - `ansible-pull` GitOps Loop
+
+### Bootstrap run from host
+
+Command:
+
+```bash
+ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml
+```
+
+Output:
+
+```text
+PLAY [Deploy QuickNotes] ************************************************************************
+
+TASK [Ensure QuickNotes group exists] ***********************************************************
+ok: [lab5]
+
+TASK [Ensure QuickNotes system user exists] *****************************************************
+ok: [lab5]
+
+TASK [Ensure QuickNotes data directory exists] **************************************************
+ok: [lab5]
+
+TASK [Copy QuickNotes binary] *******************************************************************
+ok: [lab5]
+
+TASK [Render QuickNotes systemd unit] ***********************************************************
+ok: [lab5]
+
+TASK [Apply pending service changes] ************************************************************
+
+TASK [Enable and start QuickNotes service] ******************************************************
+ok: [lab5]
+
+TASK [Install ansible-pull dependencies] ********************************************************
+changed: [lab5]
+
+TASK [Ensure Ansible configuration directory exists] ********************************************
+changed: [lab5]
+
+TASK [Ensure ansible-pull working directory exists] *********************************************
+changed: [lab5]
+
+TASK [Create local ansible-pull inventory] ******************************************************
+changed: [lab5]
+
+TASK [Render ansible-pull service unit] *********************************************************
+changed: [lab5]
+
+TASK [Render ansible-pull timer unit] ***********************************************************
+changed: [lab5]
+
+TASK [Apply pending ansible-pull unit changes] **************************************************
+
+RUNNING HANDLER [Reload systemd] ****************************************************************
+ok: [lab5]
+
+RUNNING HANDLER [Restart ansible-pull timer] ****************************************************
+changed: [lab5]
+
+TASK [Enable and start ansible-pull timer] ******************************************************
+changed: [lab5]
+
+PLAY RECAP **************************************************************************************
+lab5                       : ok=15   changed=8    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+This run installed Git and Ansible on the VM, created the local inventory, rendered the `ansible-pull` service and timer units, reloaded systemd, and enabled the timer.
+
+### Timer status
+
+Command:
+
+```bash
+systemctl list-timers | grep ansible-pull
+```
+
+Output:
+
+```text
+n/a                         n/a         Mon 2026-06-29 13:31:03 UTC 11ms ago      ansible-pull-quicknotes.timer  ansible-pull-quicknotes.service
+```
+
+Command:
+
+```bash
+systemctl status ansible-pull-quicknotes.timer
+```
+
+Output:
+
+```text
+● ansible-pull-quicknotes.timer - Run ansible-pull for QuickNotes every 5 minutes
+     Loaded: loaded (/etc/systemd/system/ansible-pull-quicknotes.timer; enabled; vendor preset: enabled)
+     Active: active (running) since Mon 2026-06-29 13:26:02 UTC; 5min ago
+    Trigger: n/a
+   Triggers: ● ansible-pull-quicknotes.service
+```
+
+### Convergence demonstration
+
+The GitOps loop was tested by changing `quicknotes_addr` to `:9090`, committing and pushing the change, then waiting for the systemd timer to run `ansible-pull`.
+
+Timeline:
+
+```text
+Git commit timestamp: 2026-06-29 13:27:18 UTC
+Timer fire observed: Mon 2026-06-29 13:31:03 UTC
+QuickNotes reconciled: Mon 2026-06-29 13:31:19 UTC
+```
+
+Command:
+
+```bash
+date
+```
+
+Output:
+
+```text
+Mon Jun 29 01:31:27 PM UTC 2026
+```
+
+Command:
+
+```bash
+journalctl -u ansible-pull-quicknotes.service --since "10 minutes ago"
+```
+
+Output:
+
+```text
+Hint: You are currently not seeing messages from other users and the system.
+      Users in groups 'adm', 'systemd-journal' can see all messages.
+      Pass -q to turn off this notice.
+-- No entries --
+```
+
+The service journal output was not visible as the `vagrant` user because journal access is restricted. The timer and resulting QuickNotes service state were used as evidence instead.
+
+Command:
+
+```bash
+systemctl status quicknotes
+```
+
+Output:
+
+```text
+● quicknotes.service - QuickNotes API
+     Loaded: loaded (/etc/systemd/system/quicknotes.service; enabled; vendor preset: enabled)
+     Active: active (running) since Mon 2026-06-29 13:31:19 UTC; 5min ago
+   Main PID: 6749 (quicknotes)
+      Tasks: 7 (limit: 1099)
+     Memory: 1.5M
+        CPU: 4ms
+     CGroup: /system.slice/quicknotes.service
+             └─6749 /usr/local/bin/quicknotes
+```
+
+Command:
+
+```bash
+systemctl cat quicknotes
+```
+
+Output:
+
+```ini
+# /etc/systemd/system/quicknotes.service
+[Unit]
+Description=QuickNotes API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=quicknotes
+Group=quicknotes
+WorkingDirectory=/var/lib/quicknotes
+Environment=ADDR=:9090
+Environment=DATA_PATH=/var/lib/quicknotes/notes.json
+Environment=SEED_PATH=/var/lib/quicknotes/seed.json
+ExecStart=/usr/local/bin/quicknotes
+Restart=on-failure
+RestartSec=4
+
+[Install]
+WantedBy=multi-user.target
+```
+
+The rendered unit contains `Environment=ADDR=:9090`, showing that the VM reconciled to the Git change without running `ansible-playbook` from the host again.
+
+### Design questions
+
+#### h) What is the security benefit of `ansible-pull` compared with push mode?
+
+`ansible-pull` uses a pull model: the VM initiates an outbound connection to Git and applies the desired state locally. This reduces the need for a central control node with SSH access into every managed machine. It also reduces exposed inbound access requirements on the VM, because the VM does not need to accept configuration pushes from an external controller.
+
+In push mode, the control node must be able to SSH into the VM. If that control node or its SSH credentials are compromised, every reachable managed host may be exposed. With pull mode, each VM only needs enough access to read the repository and converge itself.
+
+#### i) What is the same pattern called at the Kubernetes layer?
+
+At the Kubernetes layer, this pattern is called GitOps. Common tools for it include Argo CD and Flux.
+
+`ansible-pull` is a fair VM-layer simulator because it follows the same core idea: Git stores the desired state, a machine periodically pulls that desired state, and the machine reconciles itself until the live state matches the repository. In this lab, the VM plays the role of the reconciler by running `ansible-pull` every 5 minutes through a systemd timer.

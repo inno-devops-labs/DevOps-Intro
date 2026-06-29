@@ -1,0 +1,11 @@
+[Unit]
+Description=Run ansible-pull for QuickNotes every 5 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+Persistent=true
+Unit={{ ansible_pull_service_name }}.service
+
+[Install]
+WantedBy=timers.target
