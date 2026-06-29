@@ -1,5 +1,5 @@
----
-# Lab 7 — Deploy QuickNotes via Ansible
+﻿---
+# Lab 7 вЂ” Deploy QuickNotes via Ansible
 #
 # Run from inside the Lab 5 VM (ansible_local / connection: local):
 #   ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml
@@ -17,7 +17,7 @@
     quicknotes_data_dir: /var/lib/quicknotes
     quicknotes_bin_path: /usr/local/bin/quicknotes
     quicknotes_seed_path: /var/lib/quicknotes/seed.json
-    quicknotes_listen_addr: ":8080"
+    quicknotes_listen_addr: ":9090"
 
   tasks:
     - name: Create the quicknotes system user (no login shell)
