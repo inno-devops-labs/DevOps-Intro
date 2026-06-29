@@ -15,7 +15,7 @@
     quicknotes_addr: ":8080"
     quicknotes_data_path: /var/lib/quicknotes/notes.json
     quicknotes_seed_path: /var/lib/quicknotes/seed.json
-    quicknotes_restart_backoff: 2
+    quicknotes_restart_backoff: 4
 
   tasks:
     - name: Ensure QuickNotes group exists

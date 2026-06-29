@@ -236,3 +236,186 @@ For this submission, the variables are in `ansible/playbook.yaml` because the la
 No. This playbook does not use facts such as OS version, network interfaces, CPU architecture, memory, or distribution details. Setting `gather_facts: false` saves the setup/facts collection step on each run, which reduces runtime and SSH overhead.
 
 If the playbook later needed OS-specific package names or conditional logic based on the target system, then enabling facts would be useful.
+
+## Task 2 - Prove Idempotency and Selective Re-run
+
+### Second run with zero changes
+
+Command:
+
+```bash
+ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml
+```
+
+Output:
+
+```text
+PLAY [Deploy QuickNotes] ************************************************************************
+
+TASK [Ensure QuickNotes group exists] ***********************************************************
+ok: [lab5]
+
+TASK [Ensure QuickNotes system user exists] *****************************************************
+ok: [lab5]
+
+TASK [Ensure QuickNotes data directory exists] **************************************************
+ok: [lab5]
+
+TASK [Copy QuickNotes binary] *******************************************************************
+ok: [lab5]
+
+TASK [Render QuickNotes systemd unit] ***********************************************************
+ok: [lab5]
+
+TASK [Apply pending service changes] ************************************************************
+
+TASK [Enable and start QuickNotes service] ******************************************************
+ok: [lab5]
+
+PLAY RECAP **************************************************************************************
+lab5                       : ok=6    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+The second run reported `changed=0`, which shows that the current VM state already matched the playbook.
+
+### Selective variable change
+
+I changed `quicknotes_restart_backoff` from `2` to `3` in `ansible/playbook.yaml`.
+
+Command:
+
+```bash
+ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml
+```
+
+Output:
+
+```text
+PLAY [Deploy QuickNotes] ************************************************************************
+
+TASK [Ensure QuickNotes group exists] ***********************************************************
+ok: [lab5]
+
+TASK [Ensure QuickNotes system user exists] *****************************************************
+ok: [lab5]
+
+TASK [Ensure QuickNotes data directory exists] **************************************************
+ok: [lab5]
+
+TASK [Copy QuickNotes binary] *******************************************************************
+ok: [lab5]
+
+TASK [Render QuickNotes systemd unit] ***********************************************************
+changed: [lab5]
+
+TASK [Apply pending service changes] ************************************************************
+
+RUNNING HANDLER [Reload systemd] ****************************************************************
+ok: [lab5]
+
+RUNNING HANDLER [Restart QuickNotes] ************************************************************
+changed: [lab5]
+
+TASK [Enable and start QuickNotes service] ******************************************************
+ok: [lab5]
+
+PLAY RECAP **************************************************************************************
+lab5                       : ok=8    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+Only the systemd unit template changed. That change notified the systemd reload and QuickNotes restart handlers.
+
+### Health check after selective change
+
+Command:
+
+```bash
+curl -s http://localhost:18080/health
+```
+
+Output:
+
+```json
+{"notes":4,"status":"ok"}
+```
+
+### `--check --diff` preview
+
+I changed `quicknotes_restart_backoff` from `3` to `4` in `ansible/playbook.yaml`, then ran check mode with diff.
+
+Command:
+
+```bash
+ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml --check --diff
+```
+
+Output:
+
+```text
+PLAY [Deploy QuickNotes] ************************************************************************
+
+TASK [Ensure QuickNotes group exists] ***********************************************************
+ok: [lab5]
+
+TASK [Ensure QuickNotes system user exists] *****************************************************
+ok: [lab5]
+
+TASK [Ensure QuickNotes data directory exists] **************************************************
+ok: [lab5]
+
+TASK [Copy QuickNotes binary] *******************************************************************
+ok: [lab5]
+
+TASK [Render QuickNotes systemd unit] ***********************************************************
+--- before: /etc/systemd/system/quicknotes.service
++++ after: /home/mostafa/.ansible/tmp/ansible-local-221449qtsrweyz/tmptmwotypc/quicknotes.service.j2
+@@ -12,7 +12,7 @@
+ Environment=SEED_PATH=/var/lib/quicknotes/seed.json
+ ExecStart=/usr/local/bin/quicknotes
+ Restart=on-failure
+-RestartSec=3
++RestartSec=4
+ 
+ [Install]
+ WantedBy=multi-user.target
+
+changed: [lab5]
+
+TASK [Apply pending service changes] ************************************************************
+
+RUNNING HANDLER [Reload systemd] ****************************************************************
+ok: [lab5]
+
+RUNNING HANDLER [Restart QuickNotes] ************************************************************
+changed: [lab5]
+
+TASK [Enable and start QuickNotes service] ******************************************************
+ok: [lab5]
+
+PLAY RECAP **************************************************************************************
+lab5                       : ok=8    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+This was a dry-run preview. Ansible reported the predicted template change and the predicted notified handler, but it did not actually apply the `RestartSec=4` change to the VM.
+
+### Design questions
+
+#### e) Why does the second run report `changed=0`?
+
+The second run reports `changed=0` because each Ansible module compares the remote host's current state with the desired state in the playbook.
+
+The `file` module checks that `/var/lib/quicknotes` exists as a directory with the requested owner, group, and mode. The `copy` module checks whether the destination binary already has the same content and file metadata. The `template` module renders the template with the current variable values, compares the rendered result with the remote unit file, and changes the file only if the content or metadata differs.
+
+Because the VM already matched the requested state, no tasks reported changes and no handlers were triggered.
+
+#### f) What would happen if `shell: 'echo "ADDR=..." > /etc/systemd/system/quicknotes.service'` was used instead of `template:`?
+
+Using `shell` for the unit file would be less reliable and less idempotent. The shell command would rewrite the file whenever it ran unless extra manual checks were added. That could cause Ansible to report changes every run and restart QuickNotes unnecessarily.
+
+It would also be easier to introduce quoting, escaping, or formatting mistakes in the systemd unit. The `template` module is safer because it manages the whole file declaratively, compares the rendered content before writing, supports check mode and diff output, and reports changes only when the generated unit actually differs.
+
+#### g) What bug can `ansible-playbook --check --diff` catch that plain `--check` may miss?
+
+Plain `--check` can show that a task would change something, but it does not show the exact content of the change. `--check --diff` shows the before and after content, which can catch mistakes before they are applied.
+
+For example, it could reveal a wrong port, an incorrect data path, a missing environment variable, or an accidental edit that removes part of the systemd unit. In this task, the diff clearly showed the intended change from `RestartSec=3` to `RestartSec=4`.
