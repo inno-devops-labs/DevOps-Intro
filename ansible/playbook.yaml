@@ -16,7 +16,7 @@
     quicknotes_data_path: /var/lib/quicknotes/notes.json
     quicknotes_seed_path: /opt/quicknotes/app/seed.json
     listen_addr: ":8080"
-    quicknotes_restart_sec: 3
+    quicknotes_restart_sec: 4
     ansible_pull_enabled: true
     ansible_pull_repo_url: https://github.com/Hidancloud/DevOps-Intro.git
     ansible_pull_repo_branch: feature/lab7
