@@ -1,0 +1,6 @@
+apiVersion: 1
+providers:
+  - name: golden-signals
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards

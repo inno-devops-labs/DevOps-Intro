@@ -61,3 +61,6 @@ Thumbs.db
 #   *.sbom.cdx.json, zap-*.html/json, trivy-*.txt   (Lab 9 scan evidence)
 #   flake.nix, flake.lock      (Lab 11)
 #   wasm/main.go, spin.toml, go.sum   (Lab 12)
+
+# Local secrets for docker compose (never commit)
+.env
