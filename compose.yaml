@@ -1,4 +1,4 @@
-services:
+﻿services:
   quicknotes:
     build:
       context: ./app
@@ -9,7 +9,7 @@ services:
     environment:
       ADDR: ":8080"
       DATA_PATH: "/data/notes.json"
-      SEED_PATH: "/app/seed.json"
+      SEED_PATH: "/seed.json"
     volumes:
       - quicknotes-data:/data
     restart: unless-stopped
@@ -19,8 +19,6 @@ services:
       timeout: 3s
       retries: 3
       start_period: 5s
-
-    # Bonus hardening defaults
     cap_drop:
       - ALL
     read_only: true
@@ -28,6 +26,35 @@ services:
       - /tmp
     security_opt:
       - no-new-privileges:true
+
+  prometheus:
+    image: prom/prometheus:v3.11.3
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    depends_on:
+      quicknotes:
+        condition: service_healthy
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:13.0.3
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: "admin"
+      GF_SECURITY_ADMIN_PASSWORD: "lab8-admin-please-change"
+      GF_USERS_DEFAULT_THEME: "dark"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    restart: unless-stopped
 
 volumes:
   quicknotes-data:
