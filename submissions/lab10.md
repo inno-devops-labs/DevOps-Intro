@@ -188,6 +188,6 @@ Tear down: [`cloud/teardown.md`](../cloud/teardown.md)
 
 ### Submission
 
-- [ ] Course PR (`feature/lab10` → `inno-devops-labs/main`): https://github.com/inno-devops-labs/DevOps-Intro/compare/main...selysecr332:feature/lab10?expand=1
-- [ ] Fork PR (`feature/lab10` → `main`): https://github.com/selysecr332/DevOps-Intro/compare/main...feature/lab10?expand=1
+- [x] Course PR: https://github.com/inno-devops-labs/DevOps-Intro/pull/1251
+- [x] Fork PR: https://github.com/selysecr332/DevOps-Intro/pull/11
 - [ ] Moodle URL (submit course PR link above)
