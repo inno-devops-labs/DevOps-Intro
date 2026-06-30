@@ -1,0 +1,80 @@
+---
+- name: Deploy QuickNotes application
+  hosts: web
+  become: true
+  gather_facts: true
+
+  vars:
+    quicknotes_user: quicknotes
+    quicknotes_data_dir: /var/lib/quicknotes
+    quicknotes_binary_path: /usr/local/bin/quicknotes
+    quicknotes_service_name: quicknotes
+    listen_addr: :8080
+    data_path: /var/lib/quicknotes
+    seed_path: /var/lib/quicknotes/seed.json
+
+  tasks:
+    - name: Create quicknotes system user
+      ansible.builtin.user:
+        name: "{{ quicknotes_user }}"
+        system: true
+        shell: /sbin/nologin
+        home: /nonexistent
+        create_home: false
+
+    - name: Ensure data directory exists
+      ansible.builtin.file:
+        path: "{{ quicknotes_data_dir }}"
+        state: directory
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_user }}"
+        mode: '0750'
+
+    - name: Copy QuickNotes binary
+      ansible.builtin.copy:
+        src: files/quicknotes
+        dest: "{{ quicknotes_binary_path }}"
+        mode: '0755'
+        owner: root
+        group: root
+      notify: restart quicknotes
+
+    - name: Render systemd unit file
+      ansible.builtin.template:
+        src: templates/quicknotes.service.j2
+        dest: /etc/systemd/system/{{ quicknotes_service_name }}.service
+        mode: '0644'
+        owner: root
+        group: root
+
+    - name: Ensure QuickNotes is running
+      ansible.builtin.command:
+        cmd: pgrep -f quicknotes
+      register: process_check
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Start QuickNotes if not running
+      ansible.builtin.command:
+        cmd: /usr/local/bin/quicknotes
+        chdir: /var/lib/quicknotes
+      async: 10
+      poll: 0
+      environment:
+        ADDR: ":8080"
+        DATA_PATH: "/var/lib/quicknotes"
+        SEED_PATH: "/var/lib/quicknotes/seed.json"
+      when: process_check.rc != 0
+      changed_when: true
+      notify: quicknotes_started
+
+  handlers:
+    - name: restart quicknotes
+      ansible.builtin.command:
+        cmd: pkill -f quicknotes && /usr/local/bin/quicknotes &
+      listen: "restart quicknotes"
+      
+    - name: quicknotes_started
+      ansible.builtin.debug:
+        msg: "QuickNotes started successfully"
+      listen: "restart quicknotes"
