@@ -11,28 +11,22 @@
 
 $ErrorActionPreference = "Stop"
 $SpaceName = if ($env:HF_SPACE) { $env:HF_SPACE } else { "quicknotes-lab10" }
-$User = if ($env:HF_USER) { $env:HF_USER } else { "selysecr332" }
+if ($env:HF_USER) {
+    $User = $env:HF_USER
+} else {
+    $whoami = hf auth whoami 2>&1 | Out-String
+    if ($whoami -match 'user=(\S+)') { $User = $Matches[1] }
+    else { $User = "selysecr" }
+}
 $RepoId = "$User/$SpaceName"
 $Root = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $Src = Join-Path $Root "cloud\hf-space"
-$Work = Join-Path $env:TEMP "hf-space-$SpaceName"
 
 Write-Host "==> Creating HF Docker Space: $RepoId"
-hf repo create $RepoId --type space --space-sdk docker --private $false
+hf repos create $RepoId --type space --space-sdk docker --public --exist-ok
 
-if (Test-Path $Work) { Remove-Item -Recurse -Force $Work }
-New-Item -ItemType Directory -Path $Work | Out-Null
-Copy-Item (Join-Path $Src "Dockerfile") $Work
-Copy-Item (Join-Path $Src "README.md") $Work
-
-Set-Location $Work
-git init -q
-git checkout -b main 2>$null
-git add Dockerfile README.md
-git -c user.name="lab10" -c user.email="lab10@local" commit -q -m "Lab 10: QuickNotes from ghcr.io"
-git remote add origin "https://huggingface.co/spaces/$RepoId"
-Write-Host "==> Pushing to HF (may prompt for credentials)..."
-git push -u origin main --force
+Write-Host "==> Uploading Space files..."
+hf upload $RepoId $Src --repo-type space --commit-message "Lab 10: QuickNotes from ghcr.io"
 
 $Url = "https://$User-$SpaceName.hf.space"
 Write-Host ""

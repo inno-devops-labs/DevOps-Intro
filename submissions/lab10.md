@@ -67,7 +67,7 @@ Principle of least privilege. If a compromised action or script exfiltrates the 
 ```powershell
 hf auth login
 .\cloud\scripts\deploy-hf-space.ps1
-# Space: https://selysecr332-quicknotes-lab10.hf.space
+# Space: https://selysecr-quicknotes-lab10.hf.space
 ```
 
 Space files in repo:
@@ -75,35 +75,45 @@ Space files in repo:
 - [`cloud/hf-space/Dockerfile`](../cloud/hf-space/Dockerfile) — `FROM ghcr.io/selysecr332/devops-intro/quicknotes:v0.1.0`
 - [`cloud/hf-space/README.md`](../cloud/hf-space/README.md) — `sdk: docker`, `app_port: 8080`
 
+HF account: `selysecr` (script auto-detects via `hf auth whoami`).
+
 ### Space URL
 
 ```text
-https://selysecr332-quicknotes-lab10.hf.space
+https://selysecr-quicknotes-lab10.hf.space
 ```
+
+Hub: https://huggingface.co/spaces/selysecr/quicknotes-lab10
 
 ### Health check
 
 ```bash
-curl -v https://selysecr332-quicknotes-lab10.hf.space/health
-curl -s https://selysecr332-quicknotes-lab10.hf.space/notes
+curl -v https://selysecr-quicknotes-lab10.hf.space/health
+curl -s https://selysecr-quicknotes-lab10.hf.space/notes
 ```
 
 ```text
-<!-- paste curl -v excerpt after Space is live -->
+$ curl -v https://selysecr-quicknotes-lab10.hf.space/health
+< HTTP/2 200
+{"notes":0,"status":"ok"}
+
+$ curl -s https://selysecr-quicknotes-lab10.hf.space/notes
+[]
 ```
 
 ### Latency (scale-to-zero)
 
 ```powershell
-.\cloud\scripts\measure-warm.ps1 -Url "https://selysecr332-quicknotes-lab10.hf.space/health"
+.\cloud\scripts\measure-warm.ps1 -Url "https://selysecr-quicknotes-lab10.hf.space/health"
 ```
 
 | Measurement | Value |
 |-------------|------:|
-| Warm p50 (5 runs) | <!-- fill after deploy --> |
-| Cold #1 (after 35+ min idle) | <!-- fill --> |
-| Cold #2 | <!-- fill --> |
-| Cold #3 | <!-- fill --> |
+| Warm p50 (5 runs) | 0.454 s |
+| Warm p95 (5 runs) | 0.932 s |
+| Cold #1 (after 35+ min idle) | <!-- measure after idle --> |
+| Cold #2 | <!-- measure after idle --> |
+| Cold #3 | <!-- measure after idle --> |
 
 ### Design questions (Task 2)
 
@@ -134,9 +144,9 @@ Outbound connectivity to `api.trycloudflare.com` times out from this network. Do
 
 | Metric | HF Spaces (hosted) | Cloudflare Tunnel (local-via-edge) |
 |--------|-------------------:|-----------------------------------:|
-| Warm p50 | <!-- HF --> | N/A (tunnel blocked) |
-| Warm p95 | <!-- HF --> | N/A |
-| Cold start | <!-- HF cold avg --> | N/A (continuously local) |
+| Warm p50 | 0.454 s | N/A (tunnel blocked) |
+| Warm p95 | 0.932 s | N/A |
+| Cold start | <!-- after 35+ min idle --> | N/A (continuously local) |
 | Public URL stability | stable | ephemeral on restart |
 | Cost | free | free |
 
@@ -168,8 +178,8 @@ Tear down: [`cloud/teardown.md`](../cloud/teardown.md)
 
 ### Task 2 (4 pts)
 
-- [ ] HF Space live; `/health` and `/notes` work
-- [ ] Warm + cold latency measured
+- [x] HF Space live; `/health` and `/notes` work
+- [ ] Warm + cold latency measured (warm done; cold after 35+ min idle)
 - [x] Design questions d–f answered
 
 ### Bonus (2 pts)
