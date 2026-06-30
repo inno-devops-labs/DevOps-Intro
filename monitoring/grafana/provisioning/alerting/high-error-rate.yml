@@ -1,0 +1,58 @@
+# Grafana provisioned alert rule (Lab 8, Task 2).
+# Lives under the mounted provisioning dir, so Grafana loads it on startup the
+# same way it loads the data source and dashboard. One symptom alert: the user-
+# visible 4xx+5xx error ratio. The `for: 5m` gate is what makes it *sustained* —
+# a single bad request can never page; the breach must hold for 5 minutes.
+
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: quicknotes-availability
+    folder: QuickNotes
+    interval: 1m # evaluate the rule every minute
+    rules:
+      - uid: quicknotes-high-error-rate
+        title: QuickNotes high error rate
+        condition: C
+        for: 5m # sustained-breach gate: Pending for 5m before Firing
+        noDataState: OK # query always returns a number (clamp_min), so this is just a guard
+        execErrState: OK
+        labels:
+          severity: page
+        annotations:
+          summary: QuickNotes 4xx+5xx error ratio above 5% for 5 minutes
+          description: "Error ratio is {{ printf \"%.2f\" $values.A.Value }} (threshold 0.05). The service is returning client/server errors to a sustained share of requests."
+          runbook_url: https://github.com/G-Akleh/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md
+        data:
+          # A: the error ratio (4xx+5xx over all responses), instant value.
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: prometheus
+            model:
+              refId: A
+              editorMode: code
+              instant: true
+              range: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+              expr: >-
+                sum(rate(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+                /
+                clamp_min(sum(rate(quicknotes_http_responses_by_code_total[5m])), 1)
+          # C: threshold — fire when A > 0.05 (5%).
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: __expr__
+            model:
+              refId: C
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0.05]
