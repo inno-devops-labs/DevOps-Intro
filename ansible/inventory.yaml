@@ -1,0 +1,10 @@
+all:
+  children:
+    quicknotes_vm:
+      hosts:
+        lab5-vm:
+          ansible_host: 172.19.128.1
+          ansible_port: 2223
+          ansible_user: vagrant
+          ansible_private_key_file: /root/.ssh/vagrant-devops-intro/private_key
+          ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa"

@@ -1,0 +1,99 @@
+﻿---
+- name: Deploy QuickNotes to Lab 5 VM
+  hosts: quicknotes_vm
+  become: true
+  gather_facts: false
+
+  vars:
+    quicknotes_user: quicknotes
+    quicknotes_group: quicknotes
+    quicknotes_data_dir: /var/lib/quicknotes
+    quicknotes_config_dir: /etc/quicknotes
+    quicknotes_binary_src: files/quicknotes
+    quicknotes_seed_src: files/seed.json
+    quicknotes_binary_dest: /usr/local/bin/quicknotes
+    quicknotes_seed_dest: /etc/quicknotes/seed.json
+    quicknotes_listen_addr: ":8080"
+    quicknotes_data_path: /var/lib/quicknotes/notes.json
+    quicknotes_seed_path: /etc/quicknotes/seed.json
+    quicknotes_restart_sec: 4
+
+  tasks:
+    - name: Create QuickNotes group
+      ansible.builtin.group:
+        name: "{{ quicknotes_group }}"
+        system: true
+        state: present
+
+    - name: Create QuickNotes system user
+      ansible.builtin.user:
+        name: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        system: true
+        shell: /usr/sbin/nologin
+        create_home: false
+        home: "{{ quicknotes_data_dir }}"
+        state: present
+
+    - name: Ensure QuickNotes data directory exists
+      ansible.builtin.file:
+        path: "{{ quicknotes_data_dir }}"
+        state: directory
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        mode: "0750"
+
+    - name: Ensure QuickNotes config directory exists
+      ansible.builtin.file:
+        path: "{{ quicknotes_config_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Copy QuickNotes seed file
+      ansible.builtin.copy:
+        src: "{{ quicknotes_seed_src }}"
+        dest: "{{ quicknotes_seed_dest }}"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: restart quicknotes
+
+    - name: Copy QuickNotes binary
+      ansible.builtin.copy:
+        src: "{{ quicknotes_binary_src }}"
+        dest: "{{ quicknotes_binary_dest }}"
+        owner: root
+        group: root
+        mode: "0755"
+      notify: restart quicknotes
+
+    - name: Render QuickNotes systemd unit
+      ansible.builtin.template:
+        src: quicknotes.service.j2
+        dest: /etc/systemd/system/quicknotes.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify:
+        - reload systemd
+        - restart quicknotes
+
+    - name: Enable and start QuickNotes service
+      ansible.builtin.systemd:
+        name: quicknotes
+        enabled: true
+        state: started
+        daemon_reload: true
+
+  handlers:
+    - name: reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: restart quicknotes
+      ansible.builtin.systemd:
+        name: quicknotes
+        state: restarted
+        daemon_reload: true
