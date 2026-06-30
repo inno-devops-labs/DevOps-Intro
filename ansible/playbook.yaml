@@ -1,0 +1,69 @@
+---
+- name: Deploy QuickNotes to VM
+  hosts: quicknotes-vm
+  become: true
+  gather_facts: true
+
+  vars:
+    quicknotes_user: quicknotes
+    data_dir: /var/lib/quicknotes
+    binary_path: /usr/local/bin/quicknotes
+    addr: ":8080"
+    data_path: "/var/lib/quicknotes/notes.json"
+    seed_path: "/var/lib/quicknotes/seed.json"
+
+  tasks:
+    - name: Create quicknotes system user
+      ansible.builtin.user:
+        name: "{{ quicknotes_user }}"
+        shell: /usr/sbin/nologin
+        create_home: false
+        system: true
+
+    - name: Ensure data directory exists
+      ansible.builtin.file:
+        path: "{{ data_dir }}"
+        state: directory
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_user }}"
+        mode: "0750"
+
+    - name: Copy seed data
+      ansible.builtin.copy:
+        src: files/seed.json
+        dest: /var/lib/quicknotes/seed.json
+        mode: "0644"
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_user }}"
+
+    - name: Copy QuickNotes binary
+      ansible.builtin.copy:
+        src: files/quicknotes
+        dest: "{{ binary_path }}"
+        mode: "0755"
+        owner: root
+        group: root
+      notify: restart quicknotes
+
+    - name: Render systemd unit
+      ansible.builtin.template:
+        src: templates/quicknotes.service.j2
+        dest: /etc/systemd/system/quicknotes.service
+        mode: "0644"
+        owner: root
+        group: root
+      notify: restart quicknotes
+
+    - name: Reload systemd, enable and start QuickNotes
+      ansible.builtin.systemd:
+        name: quicknotes
+        enabled: true
+        state: started
+        daemon_reload: true
+
+  handlers:
+    - name: restart quicknotes
+      ansible.builtin.systemd:
+        name: quicknotes
+        state: restarted
+        daemon_reload: true
