@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+scrape_configs:
+  - job_name: quicknotes
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - quicknotes:8080
