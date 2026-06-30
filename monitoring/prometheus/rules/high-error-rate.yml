@@ -1,0 +1,26 @@
+# Prometheus alerting rule for the QuickNotes error-rate SLO.
+# Loaded via prometheus.yml -> rule_files: /etc/prometheus/rules/*.yml
+groups:
+  - name: quicknotes
+    rules:
+      # Symptom alert: page when users are actually seeing failures.
+      # The ratio of 4xx+5xx responses to all responses, averaged over 5
+      # minutes, must stay above 5% for a further 5 minutes ("for") before
+      # this fires. The 5m rate window plus the 5m hold means a single bad
+      # request - or a short 4xx burst - never pages anyone.
+      - alert: QuickNotesHighErrorRate
+        expr: |
+          sum(rate(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+            /
+          sum(rate(quicknotes_http_responses_by_code_total[5m]))
+            > 0.05
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: QuickNotes error ratio is above 5%
+          description: >-
+            The 4xx+5xx error ratio has stayed above 5% for 5 minutes
+            (current {{ $value | humanizePercentage }}). Users are seeing
+            failed requests.
+          runbook_url: https://github.com/Dekart-hub/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md
