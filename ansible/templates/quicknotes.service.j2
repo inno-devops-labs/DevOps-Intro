@@ -1,0 +1,22 @@
+{# Rendered to /etc/systemd/system/quicknotes.service.
+   Every value below is a playbook variable, so changing a var in the play
+   changes the deployed unit (and fires the restart handler). #}
+[Unit]
+Description=QuickNotes service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{ qn_user }}
+Group={{ qn_group }}
+WorkingDirectory={{ qn_data_dir }}
+Environment=ADDR={{ listen_addr }}
+Environment=DATA_PATH={{ data_path }}
+Environment=SEED_PATH={{ seed_path }}
+ExecStart={{ qn_bin }}
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

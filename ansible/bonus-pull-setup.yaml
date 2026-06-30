@@ -1,0 +1,41 @@
+---
+- name: Configure ansible-pull GitOps loop in the VM
+  hosts: lab5
+  become: true
+  gather_facts: true
+
+  vars:
+    pull_repo: https://github.com/Dnau15/DevOps-Intro.git
+    pull_branch: feature/lab7
+
+  tasks:
+    - name: Install ansible and git (distro packages)
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        update_cache: true
+        state: present
+
+    - name: Render the ansible-pull service unit
+      ansible.builtin.template:
+        src: templates/ansible-pull.service.j2
+        dest: /etc/systemd/system/ansible-pull.service
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Render the ansible-pull timer unit
+      ansible.builtin.template:
+        src: templates/ansible-pull.timer.j2
+        dest: /etc/systemd/system/ansible-pull.timer
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Enable and start the ansible-pull timer
+      ansible.builtin.systemd_service:
+        name: ansible-pull.timer
+        daemon_reload: true
+        enabled: true
+        state: started

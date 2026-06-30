@@ -1,0 +1,10 @@
+{# Rendered to /etc/systemd/system/ansible-pull.service INSIDE the VM.
+   One-shot: clone the fork at the given branch and apply the playbook locally. #}
+[Unit]
+Description=QuickNotes ansible-pull convergence run
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ansible-pull -U {{ pull_repo }} -C {{ pull_branch }} -i ansible/inventory-local.ini ansible/playbook.yaml

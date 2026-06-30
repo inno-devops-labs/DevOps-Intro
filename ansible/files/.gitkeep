@@ -1,0 +1,7 @@
+# The static QuickNotes binary `quicknotes` is shipped here.
+# Build it (from the repo root) before running the playbook:
+#
+#   CGO_ENABLED=0 go build -C app -o ../ansible/files/quicknotes .
+#
+# CGO_ENABLED=0 makes a fully static binary so it runs on the VM with no libc
+# version coupling. The binary itself is a build artifact and is not committed.

@@ -1,0 +1,12 @@
+{# Rendered to /etc/systemd/system/ansible-pull.timer INSIDE the VM.
+   Fires 1 min after boot, then every 5 min. #}
+[Unit]
+Description=Run QuickNotes ansible-pull every 5 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+Unit=ansible-pull.service
+
+[Install]
+WantedBy=timers.target
