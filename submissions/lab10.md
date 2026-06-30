@@ -62,67 +62,97 @@ Principle of least privilege. If a compromised action or script exfiltrates the 
 
 ## Task 2 — Hugging Face Spaces
 
-### Space files (in repo + pushed to HF Space Git)
+### Deploy (one-time)
 
-- [`cloud/hf-space/Dockerfile`](../cloud/hf-space/Dockerfile) — `FROM ghcr.io/.../quicknotes:v0.1.0`
+```powershell
+hf auth login
+.\cloud\scripts\deploy-hf-space.ps1
+# Space: https://selysecr332-quicknotes-lab10.hf.space
+```
+
+Space files in repo:
+
+- [`cloud/hf-space/Dockerfile`](../cloud/hf-space/Dockerfile) — `FROM ghcr.io/selysecr332/devops-intro/quicknotes:v0.1.0`
 - [`cloud/hf-space/README.md`](../cloud/hf-space/README.md) — `sdk: docker`, `app_port: 8080`
 
 ### Space URL
 
 ```text
-https://<user>-<spacename>.hf.space
+https://selysecr332-quicknotes-lab10.hf.space
 ```
 
 ### Health check
 
 ```bash
-curl -v https://<your-space>.hf.space/health
+curl -v https://selysecr332-quicknotes-lab10.hf.space/health
+curl -s https://selysecr332-quicknotes-lab10.hf.space/notes
 ```
 
 ```text
-<!-- paste curl -v excerpt -->
+<!-- paste curl -v excerpt after Space is live -->
 ```
 
 ### Latency (scale-to-zero)
 
+```powershell
+.\cloud\scripts\measure-warm.ps1 -Url "https://selysecr332-quicknotes-lab10.hf.space/health"
+```
+
 | Measurement | Value |
 |-------------|------:|
-| Warm p50 (5 runs) | <!-- s --> |
-| Cold #1 (after 35+ min idle) | <!-- s --> |
-| Cold #2 | <!-- s --> |
-| Cold #3 | <!-- s --> |
-
-```bash
-bash cloud/scripts/measure-warm.sh https://<your-space>.hf.space/health
-```
+| Warm p50 (5 runs) | <!-- fill after deploy --> |
+| Cold #1 (after 35+ min idle) | <!-- fill --> |
+| Cold #2 | <!-- fill --> |
+| Cold #3 | <!-- fill --> |
 
 ### Design questions (Task 2)
 
 **d) HF sleep vs Cloud Run scale-to-zero?**
 
-<!-- TODO -->
+Same idea — no traffic → no running container — but **wake time differs by orders of magnitude**. HF free Spaces optimize for **cost and sharing ML demos**, not sub-second API SLAs: cold wake includes scheduler, image pull/resume, and shared infra. Cloud Run targets **production HTTP** with faster scale-from-zero and tighter CPU/memory billing.
 
 **e) Why `app_port: 8080`?**
 
-<!-- TODO -->
+HF defaults to **7860** (Gradio/Streamlit convention). QuickNotes listens on **8080** (`ADDR=:8080` in compose/Dockerfile). `app_port` tells the HF router which container port to proxy — without it, health checks hit the wrong port and the Space shows "container exited."
 
 **f) Pull from ghcr vs build in Space?**
 
-<!-- TODO -->
+**Pull (chosen):** same digest as CI release — reproducible, faster HF build (no compile), matches "tag → registry → deploy" pipeline. **Build in Space:** self-contained if registry is down, but duplicates CI, slower builds, and can drift from `v0.1.0` unless carefully pinned.
 
 ---
 
 ## Bonus — Cloudflare Tunnel
 
-<!-- TODO if attempted -->
+**Attempted** — quick tunnel blocked (same as Lab 8):
 
-| Metric | HF Spaces | Cloudflare Tunnel |
-|--------|----------:|------------------:|
-| Warm p50 | | |
-| Warm p95 | | |
-| Cold start | | N/A |
-| URL stability | stable | ephemeral |
+```text
+cloudflared tunnel --url http://127.0.0.1:8080
+failed to request quick Tunnel: Post "https://api.trycloudflare.com/tunnel": context deadline exceeded
+```
+
+Outbound connectivity to `api.trycloudflare.com` times out from this network. Documented; comparison table uses HF measurements only unless tunnel becomes reachable.
+
+| Metric | HF Spaces (hosted) | Cloudflare Tunnel (local-via-edge) |
+|--------|-------------------:|-----------------------------------:|
+| Warm p50 | <!-- HF --> | N/A (tunnel blocked) |
+| Warm p95 | <!-- HF --> | N/A |
+| Cold start | <!-- HF cold avg --> | N/A (continuously local) |
+| Public URL stability | stable | ephemeral on restart |
 | Cost | free | free |
+
+### Design questions (Bonus)
+
+**g) Which is "really cloud" — HF vs Tunnel?**
+
+HF runs **your container in their datacenter** — classic PaaS. Tunnel runs the app **on your machine**; only the **proxy path** uses Cloudflare's edge. Users see a public URL either way; for ops, HF is hosted cloud, Tunnel is **hybrid** (local compute + cloud network).
+
+**h) Latency dominator for each?**
+
+**HF warm:** network RTT to HF region + Space proxy overhead. **HF cold:** container wake + possible image layer fetch (seconds). **Tunnel warm:** RTT to nearest Cloudflare PoP + tunnel backhaul to your laptop — often dominated by **last-mile upload** and home ISP, not app CPU.
+
+**i) When is Tunnel right vs wrong?**
+
+**Right:** dev demos, home lab exposure, on-prem services without public IP, stakeholder previews without deploying. **Wrong:** production APIs needing HA, predictable latency, compliance-bound data residency, or when the laptop sleeping kills availability.
 
 Tear down: [`cloud/teardown.md`](../cloud/teardown.md)
 
@@ -140,11 +170,11 @@ Tear down: [`cloud/teardown.md`](../cloud/teardown.md)
 
 - [ ] HF Space live; `/health` and `/notes` work
 - [ ] Warm + cold latency measured
-- [ ] Design questions d–f answered
+- [x] Design questions d–f answered
 
 ### Bonus (2 pts)
 
-- [ ] Quick tunnel + comparison table
+- [ ] Quick tunnel + comparison table (blocked — documented)
 
 ### Submission
 
