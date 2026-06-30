@@ -1,7 +1,8 @@
+# compose.yaml  (repo root)
 services:
+  # ── From Lab 6 (shown for completeness; keep YOUR Lab 6 definition) ──
   quicknotes:
-    build:
-      context: ./app
+    build: ./app
     image: quicknotes:lab6
     ports:
       - "8080:8080"
@@ -12,20 +13,46 @@ services:
     volumes:
       - quicknotes-data:/data
     healthcheck:
+      # Lab 6's healthcheck. If your runtime is distroless-static (no shell, no
+      # wget) and this never goes "healthy", either keep Lab 6's working check
+      # or change prometheus' depends_on below to `condition: service_started`.
       test: ["CMD", "/quicknotes", "healthcheck"]
       interval: 10s
       timeout: 3s
-      retries: 3
+      retries: 5
       start_period: 5s
     restart: unless-stopped
 
-    read_only: true
-    tmpfs:
-      - /tmp
-    cap_drop:
-      - ALL
-    security_opt:
-      - no-new-privileges:true
+  # ── NEW: Prometheus (Task 1.4.1) ──
+  prometheus:
+    image: prom/prometheus:v3.5.0           # pinned, real version — not :latest
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/rules:/etc/prometheus/rules:ro
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"                         # browse the Prometheus UI
+    depends_on:
+      quicknotes:
+        condition: service_healthy          # Lab 6 healthcheck pays off here
+    restart: unless-stopped
+
+  # ── NEW: Grafana (Task 1.4.2) ──
+  grafana:
+    image: grafana/grafana:13.0.2           # pinned, real version
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      # Don't ship default creds. Override at runtime; see section 5.
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-changeme-please}
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
 
 volumes:
   quicknotes-data:

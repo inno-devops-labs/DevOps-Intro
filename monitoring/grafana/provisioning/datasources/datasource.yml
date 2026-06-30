@@ -1,0 +1,11 @@
+# monitoring/grafana/provisioning/datasources/datasource.yml
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus                 # dashboard panels reference this uid
+    access: proxy
+    url: http://prometheus:9090     # Compose service name, not localhost
+    isDefault: true
+    editable: false

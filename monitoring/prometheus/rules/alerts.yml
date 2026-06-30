@@ -1,0 +1,23 @@
+# monitoring/prometheus/rules/alerts.yml
+groups:
+  - name: quicknotes-golden-signals
+    rules:
+      - alert: QuickNotesHighErrorRate
+        # 4xx+5xx responses ÷ all requests, over a 5m window.
+        # The 5m rate window smooths single bursts; "for: 5m" then requires the
+        # breach to PERSIST — together they satisfy "sustained, not single-event"
+        # (Task 2.1.4). If there is zero traffic the division is absent, so the
+        # alert simply stays Inactive instead of firing on NaN.
+        expr: |
+          (
+            sum(rate(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+            /
+            sum(rate(quicknotes_http_requests_total[5m]))
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: page                      # Task 2.1.2
+        annotations:
+          summary: "QuickNotes error rate above 5% for 5m"
+          description: "Error ratio is {{ $value | humanizePercentage }} (threshold 5%)."
+          runbook_url: "docs/runbook/high-error-rate.md"   # Task 2.1.3
