@@ -1,0 +1,17 @@
+apiVersion: 1
+
+groups:
+  - name: quicknotes_alerts
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          (sum(rate(quicknotes_http_requests_total{status=~"4..|5.."}[5m])) 
+           / sum(rate(quicknotes_http_requests_total[5m]))) 
+          * 100 > 5
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "High error rate detected for QuickNotes"
+          description: "Error rate is {{ $value }}% for the last 5 minutes"
+          runbook: "https://github.com/your-repo/docs/runbook/high-error-rate.md"
