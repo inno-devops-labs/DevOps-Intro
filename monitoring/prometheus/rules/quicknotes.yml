@@ -1,0 +1,15 @@
+groups:
+  - name: quicknotes
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          sum without(code)(rate(quicknotes_http_responses_by_code_total{code=~"[45].."}[5m]))
+          /
+          rate(quicknotes_http_requests_total[5m])
+          > 0.05
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "QuickNotes error rate > 5% sustained for 5 minutes"
+          runbook_url: "docs/runbook/high-error-rate.md"
