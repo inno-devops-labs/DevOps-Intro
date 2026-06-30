@@ -111,9 +111,9 @@ $ curl -s https://selysecr-quicknotes-lab10.hf.space/notes
 |-------------|------:|
 | Warm p50 (5 runs) | 0.454 s |
 | Warm p95 (5 runs) | 0.932 s |
-| Cold #1 (after 35+ min idle) | <!-- measure after idle --> |
-| Cold #2 | <!-- measure after idle --> |
-| Cold #3 | <!-- measure after idle --> |
+| Cold #1 (after 36 min idle) | 1.034 s |
+| Cold #2 (5 s later) | 0.322 s |
+| Cold #3 (5 s later) | 0.392 s |
 
 ### Design questions (Task 2)
 
@@ -146,7 +146,7 @@ Outbound connectivity to `api.trycloudflare.com` times out from this network. Do
 |--------|-------------------:|-----------------------------------:|
 | Warm p50 | 0.454 s | N/A (tunnel blocked) |
 | Warm p95 | 0.932 s | N/A |
-| Cold start | <!-- after 35+ min idle --> | N/A (continuously local) |
+| Cold start | 1.034 s (first request after idle) | N/A (continuously local) |
 | Public URL stability | stable | ephemeral on restart |
 | Cost | free | free |
 
@@ -179,15 +179,15 @@ Tear down: [`cloud/teardown.md`](../cloud/teardown.md)
 ### Task 2 (4 pts)
 
 - [x] HF Space live; `/health` and `/notes` work
-- [ ] Warm + cold latency measured (warm done; cold after 35+ min idle)
+- [x] Warm + cold latency measured
 - [x] Design questions d–f answered
 
 ### Bonus (2 pts)
 
-- [ ] Quick tunnel + comparison table (blocked — documented)
+- [x] Quick tunnel blocked on this network — documented with comparison table (HF only)
 
 ### Submission
 
-- [ ] Course PR (`feature/lab10` → `inno-devops-labs/main`)
-- [ ] Fork PR
-- [ ] Moodle URL
+- [ ] Course PR (`feature/lab10` → `inno-devops-labs/main`): https://github.com/inno-devops-labs/DevOps-Intro/compare/main...selysecr332:feature/lab10?expand=1
+- [ ] Fork PR (`feature/lab10` → `main`): https://github.com/selysecr332/DevOps-Intro/compare/main...feature/lab10?expand=1
+- [ ] Moodle URL (submit course PR link above)
