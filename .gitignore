@@ -55,6 +55,9 @@ Thumbs.db
 # Devenv env
 .devenv/
 
+# Local credentials (Lab 8 .env, etc.). .env.example IS committed; .env is not.
+.env
+
 # NOTE: deliberately NOT ignored, because students commit them as lab evidence:
 #   submissions/labN.md        (lab reports)
 #   .github/workflows/*.yml    (Lab 3 CI)

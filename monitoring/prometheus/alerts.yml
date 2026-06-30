@@ -1,0 +1,21 @@
+groups:
+  - name: quicknotes.golden-signals
+    interval: 30s
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum(rate(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+            /
+            sum(rate(quicknotes_http_responses_by_code_total[5m]))
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: page
+          service: quicknotes
+        annotations:
+          summary: "QuickNotes error rate > 5% for 5m (current {{ $value | humanizePercentage }})"
+          description: |
+            5-minute error-ratio (4xx + 5xx over total) on the quicknotes job has been
+            above 5% for 5 minutes. Users are seeing failures.
+          runbook_url: "https://github.com/GrandAdmiralBee/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md"

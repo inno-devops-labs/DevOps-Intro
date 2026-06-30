@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: quicknotes-lab8
+
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+scrape_configs:
+  - job_name: quicknotes
+    metrics_path: /metrics
+    static_configs:
+      - targets:
+          - quicknotes:8080
+        labels:
+          app: quicknotes
