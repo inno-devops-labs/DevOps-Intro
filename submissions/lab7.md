@@ -153,7 +153,8 @@ The deployment was executed from the Ansible control node.
 
 Command:
 ```bash
-ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml
 ```
 Result:
 ```text
@@ -186,30 +187,9 @@ Health check:
 vagrant@quicknotes-vm:~$ curl localhost:8080/health
 {"notes":0,"status":"ok"}
 ```
-
 The service was successfully started and responded correctly to health check requests.
 
-
-### 1.5 Idempotency verification
-
-The playbook was executed a second time without modifying any files.
-
-Command:
-```bash
-ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml
-```
-
-Result:
-```text
-PLAY RECAP
-
-192.168.56.10 : ok=6 changed=0 unreachable=0 failed=0 skipped=0 rescued=0 ignored=0
-```
-
-This demonstrates that the deployment is idempotent 
-and does not introduce unnecessary changes when the target host is already in the desired state.
-
-### 1.6 Design questions
+### 1.5 Design questions
 
 a) What's the difference between command: 
 and the dedicated modules (apt, file, copy, systemd)? 
@@ -251,4 +231,151 @@ which causes Ansible to collect information about the target host before executi
 This playbook does not use any host facts such as operating system details, memory size, network interfaces, or CPU information.
 Setting `gather_facts: false` reduces the number of remote operations performed at the start of each run, decreases execution time, and reduces SSH traffic between the control node and the managed host.
 
- files were modified.
+## Task 2 — Prove Idempotency + Selective Re-run
+
+### 2.1 Second run — zero changes
+The playbook was executed a second time without modifying any files.
+
+Command:
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml
+```
+Result:
+```text
+PLAY RECAP
+192.168.56.10 : ok=6 changed=0 unreachable=0 failed=0 skipped=0 rescued=0 ignored=0
+```
+
+This demonstrates that the deployment is idempotent 
+and does not introduce unnecessary changes when the target host is already in the desired state.
+Because the target host was already in the desired state, Ansible detected no differences and no changes were required.
+
+### 2.2 Variable change — selective update
+
+I modified the playbook variable as needed:
+
+```yaml
+quicknotes_addr: ":8080"
+```
+to:
+```yaml
+quicknotes_addr: ":9090"
+```
+and re-ran the deployment.
+
+Result:
+```text
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ nano ansible/playbook.yaml                  
+                                                                                                              
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml
+PLAY [Deploy QuickNotes] *********************************************************************************************
+TASK [Create quicknotes user] *********************************************************************************************         
+ok: [192.168.56.10]
+TASK [Create data directory] *********************************************************************************************
+ok: [192.168.56.10]
+TASK [Copy quicknotes binary] *********************************************************************************************
+ok: [192.168.56.10]
+TASK [Deploy systemd unit] *********************************************************************************************
+changed: [192.168.56.10]
+TASK [Reload systemd] *********************************************************************************************
+ok: [192.168.56.10]
+TASK [Enable and start service] *********************************************************************************************
+ok: [192.168.56.10]
+RUNNING HANDLER [restart quicknotes] *********************************************************************************************
+changed: [192.168.56.10]
+PLAY RECAP ********************************************************************************************************
+192.168.56.10              : ok=7    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+Only the template changed because the systemd unit file contained the modified listen address.
+The handler was triggered automatically and restarted the service.
+
+Verification:
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ curl localhost:9090/health
+{"notes":0,"status":"ok"}
+```
+This confirms that the new configuration was applied successfully.
+
+### 2.3 Dry run with --check --diff
+
+A third configuration change was made:
+```yaml
+quicknotes_addr: ":9090"
+```
+to:
+```yaml
+quicknotes_addr: ":10080"
+```
+The deployment was previewed without applying changes.
+
+Command:
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ ansible-playbook \
+-i ansible/inventory.ini \
+ansible/playbook.yaml \
+--check \
+--diff
+```
+Example diff:
+```text
+TASK [Deploy systemd unit] ****************************************************************************************
+--- before: /etc/systemd/system/quicknotes.service
++++ after: /home/p4in/.ansible/tmp/ansible-local-12986_chi0777/tmp5lyaeezw/quicknotes.service.j2
+@@ -11,7 +11,7 @@
+ WorkingDirectory=/var/lib/quicknotes
+-Environment="ADDR=:9090"
++Environment="ADDR=:10080"
+ Environment="DATA_PATH=/var/lib/quicknotes/data.json"
+ Environment="SEED_PATH=/var/lib/quicknotes/seed.json"
+changed: [192.168.56.10]
+```
+The diff clearly shows the exact change that would be applied without modifying the target host.
+
+### 2.4 Design questions
+
+#### e) Why does the second run report changed=0?
+
+The second run reports `changed=0` because Ansible compares 
+the desired state described in the playbook with the actual state on the managed host.
+The `file` module checks file ownership, permissions, and existence.
+The `copy` module compares file content and metadata. The `template` module renders the template and compares the generated content with the deployed file.
+When all managed resources already match the desired state,
+no changes are required and every task reports `ok`.
+
+#### f) What would happen if shell was used instead of template?
+
+Using:
+```yaml
+shell: 'echo "ADDR=..." > /etc/systemd/system/quicknotes.service'
+```
+would bypass Ansible's state tracking.
+Possible failure modes include:
+- The command would overwrite the entire service file each run.
+- Ansible would often report changes every execution.
+- Idempotency would be lost.
+- Syntax mistakes could produce an invalid systemd unit.
+- No automatic content comparison would occur.
+- Selective updates and accurate change reporting would become difficult.
+The `template` module avoids these problems by generating deterministic content
+and comparing it before applying changes.
+
+#### g) What bug would --check --diff catch that plain --check might miss?
+
+`--check` reports that a file would change but does not clearly show what changed.
+`--check --diff` displays the exact modification.
+For example, if a template variable accidentally changed from:
+```text
+ADDR=:9090
+```
+to:
+```text
+ADDR=:9009
+```
+plain `--check` would only indicate that the template would be modified.
+`--diff` immediately reveals the incorrect value before deployment,
+making configuration mistakes easier to detect and preventing accidental production outages.
