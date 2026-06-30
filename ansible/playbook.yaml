@@ -8,7 +8,7 @@
     app_user: quicknotes
     data_dir: /var/lib/quicknotes
     binary_path: /usr/local/bin/quicknotes
-    listen_addr: ":9090"
+    listen_addr: ":8080"
     data_path: /var/lib/quicknotes/notes.json
     seed_path: /var/lib/quicknotes/seed.json
 
