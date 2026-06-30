@@ -1,0 +1,34 @@
+{
+    "status": "success",
+    "data": {
+        "activeTargets": [
+            {
+                "discoveredLabels": {
+                    "__address__": "quicknotes:8080",
+                    "__metrics_path__": "/metrics",
+                    "__scheme__": "http",
+                    "__scrape_interval__": "15s",
+                    "__scrape_timeout__": "10s",
+                    "job": "quicknotes"
+                },
+                "labels": {
+                    "instance": "quicknotes:8080",
+                    "job": "quicknotes"
+                },
+                "scrapePool": "quicknotes",
+                "scrapeUrl": "http://quicknotes:8080/metrics",
+                "globalUrl": "http://quicknotes:8080/metrics",
+                "lastError": "",
+                "lastScrape": "2026-06-30T19:15:55.509592551Z",
+                "lastScrapeDuration": 0.00339975,
+                "health": "up",
+                "scrapeInterval": "15s",
+                "scrapeTimeout": "10s"
+            }
+        ],
+        "droppedTargets": [],
+        "droppedTargetCounts": {
+            "quicknotes": 0
+        }
+    }
+}

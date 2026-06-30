@@ -1,0 +1,4 @@
+NAME                        IMAGE                    COMMAND                  SERVICE      CREATED          STATUS                    PORTS
+devops-intro-grafana-1      grafana/grafana:13.0.2   "/run.sh"                grafana      42 seconds ago   Up 35 seconds             0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp
+devops-intro-prometheus-1   prom/prometheus:v3.2.1   "/bin/prometheus --c…"   prometheus   42 seconds ago   Up 35 seconds             0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp
+devops-intro-quicknotes-1   quicknotes:lab6          "/quicknotes"            quicknotes   42 seconds ago   Up 40 seconds (healthy)   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp

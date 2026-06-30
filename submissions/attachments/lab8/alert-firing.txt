@@ -1,0 +1,9 @@
+HighHTTPErrorRate state=firing value=0.317 (31.7% error ratio)
+activeAt=2026-06-30T19:15:59.892443532Z
+severity=page
+runbook_url=docs/runbook/high-error-rate.md
+
+Timeline:
+- 19:15:59Z alert entered pending (after initial traffic)
+- 19:16:11Z sustained error injection started
+- 19:22:11Z injection finished; alert state=firing

@@ -1,0 +1,21 @@
+{
+    "status": "success",
+    "data": {
+        "alerts": [
+            {
+                "labels": {
+                    "alertname": "HighHTTPErrorRate",
+                    "severity": "page"
+                },
+                "annotations": {
+                    "description": "More than 5% of HTTP responses are 4xx/5xx for 5 minutes.",
+                    "runbook_url": "docs/runbook/high-error-rate.md",
+                    "summary": "QuickNotes HTTP error ratio exceeds 5%"
+                },
+                "state": "pending",
+                "activeAt": "2026-06-30T19:15:59.892443532Z",
+                "value": "1.7777777777777778e-01"
+            }
+        ]
+    }
+}
