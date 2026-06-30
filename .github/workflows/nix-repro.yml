@@ -1,0 +1,50 @@
+name: nix-repro
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-a:
+    name: nix build (runner A)
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.sha.outputs.digest }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.2.2
+      - uses: DeterminateSystems/determinate-nix-action@9adf02b41cfdac2632e1c16f0480ff5bf3b05dd6 # v3.21.1
+      - name: Build docker image
+        run: nix build .#docker
+      - id: sha
+        name: Compute tarball digest
+        run: echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  build-b:
+    name: nix build (runner B)
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.sha.outputs.digest }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.2.2
+      - uses: DeterminateSystems/determinate-nix-action@9adf02b41cfdac2632e1c16f0480ff5bf3b05dd6 # v3.21.1
+      - name: Build docker image
+        run: nix build .#docker
+      - id: sha
+        name: Compute tarball digest
+        run: echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  compare:
+    name: assert digests match
+    runs-on: ubuntu-24.04
+    needs: [build-a, build-b]
+    steps:
+      - name: Compare digests
+        run: |
+          A="${{ needs.build-a.outputs.digest }}"
+          B="${{ needs.build-b.outputs.digest }}"
+          echo "Runner A: $A"
+          echo "Runner B: $B"
+          test "$A" = "$B"
