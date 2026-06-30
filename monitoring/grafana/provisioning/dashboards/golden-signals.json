@@ -1,0 +1,51 @@
+{
+  "title": "Golden Signals - QuickNotes",
+  "uid": "golden-signals",
+  "panels": [
+    {
+      "title": "Latency (proxy - requests/s)",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "rate(quicknotes_http_requests_total[5m])",
+          "legendFormat": "requests per second"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 }
+    },
+    {
+      "title": "Traffic (requests/s)",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "rate(quicknotes_http_requests_total[5m])",
+          "legendFormat": "rate"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 }
+    },
+    {
+      "title": "Errors ratio (4xx+5xx)",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "sum(rate(quicknotes_http_responses_by_code_total{code=~\"4..|5..\"}[5m])) / sum(rate(quicknotes_http_requests_total[5m]))",
+          "legendFormat": "error ratio"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 }
+    },
+    {
+      "title": "Saturation (notes total)",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "quicknotes_notes_total",
+          "legendFormat": "notes count"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 }
+    }
+  ],
+  "time": { "from": "now-15m", "to": "now" }
+}
