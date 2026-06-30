@@ -1,0 +1,9 @@
+global:
+  scrape_interval: 15s # how often Prometheus scrapes every target
+  scrape_timeout: 10s # must be < scrape_interval
+
+scrape_configs:
+  - job_name: quicknotes
+    metrics_path: /metrics # QuickNotes exposes Prometheus text format here
+    static_configs:
+      - targets: ["quicknotes:8080"]

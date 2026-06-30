@@ -1,0 +1,15 @@
+# Auto-provisions the Prometheus data source on Grafana startup, so a fresh
+# stack comes up already wired — no clicking through the UI. The `url` points at
+# the Prometheus *Compose service* (resolved by Docker DNS on the shared net).
+# A fixed `uid` lets the provisioned dashboard reference this source reliably.
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus
+    access: proxy # Grafana server proxies queries (browser never hits Prometheus)
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false

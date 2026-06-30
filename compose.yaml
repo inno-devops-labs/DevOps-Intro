@@ -36,5 +36,35 @@ services:
     security_opt:
       - no-new-privileges:true
 
+  # Lab 8: monitoring stack
+
+  prometheus:
+    image: prom/prometheus:v3.12.0
+    depends_on:
+      quicknotes:
+        condition: service_healthy # Lab 6 healthcheck gates the scrape target
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:13.0.3
+    depends_on:
+      - prometheus
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: quicknotes-lab8 # not the default; override per env
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
 volumes:
   quicknotes-data:
+  grafana-data:
