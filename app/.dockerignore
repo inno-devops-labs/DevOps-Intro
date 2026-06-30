@@ -1,0 +1,6 @@
+data/
+*.md
+Makefile
+.golangci.yml
+Dockerfile
+.dockerignore
