@@ -1,0 +1,78 @@
+---
+- name: Deploy QuickNotes to Lab 5 VM (Docker workaround)
+  hosts: default
+  become: true
+  gather_facts: yes
+
+  vars:
+    quicknotes_user: quicknotes
+    quicknotes_group: quicknotes
+    data_dir: /var/lib/quicknotes
+    listen_addr: ":9090"
+    data_path: "{{ data_dir }}/notes.json"
+    seed_path: "/usr/local/share/quicknotes/seed.json"
+    binary_path: /usr/local/bin/quicknotes
+    service_name: quicknotes
+
+  tasks:
+    - name: Create system group
+      ansible.builtin.group:
+        name: "{{ quicknotes_group }}"
+        system: yes
+        state: present
+
+    - name: Create system user
+      ansible.builtin.user:
+        name: "{{ quicknotes_user }}"
+        system: yes
+        create_home: no
+        shell: /usr/sbin/nologin
+        group: "{{ quicknotes_group }}"
+        state: present
+
+    - name: Ensure data directory exists
+      ansible.builtin.file:
+        path: "{{ data_dir }}"
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        mode: '0750'
+        state: directory
+
+    - name: Copy QuickNotes binary
+      ansible.builtin.copy:
+        src: files/quicknotes
+        dest: "{{ binary_path }}"
+        owner: root
+        group: root
+        mode: '0755'
+      notify: restart quicknotes
+
+    - name: Render systemd unit (for reference, but not used)
+      ansible.builtin.template:
+        src: templates/quicknotes.service.j2
+        dest: "/etc/systemd/system/{{ service_name }}.service"
+        owner: root
+        group: root
+        mode: '0644'
+      notify: restart quicknotes
+
+    - name: Ensure QuickNotes is running (direct start with env vars)
+      ansible.builtin.shell:
+        cmd: |
+          pgrep -f "{{ binary_path }}" || \
+          ADDR={{ listen_addr }} \
+          DATA_PATH={{ data_path }} \
+          SEED_PATH={{ seed_path }} \
+          {{ binary_path }} > /var/log/quicknotes.log 2>&1 &
+        creates: "{{ binary_path }}"
+      register: quicknotes_start
+
+  handlers:
+    - name: restart quicknotes
+      ansible.builtin.shell:
+        cmd: |
+          pkill -f "{{ binary_path }}" || true
+          ADDR={{ listen_addr }} \
+          DATA_PATH={{ data_path }} \
+          SEED_PATH={{ seed_path }} \
+          nohup {{ binary_path }} > /var/log/quicknotes.log 2>&1 &
