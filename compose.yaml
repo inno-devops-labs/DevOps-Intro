@@ -17,6 +17,35 @@ services:
       - quicknotes-data:/data
 
     restart: unless-stopped
+    
+
+  prometheus:
+    image: prom/prometheus:v3.3.1
+
+    ports:
+      - "9090:9090"
+
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+    depends_on:
+      - quicknotes
+  grafana:
+    image: grafana/grafana:11.6.16
+
+    ports:
+      - "3000:3000"
+
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: supersecret123
+
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+
+    depends_on:
+      - prometheus
 
 volumes:
   quicknotes-data:
