@@ -1,0 +1,75 @@
+services:
+  # One-shot init: fixes ownership of the named volume so the nonroot app
+  # (UID 65532) can write to /data. Runs to completion before quicknotes starts.
+  init-data:
+    image: busybox:1.36
+    command: ["sh", "-c", "chown -R 65532:65532 /data"]
+    volumes:
+      - quicknotes-data:/data
+    restart: "no"
+
+  quicknotes:
+    build: ./app
+    image: quicknotes:lab6
+    depends_on:
+      init-data:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/seed.json"
+    volumes:
+      - quicknotes-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/quicknotes", "-healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    user: "65532:65532"
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+
+  # --- Lab 8: monitoring stack ---
+
+  prometheus:
+    image: prom/prometheus:v3.12.0
+    container_name: quicknotes-prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      quicknotes:
+        condition: service_healthy
+
+  grafana:
+    image: grafana/grafana:13.1.0
+    container_name: quicknotes-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?put it in .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+volumes:
+  quicknotes-data:

@@ -1,0 +1,28 @@
+# monitoring/prometheus/alerts.yml
+# Task 2 — one good alert: symptom-based, sustained-breach gated.
+#
+# Fires when the 4xx+5xx ratio exceeds 5% for 5 minutes straight.
+# A single bad request cannot trip it: rate() smooths over a 5m window AND
+# `for: 5m` requires the breach to persist before the alert goes Firing.
+#
+# You can watch the state machine (Inactive -> Pending -> Firing) live at
+# http://localhost:9090/alerts — no Alertmanager needed just to SEE it fire.
+
+groups:
+  - name: quicknotes-golden-signals
+    rules:
+      - alert: QuickNotesHighErrorRate
+        expr: |
+          sum(rate(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+          /
+          sum(rate(quicknotes_http_responses_by_code_total[5m]))
+          > 0.05
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "QuickNotes error ratio above 5%"
+          description: >-
+            More than 5% of HTTP responses have been 4xx/5xx for 5 minutes
+            (current value: {{ $value | humanizePercentage }}).
+          runbook_url: "https://github.com/ivanalpatov2003-design/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md"

@@ -1,0 +1,17 @@
+# monitoring/grafana/provisioning/dashboards/dashboard.yml
+# The "provider" config: tells Grafana to scan a directory on disk for
+# dashboard JSON files at startup and load whatever it finds there.
+# The `path` below MUST match where compose.yaml mounts the JSON dashboards.
+
+apiVersion: 1
+
+providers:
+  - name: golden-signals
+    orgId: 1
+    folder: ""               # load into the General folder
+    type: file
+    disableDeletion: false
+    allowUiUpdates: true     # you can tweak in the UI, but file stays source of truth
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false

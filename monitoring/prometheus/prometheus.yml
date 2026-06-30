@@ -1,0 +1,25 @@
+# monitoring/prometheus/prometheus.yml
+# Lab 8 — Prometheus scrape configuration for QuickNotes.
+#
+# Prometheus is PULL-based: it reaches out to QuickNotes on a schedule and
+# pulls /metrics. QuickNotes does nothing but expose the endpoint.
+
+global:
+  scrape_interval: 15s        # how often we pull metrics from every target
+  scrape_timeout: 10s         # give up on a single scrape after 10s
+  evaluation_interval: 15s    # how often alerting/recording rules are evaluated
+
+# Alerting rules live in a separate file (Task 2).
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+scrape_configs:
+  # One job, one target: the QuickNotes container.
+  - job_name: quicknotes
+    metrics_path: /metrics
+    static_configs:
+      # "quicknotes" must match the Compose SERVICE NAME of your app.
+      # Docker's internal DNS resolves it inside the Compose network; the
+      # port is the one QuickNotes listens on INSIDE the container (8080),
+      # NOT the host-published port.
+      - targets: ["quicknotes:8080"]

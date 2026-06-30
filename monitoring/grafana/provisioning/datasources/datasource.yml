@@ -1,0 +1,15 @@
+# monitoring/grafana/provisioning/datasources/datasource.yml
+# Auto-provisions the Prometheus data source on Grafana startup, set as default.
+# No clicking through the UI — the data source exists the moment Grafana boots.
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    uid: prometheus          # fixed uid so the provisioned dashboard can reference it
+    type: prometheus
+    access: proxy            # Grafana's backend queries Prometheus (server-side)
+    # Point at the Prometheus COMPOSE SERVICE name + its in-container port.
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false          # provisioned-as-code: don't let the UI silently drift
