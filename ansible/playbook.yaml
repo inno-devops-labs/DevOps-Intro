@@ -105,6 +105,7 @@
         owner: root
         group: root
         mode: "0644"
+      register: ansible_pull_local_inventory
       when: ansible_pull_enabled
 
     - name: Ensure ansible-pull checkout directory exists
@@ -150,6 +151,7 @@
       when:
         - ansible_pull_enabled
         - ansible_connection != 'local'
+        - ansible_pull_local_inventory.changed or ansible_pull_service_unit.changed or ansible_pull_timer_unit.changed
 
     - name: Enable and start the ansible-pull timer
       ansible.builtin.systemd:

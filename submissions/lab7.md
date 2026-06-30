@@ -16,11 +16,11 @@ service lifecycle through handlers.
 | App artifact | `ansible/files/quicknotes` (Linux arm64 for this MacBook VM path) |
 | Ansible layout | `ansible/` |
 
-> Note: this repository snapshot initially did not have `ansible` or `vagrant`
-> installed, so the playbook and submission were prepared first and the live VM
-> verification still depends on finishing the local VM-tool install. The command
-> outputs marked **TODO** below must be collected once the Lab 5 VM is running
-> on this MacBook.
+> Note: this lab was completed on an Apple Silicon MacBook, so two small
+> compatibility adjustments were required compared with the original Lab 5/7
+> assumptions: the Lab 5 `Vagrantfile` now picks the guest Go tarball by
+> architecture, and the committed QuickNotes payload in `ansible/files/` was
+> rebuilt for Linux arm64.
 
 ## Implementation summary
 
@@ -31,6 +31,8 @@ The `ansible/` directory contains:
 3. `files/quicknotes`, a static Linux QuickNotes binary built from `app/`.
 4. `templates/quicknotes.service.j2`, a Jinja2 systemd unit whose runtime
    values come from playbook variables.
+5. Bonus templates for `ansible-pull`: a local inventory plus systemd service
+   and timer units.
 
 The playbook performs the required idempotent steps:
 
@@ -63,6 +65,9 @@ ansible/
 ├── files/
 │   └── quicknotes
 └── templates/
+    ├── ansible-pull-quicknotes.service.j2
+    ├── ansible-pull-quicknotes.timer.j2
+    ├── quicknotes-local.ini.j2
     └── quicknotes.service.j2
 ```
 
@@ -87,6 +92,15 @@ ansible/
     quicknotes_data_path: /var/lib/quicknotes/notes.json
     quicknotes_seed_path: /opt/quicknotes/app/seed.json
     listen_addr: ":8080"
+    quicknotes_restart_sec: 4
+    ansible_pull_enabled: true
+    ansible_pull_repo_url: https://github.com/Hidancloud/DevOps-Intro.git
+    ansible_pull_repo_branch: feature/lab7
+    ansible_pull_checkout_dir: /var/lib/ansible-pull/quicknotes
+    ansible_pull_inventory_path: /etc/ansible/quicknotes-local.ini
+    ansible_pull_playbook_path: ansible/playbook.yaml
+    ansible_pull_service_name: ansible-pull-quicknotes.service
+    ansible_pull_timer_name: ansible-pull-quicknotes.timer
 
   tasks:
     - name: Create the quicknotes system group
@@ -141,6 +155,87 @@ ansible/
         enabled: true
         state: started
 
+    - name: Install ansible-pull dependencies
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      when: ansible_pull_enabled
+
+    - name: Ensure ansible config directory exists
+      ansible.builtin.file:
+        path: /etc/ansible
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      when: ansible_pull_enabled
+
+    - name: Install ansible-pull local inventory
+      ansible.builtin.template:
+        src: templates/quicknotes-local.ini.j2
+        dest: "{{ ansible_pull_inventory_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+      register: ansible_pull_local_inventory
+      when: ansible_pull_enabled
+
+    - name: Ensure ansible-pull checkout directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_pull_checkout_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      when: ansible_pull_enabled
+
+    - name: Install ansible-pull service
+      ansible.builtin.template:
+        src: templates/ansible-pull-quicknotes.service.j2
+        dest: "/etc/systemd/system/{{ ansible_pull_service_name }}"
+        owner: root
+        group: root
+        mode: "0644"
+      register: ansible_pull_service_unit
+      when: ansible_pull_enabled
+
+    - name: Install ansible-pull timer
+      ansible.builtin.template:
+        src: templates/ansible-pull-quicknotes.timer.j2
+        dest: "/etc/systemd/system/{{ ansible_pull_timer_name }}"
+        owner: root
+        group: root
+        mode: "0644"
+      register: ansible_pull_timer_unit
+      when: ansible_pull_enabled
+
+    - name: Reload systemd when ansible-pull units change
+      ansible.builtin.systemd:
+        daemon_reload: true
+      when:
+        - ansible_pull_enabled
+        - ansible_pull_service_unit.changed or ansible_pull_timer_unit.changed
+
+    - name: Prime ansible-pull once so the timer has a last-run anchor
+      ansible.builtin.systemd:
+        name: "{{ ansible_pull_service_name }}"
+        state: started
+      when:
+        - ansible_pull_enabled
+        - ansible_connection != 'local'
+        - ansible_pull_local_inventory.changed or ansible_pull_service_unit.changed or ansible_pull_timer_unit.changed
+
+    - name: Enable and start the ansible-pull timer
+      ansible.builtin.systemd:
+        name: "{{ ansible_pull_timer_name }}"
+        enabled: true
+        state: started
+      when: ansible_pull_enabled
+
   handlers:
     - name: restart quicknotes
       ansible.builtin.systemd:
@@ -153,7 +248,7 @@ ansible/
 
 ```ini
 [quicknotes_vm]
-quicknotes-vm ansible_host=127.0.0.1 ansible_port=2222 ansible_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/default/virtualbox/private_key ansible_python_interpreter=/usr/bin/python3
+quicknotes-vm ansible_host=127.0.0.1 ansible_port=2222 ansible_user=vagrant ansible_ssh_private_key_file=.vagrant/machines/default/virtualbox/private_key ansible_python_interpreter=/usr/bin/python3 ansible_ssh_common_args='-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o IdentitiesOnly=yes -o PubkeyAcceptedKeyTypes=+ssh-rsa -o HostKeyAlgorithms=+ssh-rsa'
 ```
 
 If `vagrant ssh-config` prints a different forwarded port or key path on your
@@ -178,7 +273,7 @@ Environment=DATA_PATH={{ quicknotes_data_path }}
 Environment=SEED_PATH={{ quicknotes_seed_path }}
 ExecStart={{ quicknotes_binary_dest }}
 Restart=on-failure
-RestartSec=3
+RestartSec={{ quicknotes_restart_sec }}
 
 [Install]
 WantedBy=multi-user.target
@@ -196,6 +291,11 @@ GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
 ```
 
 ## Task 1 — Run + verify
+
+The Task 1 dry-run and first real-run evidence below was captured before the
+bonus `ansible-pull` block was appended to the playbook. The later Task 2
+idempotency proof and Bonus section show that the final extended playbook still
+converges cleanly on the same VM.
 
 ### Dry-run
 
@@ -353,8 +453,35 @@ skipping: [quicknotes-vm]
 TASK [Enable and start the quicknotes service] *********************************
 ok: [quicknotes-vm]
 
+TASK [Install ansible-pull dependencies] ***************************************
+ok: [quicknotes-vm]
+
+TASK [Ensure ansible config directory exists] **********************************
+ok: [quicknotes-vm]
+
+TASK [Install ansible-pull local inventory] ************************************
+ok: [quicknotes-vm]
+
+TASK [Ensure ansible-pull checkout directory exists] ***************************
+ok: [quicknotes-vm]
+
+TASK [Install ansible-pull service] ********************************************
+ok: [quicknotes-vm]
+
+TASK [Install ansible-pull timer] **********************************************
+ok: [quicknotes-vm]
+
+TASK [Reload systemd when ansible-pull units change] ***************************
+skipping: [quicknotes-vm]
+
+TASK [Prime ansible-pull once so the timer has a last-run anchor] **************
+skipping: [quicknotes-vm]
+
+TASK [Enable and start the ansible-pull timer] *********************************
+ok: [quicknotes-vm]
+
 PLAY RECAP *********************************************************************
-quicknotes-vm              : ok=6    changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+quicknotes-vm              : ok=13   changed=0    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0
 ```
 
 ### Selective change: template only + handler fired
@@ -451,6 +578,107 @@ it catches bugs like accidentally changing `ADDR=:8080` to `ADDR=8080`, pointing
 production-impacting config mistakes that a dry-run count alone would not make
 obvious.
 
+## Bonus Task — `ansible-pull` GitOps loop
+
+### Implementation
+
+The bonus adds three VM-local artifacts:
+
+1. `/etc/ansible/quicknotes-local.ini`
+2. `/etc/systemd/system/ansible-pull-quicknotes.service`
+3. `/etc/systemd/system/ansible-pull-quicknotes.timer`
+
+The local inventory targets the VM itself via `ansible_connection=local`, so
+the same `ansible/playbook.yaml` can run either from the host or from inside
+the VM. The systemd service executes:
+
+```bash
+/usr/bin/ansible-pull \
+  -U https://github.com/Hidancloud/DevOps-Intro.git \
+  -C feature/lab7 \
+  -d /var/lib/ansible-pull/quicknotes \
+  -i /etc/ansible/quicknotes-local.ini \
+  ansible/playbook.yaml
+```
+
+The timer uses the required cadence:
+
+```ini
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+Unit=ansible-pull-quicknotes.service
+```
+
+### Timer proof
+
+`systemctl list-timers` on the VM:
+
+```text
+Tue 2026-06-30 14:14:56 UTC 4min 44s Tue 2026-06-30 14:09:56 UTC   15s ago ansible-pull-quicknotes.timer ansible-pull-quicknotes.service
+```
+
+The local inventory installed in the VM:
+
+```ini
+[quicknotes_vm]
+quicknotes-vm ansible_connection=local ansible_python_interpreter=/usr/bin/python3
+```
+
+### Convergence demonstration
+
+To produce a non-destructive but visible reconcile, I changed the playbook
+variable `quicknotes_restart_sec` from `3` to `4`, committed it to
+`feature/lab7`, and pushed to GitHub.
+
+Timeline:
+
+| Event | Time |
+|-------|------|
+| Git commit pushed (`5b92184`) | `2026-06-30T17:05:27+03:00` |
+| Next timer fire on VM | `2026-06-30 14:09:56 UTC` |
+| State observed reconciled | `2026-06-30 14:10:11 UTC` |
+
+State proof from the VM after the timer-fired run:
+
+```text
+16:RestartSec=4
+```
+
+Relevant `journalctl` excerpt:
+
+```text
+Jun 30 14:10:06 quicknotes-vm ansible-pull[8484]: RUNNING HANDLER [restart quicknotes] *******************************************
+Jun 30 14:10:06 quicknotes-vm ansible-pull[8484]: changed: [quicknotes-vm]
+Jun 30 14:10:06 quicknotes-vm ansible-pull[8484]: PLAY RECAP *********************************************************************
+Jun 30 14:10:06 quicknotes-vm ansible-pull[8484]: quicknotes-vm              : ok=15   changed=2    unreachable=0    failed=0    skipped=2    rescued=0    ignored=0
+Jun 30 14:10:06 quicknotes-vm ansible-pull[8484]: Starting Ansible Pull at 2026-06-30 14:09:56
+Jun 30 14:10:06 quicknotes-vm ansible-pull[8484]: /usr/bin/ansible-pull -U https://github.com/Hidancloud/DevOps-Intro.git -C feature/lab7 -d /var/lib/ansible-pull/quicknotes -i /etc/ansible/quicknotes-local.ini ansible/playbook.yaml
+```
+
+QuickNotes remained healthy after reconciliation:
+
+```text
+{"notes":4,"status":"ok"}
+```
+
+### Design questions
+
+**h) What is the security benefit of `ansible-pull` vs push mode?**
+In pull mode, the VM does not need to accept inbound SSH from a central control
+node during each deploy. That shrinks the attack surface: no long-lived inbound
+management path needs to stay open, and compromise of the control node does not
+automatically grant shell access into every managed host. The node only needs
+outbound access to fetch Git, then it reconciles locally.
+
+**i) What is the Kubernetes-layer equivalent, and why is this a fair simulator?**
+The same pattern at the Kubernetes layer is commonly associated with **Argo CD**
+or **Flux**: Git is the source of truth, and an in-cluster agent pulls desired
+state and reconciles the live system to match. `ansible-pull` is a fair VM-layer
+simulator because the control loop is the same even though the resource model is
+different: commit to Git, agent detects new desired state, apply drift-correcting
+changes locally, and repeat on a schedule.
+
 ## Notes
 
 - The inventory assumes the standard Vagrant VM created from the repo root with
@@ -459,5 +687,3 @@ obvious.
   for either `amd64` or `arm64`, because this MacBook is Apple Silicon.
 - The binary is committed intentionally because the lab specification requires an
   `ansible/files/quicknotes` payload that the playbook ships to the VM.
-- The Lab 7 bonus (`ansible-pull` + systemd timer) was not implemented in this
-  branch because it needs a reachable Git clone URL and live VM verification.
