@@ -8,6 +8,8 @@
     curl
     jq
     gh
+    ansible
+    ansible-lint
   ];
 
   languages.go.enable = true;
