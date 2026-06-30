@@ -1,0 +1,16 @@
+{
+  "target": "https://intensity-biological-beverages-perfectly.trycloudflare.com/health",
+  "regions": [
+    "DE",
+    "SG",
+    "US"
+  ],
+  "window": {
+    "start": "2026-06-30T15:01:43Z",
+    "end": "2026-06-30T15:35:35Z",
+    "duration_seconds": 2032,
+    "interval_seconds": 60,
+    "samples": 31
+  },
+  "samples": 31
+}

@@ -32,6 +32,19 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  blackbox-exporter:
+    image: prom/blackbox-exporter:v0.27.0
+    command:
+      - --config.file=/etc/blackbox_exporter/blackbox.yml
+    ports:
+      - "9115:9115"
+    volumes:
+      - ./monitoring/blackbox/blackbox.yml:/etc/blackbox_exporter/blackbox.yml:ro
+    depends_on:
+      quicknotes:
+        condition: service_healthy
+    restart: unless-stopped
+
   grafana:
     image: grafana/grafana:13.0.3-slim
     environment:

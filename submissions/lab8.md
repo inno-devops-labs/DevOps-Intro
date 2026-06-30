@@ -21,6 +21,8 @@ auto-load a four-panel golden-signals dashboard, define one sustained high-error
 
 ```text
 monitoring/
+├── blackbox/
+│   └── blackbox.yml
 ├── prometheus/
 │   ├── alerts.yml
 │   └── prometheus.yml
@@ -33,6 +35,7 @@ monitoring/
 │       └── datasources/
 │           └── datasource.yml
 └── scripts/
+    ├── checkhost-multi-region.sh
     ├── generate-traffic.sh
     └── trigger-high-error-rate.sh
 ```
@@ -50,6 +53,24 @@ rule_files:
   - /etc/prometheus/alerts.yml
 
 scrape_configs:
+  - job_name: blackbox-internal
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+      - targets:
+          - http://quicknotes:8080/health
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__address__]
+        target_label: __address__
+        replacement: blackbox-exporter:9115
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: job
+        replacement: blackbox-internal
+
   - job_name: quicknotes
     static_configs:
       - targets:
@@ -135,6 +156,19 @@ services:
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+    depends_on:
+      quicknotes:
+        condition: service_healthy
+    restart: unless-stopped
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:v0.27.0
+    command:
+      - --config.file=/etc/blackbox_exporter/blackbox.yml
+    ports:
+      - "9115:9115"
+    volumes:
+      - ./monitoring/blackbox/blackbox.yml:/etc/blackbox_exporter/blackbox.yml:ro
     depends_on:
       quicknotes:
         condition: service_healthy
@@ -386,6 +420,107 @@ This alert is symptom-based because it tracks what users actually observe: error
 **g) Alert fatigue threshold.**
 If an alert pages roughly more than 20% of the time without meaningful user impact, it is too noisy and needs tuning. That is a practical threshold where responders start distrusting the signal instead of treating it as urgent.
 
+## Bonus Task — Synthetic Monitoring From the Outside
+
+### Public URL and probe setup
+
+For the external vantage point, I exposed the local QuickNotes instance through a
+Cloudflare quick tunnel:
+
+```bash
+docker run -d --name quicknotes-tunnel --network bridge \
+  cloudflare/cloudflared:latest \
+  tunnel --no-autoupdate --url http://host.docker.internal:8080
+```
+
+Tunnel URL used for the run:
+
+```text
+https://intensity-biological-beverages-perfectly.trycloudflare.com/health
+```
+
+Instead of Checkly, I used the equivalent free synthetic service
+`api.check-host.cc`, which satisfies the lab's "or equivalent" clause. The
+collector script `monitoring/scripts/checkhost-multi-region.sh` issued one HTTP
+check per minute, treated non-`200` responses as failures, and summarized three
+regions:
+
+- Germany: `DE-FFM-KRK` (Frankfurt am Main)
+- Singapore: `SG-SIN-FDCServers`
+- United States: `US-DAL-Leora` (Dallas)
+
+Run window:
+
+```text
+start: 2026-06-30T15:01:43Z
+end:   2026-06-30T15:35:35Z
+span:  2032 s (~33.9 min)
+cadence: 60 s
+```
+
+### External summary
+
+```json
+$ cat monitoring/results/checkhost/summary.json
+{
+  "overall": {
+    "checks": 93,
+    "errors": 0,
+    "p50_seconds": 0.428,
+    "p95_seconds": 1.284
+  },
+  "nodes": {
+    "DE": { "p50_seconds": 0.389, "p95_seconds": 0.619, "errors": 0 },
+    "SG": { "p50_seconds": 0.99,  "p95_seconds": 1.549, "errors": 0 },
+    "US": { "p50_seconds": 0.418, "p95_seconds": 0.478, "errors": 0 }
+  }
+}
+```
+
+All three external regions stayed below the lab's `2 s` latency threshold at
+the `p95` level, and none returned a non-`200` status during the measured
+window.
+
+### Internal blackbox summary over the same window
+
+The Prometheus-side comparison used the internal blackbox probe on
+`http://quicknotes:8080/health` and queried the same time window
+(`2026-06-30T15:01:43Z` to `2026-06-30T15:35:35Z`) with a `15s` step.
+
+```json
+{
+  "samples": 136,
+  "p50_seconds": 0.002150833,
+  "p95_seconds": 0.002642417,
+  "errors": 0
+}
+```
+
+### Internal vs external comparison
+
+| Metric | Prometheus (inside the Compose net) | External synthetic (DE + SG + US) |
+|--------|-------------------------------------|-----------------------------------|
+| Avg latency p50 | `0.0022 s` | `0.428 s` |
+| Avg latency p95 | `0.0026 s` | `1.284 s` |
+| Errors observed | `0 / 136` | `0 / 93` |
+
+### Failure-mode analysis
+
+The external synthetic probe would catch failures in the public path that the
+internal Prometheus probe cannot see: Cloudflare tunnel issues, DNS mistakes,
+edge routing problems, TLS handshake failures, or an ISP/regional reachability
+issue between users and the edge. That is why the external p50/p95 values are
+two orders of magnitude slower than the internal ones even though both saw zero
+errors: the external path includes Internet and edge overhead, while the
+internal probe only measures an in-network container-to-container request. On
+the other hand, Prometheus can catch failures that stay inside the cluster or
+service mesh boundary, such as a metrics endpoint disappearing, an internal-only
+health endpoint regressing, or fast transient failures sampled every 15 seconds
+that a once-per-minute synthetic probe could miss. In practice, the two signals
+are complementary: internal probing is sharper for service behavior, while
+external probing is the better "can a real user reach me?" detector.
+
 ## Notes
 
-- Bonus synthetic monitoring was not attempted in this environment because it requires an externally reachable QuickNotes endpoint and a third-party service account.
+- The bonus collector was hardened during the run to tolerate a transient
+  `api.check-host.cc` `502` without aborting the full measurement window.
