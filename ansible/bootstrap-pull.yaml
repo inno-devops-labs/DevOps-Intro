@@ -25,6 +25,14 @@
         update_cache: true
         cache_valid_time: 3600
 
+    - name: Ensure /etc/ansible exists
+      ansible.builtin.file:
+        path: /etc/ansible
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
     - name: Install local inventory for ansible-pull
       ansible.builtin.copy:
         src: files/inventory-local.ini
