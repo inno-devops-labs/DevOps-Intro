@@ -1,0 +1,18 @@
+[Unit]
+Description=QuickNotes API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{ quicknotes_user }}
+WorkingDirectory={{ data_dir }}
+ExecStart=/usr/local/bin/quicknotes
+Environment="ADDR={{ listen_addr }}"
+Environment="DATA_PATH={{ data_dir }}/notes.json"
+Environment="SEED_PATH={{ seed_path }}"
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
