@@ -75,3 +75,144 @@ At `5s`, you create much higher storage churn and more scrape overhead for very 
 #### d) **Why provision Grafana from files** instead of clicking through the UI on every fresh stack?
 
 Provisioning Grafana from files makes the monitoring stack reproducible, reviewable, and version-controlled. A fresh `docker compose up` gets the same datasource and dashboard every time without manual UI clicks. That also means changes to queries, panel titles, or datasource wiring go through normal Git review instead of living as undocumented state inside one developer's local Grafana volume.
+
+## Task 2 — One Good Alert + Runbook
+
+### Alert rule definition
+
+Rule file:
+
+- [monitoring/prometheus/rules/high-error-rate.yml](../monitoring/prometheus/rules/high-error-rate.yml)
+
+```yaml
+groups:
+  - name: quicknotes-alerts
+    rules:
+      - alert: QuickNotesHighErrorRate
+        expr: |
+          sum(rate(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+            /
+          clamp_min(sum(rate(quicknotes_http_requests_total[5m])), 0.000001)
+            > 0.05
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: QuickNotes error ratio is above 5%
+          description: QuickNotes has served more than 5% error responses for 5 minutes.
+          runbook: docs/runbook/high-error-rate.md
+```
+
+This is a symptom alert because it pages on user-visible failures, not on a low-level host metric.
+
+### Trigger method
+
+I triggered the alert with sustained mixed traffic for more than 7 minutes:
+
+- healthy traffic: repeated `GET /notes`
+- failing traffic: repeated malformed `POST /notes` requests, which QuickNotes correctly returned as `400`
+
+This produced a sustained error ratio close to `0.49`, well above the `0.05` threshold.
+
+### Observed alert transition
+
+Prometheus API samples during the run:
+
+```text
+2026-06-30T17:54:01Z state=inactive ratio=0 ok=1 bad=1
+2026-06-30T17:55:01Z state=inactive ratio=0.47702171072953575 ok=2213 bad=2213
+2026-06-30T17:56:01Z state=pending ratio=0.4804334754537703 ok=4474 bad=4474
+2026-06-30T17:57:01Z state=pending ratio=0.4813993459198989 ok=6716 bad=6716
+2026-06-30T17:58:01Z state=pending ratio=0.4856468217381693 ok=8961 bad=8961
+2026-06-30T17:59:01Z state=pending ratio=0.49826494689064627 ok=11192 bad=11192
+2026-06-30T18:00:01Z state=pending ratio=0.4989169335091354 ok=13362 bad=13362
+2026-06-30T18:01:01Z state=pending ratio=0.49891386475255 ok=15604 bad=15604
+```
+
+Final alert API output in `firing` state:
+
+```json
+{
+  "status": "success",
+  "data": {
+    "alerts": [
+      {
+        "labels": {
+          "alertname": "QuickNotesHighErrorRate",
+          "severity": "page"
+        },
+        "annotations": {
+          "description": "QuickNotes has served more than 5% error responses for 5 minutes.",
+          "runbook": "docs/runbook/high-error-rate.md",
+          "summary": "QuickNotes error ratio is above 5%"
+        },
+        "state": "firing",
+        "activeAt": "2026-06-30T17:55:04.682872047Z",
+        "value": "4.989169335091354e-01"
+      }
+    ]
+  }
+}
+```
+
+Prometheus rule state at firing time:
+
+```text
+state: firing
+severity: page
+runbook: docs/runbook/high-error-rate.md
+lastEvaluation: 2026-06-30T18:01:04.658174793Z
+```
+
+### Screenshots:
+
+![Errors dashboard](./assets/errors_dashboard.png)
+Error ratio dashboard
+
+![Alert firing](./assets/alert_firing.png)
+Firing an alert
+
+### Runbook
+
+Runbook file:
+
+- [docs/runbook/high-error-rate.md](../docs/runbook/high-error-rate.md)
+
+```markdown
+# High Error Rate
+
+## What this alert means
+
+QuickNotes is returning more than 5% `4xx` and `5xx` responses for at least 5 minutes, which indicates sustained user-visible failures.
+
+## Triage steps
+
+1. Open Prometheus or Grafana and confirm the alert is real by checking the current error ratio together with request traffic volume.
+2. Split the failing traffic by status code and endpoint to determine whether the spike is mostly client errors (`400`/`404`) or server-side failures (`500`).
+3. Check recent QuickNotes container logs and `docker compose ps` to confirm the application is still healthy and has not restarted unexpectedly.
+4. Compare the Errors panel with the Traffic and Saturation panels to see whether the incident lines up with a traffic spike, data growth, or a specific request pattern.
+
+## Mitigations
+
+1. Stop the bleeding by throttling or blocking the failing request pattern if one bad client or script is generating malformed traffic.
+2. Roll back the most recent QuickNotes configuration or image change if the error spike started immediately after a deploy.
+3. If the data file is corrupted or the app is unhealthy, restart the QuickNotes container and validate `/health` before sending more traffic.
+
+## Post-incident
+
+Write a blameless postmortem with timeline, root cause, customer impact, and follow-up actions. You can use the course guidance in [Lecture 1](../../lectures/lec1.md) under the blameless postmortem section as the template baseline.
+```
+
+### Design answers
+
+#### e) **Why "sustained for 5 minutes" instead of "fire immediately on first bad request"?**
+
+Because one bad request is not enough evidence of a user-impacting incident. A single malformed request, a browser refresh race, or one client bug can create isolated `4xx` responses without meaning the service is degraded for everyone else. Requiring the breach to persist for 5 minutes filters out transient spikes and pages only when the symptom is sustained long enough to deserve human interruption.
+
+#### f) **Symptom alerts vs cause alerts:** the alert above is a symptom alert. What's an example of a *cause* alert someone might write for QuickNotes? Why is it worse?
+
+A cause alert would be something like `container_cpu_usage > 80%` or `memory usage > 90%` on the QuickNotes container. That is worse because it pages on an implementation detail instead of on what users actually experience. High CPU might be harmless during a short burst, and low CPU does not guarantee the service is healthy. Symptom alerts are better because they tie directly to failing requests or latency that users can feel.
+
+#### g) **Alert fatigue:** Lecture 8 cited it as the bigger danger than too few alerts. What's a quantitative threshold that would mean your alert is too noisy?
+
+If roughly 20% or more of pages turn out to be false positives or non-actionable, the alert is too noisy and should be redesigned. That means one in five wake-ups did not correspond to real user harm, which is already enough to train responders to distrust the signal. For a paging alert, the expected false-positive rate should be much lower than that.
