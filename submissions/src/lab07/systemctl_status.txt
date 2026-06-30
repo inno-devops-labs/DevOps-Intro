@@ -1,0 +1,9 @@
+● quicknotes.service - QuickNotes service
+     Loaded: loaded (/etc/systemd/system/quicknotes.service; enabled; vendor preset: enabled)
+     Active: active (running) since Tue 2026-06-30 18:28:01 UTC; 1min 0s ago
+   Main PID: 1935 (quicknotes)
+      Tasks: 7 (limit: 1099)
+     Memory: 1.0M
+        CPU: 4ms
+     CGroup: /system.slice/quicknotes.service
+             └─1935 /usr/local/bin/quicknotes

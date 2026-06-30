@@ -1,0 +1,4 @@
+lab5-vm | SUCCESS => {
+    "changed": false,
+    "ping": "pong"
+}

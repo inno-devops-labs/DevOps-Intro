@@ -1,0 +1,24 @@
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Ensure quicknotes system user exists] ************************************
+ok: [lab5-vm]
+
+TASK [Ensure data directory exists] ********************************************
+ok: [lab5-vm]
+
+TASK [Copy seed file] **********************************************************
+ok: [lab5-vm]
+
+TASK [Copy QuickNotes binary] **************************************************
+ok: [lab5-vm]
+
+TASK [Render systemd unit] *****************************************************
+ok: [lab5-vm]
+
+TASK [Enable and start QuickNotes service] *************************************
+ok: [lab5-vm]
+
+PLAY RECAP *********************************************************************
+lab5-vm                    : ok=6    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
