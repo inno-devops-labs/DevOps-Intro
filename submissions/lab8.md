@@ -335,3 +335,5 @@ Failure Alerts: 0
 **What Checkly catches that Prometheus cannot:** A failure in the public network path — the Dev Tunnel dropping connections, a TLS certificate issue, a DNS resolution failure for the public hostname, or regional routing problems between user locations and the server. Prometheus scrapes from inside the Compose network over the service name `quicknotes:8080`; it reports `up` even if the public-facing tunnel has completely stopped forwarding traffic.
 
 **What Prometheus catches that Checkly cannot:** Internal process-level failures that don't affect the `/health` endpoint — a goroutine panic that only breaks POST `/notes` while GET `/health` still returns 200, a slow memory leak visible in process metrics before it causes timeouts, a data-layer error producing 500s only on write paths, or the `quicknotes_notes_total` gauge drifting unexpectedly due to a delete bug. The synthetic probe only knows what the one probed endpoint returns; Prometheus sees all routes and all internal counters.
+
+![alt text](checklyhq.png)
