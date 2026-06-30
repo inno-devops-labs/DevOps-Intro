@@ -191,7 +191,7 @@ The service was successfully started and responded correctly to health check req
 
 ### 1.5 Design questions
 
-a) What's the difference between command: 
+#### a) What's the difference between command: 
 and the dedicated modules (apt, file, copy, systemd)? 
 Which is idempotent, and why does it matter?
 
@@ -200,8 +200,7 @@ Dedicated modules such as `apt`, `file`, `copy`, `template`, and `systemd` are s
 They inspect the current state of the target system and only perform changes when the actual state differs from the desired state.
 These modules are idempotent because repeated executions converge to the same result without introducing additional changes. Idempotency is important because infrastructure automation should be safe to run repeatedly and should not continuously modify an already-correct system.
 
-b) notify: and handlers: when does a handler fire? When does it not fire? Why is that the right default?
-
+#### b) notify: and handlers: when does a handler fire? When does it not fire? Why is that the right default?
 handler is triggered only when a task that references it through `notify` reports a change.
 In this lab, the handler is notified by the `copy` task that deploys the binary 
 and the `template` task that deploys the systemd unit.
@@ -209,7 +208,7 @@ If nether task changes anything, the handler is not executed.
 This behavior is desirable because service restarts are disruptive operations.
 Restarting a service only when configuration or application artifacts change minimizes downtime and avoids unnecessary work.
 
-c) Variable hierarchy: Ansible has at least 22 levels of variable precedence.
+#### c) Variable hierarchy: Ansible has at least 22 levels of variable precedence.
 List the top 3 places you'd put a variable for this lab 
 (defaults, group_vars, playbook vars, …) and why
 
@@ -222,7 +221,7 @@ and deployment-specific values easy to understand.
 In this lab I used playbook variables because the deployment consists 
 of a single playbook and a single host group.
 
-d) gather_facts: true is the default. 
+#### d) gather_facts: true is the default. 
 Do you need it for this playbook? 
 What does turning it off save you per run?
 
@@ -339,7 +338,6 @@ The diff clearly shows the exact change that would be applied without modifying 
 ### 2.4 Design questions
 
 #### e) Why does the second run report changed=0?
-
 The second run reports `changed=0` because Ansible compares 
 the desired state described in the playbook with the actual state on the managed host.
 The `file` module checks file ownership, permissions, and existence.
@@ -348,7 +346,6 @@ When all managed resources already match the desired state,
 no changes are required and every task reports `ok`.
 
 #### f) What would happen if shell was used instead of template?
-
 Using:
 ```yaml
 shell: 'echo "ADDR=..." > /etc/systemd/system/quicknotes.service'
@@ -365,7 +362,6 @@ The `template` module avoids these problems by generating deterministic content
 and comparing it before applying changes.
 
 #### g) What bug would --check --diff catch that plain --check might miss?
-
 `--check` reports that a file would change but does not clearly show what changed.
 `--check --diff` displays the exact modification.
 For example, if a template variable accidentally changed from:
@@ -379,3 +375,75 @@ ADDR=:9009
 plain `--check` would only indicate that the template would be modified.
 `--diff` immediately reveals the incorrect value before deployment,
 making configuration mistakes easier to detect and preventing accidental production outages.
+
+## Bonus Task — ansible-pull GitOps Loop
+
+### B.1 Systemd timer
+
+Timer status:
+```bash
+vagrant@quicknotes-vm:~$ systemctl list-timers | grep ansible-pull
+Tue 2026-06-30 08:14:47 UTC 4min 51s 
+Tue 2026-06-30 08:09:47 UTC  8s ago 
+ansible-pull.timer           
+ansible-pull.service
+```
+The VM is configured to run ansible-pull automatically every 5 minutes.
+
+### B.2 Convergence demonstration
+
+A configuration change was committed and pushed to the feature/lab7 branch.
+
+Timeline:
+
+| Event | Time (UTC) |
+|---------|---------|
+| Git commit pushed | 08:17 |
+| Timer execution | 08:22 |
+| Configuration reconciled | 08:22 |
+
+Journal excerpt:
+```text
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: PLAY [Deploy QuickNotes] *******************************************************
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: TASK [Create quicknotes user] **************************************************
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: ok: [127.0.0.1]
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: TASK [Create data directory] ***************************************************
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: ok: [127.0.0.1]
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: TASK [Copy quicknotes binary] **************************************************
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: ok: [127.0.0.1]
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: TASK [Deploy systemd unit] *****************************************************
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: changed: [127.0.0.1]
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: TASK [Reload systemd] **********************************************************
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: ok: [127.0.0.1]
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: TASK [Enable and start service] ************************************************
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: ok: [127.0.0.1]
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: RUNNING HANDLER [restart quicknotes] *******************************************
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: changed: [127.0.0.1]
+Jun 30 08:11:59 quicknotes-vm ansible-pull[4897]: PLAY RECAP *********************************************************************
+```
+Verification:
+```bash
+vagrant@quicknotes-vm:~$ curl localhost:10080/health
+{"notes":0,"status":"ok"}
+```
+This confirms that the VM automatically converged to the desired state from Git without running ansible-playbook from the control node.
+
+### B.3 Design questions
+
+#### h) What is the security benefit of ansible-pull?
+In pull mode the managed node initiates outbound connections to Git
+and retrieves its desired configuration itself.
+This reduces the need for inbound SSH access from a centralized control node
+and limits the distribution of privileged credentials. 
+The attack surface is smaller because the VM does not need to accept configuration
+changes pushed from external hosts.
+
+#### i) What is the equivalent Kubernetes pattern?
+At the Kubernetes layer this pattern is commonly known as GitOps
+and is typically implemented with tools such as Argo CD or Flux.
+These tools continuously compare the desired state stored in Git
+with the actual cluster state and automatically reconcile differences.
+ansible-pull applies the same concept at the VM layer. 
+Git acts as the source of truth and the VM periodically converges itself toward the desired configuration.
+
+
