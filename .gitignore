@@ -26,6 +26,9 @@ app/data/
 # Vagrant runtime state (Lab 5) — the Vagrantfile IS committed; .vagrant/ is not
 .vagrant/
 
+# Ansible cache (Lab 7)
+.ansible
+
 # Nix build symlinks (Lab 11) — flake.nix + flake.lock ARE committed; result is not
 result
 result-*

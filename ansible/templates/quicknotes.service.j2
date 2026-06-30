@@ -1,0 +1,20 @@
+[Unit]
+Description=QuickNotes Service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{ user }}
+Group={{ user }}
+WorkingDirectory={{ data_dir }}
+ExecStart={{ bin }}
+Restart=on-failure
+RestartSec=5s
+
+Environment="ADDR={{ addr }}"
+Environment="DATA_PATH={{ data_path }}"
+Environment="SEED_PATH={{ seed_path }}"
+
+[Install]
+WantedBy=multi-user.target
