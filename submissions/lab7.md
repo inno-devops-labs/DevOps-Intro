@@ -49,6 +49,11 @@ The playbook performs the required idempotent steps:
 on OS facts, CPU architecture, or package manager state; skipping the setup step
 keeps runs shorter and makes the idempotency proof tighter.
 
+On this MacBook, the inventory also had to mirror `vagrant ssh-config` by
+disabling strict host-key checks for the ephemeral local VM SSH endpoint. That
+matched Vagrant's own SSH behavior and resolved an initial `Host key
+verification failed` error from Ansible.
+
 ## Repository layout
 
 ```text
@@ -198,7 +203,36 @@ GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
 ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml --check
 ```
 
-**TODO:** paste the output.
+```text
+PLAY [Deploy QuickNotes to the Lab 5 VM] ***************************************
+
+TASK [Create the quicknotes system group] **************************************
+changed: [quicknotes-vm]
+
+TASK [Create the quicknotes system user] ***************************************
+changed: [quicknotes-vm]
+
+TASK [Ensure the quicknotes data directory exists] *****************************
+changed: [quicknotes-vm]
+
+TASK [Install the QuickNotes binary] *******************************************
+changed: [quicknotes-vm]
+
+TASK [Install the systemd unit] ************************************************
+changed: [quicknotes-vm]
+
+TASK [Reload systemd when the unit changes] ************************************
+ok: [quicknotes-vm]
+
+TASK [Enable and start the quicknotes service] *********************************
+ok: [quicknotes-vm]
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+changed: [quicknotes-vm]
+
+PLAY RECAP *********************************************************************
+quicknotes-vm              : ok=8    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
 
 ### First real run
 
@@ -206,7 +240,36 @@ ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml --check
 ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml
 ```
 
-**TODO:** paste the full PLAY RECAP from the first run.
+```text
+PLAY [Deploy QuickNotes to the Lab 5 VM] ***************************************
+
+TASK [Create the quicknotes system group] **************************************
+changed: [quicknotes-vm]
+
+TASK [Create the quicknotes system user] ***************************************
+changed: [quicknotes-vm]
+
+TASK [Ensure the quicknotes data directory exists] *****************************
+changed: [quicknotes-vm]
+
+TASK [Install the QuickNotes binary] *******************************************
+changed: [quicknotes-vm]
+
+TASK [Install the systemd unit] ************************************************
+changed: [quicknotes-vm]
+
+TASK [Reload systemd when the unit changes] ************************************
+ok: [quicknotes-vm]
+
+TASK [Enable and start the quicknotes service] *********************************
+ok: [quicknotes-vm]
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+changed: [quicknotes-vm]
+
+PLAY RECAP *********************************************************************
+quicknotes-vm              : ok=8    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
 
 ### Reachability proof
 
@@ -214,8 +277,9 @@ ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml
 curl -s http://localhost:18080/health
 ```
 
-**TODO:** paste the output proving the service is reachable through the Vagrant
-port-forward.
+```text
+{"notes":4,"status":"ok"}
+```
 
 ### Design questions
 
@@ -265,7 +329,33 @@ run and makes repeated idempotency checks faster.
 ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml
 ```
 
-**TODO:** paste the second-run PLAY RECAP showing `changed=0`.
+```text
+PLAY [Deploy QuickNotes to the Lab 5 VM] ***************************************
+
+TASK [Create the quicknotes system group] **************************************
+ok: [quicknotes-vm]
+
+TASK [Create the quicknotes system user] ***************************************
+ok: [quicknotes-vm]
+
+TASK [Ensure the quicknotes data directory exists] *****************************
+ok: [quicknotes-vm]
+
+TASK [Install the QuickNotes binary] *******************************************
+ok: [quicknotes-vm]
+
+TASK [Install the systemd unit] ************************************************
+ok: [quicknotes-vm]
+
+TASK [Reload systemd when the unit changes] ************************************
+skipping: [quicknotes-vm]
+
+TASK [Enable and start the quicknotes service] *********************************
+ok: [quicknotes-vm]
+
+PLAY RECAP *********************************************************************
+quicknotes-vm              : ok=6    changed=0    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+```
 
 ### Selective change: template only + handler fired
 
@@ -280,7 +370,36 @@ Expected behavior:
 - The restart handler is invoked
 - The `user`, `file`, and `copy` tasks stay `ok`
 
-**TODO:** paste the PLAY RECAP and the handler output.
+```text
+PLAY [Deploy QuickNotes to the Lab 5 VM] ***************************************
+
+TASK [Create the quicknotes system group] **************************************
+ok: [quicknotes-vm]
+
+TASK [Create the quicknotes system user] ***************************************
+ok: [quicknotes-vm]
+
+TASK [Ensure the quicknotes data directory exists] *****************************
+ok: [quicknotes-vm]
+
+TASK [Install the QuickNotes binary] *******************************************
+ok: [quicknotes-vm]
+
+TASK [Install the systemd unit] ************************************************
+changed: [quicknotes-vm]
+
+TASK [Reload systemd when the unit changes] ************************************
+ok: [quicknotes-vm]
+
+TASK [Enable and start the quicknotes service] *********************************
+ok: [quicknotes-vm]
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+changed: [quicknotes-vm]
+
+PLAY RECAP *********************************************************************
+quicknotes-vm              : ok=8    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
 
 ### Preview a third change with `--check --diff`
 
@@ -289,7 +408,21 @@ ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml \
   -e quicknotes_data_path=/var/lib/quicknotes/notes-v2.json --check --diff
 ```
 
-**TODO:** paste one useful diff excerpt.
+```diff
+--- before: /etc/systemd/system/quicknotes.service
++++ after: /Users/arsenypinigin/.ansible/tmp/ansible-local-12275b4sv3mqt/tmpy1vbafoo/quicknotes.service.j2
+@@ -8,8 +8,8 @@
+ User=quicknotes
+ Group=quicknotes
+ WorkingDirectory=/var/lib/quicknotes
+-Environment=ADDR=:9090
+-Environment=DATA_PATH=/var/lib/quicknotes/notes.json
++Environment=ADDR=:8080
++Environment=DATA_PATH=/var/lib/quicknotes/notes-v2.json
+ Environment=SEED_PATH=/opt/quicknotes/app/seed.json
+ ExecStart=/usr/local/bin/quicknotes
+ Restart=on-failure
+```
 
 ### Design questions
 
