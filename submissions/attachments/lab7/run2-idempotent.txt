@@ -1,0 +1,25 @@
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Create quicknotes system user] *******************************************
+[WARNING]: Host 'quicknotes-dev' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.20/reference_appendices/interpreter_discovery.html for more information.
+ok: [quicknotes-dev]
+
+TASK [Ensure data directory] ***************************************************
+ok: [quicknotes-dev]
+
+TASK [Install QuickNotes binary] ***********************************************
+ok: [quicknotes-dev]
+
+TASK [Install seed data] *******************************************************
+ok: [quicknotes-dev]
+
+TASK [Install systemd unit] ****************************************************
+ok: [quicknotes-dev]
+
+TASK [Enable and start quicknotes service] *************************************
+ok: [quicknotes-dev]
+
+PLAY RECAP *********************************************************************
+quicknotes-dev             : ok=6    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+

@@ -1,0 +1,51 @@
+---
+- name: Configure ansible-pull GitOps loop on the VM
+  hosts: quicknotes
+  become: true
+  gather_facts: false
+
+  vars:
+    ansible_pull_repo_url: "https://github.com/markovav-official/DevOps-Intro.git"
+    ansible_pull_branch: "feature/lab7"
+    ansible_pull_inventory: "/etc/ansible-pull/inventory-local.ini"
+
+  tasks:
+    - name: Install Ansible and Git
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+          - python3
+        state: present
+        update_cache: true
+
+    - name: Ensure ansible-pull config directory
+      ansible.builtin.file:
+        path: /etc/ansible-pull
+        state: directory
+        mode: "0755"
+
+    - name: Install local inventory for ansible-pull
+      ansible.builtin.copy:
+        src: inventory-local.ini
+        dest: "{{ ansible_pull_inventory }}"
+        mode: "0644"
+
+    - name: Install ansible-pull systemd service
+      ansible.builtin.template:
+        src: ansible-pull.service.j2
+        dest: /etc/systemd/system/ansible-pull.service
+        mode: "0644"
+
+    - name: Install ansible-pull systemd timer
+      ansible.builtin.template:
+        src: ansible-pull.timer.j2
+        dest: /etc/systemd/system/ansible-pull.timer
+        mode: "0644"
+
+    - name: Enable and start ansible-pull timer
+      ansible.builtin.systemd:
+        name: ansible-pull.timer
+        enabled: true
+        state: started
+        daemon_reload: true

@@ -1,0 +1,35 @@
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Create quicknotes system user] *******************************************
+[WARNING]: Host 'quicknotes-dev' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.20/reference_appendices/interpreter_discovery.html for more information.
+changed: [quicknotes-dev]
+
+TASK [Ensure data directory] ***************************************************
+[WARNING]: failed to look up user quicknotes. Create user up to this point in real play
+[WARNING]: failed to look up group quicknotes. Create group up to this point in real play
+changed: [quicknotes-dev]
+
+TASK [Install QuickNotes binary] ***********************************************
+changed: [quicknotes-dev]
+
+TASK [Install seed data] *******************************************************
+changed: [quicknotes-dev]
+
+TASK [Install systemd unit] ****************************************************
+changed: [quicknotes-dev]
+
+TASK [Enable and start quicknotes service] *************************************
+[ERROR]: Task failed: Module failed: Could not find the requested service quicknotes: host
+Origin: /Users/markovav/dev/DevOps-Intro/ansible/playbook.yaml:60:7
+
+58       notify: restart quicknotes
+59
+60     - name: Enable and start quicknotes service
+         ^ column 7
+
+fatal: [quicknotes-dev]: FAILED! => {"changed": false, "msg": "Could not find the requested service quicknotes: host"}
+
+PLAY RECAP *********************************************************************
+quicknotes-dev             : ok=5    changed=5    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+

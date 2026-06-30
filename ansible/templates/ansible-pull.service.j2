@@ -1,0 +1,13 @@
+[Unit]
+Description=Ansible Pull (QuickNotes GitOps)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ansible-pull -U {{ ansible_pull_repo_url }} -C {{ ansible_pull_branch }} -i {{ ansible_pull_inventory }} ansible/playbook.yaml --accept-host-key
+WorkingDirectory=/var/lib/quicknotes
+User=root
+
+[Install]
+WantedBy=multi-user.target

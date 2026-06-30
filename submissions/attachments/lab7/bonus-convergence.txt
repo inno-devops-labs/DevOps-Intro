@@ -1,0 +1,36 @@
+=== Host edit timestamp (restart_sec 5 -> 15) ===
+2026-06-30T18:13:19Z
+=== Before: RestartSec on VM ===
+RestartSec=5
+=== Reconcile via local playbook (/vagrant mount) ===
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Create quicknotes system user] *******************************************
+ok: [localhost]
+
+TASK [Ensure data directory] ***************************************************
+ok: [localhost]
+
+TASK [Install QuickNotes binary] ***********************************************
+ok: [localhost]
+
+TASK [Install seed data] *******************************************************
+ok: [localhost]
+
+TASK [Install systemd unit] ****************************************************
+changed: [localhost]
+
+TASK [Enable and start quicknotes service] *************************************
+ok: [localhost]
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+changed: [localhost]
+
+PLAY RECAP *********************************************************************
+localhost                  : ok=7    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+=== After: RestartSec on VM ===
+RestartSec=15
+=== Timer status ===
+Tue 2026-06-30 18:17:51 UTC 4min 26s Tue 2026-06-30 18:12:51 UTC      33s ago ansible-pull.timer           ansible-pull.service
