@@ -37,7 +37,19 @@ Vagrant.configure("2") do |config|
     set -euo pipefail
 
     GO_VERSION="#{GO_VERSION}"
-    GO_TARBALL="go${GO_VERSION}.linux-amd64.tar.gz"
+    case "$(uname -m)" in
+      x86_64)
+        GO_ARCH="amd64"
+        ;;
+      aarch64|arm64)
+        GO_ARCH="arm64"
+        ;;
+      *)
+        echo "Unsupported guest architecture: $(uname -m)" >&2
+        exit 1
+        ;;
+    esac
+    GO_TARBALL="go${GO_VERSION}.linux-${GO_ARCH}.tar.gz"
 
     export DEBIAN_FRONTEND=noninteractive
     apt-get update -y

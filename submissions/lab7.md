@@ -13,13 +13,14 @@ service lifecycle through handlers.
 | Host OS | macOS (authoring machine) |
 | Git branch | `feature/lab7` |
 | VM target | Lab 5 Vagrant VM (`127.0.0.1:18080 -> guest:8080`) |
-| App artifact | `ansible/files/quicknotes` |
+| App artifact | `ansible/files/quicknotes` (Linux arm64 for this MacBook VM path) |
 | Ansible layout | `ansible/` |
 
-> Note: this repository snapshot did not have `ansible` or `vagrant` installed,
-> so the playbook, inventory, and submission were prepared statically and the
-> Linux binary was built locally. The command outputs marked **TODO** below must
-> be collected on a machine that has the Lab 5 VM and Ansible available.
+> Note: this repository snapshot initially did not have `ansible` or `vagrant`
+> installed, so the playbook and submission were prepared first and the live VM
+> verification still depends on finishing the local VM-tool install. The command
+> outputs marked **TODO** below must be collected once the Lab 5 VM is running
+> on this MacBook.
 
 ## Implementation summary
 
@@ -180,10 +181,11 @@ WantedBy=multi-user.target
 
 ## Static artifact build
 
-The managed binary was produced from `app/` as a static Linux executable:
+The managed binary was produced from `app/` as a static Linux executable for
+the Apple Silicon VM path:
 
 ```bash
-GOOS=linux GOARCH=amd64 CGO_ENABLED=0 \
+GOOS=linux GOARCH=arm64 CGO_ENABLED=0 \
   go build -C app -trimpath -ldflags='-s -w' \
   -o ../ansible/files/quicknotes .
 ```
@@ -320,6 +322,8 @@ obvious.
 
 - The inventory assumes the standard Vagrant VM created from the repo root with
   the Lab 5 `Vagrantfile` now restored into this branch.
+- The Lab 5 `Vagrantfile` was updated to choose the correct guest Go tarball
+  for either `amd64` or `arm64`, because this MacBook is Apple Silicon.
 - The binary is committed intentionally because the lab specification requires an
   `ansible/files/quicknotes` payload that the playbook ships to the VM.
 - The Lab 7 bonus (`ansible-pull` + systemd timer) was not implemented in this
