@@ -513,3 +513,154 @@ shows the before/after lines, so it catches a **wrong value that still counts as
 e.g. a `:9009` instead of `:9090`, or a variable that resolved to empty
 (`ADDR=`). Plain `--check` reports "template: changed" in all three cases; only `--diff`
 reveals the content is wrong *before* it reaches production.
+
+---
+
+## Bonus Task: `ansible-pull` GitOps Loop
+
+Instead of *pushing* config from the host, the VM **pulls** the playbook from the fork on a
+systemd timer and converges itself, the same source-of-truth-in-Git model as ArgoCD/Flux,
+scaled down to one VM.
+
+### B.2 Artifacts (committed in `ansible/`)
+
+`ansible/inventory-local.ini` — the VM reconciles *itself*, so the target is the loopback
+over the local connection plugin (no SSH):
+
+```ini
+[quicknotes_vm]
+127.0.0.1 ansible_connection=local
+```
+
+`ansible/ansible-pull.service` — a `oneshot` unit that clones the fork at `feature/lab7` and
+runs the same `playbook.yaml`. It runs as root, so the play's `become: true` is already
+satisfied:
+
+```ini
+[Unit]
+Description=QuickNotes ansible-pull GitOps convergence
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ansible-pull \
+  -U https://github.com/G-Akleh/DevOps-Intro.git \
+  -C feature/lab7 \
+  -i ansible/inventory-local.ini \
+  ansible/playbook.yaml
+```
+
+`ansible/ansible-pull.timer` — fires 1 min after boot, then every 5 min:
+
+```ini
+[Unit]
+Description=Run QuickNotes ansible-pull every 5 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+
+[Install]
+WantedBy=timers.target
+```
+
+### Install steps (run once inside the VM)
+
+#### 1. Ansible (the distro package) + Git
+```bash
+sudo apt-get update && sudo apt-get install -y ansible git   # -> ansible-core 2.16.3
+```
+#### 2. install the units (from the /vagrant synced repo) and enable the timer
+```bash
+sudo cp /vagrant/ansible/ansible-pull.{service,timer} /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now ansible-pull.timer
+```
+
+The HTTPS clone URL is used (not the `git@` SSH remote) because the VM has no GitHub key;
+the fork is public, so no token is needed. The local inventory's host `127.0.0.1` matches
+the limit `ansible-pull` applies automatically, so the `quicknotes_vm` play runs locally.
+
+### B.5 `systemctl list-timers`
+
+```text
+NEXT                        LEFT      LAST                        PASSED   UNIT                ACTIVATES
+Tue 2026-06-30 17:42:26 UTC 4min 10s  Tue 2026-06-30 17:37:26 UTC 49s ago  ansible-pull.timer  ansible-pull.service
+$ systemctl is-enabled ansible-pull.timer
+enabled
+```
+
+### Convergence demonstration (push → auto-reconcile)
+
+Changed `quicknotes_listen_addr` from `:8080` to `:9090` on the host, committed, and pushed
+to `feature/lab7` — then left the VM completely alone and watched the deployed unit flip on
+its own.
+
+**Timeline (all UTC):**
+
+| Event | Time | Evidence |
+|-------|------|----------|
+| Commit `c50417f` (`:9090`) pushed to fork | `17:31:39` | `git show -s --format=%cI` |
+| Timer fires `ansible-pull.service` | `17:32:26` | `list-timers` LAST |
+| VM reconciled, deployed unit now `:9090` | `17:32:36` | poll of `/etc/systemd/system/quicknotes.service` |
+
+**~57 seconds, push → reconciled: well under the 5-minute SLA, with no `ansible-playbook`
+run from the host.** The service journal for that fire (note `"after"` = the exact commit we
+pushed, the template `changed`, and the handler firing):
+
+```text
+ansible-pull[5117]:     "after": "c50417f39c202691cc9089d05b058b1fadbc7068",
+ansible-pull[5117]: TASK [Create system user for quicknotes] ***************************************
+ansible-pull[5117]: ok: [127.0.0.1]
+ansible-pull[5117]: TASK [Ensure quicknotes data directory exists] *********************************
+ansible-pull[5117]: ok: [127.0.0.1]
+ansible-pull[5117]: TASK [Ship seed data] **********************************************************
+ansible-pull[5117]: ok: [127.0.0.1]
+ansible-pull[5117]: TASK [Copy quicknotes binary] **************************************************
+ansible-pull[5117]: ok: [127.0.0.1]
+ansible-pull[5117]: TASK [Render quicknotes systemd unit] ******************************************
+ansible-pull[5117]: changed: [127.0.0.1]
+ansible-pull[5117]: TASK [Reload systemd, enable and start quicknotes] *****************************
+ansible-pull[5117]: ok: [127.0.0.1]
+ansible-pull[5117]: RUNNING HANDLER [restart quicknotes] *******************************************
+ansible-pull[5117]: changed: [127.0.0.1]
+```
+
+Service confirmed live on the new port, checked inside the VM:
+
+```console
+$ curl -s localhost:9090/health
+{"notes":4,"status":"ok"}
+```
+
+To leave a clean baseline I pushed `:8080` back; the
+**timer reconciled it automatically** at `17:37:37`, and the host port-forward works again:
+
+```console
+$ curl.exe -s http://localhost:18080/health
+{"notes":4,"status":"ok"}
+```
+
+### B.4 Design questions
+
+**h) `ansible-pull` is "pull" mode. What's the security benefit vs the "push" model where a
+control node SSHes in?**
+
+In push mode a control node holds privileged SSH keys to *every* managed host and opens
+inbound connections to each, so every host must expose an SSH/management port, and that one
+control node is a high-value target whose compromise hands over the whole fleet. In pull
+mode each host makes an *outbound*, read-only fetch from Git and applies the config locally,
+so no inbound management port is required and there's no central store of credentials to all
+hosts. The blast radius shrinks: a host only needs read access to the repo, nothing needs
+keys *into* it.
+
+**i) What's the same pattern called at the Kubernetes layer, and why is `ansible-pull` a fair
+simulator?**
+
+It's **GitOps**, implemented by tools like **Argo CD** and **Flux**: Git is the single source
+of truth and an in-cluster agent continuously reconciles actual state toward the declared
+state, auto-correcting drift. `ansible-pull` is a fair VM-layer simulator because it runs the
+identical loop — a timer-driven agent on the node periodically pulls the desired state from
+Git and converges the host to it, with no imperative push from outside — just at the
+single-VM level instead of a cluster.
