@@ -207,3 +207,87 @@ For this small single-host lab I kept everything in playbook `vars:`; if it grew
 No. The playbook references no facts (no `ansible_distribution`, `ansible_default_ipv4`, etc.), every value is a static var or module parameter. So I set `gather_facts: false`. Turning it off skips the implicit `setup` module that runs against the target at the start of every play, saving the fact-gathering round-trip (a few seconds here, and it scales with host count and latency). Trade-off: if I later needed OS-conditional logic I'd re-enable it or use a narrow `gather_subset`.
 
 ---
+
+## Task 2 - Prove Idempotency + Selective Re-run
+
+### 2.1 Second run = zero changes
+
+```text
+$ ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml
+...
+TASK [Render systemd unit from template] ***************************************
+ok: [qn-vm-1]
+TASK [Reload systemd, enable and start quicknotes] *****************************
+ok: [qn-vm-1]
+
+PLAY RECAP *********************************************************************
+qn-vm-1  : ok=6  changed=0  unreachable=0  failed=0  skipped=0  rescued=0  ignored=0
+```
+
+No `RUNNING HANDLER` line - nothing changed, so the handler was never notified.
+
+### 2.2 Variable tweak = selective change
+
+Changed `listen_addr` from `:8080` to `:9090` in `playbook.yaml`, then re-ran.
+
+```text
+$ ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml
+...
+TASK [Copy QuickNotes binary] **************************************************
+ok: [qn-vm-1]
+TASK [Copy seed data] **********************************************************
+ok: [qn-vm-1]
+TASK [Render systemd unit from template] ***************************************
+changed: [qn-vm-1]
+TASK [Reload systemd, enable and start quicknotes] *****************************
+ok: [qn-vm-1]
+RUNNING HANDLER [Restart quicknotes] *******************************************
+changed: [qn-vm-1]
+
+PLAY RECAP *********************************************************************
+qn-vm-1  : ok=7  changed=2  unreachable=0  failed=0  skipped=0  rescued=0  ignored=0
+```
+
+Only the `template` task changed (the rendered unit differed), which notified the handler, every other task stayed `ok`. `changed=2` = the template task + the handler.
+
+### 2.3 `--check --diff` preview
+
+Made a third variable change and ran with `--check --diff`.
+
+```text
+$ ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml --check --diff
+...
+TASK [Render systemd unit from template] ***************************************
+--- before: /etc/systemd/system/quicknotes.service
++++ after:  .../tmp/.../quicknotes.service.j2
+@@ -10,7 +10,7 @@
+ WorkingDirectory=/var/lib/quicknotes
+ ExecStart=/usr/local/bin/quicknotes
+-Environment=ADDR=:9090
++Environment=ADDR=:8080
+ Environment=DATA_PATH=/var/lib/quicknotes/notes.json
+ Environment=SEED_PATH=/var/lib/quicknotes/seed.json
+changed: [qn-vm-1]
+
+PLAY RECAP *********************************************************************
+qn-vm-1  : ok=7  changed=2  unreachable=0  failed=0  skipped=0  rescued=0  ignored=0
+```
+
+`--check` ran the play without writing anything; `--diff` printed the exact line-level change to the unit file (`ADDR=:9090` -> `:8080`) — the preview a human reviews before a real deploy.
+
+### 2.4 Design Questions
+
+**e) Why does the second run report `changed=0`? What does `file`/`template` check?**
+Each module compares desired state to actual state and only writes on a difference. `copy` computes the checksum of the source file and compares it to the destination's checksum, plus owner/group/mode; identical - no change. `template` renders the Jinja2 to a temporary file, checksums the rendered output, and compares it (and metadata) to the existing destination; it only replaces the file if the rendered bytes differ. `file` checks the path's existence, type, owner, group, and mode. On an unchanged second run all of these already match, so every task reports `ok`, `changed=0`, and no handler is notified.
+
+**f) What if you used `shell: 'echo "ADDR=..." > /etc/systemd/system/quicknotes.service'` instead of `template:`? Trace the failure modes.**
+- **Not idempotent:** `shell` runs unconditionally and reports `changed` every run, so the restart handler fires on *every* run - needless restarts/downtime.
+- **No content comparison:** `>` truncates and rewrites the file every time even when the contents are identical; there's no checksum check.
+- **Non-atomic write:** a redirect writes in place; an interruption can leave a half-written unit file. `template` writes to a temp file and atomically renames it.
+- **No `--check`/`--diff`:** you can't dry-run or preview the change.
+- **No managed owner/mode**, and **quoting/escaping hell** for multi-line unit content, colons, and env values, fragile and easy to corrupt. You'd also be doing variable substitution in the shell instead of Jinja2.
+
+**g) `--check` is dry-run, `--diff` shows changes - what bug do you catch with `--check --diff` that plain `--check` misses?**
+Plain `--check` only tells you a task *would* change something (`changed=1`); it doesn't show *what*. `--diff` shows the line-level content. The bug you catch: a template that would change in a way you didn't intend, e.g. a variable rendering to the wrong value (`ADDR=:9090` when you meant `:8080`), an accidental owner/mode/whitespace drift, or a template that rewrites the whole file every run (trailing-newline diff). With plain `--check` you'd see `changed=1` and assume it's benign; `--diff` reveals the exact unintended modification before it ships to production.
+
+---
