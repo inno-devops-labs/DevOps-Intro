@@ -1,0 +1,51 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: quicknotes
+    folder: QuickNotes
+    interval: 1m
+    rules:
+      - uid: quicknotes-high-error-rate
+        title: QuickNotes High Error Rate
+        condition: B
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: >
+                sum(rate(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+                /
+                sum(rate(quicknotes_http_requests_total[5m]))
+              instant: true
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              refId: B
+              expression: A
+              conditions:
+                - evaluator:
+                    type: gt
+                    params:
+                      - 0.05
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - A
+                  reducer:
+                    type: last
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "QuickNotes error rate exceeded 5% for 5 minutes"
+          runbook_url: "docs/runbook/high-error-rate.md"
+        isPaused: false
