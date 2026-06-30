@@ -1,0 +1,62 @@
+---
+- hosts: vagrant
+  become: true
+
+  vars:
+    addr: ":8080"
+    data_dir: "/var/lib/quicknotes"
+    bin: "/usr/local/bin/quicknotes"
+    data_path: "/var/lib/quicknotes"
+    seed_path: "/var/lib/quicknotes/seed.json"
+
+  handlers:
+    - name: restart quicknotes
+      ansible.builtin.systemd:
+        name: quicknotes
+        state: restarted
+
+  tasks:
+
+    - name: Create user
+      ansible.builtin.user:
+        name: quicknotes
+        shell: /usr/sbin/nologin
+        system: true
+
+    - name: Create data directory
+      ansible.builtin.file:
+        path: /var/lib/quicknotes
+        state: directory
+        owner: quicknotes
+        group: quicknotes
+        mode: "0750"
+
+    - name: Copy binary
+      ansible.builtin.copy:
+        src: files/quicknotes
+        dest: /usr/local/bin/quicknotes
+        owner: root
+        group: root
+        mode: "0755"
+      notify: restart quicknotes
+
+    - name: Deploy service file
+      ansible.builtin.template:
+        src: templates/quicknotes.service.j2
+        dest: /etc/systemd/system/quicknotes.service
+      notify: restart quicknotes
+
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Enable service
+      ansible.builtin.systemd:
+        name: quicknotes
+        enabled: true
+
+    - name: Start service
+      ansible.builtin.systemd:
+        name: quicknotes
+        state: started
+
