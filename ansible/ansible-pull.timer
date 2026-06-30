@@ -1,0 +1,10 @@
+[Unit]
+Description=Run QuickNotes ansible-pull every 5 minutes
+
+[Timer]
+# First convergence 1 minute after boot, then every 5 minutes thereafter.
+OnBootSec=1min
+OnUnitActiveSec=5min
+
+[Install]
+WantedBy=timers.target

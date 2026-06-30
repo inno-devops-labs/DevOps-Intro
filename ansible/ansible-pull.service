@@ -1,0 +1,14 @@
+[Unit]
+Description=QuickNotes ansible-pull GitOps convergence
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+# Clone the fork at the lab branch and converge this host against the committed playbook.
+# Runs as root (system service), so the playbook's `become: true` is already satisfied.
+ExecStart=/usr/bin/ansible-pull \
+  -U https://github.com/G-Akleh/DevOps-Intro.git \
+  -C feature/lab7 \
+  -i ansible/inventory-local.ini \
+  ansible/playbook.yaml
