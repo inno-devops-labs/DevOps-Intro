@@ -1,0 +1,13 @@
+[Unit]
+Description=ansible-pull from {{ repo_url }} on branch {{ repo_branch }}
+Documentation=https://docs.ansible.com/ansible/latest/cli/ansible-pull.html
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ansible-pull \
+  --url {{ repo_url }} \
+  --checkout {{ repo_branch }} \
+  --inventory {{ pull_inventory }} \
+  ansible/playbook.yaml

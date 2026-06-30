@@ -1,0 +1,28 @@
+[Unit]
+Description=QuickNotes — minimal Go notes service (Lab 7)
+Documentation=https://github.com/inno-devops-labs/DevOps-Intro
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{ app_user }}
+Group={{ app_user }}
+
+ExecStart={{ binary_path }}
+WorkingDirectory={{ data_dir }}
+
+Environment=ADDR={{ listen_addr }}
+Environment=DATA_PATH={{ data_path }}
+Environment=SEED_PATH={{ seed_path }}
+
+Restart=on-failure
+RestartSec=2s
+
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

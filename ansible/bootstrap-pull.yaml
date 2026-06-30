@@ -1,0 +1,64 @@
+---
+# Bonus task — installs ansible+git on the VM and arms a 5-min systemd timer
+# that re-runs `ansible-pull` against the fork. After this play succeeds, the
+# VM converges itself; no further ansible-playbook invocations from the host
+# are required.
+
+- name: Bootstrap ansible-pull GitOps loop on the Lab 5 VM
+  hosts: lab5
+  become: true
+  gather_facts: true
+
+  vars:
+    repo_url: https://github.com/GrandAdmiralBee/DevOps-Intro
+    repo_branch: feature/lab7
+    pull_inventory: /etc/ansible/hosts-local.ini
+    pull_interval: 5min
+
+  tasks:
+    - name: Install ansible and git
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install local inventory for ansible-pull
+      ansible.builtin.copy:
+        src: files/inventory-local.ini
+        dest: "{{ pull_inventory }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Render ansible-pull.service
+      ansible.builtin.template:
+        src: templates/ansible-pull.service.j2
+        dest: /etc/systemd/system/ansible-pull.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload systemd
+
+    - name: Render ansible-pull.timer
+      ansible.builtin.template:
+        src: templates/ansible-pull.timer.j2
+        dest: /etc/systemd/system/ansible-pull.timer
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload systemd
+
+    - name: Enable and start ansible-pull.timer
+      ansible.builtin.systemd:
+        name: ansible-pull.timer
+        enabled: true
+        state: started
+        daemon_reload: true
+
+  handlers:
+    - name: Reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
