@@ -316,10 +316,200 @@ the tasks that use them; (3) **`-e` extra-vars**, which win over everything — 
 `-e ansible_ssh_private_key_file=...` for a per-run override without editing the committed
 inventory.
 
-**d) `gather_facts: true` is the default — do you need it here? What does turning it off
-save?**
+d) **`gather_facts: true` is the default.** Do you need it for *this* playbook? What does turning it off save you per run?
 
-No — the playbook references zero `ansible_*` facts, so I set `gather_facts: false`. That
+No, the playbook references zero `ansible_*` facts, so I set `gather_facts: false`. That
 skips the implicit `setup` run at play start, saving an SSH round-trip and a few hundred ms
 per run — worth it for a play the Bonus timer runs every 5 minutes. I'd re-enable it only if
 a template needed a fact like `ansible_default_ipv4.address`.
+
+---
+
+## Task 2: Prove Idempotency + Selective Re-run
+
+### 2.1 Second run = zero changes
+
+Re-running the playbook with nothing changed: every task reports `ok`, no handler runs.
+
+**Input:**
+```bash
+ansible-playbook -i inventory.ini playbook.yaml -e ansible_ssh_private_key_file=$HOME/.ssh/vagrant_qn_key
+```
+
+**Output:**
+```text
+PLAY [Deploy QuickNotes to the Lab 5 Vagrant VM] *******************************
+
+TASK [Create system user for quicknotes] ***************************************
+ok: [default]
+
+TASK [Ensure quicknotes data directory exists] *********************************
+ok: [default]
+
+TASK [Ship seed data] **********************************************************
+ok: [default]
+
+TASK [Copy quicknotes binary] **************************************************
+ok: [default]
+
+TASK [Render quicknotes systemd unit] ******************************************
+ok: [default]
+
+TASK [Reload systemd, enable and start quicknotes] *****************************
+ok: [default]
+
+PLAY RECAP *********************************************************************
+default                    : ok=6    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+`changed=0`, and note there is **no `RUNNING HANDLER` line at all** because no task
+reported `changed`, the `restart quicknotes` handler was never notified, so the service was
+not bounced. The system was already in the desired state.
+
+### 2.2 Variable tweak = selective change + handler fires
+
+Changed exactly one variable in `playbook.yaml`:
+
+```diff
+-    quicknotes_listen_addr: ":8080"
++    quicknotes_listen_addr: ":9090"
+```
+
+**Input:**
+```bash
+ansible-playbook -i inventory.ini playbook.yaml -e ansible_ssh_private_key_file=$HOME/.ssh/vagrant_qn_key
+```
+
+**Output:**
+```text
+PLAY [Deploy QuickNotes to the Lab 5 Vagrant VM] *******************************
+
+TASK [Create system user for quicknotes] ***************************************
+ok: [default]
+
+TASK [Ensure quicknotes data directory exists] *********************************
+ok: [default]
+
+TASK [Ship seed data] **********************************************************
+ok: [default]
+
+TASK [Copy quicknotes binary] **************************************************
+ok: [default]
+
+TASK [Render quicknotes systemd unit] ******************************************
+changed: [default]
+
+TASK [Reload systemd, enable and start quicknotes] *****************************
+ok: [default]
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+changed: [default]
+
+PLAY RECAP *********************************************************************
+default                    : ok=7    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+Exactly what the spec asks for: **only** the `template` task is `changed`, every other task
+is `ok`, and the `restart quicknotes` **handler fired** (`changed=2` = the template + the
+handler restart). `listen_addr` only appears in the unit template, so nothing else had any
+reason to change.
+
+Verification that the service actually rebound to `:9090` (checked *inside* the VM, because
+the host port-forward only maps guest `:8080`):
+
+```console
+$ vagrant ssh -c "curl -s localhost:9090/health"
+{"notes":4,"status":"ok"}
+$ vagrant ssh -c "curl -s --max-time 3 localhost:8080/health || echo '(no listener on 8080)'"
+(no listener on 8080)
+```
+
+### 2.3 `--check --diff` preview
+
+Made a *third* one-line change and previewed it without applying:
+
+```diff
+-    quicknotes_listen_addr: ":9090"
++    quicknotes_listen_addr: ":9091"
+```
+
+**Input:**
+```bash
+ansible-playbook -i inventory.ini playbook.yaml -e ansible_ssh_private_key_file=$HOME/.ssh/vagrant_qn_key --check --diff
+```
+
+**Output:**
+```text
+PLAY [Deploy QuickNotes to the Lab 5 Vagrant VM] *******************************
+
+TASK [Create system user for quicknotes] ***************************************
+ok: [default]
+
+TASK [Ensure quicknotes data directory exists] *********************************
+ok: [default]
+
+TASK [Ship seed data] **********************************************************
+ok: [default]
+
+TASK [Copy quicknotes binary] **************************************************
+ok: [default]
+
+TASK [Render quicknotes systemd unit] ******************************************
+--- before: /etc/systemd/system/quicknotes.service
++++ after: /home/g-akleh/.ansible/tmp/ansible-local-155569sj_q37/tmp2pgx1rku/quicknotes.service.j2
+@@ -7,7 +7,7 @@
+ User=quicknotes
+ Group=quicknotes
+ WorkingDirectory=/var/lib/quicknotes
+-Environment=ADDR=:9090
++Environment=ADDR=:9091
+ Environment=DATA_PATH=/var/lib/quicknotes/notes.json
+ Environment=SEED_PATH=/var/lib/quicknotes/seed.json
+ ExecStart=/usr/local/bin/quicknotes
+
+changed: [default]
+
+TASK [Reload systemd, enable and start quicknotes] *****************************
+ok: [default]
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+changed: [default]
+
+PLAY RECAP *********************************************************************
+default                    : ok=7    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+```
+
+`--diff` prints the exact line-level change (`ADDR=:9090` → `:9091`). Because `--check` is
+also set, **nothing was actually written** the VM stayed on `:9090`; the `changed`/handler
+lines describe what *would* happen on a real run.
+
+> **Cleanup:** after capturing the diff I reverted the variable back to `:8080` and did one
+> final real run (`changed=2` template + handler), so the committed `playbook.yaml`,
+> the deployed unit, and the host port-forward (`18080 → 8080`) all agree. `curl.exe -s
+> http://localhost:18080/health` returns `{"notes":4,"status":"ok"}` again.
+
+### 2.4 Design questions
+
+**e) Why does the second run report `changed=0`? What specifically do `file` / `template`
+check?**
+
+Each module compares desired state to actual state before acting. `file` checks the path
+exists with the declared `owner`/`group`/`mode`; `copy` and `template` compare a checksum of
+the intended content against the file already on disk. When everything already matches, each task reports `ok`, nothing is notified, and no handler fires, so `changed=0`.
+
+**f) What if you used `shell: 'echo "ADDR=..." > /etc/.../quicknotes.service'` instead of
+`template:`?**
+
+`shell:` has no notion of prior content, so it overwrites the file and reports `changed`
+**every** run, killing idempotency and firing the restart handler needlessly each time.
+You'd also lose `--diff` previews, and hand-escaping a multi-line unit through `echo` is
+fragile (quoting/newline bugs, possible injection if a var holds shell metacharacters). The
+`template:` module renders deterministically and only writes on a real content difference.
+
+**g) What bug does `--check --diff` catch that plain `--check` would miss?**
+
+Plain `--check` only tells us *that* a file would change, not *what* would change. `--diff`
+shows the before/after lines, so it catches a **wrong value that still counts as a change** —
+e.g. a `:9009` instead of `:9090`, or a variable that resolved to empty
+(`ADDR=`). Plain `--check` reports "template: changed" in all three cases; only `--diff`
+reveals the content is wrong *before* it reaches production.
