@@ -1,0 +1,4 @@
+# Keep the build context small and the COPY layer cache stable: do not ship the
+# prebuilt host binary or local notes data into the image build context.
+quicknotes
+data/
