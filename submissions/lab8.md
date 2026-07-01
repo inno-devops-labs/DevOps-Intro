@@ -1,5 +1,7 @@
 # LAb8
 
+Ссылка на PR: https://github.com/inno-devops-labs/DevOps-Intro/pull/1304
+
 ## Task1
 
 ### Конфигурационные файлы
