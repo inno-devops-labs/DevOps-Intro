@@ -31,12 +31,9 @@ jobs:
       - name: Compute image tarball digest
         id: digest
         run: |
-          cp -L result broken-result
-          printf 'deliberate-ci-divergence' >> broken-result
-          digest="$(sha256sum broken-result | awk '{print $1}')"
+          digest="$(sha256sum result | awk '{print $1}')"
           echo "digest=$digest" >> "$GITHUB_OUTPUT"
           echo "digest=$digest"
-          echo "This job intentionally hashes a modified tarball copy to prove the compare job catches mismatches."
 
   build-b:
     name: Build image B
