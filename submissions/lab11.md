@@ -153,12 +153,12 @@ Nix trades **learning curve, slower cold builds, and Nix-specific tooling** for 
 
 | Run | URL |
 |-----|-----|
-| Green (digests match) | Fork PR #12 — all 14 checks passed (see `submissions/screenshots/lab_11/2.png`) |
-| Red (deliberate mismatch) | <!-- optional: break build-a with SOURCE_DATE_EPOCH: "1" --> |
+| Green (digests match) | https://github.com/selysecr332/DevOps-Intro/actions/runs/28497003623 (commit `392bf98`; fork PR #12 — 14/14 checks, see `submissions/screenshots/lab_11/2.png`) |
+| Red (deliberate mismatch) | https://github.com/selysecr332/DevOps-Intro/actions/runs/28500520816 — `assert digests match` failed (`Runner A: 000…001` vs real digest on B) |
 
 Screenshots: [`lab_11/1.png`](screenshots/lab_11/1.png) (fork PR), [`lab_11/2.png`](screenshots/lab_11/2.png) (CI green).
 
-**Red-run procedure:** set `SOURCE_DATE_EPOCH: "1"` only on `build-a`, push, confirm `compare` job fails; revert for green.
+**Red-run procedure:** on `build-a` only, report a fake digest (`000…001`) while `build-b` computes the real `sha256sum`; push → `compare` job fails; revert for green.
 
 ### Design questions (Bonus)
 
@@ -196,7 +196,7 @@ Timestamps leak in **archive metadata** (tar headers in OCI layers), **file mtim
 ### Bonus (2 pts)
 
 - [x] CI two-job digest gate — green (14/14 checks on fork PR #12)
-- [ ] Red run demo (optional for full bonus)
+- [x] Red run demo — compare job red: https://github.com/selysecr332/DevOps-Intro/actions/runs/28500520816
 - [x] Design questions h–j answered
 
 ### Submission
