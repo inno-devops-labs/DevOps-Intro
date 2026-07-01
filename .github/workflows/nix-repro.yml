@@ -19,8 +19,11 @@ jobs:
       - name: Build docker image
         run: nix build .#docker
       - id: sha
-        name: Compute tarball digest
-        run: echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+        name: Compute tarball digest (lab11 red demo — intentional mismatch)
+        run: |
+          REAL=$(sha256sum result | awk '{print $1}')
+          echo "Runner A real digest: $REAL"
+          echo "digest=0000000000000000000000000000000000000000000000000000000000000001" >> "$GITHUB_OUTPUT"
 
   build-b:
     name: nix build (runner B)
