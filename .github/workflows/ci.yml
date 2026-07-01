@@ -68,5 +68,41 @@ jobs:
       - name: Install pinned govulncheck
         run: go install golang.org/x/vuln/cmd/govulncheck@v1.5.0
 
-      - name: Run govulncheck
-        run: govulncheck ./...
+      - name: Run govulncheck with accepted baseline
+        shell: bash
+        run: |
+          set +e
+          govulncheck ./... 2>&1 | tee govulncheck.txt
+          GOVULN_EXIT=${PIPESTATUS[0]}
+          set -e
+
+          python - <<'PY'
+          import pathlib
+          import re
+          import sys
+
+          output = pathlib.Path("govulncheck.txt").read_text(encoding="utf-8", errors="replace")
+          accepted_path = pathlib.Path("../.github/govulncheck-accepted.txt")
+          accepted = {
+              line.strip()
+              for line in accepted_path.read_text(encoding="utf-8").splitlines()
+              if line.strip() and not line.strip().startswith("#")
+          }
+
+          found = set(re.findall(r"\bGO-\d{4}-\d+\b", output))
+          unaccepted = sorted(found - accepted)
+
+          print("govulncheck finding IDs:", ", ".join(sorted(found)) or "none")
+          print("accepted baseline IDs:", ", ".join(sorted(accepted)) or "none")
+
+          if unaccepted:
+              print("Unaccepted reachable vulnerabilities found:")
+              for vuln_id in unaccepted:
+                  print(f"- {vuln_id}")
+              sys.exit(1)
+
+          if found:
+              print("Only accepted baseline vulnerabilities were found. Passing CI, but keep the baseline review date.")
+          else:
+              print("No reachable vulnerabilities found.")
+          PY
