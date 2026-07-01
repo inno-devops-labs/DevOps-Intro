@@ -121,10 +121,10 @@ The final dashboard configuration was exported from Grafana (Settings → JSON M
 
 ### Configuration Files
 
-[`monitoring/prometheus/prometheus.yml`](../monitoring/prometheus/prometheus.yml)
-[`monitoring/grafana/provisioning/datasources/datasource.yml`](../monitoring/grafana/provisioning/datasources/datasource.yml)
-[`monitoring/grafana/provisioning/dashboards/dashboard.yml`](../monitoring/grafana/provisioning/dashboards/dashboard.yml)
-[`monitoring/grafana/dashboards/golden-signals.json`](../monitoring/grafana/dashboards/golden-signals.json)
+- [monitoring/prometheus/prometheus.yml](../monitoring/prometheus/prometheus.yml)
+- [monitoring/grafana/provisioning/datasources/datasource.yml](../monitoring/grafana/provisioning/datasources/datasource.yml)
+- [monitoring/grafana/provisioning/dashboards/dashboard.yml](../monitoring/grafana/provisioning/dashboards/dashboard.yml)
+- [monitoring/grafana/dashboards/golden-signals.json](../monitoring/grafana/dashboards/golden-signals.json)
 
 ### 1.7 Generate traffic and verify
 
@@ -171,3 +171,131 @@ The default value of 15 seconds provides a good balance.
 Provisioning allows dashboards and datasources to be version controlled alongside application code.
 A fresh deployment automatically receives identical monitoring configuration without manual UI setup.
 This approach improves reproducibility and prevents configuration drift.
+
+
+# Task 2 — Alert Rule and Runbook
+
+## 2.1 Runbook
+
+Runbook created for the alert:
+```
+# High Error Rate
+## Summary
+This alert indicates that more than 5% of HTTP requests are returning 4xx or 5xx responses for at least 5 minutes.
+
+## Detection
+Check the Grafana Golden Signals dashboard:
+- Error Ratio
+- Traffic
+- Saturation
+Verify the current error rate and identify whether errors are client-side (4xx) or server-side (5xx).
+
+## Investigation
+Inspect application logs:
+docker-compose logs quicknotes
+
+Inspect container health:
+docker-compose ps
+
+Verify Prometheus target status:
+curl -s http://localhost:9090/api/v1/targets | jq .
+
+## Mitigation
+- Restart QuickNotes if the service is unhealthy.
+- Investigate recent code or configuration changes.
+- Reduce malformed client traffic if excessive 4xx responses are observed.
+
+## Escalation
+Severity: page
+Escalate if the error rate remains above threshold after mitigation attempts.
+
+## Post-incident
+After the error ratio is back under 5% and stable, write a blameless postmortem (what happened, why, and what changes) with timeline, root cause, what detected it and follow-up actions.
+```
+- [`docs/runbook/high-error-rate.md`](../docs/runbook/high-error-rate.md)
+
+## 2.2 Alert Rule
+Alert name:
+```text
+High Error Rate
+```
+PromQL expression:
+```promql
+100 *
+(
+  sum(rate(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+  /
+  sum(rate(quicknotes_http_requests_total[5m]))
+)
+```
+Alert condition:
+```text
+Error ratio > 5%
+for 5 minutes
+```
+Labels:
+```text
+severity=page
+```
+Runbook URL:
+```text
+docs/runbook/high-error-rate.md
+```
+Evaluation interval:
+```text
+1 minute
+```
+
+## 2.3 Alert Verification
+A stream of invalid requests was generated to intentionally increase the HTTP error rate.
+My command:
+```bash
+┌──(p4in㉿kali)-[~/Desktop/DevOps-Intro]
+└─$ while true; do
+  for i in $(seq 1 100); do
+    curl -s -X POST http://localhost:8080/notes >/dev/null
+  done
+  sleep 1
+done
+```
+The alert transitioned through:
+```text
+Normal → Pending → Firing
+```
+Alert firing screenshot:
+![Normal Alert](lab8-errornormalrate.png)
+![Pending Alert](lab8-errorpendingrate.png)
+![Firing Alert](lab8-errorfiringrate.png)
+
+The alert successfully triggered after the error ratio remained above the configured threshold for longer than the 5-minute pending period.
+
+### 2.4 Design questions
+
+#### e) Why "sustained for 5 minutes" instead of "fire immediately on first bad request"?
+
+A single failed request does not necessarily indicate a real service problem.
+Occasional client mistakes, network glitches, or malformed requests can generate
+isolated errors without affecting overall service health.
+Requiring the error ratio to remain above the threshold for 5 minutes reduces false positives and ensures that operators are only paged for persistent issues that are likely impacting users.
+
+#### f) Symptom alerts vs cause alerts: the alert above is a symptom alert. What's an example of a cause alert someone might write for QuickNotes? Why is it worse?
+
+An example of a cause alert would be:
+```text
+Disk usage on the Docker volume exceeds 80%
+```
+or
+```text
+Container memory usage exceeds 500 MB
+```
+These alerts focus on a possible cause rather than an observed user impact.
+Cause alerts are usually worse because they require assumptions about how the system behaves.
+High memory usage or disk usage may not actually affect users,
+while a high error ratio directly indicates degraded service quality.
+Symptom alerts measure what users experience, making them more reliable indicators for paging.
+
+#### g) Alert fatigue: Lecture 8 cited it as the bigger danger than too few alerts. What's a quantitative threshold ("page X% of the time the user wasn't actually affected") that would mean your alert is too noisy?
+
+If more than 20% of pages occur without any meaningful user impact, the alert is too noisy.
+At that point engineers begin to lose trust in the alert, increasing the risk that real incidents will be ignored or acknowledged slowly.
+An effective paging alert should have a low false-positive rate and should usually indicate a genuine user-facing problem.
