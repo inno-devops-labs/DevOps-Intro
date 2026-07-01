@@ -81,3 +81,10 @@ Signed commits matter because they give maintainers and users a cryptographic wa
 ## Task 2 - Pull Request Template & First PR 
 
 Added a `.github/pull_request_template.md` 
+
+
+## Task 3 - GitHub Community Engagement
+
+Starring repositories matters in open source because it shows support, helps useful projects gain visibility.
+
+Following developers helps to learn from their work, stay connected, and build professional relationships that support growth.
