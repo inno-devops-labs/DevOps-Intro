@@ -11,6 +11,8 @@ jobs:
   build-a:
     name: nix build (runner A)
     runs-on: ubuntu-24.04
+    env:
+      SOURCE_DATE_EPOCH: "1" # lab11 bonus demo — intentional digest mismatch vs build-b
     outputs:
       digest: ${{ steps.sha.outputs.digest }}
     steps:
