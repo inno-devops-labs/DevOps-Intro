@@ -291,3 +291,98 @@ Each module compares desired state to actual state and only writes on a differen
 Plain `--check` only tells you a task *would* change something (`changed=1`); it doesn't show *what*. `--diff` shows the line-level content. The bug you catch: a template that would change in a way you didn't intend, e.g. a variable rendering to the wrong value (`ADDR=:9090` when you meant `:8080`), an accidental owner/mode/whitespace drift, or a template that rewrites the whole file every run (trailing-newline diff). With plain `--check` you'd see `changed=1` and assume it's benign; `--diff` reveals the exact unintended modification before it ships to production.
 
 ---
+
+## Bonus Task - `ansible-pull` GitOps Loop
+
+### B.1 Local inventory (on the VM)
+
+```ini
+# ansible/local-inventory.ini
+[quicknotes_vm]
+quicknotes-vm ansible_connection=local ansible_python_interpreter=/usr/bin/python3
+```
+
+`ansible_connection=local` means the VM runs the playbook against itself with no SSH. This is separate from Task 1's `inventory.ini` (which SSHes in from the host using the Vagrant key), that key path doesn't exist inside the VM, and SSHing into yourself is pointless.
+
+### B.2 systemd service + timer
+
+```ini
+# /etc/systemd/system/ansible-pull.service
+[Unit]
+Description=Ansible-pull GitOps reconcile for QuickNotes
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ansible-pull -U https://github.com/blacktree-lab/DevOps-Intro.git -C feature/lab7 -i ansible/local-inventory.ini ansible/playbook.yaml
+```
+
+```ini
+# /etc/systemd/system/ansible-pull.timer
+[Unit]
+Description=Run ansible-pull every 5 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+Unit=ansible-pull.service
+
+[Install]
+WantedBy=timers.target
+```
+
+The service is `Type=oneshot` (run once and exit); the timer provides repetition.
+The service runs as root, so the playbook's `become: true` needs no password. Enabled with:
+
+```text
+$ sudo systemctl daemon-reload
+$ sudo systemctl enable --now ansible-pull.timer
+Created symlink /etc/systemd/system/timers.target.wants/ansible-pull.timer /etc/systemd/system/ansible-pull.timer.
+```
+
+### B.3 Timer active
+
+```text
+$ systemctl list-timers | grep ansible-pull
+NEXT                        LEFT       LAST                        PASSED   UNIT                 ACTIVATES
+Wed 2026-07-01 04:55:53 UTC 4min 40s   Wed 2026-07-01 04:50:53 UTC 20s ago  ansible-pull.timer   ansible-pull.service
+```
+
+### B.4 Convergence demonstrated
+
+I changed `listen_addr` from `:8080` to `:9090` on the host, committed, and pushed, then let the timer reconcile the VM with no further action.
+
+| Event | Time (UTC) |
+|-------|-----------|
+| `git push` commit `e8972cb` (`:8080` -> `:9090`) | `04:54:23` |
+| `ansible-pull.timer` fired the service | `04:55:56` |
+| `quicknotes` restarted with new config (`ActiveEnterTimestamp`) | `04:56:10` |
+
+Proof the VM reconciled on its own (all run inside the VM, nothing pushed from host):
+
+```text
+$ grep ADDR /etc/systemd/system/quicknotes.service
+Environment=ADDR=:9090
+
+$ sudo systemctl show quicknotes -p ActiveEnterTimestamp
+ActiveEnterTimestamp=Wed 2026-07-01 04:56:10 UTC
+
+$ curl -s localhost:9090/health ; echo
+{"notes":4,"status":"ok"}
+```
+
+End-to-end convergence took ~1m47s (push 04:54:23 -> restart 04:56:10), well under the 5-minute budget. I then reverted `listen_addr` to `:8080`, pushed, and forced a pull (`sudo systemctl start ansible-pull.service`) to restore the host-reachable state:
+
+```text
+$ curl -s http://localhost:18080/health ; echo     # from the host
+{"notes":4,"status":"ok"}
+```
+
+### B.5 Design Questions
+
+**h) `ansible-pull` is "pull" mode — what's the security benefit vs the push model?**
+In push mode the control node holds SSH credentials for every managed node and needs inbound SSH access to each, the control node becomes a high-value target whose compromise hands over the whole fleet, and every node must accept inbound SSH. In pull mode each node clones the Git repo and applies the playbook locally (`ansible_connection=local`): there's no central node with fleet-wide keys, nodes need no inbound SSH listener for config (they can sit behind a firewall with no open ports), and each node's credential is reduced to a read-only Git token scoped to itself. The attack surface shrinks and blast radius of a single compromised node is limited to its own read access.
+
+**i) What's this pattern called at the Kubernetes layer, and why is `ansible-pull` a fair simulator?**
+It's GitOps, implemented by tools like ArgoCD/Flux. `ansible-pull` is a fair VM-layer simulator because it's the same reconciliation loop: Git is the single source of truth, an agent on/near the target periodically pulls the declared desired state and converges actual state to match, on a schedule, self-healing without a human pushing. The only differences are the abstraction layer (host packages/services/files via Ansible vs. cluster manifests via Argo/Flux) and that Argo/Flux watch continuously while `ansible-pull` runs on a 5-minute systemd timer.
