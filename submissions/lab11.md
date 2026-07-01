@@ -153,8 +153,10 @@ Nix trades **learning curve, slower cold builds, and Nix-specific tooling** for 
 
 | Run | URL |
 |-----|-----|
-| Green (digests match) | <!-- fill after push --> |
-| Red (deliberate mismatch) | <!-- fill after SOURCE_DATE_EPOCH break --> |
+| Green (digests match) | Fork PR #12 — all 14 checks passed (see `submissions/screenshots/lab_11/2.png`) |
+| Red (deliberate mismatch) | <!-- optional: break build-a with SOURCE_DATE_EPOCH: "1" --> |
+
+Screenshots: [`lab_11/1.png`](screenshots/lab_11/1.png) (fork PR), [`lab_11/2.png`](screenshots/lab_11/2.png) (CI green).
 
 **Red-run procedure:** set `SOURCE_DATE_EPOCH: "1"` only on `build-a`, push, confirm `compare` job fails; revert for green.
 
@@ -193,11 +195,12 @@ Timestamps leak in **archive metadata** (tar headers in OCI layers), **file mtim
 
 ### Bonus (2 pts)
 
-- [ ] CI two-job digest gate + green + red runs
+- [x] CI two-job digest gate — green (14/14 checks on fork PR #12)
+- [ ] Red run demo (optional for full bonus)
 - [x] Design questions h–j answered
 
 ### Submission
 
 - [x] Course PR: https://github.com/inno-devops-labs/DevOps-Intro/pull/1292
-- [ ] Fork PR: https://github.com/selysecr332/DevOps-Intro/compare/main...feature/lab11?expand=1 (optional — separate repo from course PR)
-- [ ] Moodle URL (submit course PR link above)
+- [x] Fork PR: https://github.com/selysecr332/DevOps-Intro/pull/12
+- [ ] Moodle URL (submit **course** PR #1292)
