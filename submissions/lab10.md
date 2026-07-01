@@ -44,7 +44,8 @@ README.md includes `app_port: 8080`.
 ### 2.2 Latency Measurements
 
 **Warm (p50):** ~0.75s (measured: 0.82, 0.80, 0.75, 0.74, 0.70)
-**Cold start:**
+**Cold start:** 5.72s (after ~1 hour idle — HF sleep → wake)
+**Warm after wake:** 0.75s, 0.71s 
 
 ### 2.3 Design Questions
 
