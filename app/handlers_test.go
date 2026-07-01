@@ -54,6 +54,29 @@ func TestHealth_ReportsCount(t *testing.T) {
 	}
 }
 
+func TestRoutes_AddSecurityHeaders(t *testing.T) {
+	srv := newTestServer(t)
+	rec := do(t, srv, http.MethodGet, "/health", nil)
+
+	want := map[string]string{
+		"Cache-Control":                "no-store",
+		"Content-Security-Policy":      "default-src 'none'",
+		"Cross-Origin-Embedder-Policy": "require-corp",
+		"Cross-Origin-Opener-Policy":   "same-origin",
+		"Cross-Origin-Resource-Policy": "same-origin",
+		"Permissions-Policy":           "camera=(), geolocation=(), microphone=()",
+		"Pragma":                       "no-cache",
+		"Referrer-Policy":              "no-referrer",
+		"X-Content-Type-Options":       "nosniff",
+		"X-Frame-Options":              "DENY",
+	}
+	for header, value := range want {
+		if got := rec.Header().Get(header); got != value {
+			t.Errorf("%s = %q, want %q", header, got, value)
+		}
+	}
+}
+
 func TestCreateNote_RoundTrip(t *testing.T) {
 	srv := newTestServer(t)
 	rec := do(t, srv, http.MethodPost, "/notes", map[string]string{
@@ -130,4 +153,3 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 		}
 	}
 }
-
