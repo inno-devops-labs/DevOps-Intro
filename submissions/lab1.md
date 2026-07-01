@@ -76,3 +76,8 @@ A Screenshot of Verified  badge on your platform's PR/commit page
 
 Why signed commits matter?
 Signed commits matter because they give maintainers and users a cryptographic way to verify who authored or approved a change, instead of trusting only a username, email or repository access. In the XZ Utils backdoor case, malicious code was able to enter the release process after trust in a maintainer identity had been built over time, showing that software supply-chain attacks often target trust itself. Commit signing is not a complete defense, but it raises the bar by making suspicious, unsigned, or unexpectedly signed changes easier to detect before they become part of critical software.
+
+
+## Task 2 - Pull Request Template & First PR 
+
+Added a `.github/pull_request_template.md` 
