@@ -1,0 +1,69 @@
+services:
+  quicknotes:
+    build:
+      context: ./app
+    image: quicknotes:lab6
+    ports:
+      # Expose on all interfaces so host curl and docker-proxy both work
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: /data/notes.json
+      SEED_PATH: /seed.json
+    volumes:
+      # Named volume for persistent note storage
+      - quicknotes-data:/data
+    tmpfs:
+      # /tmp writable scratch space required when rootfs is read-only
+      - /tmp
+    healthcheck:
+      # Use the static healthcheck binary baked into the image (distroless has no shell/curl)
+      test: ["CMD", "/healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    # --- Security hardening -----------------------------------------------------
+    cap_drop:
+      # Drop all Linux capabilities
+      - ALL
+    read_only: true          # Root filesystem is read-only; only /data and /tmp are writable
+    security_opt:
+      - no-new-privileges:true  # Prevent privilege escalation via setuid binaries
+    restart: unless-stopped
+
+  # --- Monitoring stack (Lab 8) ------------------------------------------------
+  prometheus:
+    image: prom/prometheus:v3.1.0     # pinned, not :latest
+    volumes:
+      # Mount our scrape config + alert rules read-only into the config dir
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+    ports:
+      - "9090:9090"                   # Prometheus UI + API on the host
+    depends_on:
+      quicknotes:
+        # Lab 6 healthcheck pays off: don't scrape until the app is ready
+        condition: service_healthy
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:13.0.3     # pinned, not :latest
+    environment:
+      # Never ship default admin/admin. Override via .env if you like.
+      GF_SECURITY_ADMIN_USER: "${GRAFANA_ADMIN_USER:-admin}"
+      GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_ADMIN_PASSWORD:-changeme-lab8}"
+    volumes:
+      # Datasource + dashboard provider + dashboard JSON, all read-only
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      # Grafana's own state (users, prefs) persists here
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"                   # Grafana UI on the host
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  quicknotes-data:
+  grafana-data:

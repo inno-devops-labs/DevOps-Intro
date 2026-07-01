@@ -1,0 +1,21 @@
+# Prometheus config for the QuickNotes monitoring stack (Lab 8).
+global:
+  # How often Prometheus scrapes each target. 15s is the sane default:
+  # frequent enough for a live dashboard, cheap enough not to distort rate().
+  scrape_interval: 15s
+  # How often Prometheus evaluates alerting/recording rules.
+  evaluation_interval: 15s
+
+# Alerting rules (the "one good alert" for Task 2).
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+scrape_configs:
+  # One job: QuickNotes. Prometheus PULLS GET /metrics from it every 15s.
+  - job_name: quicknotes
+    # `quicknotes` is the Compose SERVICE NAME — Docker's internal DNS resolves
+    # it to the container's IP on the compose network. 8080 is the port the app
+    # listens on INSIDE the container (not the host-published port).
+    static_configs:
+      - targets: ["quicknotes:8080"]
+    # metrics_path defaults to /metrics, which is exactly what QuickNotes serves.

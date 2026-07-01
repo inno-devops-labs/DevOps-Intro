@@ -1,0 +1,15 @@
+# Tells Grafana to load dashboard JSON files from a folder on startup.
+apiVersion: 1
+
+providers:
+  - name: golden-signals
+    orgId: 1
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      # Folder INSIDE the container where the JSON is mounted. Grafana loads
+      # every *.json here (the sibling dashboard.yml is ignored).
+      path: /etc/grafana/provisioning/dashboards
+      foldersFromFilesStructure: false

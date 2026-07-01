@@ -1,0 +1,15 @@
+# Auto-provisions the Prometheus data source on Grafana startup, so a fresh
+# stack comes up already wired — no clicking through the UI.
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    # `prometheus` is the Compose service name; 9090 is Prometheus' port.
+    url: http://prometheus:9090
+    isDefault: true
+    # Fixed uid so the provisioned dashboard can reference this datasource
+    # deterministically (panels use uid: "prometheus").
+    uid: prometheus
+    editable: true
