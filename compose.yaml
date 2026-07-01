@@ -21,7 +21,41 @@ services:
       start_period: 5s
     restart: unless-stopped
 
+  prometheus:
+    image: prom/prometheus:v3.0.1
+    container_name: prometheus
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      quicknotes:
+        condition: service_healthy
+    networks:
+      - quicknotes-net
 
+  grafana:
+    image: grafana/grafana:13.0.0
+    container_name: grafana
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/provisioning/dashboards/golden-signals.json:/var/lib/grafana/dashboards/golden-signals.json:ro
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=securepassword123
+      - GF_INSTALL_PLUGINS=
+    depends_on:
+      - prometheus
+    networks:
+      - quicknotes-net
+
+networks:
+  quicknotes-net:
+    driver: bridge
+
+    
 volumes:
   quicknotes-data:
     name: quicknotes-data
