@@ -198,6 +198,6 @@ Timestamps leak in **archive metadata** (tar headers in OCI layers), **file mtim
 
 ### Submission
 
-- [ ] Course PR (`feature/lab11` → `inno-devops-labs/main`)
-- [ ] Fork PR
-- [ ] Moodle URL
+- [x] Course PR: https://github.com/inno-devops-labs/DevOps-Intro/pull/1292
+- [ ] Fork PR: https://github.com/selysecr332/DevOps-Intro/compare/main...feature/lab11?expand=1 (optional — separate repo from course PR)
+- [ ] Moodle URL (submit course PR link above)
