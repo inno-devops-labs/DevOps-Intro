@@ -514,5 +514,200 @@ Marking everything accepted without reading destroys the value of security scann
 
 ## Bonus Task - govulncheck as a CI PR Gate
 
-_To be completed after the bonus task._
+### B.1 CI workflow job
+
+I added a separate GitHub Actions job named `govulncheck` in `.github/workflows/ci.yml`. It runs independently from `Go vet` and `Go test`, uses Go `1.24`, installs a pinned scanner version, and runs inside the `app/` module directory.
+
+Workflow excerpt:
+
+```yaml
+  govulncheck:
+    name: govulncheck
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache: false
+
+      - name: Install pinned govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@v1.5.0
+
+      - name: Run govulncheck with accepted baseline
+        shell: bash
+        run: |
+          set +e
+          govulncheck ./... 2>&1 | tee govulncheck.txt
+          GOVULN_EXIT=${PIPESTATUS[0]}
+          set -e
+
+          python - <<'PY'
+          import pathlib
+          import re
+          import sys
+
+          output = pathlib.Path("govulncheck.txt").read_text(encoding="utf-8", errors="replace")
+          accepted_path = pathlib.Path("../.github/govulncheck-accepted.txt")
+          accepted = {
+              line.strip()
+              for line in accepted_path.read_text(encoding="utf-8").splitlines()
+              if line.strip() and not line.strip().startswith("#")
+          }
+
+          found = set(re.findall(r"\bGO-\d{4}-\d+\b", output))
+          unaccepted = sorted(found - accepted)
+
+          print("govulncheck finding IDs:", ", ".join(sorted(found)) or "none")
+          print("accepted baseline IDs:", ", ".join(sorted(accepted)) or "none")
+
+          if unaccepted:
+              print("Unaccepted reachable vulnerabilities found:")
+              for vuln_id in unaccepted:
+                  print(f"- {vuln_id}")
+              sys.exit(1)
+
+          if found:
+              print("Only accepted baseline vulnerabilities were found. Passing CI, but keep the baseline review date.")
+          else:
+              print("No reachable vulnerabilities found.")
+          PY
+```
+
+I also added `.github/govulncheck-accepted.txt` to document the accepted current Go 1.24 standard-library baseline findings:
+
+```text
+GO-2026-5039
+GO-2026-5037
+GO-2026-4971
+GO-2026-4947
+GO-2026-4946
+GO-2026-4870
+GO-2026-4602
+GO-2026-4601
+```
+
+Reason for this baseline:
+
+The GitHub Actions Go `1.24` environment reported reachable standard-library findings even without the deliberately vulnerable dependency. Following the normal rollout strategy from the lecture, I documented the existing findings and configured the CI gate to fail only on new unaccepted vulnerabilities.
+
+Green baseline evidence:
+
+```text
+Commit: c3bf625
+Workflow run: lab9 baseline govulncheck stdlib findings #16
+Status: Success
+Go vet: green
+Go test: green
+govulncheck: green
+```
+
+---
+
+### B.2 Red CI evidence with deliberately vulnerable dependency
+
+For the red CI proof, I temporarily added a deliberately vulnerable dependency:
+
+```text
+golang.org/x/text v0.3.5
+```
+
+Temporary file added:
+
+```go
+package main
+
+import "golang.org/x/text/language"
+
+// This file is intentionally temporary for Lab 9 bonus evidence.
+// It makes a known-vulnerable dependency reachable so govulncheck can prove
+// the CI gate catches a new unaccepted vulnerability.
+func init() {
+	_, _ = language.Parse("en-US")
+}
+```
+
+Local `govulncheck` evidence before pushing:
+
+```text
+Vulnerability #1: GO-2021-0113
+    Out-of-bounds read in golang.org/x/text/language
+  Module: golang.org/x/text
+    Found in: golang.org/x/text@v0.3.5
+    Fixed in: golang.org/x/text@v0.3.7
+    Example traces found:
+      #1: vuln_demo.go:9:23: quicknotes.init#1 calls language.Parse
+
+Your code is affected by 1 vulnerability from 1 module.
+```
+
+Red CI evidence:
+
+```text
+Commit: 988fd87
+Workflow run: temp lab9 reachable vulnerable dependency demo #17
+Status: Failure
+Go vet: green
+Go test: green
+govulncheck: red
+```
+
+The `govulncheck` job failed because the dependency introduced a new reachable vulnerability that was not in the accepted baseline:
+
+```text
+govulncheck finding IDs: GO-2021-0113, GO-2026-4601, GO-2026-4602, GO-2026-4870, GO-2026-4946, GO-2026-4947, GO-2026-4971, GO-2026-5037, GO-2026-5039
+accepted baseline IDs: GO-2026-4601, GO-2026-4602, GO-2026-4870, GO-2026-4946, GO-2026-4947, GO-2026-4971, GO-2026-5037, GO-2026-5039
+Unaccepted reachable vulnerabilities found:
+- GO-2021-0113
+Error: Process completed with exit code 1.
+```
+
+This proves the CI gate catches a new reachable vulnerability while allowing the documented baseline.
+
+---
+
+### B.3 Green CI evidence after revert
+
+After capturing the red CI proof, I reverted the temporary vulnerable dependency commit. This removed:
+
+```text
+app/vuln_demo.go
+app/go.sum
+golang.org/x/text v0.3.5 from app/go.mod
+```
+
+Revert evidence:
+
+```text
+Commit: 4cdddda
+Workflow run: Revert "temp lab9 reachable vulnerable dependency..." #18
+Status: Success
+Go vet: green
+Go test: green
+govulncheck: green
+```
+
+This confirms the final branch does not contain the temporary vulnerable dependency and the CI gate passes again.
+
+---
+
+### B.4 Design questions
+
+#### h) How is “this module has a CVE but we do not call the affected function” different from “this module has a CVE”?
+
+A module-level CVE only says the vulnerable code exists somewhere in the dependency. A reachable vulnerability means the application actually calls, directly or indirectly, the affected function. `govulncheck` is useful because it reduces noise by showing whether the vulnerable symbol is reachable from the program. A dependency can contain a CVE, but if the affected function is never called, the immediate application risk is lower than a reachable vulnerability.
+
+#### i) Why pin the scanner version instead of using `@latest`?
+
+Pinning the scanner version makes CI reproducible. If the workflow uses `@latest`, a new scanner release can change output, rules, exit behavior, or formatting without any repository change. That can break CI unexpectedly or make old evidence hard to reproduce. A pinned version lets the team update the scanner intentionally, review changes, and document why the update is safe.
+
+#### j) What will govulncheck not catch that Trivy image scan would?
+
+`govulncheck` focuses on Go code and Go vulnerabilities. It does not scan the full container image filesystem. It will not catch vulnerable OS packages, vulnerable non-Go binaries, Dockerfile or image misconfigurations, leaked secrets in image layers, or packages installed in the base image. Trivy image scanning covers those container and filesystem-level risks, so both tools are useful together.
 
