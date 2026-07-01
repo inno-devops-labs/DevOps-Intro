@@ -153,7 +153,7 @@ Nix trades **learning curve, slower cold builds, and Nix-specific tooling** for 
 
 | Run | URL |
 |-----|-----|
-| Green (digests match) | https://github.com/selysecr332/DevOps-Intro/actions/runs/28497003623 (commit `392bf98`; fork PR #12 — 14/14 checks, see `submissions/screenshots/lab_11/2.png`) |
+| Green (digests match) | https://github.com/selysecr332/DevOps-Intro/actions/runs/28500684322 (final, after red revert; fork PR #12 — 14/14 checks, see `submissions/screenshots/lab_11/2.png`) |
 | Red (deliberate mismatch) | https://github.com/selysecr332/DevOps-Intro/actions/runs/28500520816 — `assert digests match` failed (`Runner A: 000…001` vs real digest on B) |
 
 Screenshots: [`lab_11/1.png`](screenshots/lab_11/1.png) (fork PR), [`lab_11/2.png`](screenshots/lab_11/2.png) (CI green).
