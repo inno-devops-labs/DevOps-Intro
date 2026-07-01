@@ -1,0 +1,121 @@
+Go toolchain:
+go version go1.24.13 linux/amd64
+
+govulncheck version:
+Go: go1.24.13
+Scanner: govulncheck@v1.1.4
+DB: https://vuln.go.dev
+DB updated: 2026-06-26 20:04:13 +0000 UTC
+
+No vulnerabilities found.
+
+Running: govulncheck ./...
+=== Symbol Results ===
+
+Vulnerability #1: GO-2026-5039
+    Arbitrary inputs are included in errors without any escaping in
+    net/textproto
+  More info: https://pkg.go.dev/vuln/GO-2026-5039
+  Standard library
+    Found in: net/textproto@go1.24.13
+    Fixed in: net/textproto@go1.25.11
+    Example traces found:
+      #1: main.go:38:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls textproto.Reader.ReadMIMEHeader
+
+Vulnerability #2: GO-2026-5037
+    Inefficient candidate hostname parsing in crypto/x509
+  More info: https://pkg.go.dev/vuln/GO-2026-5037
+  Standard library
+    Found in: crypto/x509@go1.24.13
+    Fixed in: crypto/x509@go1.25.11
+    Example traces found:
+      #1: main.go:38:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls x509.Certificate.Verify
+      #2: main.go:38:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls x509.Certificate.VerifyHostname
+      #3: main.go:21:13: quicknotes.main calls log.Fatalf, which eventually calls x509.HostnameError.Error
+
+Vulnerability #3: GO-2026-4971
+    Panic in Dial and LookupPort when handling NUL byte on Windows in net
+  More info: https://pkg.go.dev/vuln/GO-2026-4971
+  Standard library
+    Found in: net@go1.24.13
+    Fixed in: net@go1.25.10
+    Example traces found:
+      #1: main.go:38:31: quicknotes.main calls http.Server.ListenAndServe, which calls net.Listen
+
+Vulnerability #4: GO-2026-4947
+    Unexpected work during chain building in crypto/x509
+  More info: https://pkg.go.dev/vuln/GO-2026-4947
+  Standard library
+    Found in: crypto/x509@go1.24.13
+    Fixed in: crypto/x509@go1.25.9
+    Example traces found:
+      #1: main.go:38:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls x509.Certificate.Verify
+
+Vulnerability #5: GO-2026-4946
+    Inefficient policy validation in crypto/x509
+  More info: https://pkg.go.dev/vuln/GO-2026-4946
+  Standard library
+    Found in: crypto/x509@go1.24.13
+    Fixed in: crypto/x509@go1.25.9
+    Example traces found:
+      #1: main.go:38:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls x509.Certificate.Verify
+
+Vulnerability #6: GO-2026-4870
+    Unauthenticated TLS 1.3 KeyUpdate record can cause persistent connection
+    retention and DoS in crypto/tls
+  More info: https://pkg.go.dev/vuln/GO-2026-4870
+  Standard library
+    Found in: crypto/tls@go1.24.13
+    Fixed in: crypto/tls@go1.25.9
+    Example traces found:
+      #1: main.go:38:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls tls.Conn.HandshakeContext
+      #2: main.go:44:15: quicknotes.main calls signal.Notify, which eventually calls tls.Conn.Read
+
+Vulnerability #7: GO-2026-4602
+    FileInfo can escape from a Root in os
+  More info: https://pkg.go.dev/vuln/GO-2026-4602
+  Standard library
+    Found in: os@go1.24.13
+    Fixed in: os@go1.25.8
+    Example traces found:
+      #1: main.go:44:15: quicknotes.main calls signal.Notify, which eventually calls os.ReadDir
+
+Vulnerability #8: GO-2026-4601
+    Incorrect parsing of IPv6 host literals in net/url
+  More info: https://pkg.go.dev/vuln/GO-2026-4601
+  Standard library
+    Found in: net/url@go1.24.13
+    Fixed in: net/url@go1.25.8
+    Example traces found:
+      #1: main.go:44:15: quicknotes.main calls signal.Notify, which eventually calls url.Parse
+      #2: main.go:38:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls url.ParseRequestURI
+
+Vulnerability #9: GO-2021-0113
+    Out-of-bounds read in golang.org/x/text/language
+  More info: https://pkg.go.dev/vuln/GO-2021-0113
+  Module: golang.org/x/text
+    Found in: golang.org/x/text@v0.3.5
+    Fixed in: golang.org/x/text@v0.3.7
+    Example traces found:
+      #1: vuln_demo.go:8:23: quicknotes.runVulnerableDependencyDemo calls language.Parse
+
+Your code is affected by 9 vulnerabilities from 1 module and the Go standard library.
+This scan also found 5 vulnerabilities in packages you import and 8
+vulnerabilities in modules you require, but your code doesn't appear to call
+these vulnerabilities.
+Use '-show verbose' for more details.
+
+Reviewed Go 1.24 baseline IDs currently present:
+GO-2026-4601
+GO-2026-4602
+GO-2026-4870
+GO-2026-4946
+GO-2026-4947
+GO-2026-4971
+GO-2026-5037
+GO-2026-5039
+
+Unexpected reachable vulnerability IDs:
+GO-2021-0113
+
+FAIL: new reachable vulnerabilities were detected.
