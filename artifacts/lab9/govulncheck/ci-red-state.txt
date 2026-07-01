@@ -1,0 +1,7 @@
+Fork PR: https://github.com/tivdzualubem/DevOps-Intro/pull/9
+Commit: 332bec4b61fa457fe9be771378b2bc7238c8aa3c
+Expected failing check: ci / govulncheck-go-1.24 (pull_request)
+Result observed: failed
+Other CI checks observed: 5 successful
+Reachable vulnerability: GO-2021-0113
+Dependency: golang.org/x/text v0.3.5

@@ -12,7 +12,6 @@ import (
 )
 
 func main() {
-	runVulnerableDependencyDemo()
 	addr := envOrDefault("ADDR", ":8080")
 	dataPath := envOrDefault("DATA_PATH", "data/notes.json")
 	seedPath := envOrDefault("SEED_PATH", "seed.json")
