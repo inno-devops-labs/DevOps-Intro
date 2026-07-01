@@ -1,11 +1,11 @@
-GREEN CI CHECK EVIDENCE
-========================================
-Commit: 053da8ce5c4c6883d210b1f9332912a010446669
+CORRECTED GO 1.24 GREEN CI CHECK EVIDENCE
+=========================================
+Commit: b1d2060
 Fork PR: https://github.com/tivdzualubem/DevOps-Intro/pull/9
 
-govulncheck-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529636247/job/84575398381
-lint | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529636247/job/84575398472
-test-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529636247/job/84575398528
-test-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529636247/job/84575398482
-vet-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529636247/job/84575398432
-vet-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529636247/job/84575398442
+govulncheck-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022578
+lint | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022511
+test-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022529
+test-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022557
+vet-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022565
+vet-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022581

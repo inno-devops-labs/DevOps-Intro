@@ -4,8 +4,8 @@
 
 - [Course repository PR #1298](https://github.com/inno-devops-labs/DevOps-Intro/pull/1298)
 - [Fork PR #9](https://github.com/tivdzualubem/DevOps-Intro/pull/9)
-- Red CI demonstration commit: [332bec4](https://github.com/tivdzualubem/DevOps-Intro/commit/332bec4b61fa457fe9be771378b2bc7238c8aa3c)
-- Green recovery commit: [053da8c](https://github.com/tivdzualubem/DevOps-Intro/commit/053da8ce5c4c6883d210b1f9332912a010446669)
+- Corrected Go 1.24 red CI commit: [c28305d](https://github.com/tivdzualubem/DevOps-Intro/commit/c28305d6add4aa04ee418edd2541a65aef4ffe92)
+- Corrected Go 1.24 green recovery commit: [b1d2060](https://github.com/tivdzualubem/DevOps-Intro/commit/b1d2060bc06d0f4b9f6c7406b4167f61ac9c243c)
 
 ## Tool versions and scope
 
@@ -13,7 +13,7 @@
 | --- | --- | --- |
 | Trivy | `aquasec/trivy:0.59.1` | Image, filesystem, configuration, and CycloneDX SBOM |
 | OWASP ZAP | `ghcr.io/zaproxy/zaproxy:2.16.1` | Passive baseline scan only |
-| govulncheck | `golang.org/x/vuln/cmd/govulncheck@v1.5.0` | Reachable Go vulnerability CI gate |
+| govulncheck | `golang.org/x/vuln/cmd/govulncheck@v1.1.4` | Reachable-vulnerability CI gate using Go 1.24.13 |
 | Final image builder | `golang:1.26.4-alpine3.24` | Patched production build toolchain |
 
 The ZAP baseline was run against `http://localhost:8080`. No active
@@ -414,7 +414,7 @@ behavior that could be corrected.
 
 # Bonus — `govulncheck` CI PR gate
 
-## 1. CI job
+## 1. Genuine Go 1.24 CI job
 
 The separate status check is defined in
 [`.github/workflows/ci.yml`](../.github/workflows/ci.yml).
@@ -430,114 +430,167 @@ The separate status check is defined in
       - name: Check out repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Set up required Go 1.24 environment
+      - name: Set up Go 1.24
         uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
         with:
           go-version: '1.24.13'
           cache: false
 
-      - name: Verify required Go 1.24 setup
+      - name: Verify Go 1.24 toolchain
         env:
           GOTOOLCHAIN: local
         run: go version
 
       - name: Install pinned govulncheck
         env:
-          GOTOOLCHAIN: go1.26.4
-        run: go install golang.org/x/vuln/cmd/govulncheck@v1.5.0
+          GOTOOLCHAIN: local
+        run: go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
 
-      - name: Run reachable-vulnerability scan
+      - name: Run Go 1.24 reachable-vulnerability gate
         env:
-          GOTOOLCHAIN: go1.26.4
-        run: '"$(go env GOPATH)/bin/govulncheck" ./...'
+          GOTOOLCHAIN: local
+          GOVULNCHECK_BASELINE: ../.github/govulncheck-go1.24-baseline.txt
+        run: ../.github/scripts/govulncheck-gate.sh
 ```
 
-The workflow provisions the required Go `1.24.13` CI environment. The
-scanner installation and source analysis use `GOTOOLCHAIN=go1.26.4`,
-matching the patched production builder. This is necessary because the
-current vulnerability database reports eight reachable standard-library
-advisories in Go `1.24.13`; using that vulnerable toolchain would keep the
-clean branch permanently red independently of the deliberately introduced
-dependency.
+The job uses Go `1.24.13` with `GOTOOLCHAIN=local`, installs pinned
+`govulncheck v1.1.4`, runs from `app/`, executes `govulncheck ./...`, and
+publishes its own `govulncheck-go-1.24` status check. It does not switch the
+scanner or source analysis to another Go toolchain.
 
-## 2. Red demonstration
+## 2. Reviewed Go 1.24 standard-library baseline
 
-The red commit deliberately added `golang.org/x/text v0.3.5` and called
-`language.Parse`, making `GO-2021-0113` reachable.
+The current vulnerability database reports eight reachable standard-library
+advisories under the required Go `1.24.13` toolchain. The reviewed baseline is
+[`.github/govulncheck-go1.24-baseline.txt`](../.github/govulncheck-go1.24-baseline.txt),
+and the gate is
+[`.github/scripts/govulncheck-gate.sh`](../.github/scripts/govulncheck-gate.sh).
 
-Local scanner evidence:
+The gate prints all reachable advisories and fails whenever a reachable ID is
+not in the reviewed baseline. It also fails on scanner execution errors or an
+invalid baseline.
+
+| Advisory | Scope | Disposition | Reason | Owner | Review date |
+| --- | --- | --- | --- | --- | --- |
+| GO-2026-4601 | Go 1.24.13 standard library | ACCEPT BASELINE | Fixed only in Go 1.25.8 or later; Go 1.24 is required for this bonus job. The production image uses patched Go 1.26.4. | Lab maintainer | 2026-12-01 |
+| GO-2026-4602 | Go 1.24.13 standard library | ACCEPT BASELINE | Fixed only in Go 1.25.8 or later; retained only for the required Go 1.24 CI environment. | Lab maintainer | 2026-12-01 |
+| GO-2026-4870 | Go 1.24.13 standard library | ACCEPT BASELINE | Fixed only in Go 1.25.9 or later; retained only for the required Go 1.24 CI environment. | Lab maintainer | 2026-12-01 |
+| GO-2026-4946 | Go 1.24.13 standard library | ACCEPT BASELINE | Fixed only in Go 1.25.9 or later; retained only for the required Go 1.24 CI environment. | Lab maintainer | 2026-12-01 |
+| GO-2026-4947 | Go 1.24.13 standard library | ACCEPT BASELINE | Fixed only in Go 1.25.9 or later; retained only for the required Go 1.24 CI environment. | Lab maintainer | 2026-12-01 |
+| GO-2026-4971 | Go 1.24.13 standard library | ACCEPT BASELINE | Fixed only in Go 1.25.10 or later; retained only for the required Go 1.24 CI environment. | Lab maintainer | 2026-12-01 |
+| GO-2026-5037 | Go 1.24.13 standard library | ACCEPT BASELINE | Fixed only in Go 1.25.11 or later; retained only for the required Go 1.24 CI environment. | Lab maintainer | 2026-12-01 |
+| GO-2026-5039 | Go 1.24.13 standard library | ACCEPT BASELINE | Fixed only in Go 1.25.11 or later; retained only for the required Go 1.24 CI environment. | Lab maintainer | 2026-12-01 |
+
+The review date is within six months. Production must use the patched Go
+`1.26.4` image from Task 1 rather than the Go 1.24 CI compatibility
+environment.
+
+## 3. Corrected red demonstration
+
+Corrected red commit:
+[c28305d](https://github.com/tivdzualubem/DevOps-Intro/commit/c28305d6add4aa04ee418edd2541a65aef4ffe92)
+
+The commit added `golang.org/x/text v0.3.5` and made `language.Parse`
+reachable from `main`. The baseline was not modified.
+
+Local evidence:
+
+- [Complete corrected red log](../artifacts/lab9/govulncheck/go1.24-corrected-local-red.txt)
+- [Corrected red exit code](../artifacts/lab9/govulncheck/go1.24-corrected-local-red-exit-code.txt)
 
 ```text
-=== Symbol Results ===
+Go toolchain:
+go version go1.24.13 linux/amd64
 
-Vulnerability #1: GO-2021-0113
-    Out-of-bounds read in golang.org/x/text/language
-  More info: https://pkg.go.dev/vuln/GO-2021-0113
-  Module: golang.org/x/text
+Scanner: govulncheck@v1.1.4
+
+Vulnerability #9: GO-2021-0113
     Found in: golang.org/x/text@v0.3.5
-    Fixed in: golang.org/x/text@v0.3.7
-    Example traces found:
-      #1: vuln_demo.go:8:23: quicknotes.runVulnerableDependencyDemo calls language.Parse
+    quicknotes.runVulnerableDependencyDemo calls language.Parse
 
-Your code is affected by 1 vulnerability from 1 module.
-This scan also found 1 vulnerability in packages you import and 0
-vulnerabilities in modules you require, but your code doesn't appear to call
-these vulnerabilities.
-Use '-show verbose' for more details.
+Unexpected reachable vulnerability IDs:
+GO-2021-0113
+
+FAIL: new reachable vulnerabilities were detected.
 ```
 
 GitHub CI evidence:
 
+- [Corrected red check-run JSON](../artifacts/lab9/govulncheck/ci-red-check-runs.json)
+- [Corrected red check summary](../artifacts/lab9/govulncheck/ci-red-check-runs.txt)
+
 ```text
-RED CI CHECK EVIDENCE
-========================================
-Commit: 332bec4b61fa457fe9be771378b2bc7238c8aa3c
+CORRECTED GO 1.24 RED CI CHECK EVIDENCE
+=======================================
+Commit: c28305d
 Fork PR: https://github.com/tivdzualubem/DevOps-Intro/pull/9
 
-govulncheck-go-1.24 | status=completed | conclusion=failure | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529310985/job/84574247121
-lint | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529310985/job/84574247235
-test-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529310985/job/84574247138
-test-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529310985/job/84574247167
-vet-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529310985/job/84574247108
-vet-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529310985/job/84574247258
+govulncheck-go-1.24 | status=completed | conclusion=failure | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532494217/job/84585373873
+lint | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532494217/job/84585373736
+test-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532494217/job/84585373898
+test-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532494217/job/84585373894
+vet-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532494217/job/84585373919
+vet-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532494217/job/84585373905
 ```
 
-At commit [332bec4](https://github.com/tivdzualubem/DevOps-Intro/commit/332bec4b61fa457fe9be771378b2bc7238c8aa3c):
+At the corrected red commit, `govulncheck-go-1.24` failed, the other five
+checks passed, and `GO-2021-0113` was the only reachable ID beyond the
+reviewed baseline.
 
-- `govulncheck-go-1.24` failed.
-- The other five CI checks passed.
+## 4. Corrected green recovery
 
-## 3. Green recovery
+Corrected green commit:
+[b1d2060](https://github.com/tivdzualubem/DevOps-Intro/commit/b1d2060bc06d0f4b9f6c7406b4167f61ac9c243c)
 
-The vulnerable source file, call, dependency, and `go.sum` entries were
-removed in commit [053da8c](https://github.com/tivdzualubem/DevOps-Intro/commit/053da8ce5c4c6883d210b1f9332912a010446669).
+The vulnerable source file, reachable call, dependency, and `go.sum` entries
+were removed. The reviewed baseline remained unchanged.
 
-Local scanner evidence:
+Local evidence:
+
+- [Complete corrected green log](../artifacts/lab9/govulncheck/go1.24-corrected-local-green.txt)
+- [Corrected green exit code](../artifacts/lab9/govulncheck/go1.24-corrected-local-green-exit-code.txt)
 
 ```text
-No vulnerabilities found.
+Reviewed Go 1.24 baseline IDs currently present:
+GO-2026-4601
+GO-2026-4602
+GO-2026-4870
+GO-2026-4946
+GO-2026-4947
+GO-2026-4971
+GO-2026-5037
+GO-2026-5039
+
+Unexpected reachable vulnerability IDs:
+None
+
+PASS: no new reachable vulnerabilities beyond the reviewed Go 1.24 baseline.
 ```
 
 GitHub CI evidence:
 
+- [Corrected green check-run JSON](../artifacts/lab9/govulncheck/ci-green-check-runs.json)
+- [Corrected green check summary](../artifacts/lab9/govulncheck/ci-green-check-runs.txt)
+
 ```text
-GREEN CI CHECK EVIDENCE
-========================================
-Commit: 053da8ce5c4c6883d210b1f9332912a010446669
+CORRECTED GO 1.24 GREEN CI CHECK EVIDENCE
+=========================================
+Commit: b1d2060
 Fork PR: https://github.com/tivdzualubem/DevOps-Intro/pull/9
 
-govulncheck-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529636247/job/84575398381
-lint | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529636247/job/84575398472
-test-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529636247/job/84575398528
-test-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529636247/job/84575398482
-vet-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529636247/job/84575398432
-vet-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28529636247/job/84575398442
+govulncheck-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022578
+lint | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022511
+test-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022529
+test-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022557
+vet-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022565
+vet-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022581
 ```
 
-All six status checks passed on the green commit. The final branch does
-not contain the deliberately vulnerable dependency.
+All six checks passed on the corrected green commit. The final branch contains
+neither the deliberately vulnerable dependency nor `GO-2021-0113`.
 
-## 4. Design questions h–j
+
+## 5. Design questions h–j
 
 ### h) How does reachability change vulnerability triage?
 
