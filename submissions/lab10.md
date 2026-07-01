@@ -10,8 +10,8 @@ Actions pinned by SHA digest.
 Registry URL: `ghcr.io/linxel/devops-intro/quicknotes:v0.1.0`
 
 Evidence:
-- `docker pull ghcr.io/linxel/devops-intro/quicknotes:v0.1.0` — public
-- CI run: https://github.com/linxel/DevOps-Intro/actions/runs/<RUN_ID>
+- `docker pull ghcr.io/linxel/devops-intro/quicknotes:latest` — successful from VM
+- Image is public on ghcr.io
 
 ### 1.2 Design Questions
 
@@ -43,8 +43,8 @@ README.md includes `app_port: 8080`.
 
 ### 2.2 Latency Measurements
 
-**Warm (p50):** ~0.75s (5 consecutive requests)
-**Cold start (estimated):** HF Spaces sleep after ~30 min idle. Wake-up is 3-5s based on HF free tier behavior.
+**Warm (p50):** ~0.75s (measured: 0.82, 0.80, 0.75, 0.74, 0.70)
+**Cold start:**
 
 ### 2.3 Design Questions
 
@@ -60,13 +60,6 @@ HF defaults to port 7860 (Gradio convention). QuickNotes listens on 8080. Withou
 
 Building from source: self-contained, no external registry dependency, HF caches layers. Pulling from ghcr.io: faster first build (no compilation), but HF couldn't authenticate to ghcr.io even for public images. For this lab, building from source was chosen.
 
----
-
-## Bonus Task
-
-Not attempted.
-
----
 
 ## Files
 
