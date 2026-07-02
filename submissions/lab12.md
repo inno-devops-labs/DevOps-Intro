@@ -4,11 +4,54 @@
 
 ### 1.1 main.go
 
-(код выше)
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"time"
+
+	spinhttp "github.com/spinframework/spin-go-sdk/v2/http"
+)
+
+func init() {
+	spinhttp.Handle(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/time" {
+			http.NotFound(w, r)
+			return
+		}
+
+		now := time.Now().UTC().Add(3 * time.Hour)
+		unix := now.Unix()
+		iso := now.Format(time.RFC3339)
+		hourMinute := now.Format("15:04")
+
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, `{"unix":%d,"iso":"%s","hour_minute":"%s"}`+"\n", unix, iso, hourMinute)
+	})
+}
+```
 
 ### 1.2 spin.toml
 
-(конфиг выше)
+```toml
+spin_manifest_version = 2
+
+[application]
+name = "moscow-time"
+version = "0.1.0"
+
+[[trigger.http]]
+route = "/time"
+component = "moscow-time"
+
+[component.moscow-time]
+source = "main.wasm"
+allowed_outbound_hosts = []
+[component.moscow-time.build]
+command = "tinygo build -target=wasip1 -buildmode=c-shared -no-debug -o main.wasm ."
+```
 
 ### 1.3 Build & Run
 
