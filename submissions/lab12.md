@@ -100,3 +100,44 @@ WASM: short-lived functions, edge computing, high-density multi-tenant. Docker: 
 **g) Multi-tenant safety?**
 WASM capability sandbox makes arbitrary code execution harder — no syscalls, no filesystem unless explicitly granted. Docker namespaces can be escaped via kernel bugs; WASM has a formally verified sandbox.
 
+## Bonus Task
+
+### B.1 CLI Module
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	now := time.Now().UTC().Add(3 * time.Hour)
+	fmt.Printf(`{"unix":%d,"iso":"%s","hour_minute":"%s"}`+"\n",
+		now.Unix(), now.Format(time.RFC3339), now.Format("15:04"))
+}
+```
+
+Build: `tinygo build -o main.wasm -target=wasi -no-debug ./main.go`
+Run: `wasmtime run main.wasm` → `{"unix":1783012109,"iso":"2026-07-02T17:08:29Z","hour_minute":"17:08"}`
+Size: 188 KB
+
+### B.2 Comparison
+
+| | Spin (wasi-http) | wasmtime (WASI CLI) |
+|---|---|---|
+| Size | 362 KB | 188 KB |
+| Model | Persistent server | CGI-style per-invocation |
+| Cold start | ~0.05s | ~0.02s |
+
+### B.3 Design Questions
+
+**h) Why can't Spin component run under wasmtime run?**
+Spin component exports a wasi-http handler, not `_start`. wasmtime run expects `_start`.
+
+**i) What does Spin add on top of wasmtime?**
+Instance pooling, wasi-http server loop, manifest/routing layer, outbound-host policy.
+
+**j) When each model fits?**
+wasmtime run: one-off CLI tools, build pipelines. Spin: HTTP APIs, edge functions, persistent services.
