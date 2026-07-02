@@ -175,4 +175,63 @@ what shows you the real blast radius, line by line.
 
 ## Bonus — `ansible-pull` GitOps Loop
 
-<!-- filled after the timer + convergence demo -->
+The managed node reconciles *itself* from the fork on a schedule — no control
+node SSHes in. A oneshot service runs `ansible-pull` against a local inventory;
+a timer fires it every 5 minutes.
+
+- [`ansible/ansible-pull-quicknotes.service`](../ansible/ansible-pull-quicknotes.service)
+  — `ansible-pull -U <fork> -C feature/lab7 -i ansible/inventory.local.ini ansible/playbook.yaml`
+- [`ansible/ansible-pull-quicknotes.timer`](../ansible/ansible-pull-quicknotes.timer)
+  — `OnBootSec=1min`, `OnUnitActiveSec=5min`
+
+### Timer active
+
+```text
+$ systemctl list-timers ansible-pull-quicknotes.timer
+NEXT                        LEFT      LAST                        PASSED  UNIT                           ACTIVATES
+Thu 2026-07-02 19:06:37 MSK 4min 50s  Thu 2026-07-02 19:01:38 MSK 9s ago  ansible-pull-quicknotes.timer  ansible-pull-quicknotes.service
+```
+
+### Convergence observed (push → timer → reconciled)
+
+| Step | Time |
+|------|------|
+| `git push` — `listen_addr: ":8090"` to `feature/lab7` | **18:59:40** |
+| Timer fired `ansible-pull-quicknotes.service` | **19:01:38** |
+| Node reconciled — unit now `Environment=ADDR=:8090`, service restarted on `:8090` | **19:01:47** |
+
+```text
+$ grep ADDR /etc/systemd/system/quicknotes.service      # after the timer fired
+Environment=ADDR=:8090
+$ curl -s localhost:8090/health
+{"notes":4,"status":"ok"}
+```
+
+No `ansible-playbook` was run from a control node — the node pulled the pushed
+change and converged on its own, ~2 minutes after the push (well under the 5-min
+timer period).
+
+### B.4 Design questions
+
+**h) `ansible-pull` (pull) — security benefit vs push.**
+In **push** mode a control node holds SSH keys into *every* managed host and
+connects inbound; that control node becomes a fleet-wide crown jewel (own it →
+own everything), and every host must expose SSH and trust the control node. In
+**pull** mode each host reaches *out* to Git, clones, and applies to itself:
+- **No inbound management port** — hosts can sit behind NAT/firewalls with no open
+  SSH for a control node; the attack surface loses the "central SSH-er."
+- **No central store of fleet credentials** — there's no one box whose compromise
+  yields every host; each node needs only *read* access to the repo (a scoped
+  token for private repos).
+- **Git is the audited source of truth** — every desired-state change is a
+  reviewed, signed commit, not an ad-hoc push from someone's laptop.
+
+**i) Same pattern at the Kubernetes layer.**
+It's **GitOps**, implemented by tools like **Argo CD** and **Flux**: an agent
+runs *in* the cluster, watches a Git repo, and continuously reconciles the
+cluster to the declared state. `ansible-pull` is a fair VM-layer simulator
+because it's the identical control loop — *the repo is the source of truth, and a
+scheduled agent on the target pulls desired state and converges the local system
+to it*. Argo CD/Flux do this for Kubernetes objects; `ansible-pull` + a systemd
+timer does it for a VM's packages, files, and systemd units. Same loop, different
+layer.
