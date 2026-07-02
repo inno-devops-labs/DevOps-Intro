@@ -1,0 +1,36 @@
+name: Release to GHCR
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: meta
+        uses: docker/metadata-action@8e5d50828dc3d537f8f668af89e5dc912a762035
+        with:
+          images: ghcr.io/${{ github.repository }}/quicknotes
+          tags: |
+            type=semver,pattern={{version}}
+            type=raw,value=latest
+
+      - uses: docker/build-push-action@4a13b500e551474570896f72c87cb7aecfdabae8
+        with:
+          context: ./app
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
