@@ -82,6 +82,11 @@ Image built via nix build .#docker producing a gzipped tarball. docker load < re
 First build: 0dd1e8c60570d6aeb866c1c8fcda84b19baa14c4f43ce659189221144fdd83f7
 Second build (after `nix store gc`): 0dd1e8c60570d6aeb866c1c8fcda84b19baa14c4f43ce659189221144fdd83f7
 
+Docker build (non-reproducible, Lab 6):
+- run1: sha256:e2faba7b1c4cdd3e640642dbddc977e4478866d042b34a87911f3247995b25c8
+- run2: sha256:da6f85c7d92232d88ab7a01bc2b187c4fb7431926b1213f7f82346d4a6d6c958
+
+Nix builds are identical; Docker builds differ each time.
 
 2.4 Design Questions
 
