@@ -1,0 +1,8 @@
+GitHub Actions release evidence
+
+Tag: v0.1.0
+Run URL: https://github.com/BearAx/DevOps-Intro/actions/runs/28587249995
+Status: completed
+Conclusion: success
+Image: ghcr.io/bearax/devops-intro/quicknotes:v0.1.0
+Also tagged: ghcr.io/bearax/devops-intro/quicknotes:latest

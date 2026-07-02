@@ -1,0 +1,11 @@
+Clean GHCR pull evidence
+
+Command used a temporary empty Docker config directory, so no saved GHCR credentials were used:
+
+docker --config <empty-temp-dir> pull ghcr.io/bearax/devops-intro/quicknotes:v0.1.0
+
+Output excerpt:
+v0.1.0: Pulling from bearax/devops-intro/quicknotes
+Digest: sha256:2b74b9b9f7eae6e9f6d74deb323876c5a3db2aa4012ef8203a38fd9f6d3e5c85
+Status: Downloaded newer image for ghcr.io/bearax/devops-intro/quicknotes:v0.1.0
+ghcr.io/bearax/devops-intro/quicknotes:v0.1.0

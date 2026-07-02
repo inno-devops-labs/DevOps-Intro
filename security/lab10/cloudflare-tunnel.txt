@@ -1,0 +1,31 @@
+Cloudflare Tunnel bonus evidence
+
+cloudflared version: 2026.6.1
+Tunnel URL: https://imperial-recipients-traditional-gras.trycloudflare.com
+Local image: ghcr.io/bearax/devops-intro/quicknotes:v0.1.0
+Local container: quicknotes-lab10-tunnel
+
+Tunnel creation excerpt:
+Your quick Tunnel has been created! Visit it at:
+https://imperial-recipients-traditional-gras.trycloudflare.com
+
+Health check:
+curl.exe -s https://imperial-recipients-traditional-gras.trycloudflare.com/health
+{"notes":4,"status":"ok"}
+
+Single request timing:
+time_total=0.436720
+
+Hyperfine command:
+hyperfine --warmup 5 --runs 50 --export-json security/lab10/cloudflare-hyperfine.json "curl.exe -s -o NUL https://imperial-recipients-traditional-gras.trycloudflare.com/health"
+
+Hyperfine summary:
+mean=389.8 ms
+stddev=43.4 ms
+min=339.3 ms
+max=528.8 ms
+runs=50
+p50=375.8 ms
+p95=483.9 ms
+
+Note: This proves the public trycloudflare.com URL reaches the local container through Cloudflare. I could not perform a phone/cellular verification from this non-interactive environment.

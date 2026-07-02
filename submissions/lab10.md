@@ -10,6 +10,10 @@
 - [`cloud/huggingface/README.md`](../cloud/huggingface/README.md)
 - [`cloud/tunnel/README.md`](../cloud/tunnel/README.md)
 - [`cloud/teardown.md`](../cloud/teardown.md)
+- [`security/lab10/ghcr-release-run.txt`](../security/lab10/ghcr-release-run.txt)
+- [`security/lab10/ghcr-clean-pull.txt`](../security/lab10/ghcr-clean-pull.txt)
+- [`security/lab10/cloudflare-tunnel.txt`](../security/lab10/cloudflare-tunnel.txt)
+- [`security/lab10/cloudflare-hyperfine.json`](../security/lab10/cloudflare-hyperfine.json)
 
 ## Task 1 - GHCR release workflow
 
@@ -47,13 +51,24 @@ jobs:
 Release evidence:
 
 ```text
-Pending final tagged workflow run.
+Tag: v0.1.0
+Run URL: https://github.com/BearAx/DevOps-Intro/actions/runs/28587249995
+Status: completed
+Conclusion: success
 ```
 
 Clean pull evidence:
 
 ```text
-Pending final GHCR visibility/pull verification.
+Command used a temporary empty Docker config directory, so no saved GHCR credentials were used:
+
+docker --config <empty-temp-dir> pull ghcr.io/bearax/devops-intro/quicknotes:v0.1.0
+
+Output excerpt:
+v0.1.0: Pulling from bearax/devops-intro/quicknotes
+Digest: sha256:2b74b9b9f7eae6e9f6d74deb323876c5a3db2aa4012ef8203a38fd9f6d3e5c85
+Status: Downloaded newer image for ghcr.io/bearax/devops-intro/quicknotes:v0.1.0
+ghcr.io/bearax/devops-intro/quicknotes:v0.1.0
 ```
 
 ### a) OIDC vs `GITHUB_TOKEN`
@@ -93,23 +108,23 @@ pinned: false
 Space URL:
 
 ```text
-Pending Hugging Face Space deployment.
+Blocked in this environment: no Hugging Face token, CLI login, or cached HF credentials were available.
 ```
 
 `curl -v /health` evidence:
 
 ```text
-Pending Hugging Face Space deployment.
+Blocked until the Space repository can be created and pushed with a Hugging Face account token.
 ```
 
 Latency evidence:
 
 | Measurement | Value |
 |---|---:|
-| Warm p50, 5 consecutive requests | Pending |
-| Cold start #1 | Pending |
-| Cold start #2 | Pending |
-| Cold start #3 | Pending |
+| Warm p50, 5 consecutive requests | Blocked by missing HF deployment |
+| Cold start #1 | Blocked by missing HF deployment |
+| Cold start #2 | Blocked by missing HF deployment |
+| Cold start #3 | Blocked by missing HF deployment |
 
 I chose the pull-from-GHCR Space Dockerfile so the Space runs the same tested release artifact that CI published. That makes the deployed image easier to correlate with the release tag and SBOM than rebuilding independently inside the Space.
 
@@ -132,26 +147,42 @@ Tunnel runbook: [`cloud/tunnel/README.md`](../cloud/tunnel/README.md).
 Cloudflare quick tunnel URL:
 
 ```text
-Pending tunnel run.
+https://imperial-recipients-traditional-gras.trycloudflare.com
 ```
 
 External reachability evidence:
 
 ```text
-Pending tunnel run.
+cloudflared created a public trycloudflare.com URL that reached the local GHCR image:
+
+curl.exe -s https://imperial-recipients-traditional-gras.trycloudflare.com/health
+{"notes":4,"status":"ok"}
+
+Single request timing:
+time_total=0.436720
+
+I could not perform a phone/cellular verification from this non-interactive environment.
 ```
 
 Warm latency evidence:
 
 ```text
-Pending hyperfine/cloudflared run.
+hyperfine --warmup 5 --runs 50 "curl.exe -s -o NUL https://imperial-recipients-traditional-gras.trycloudflare.com/health"
+
+mean=389.8 ms
+stddev=43.4 ms
+min=339.3 ms
+max=528.8 ms
+runs=50
+p50=375.8 ms
+p95=483.9 ms
 ```
 
 | Metric | HF Spaces (hosted) | Cloudflare Tunnel (local-via-edge) |
 |--------|-------------------:|-----------------------------------:|
-| Warm p50 | Pending | Pending |
-| Warm p95 | Pending | Pending |
-| Cold start | Pending | N/A (continuously local) |
+| Warm p50 | Blocked by missing HF deployment | 375.8 ms |
+| Warm p95 | Blocked by missing HF deployment | 483.9 ms |
+| Cold start | Blocked by missing HF deployment | N/A (continuously local) |
 | Public URL stability | stable | ephemeral on restart |
 | Cost | free | free |
 
