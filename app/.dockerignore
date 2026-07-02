@@ -1,0 +1,6 @@
+data/
+quicknotes
+quicknotes.exe
+*.test
+coverage.out
+.git/
