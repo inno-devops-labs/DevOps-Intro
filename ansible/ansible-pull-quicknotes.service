@@ -1,0 +1,14 @@
+[Unit]
+Description=QuickNotes GitOps convergence via ansible-pull
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+Environment=ANSIBLE_HOST_KEY_CHECKING=False
+# Pull the fork, check out the branch, run the playbook against localhost.
+ExecStart=/usr/bin/ansible-pull \
+  -U https://github.com/rikire/DevOps-Intro.git \
+  -C feature/lab7 \
+  -i ansible/inventory.local.ini \
+  ansible/playbook.yaml
