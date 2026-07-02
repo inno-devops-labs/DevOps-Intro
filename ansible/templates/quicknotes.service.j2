@@ -1,0 +1,18 @@
+# Managed by Ansible — do not edit by hand.
+[Unit]
+Description=QuickNotes
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User={{ svc_user }}
+WorkingDirectory={{ data_dir }}
+Environment=ADDR={{ listen_addr }}
+Environment=DATA_PATH={{ data_path }}
+Environment=SEED_PATH={{ seed_path }}
+ExecStart={{ binary_path }}
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

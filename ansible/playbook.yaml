@@ -1,0 +1,73 @@
+---
+- name: Deploy QuickNotes
+  hosts: quicknotes
+  become: true
+  # We never read any host facts (no ansible_* used), so skip fact gathering —
+  # it shaves the setup module off every run. See design question (d).
+  gather_facts: false
+
+  vars:
+    listen_addr: ":8080"
+    svc_user: quicknotes
+    data_dir: /var/lib/quicknotes
+    data_path: "{{ data_dir }}/notes.json"
+    seed_path: "{{ data_dir }}/seed.json"
+    binary_path: /usr/local/bin/quicknotes
+
+  tasks:
+    - name: Create the quicknotes system user (no login, no home)
+      ansible.builtin.user:
+        name: "{{ svc_user }}"
+        system: true
+        shell: /usr/sbin/nologin
+        home: "{{ data_dir }}"
+        create_home: false
+
+    - name: Ensure the data directory exists
+      ansible.builtin.file:
+        path: "{{ data_dir }}"
+        state: directory
+        owner: "{{ svc_user }}"
+        group: "{{ svc_user }}"
+        mode: "0750"
+
+    - name: Ship the QuickNotes binary
+      ansible.builtin.copy:
+        src: files/quicknotes
+        dest: "{{ binary_path }}"
+        owner: root
+        group: root
+        mode: "0755"
+      notify: restart quicknotes
+
+    - name: Seed initial notes (only if not already present in data dir)
+      ansible.builtin.copy:
+        src: files/seed.json
+        dest: "{{ seed_path }}"
+        owner: "{{ svc_user }}"
+        group: "{{ svc_user }}"
+        mode: "0640"
+
+    - name: Render the systemd unit from template
+      ansible.builtin.template:
+        src: templates/quicknotes.service.j2
+        dest: /etc/systemd/system/quicknotes.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify: restart quicknotes
+
+    - name: Enable and start QuickNotes
+      ansible.builtin.systemd_service:
+        name: quicknotes
+        enabled: true
+        state: started
+
+  handlers:
+    # Fires only when the binary or the unit template actually changed. The
+    # daemon_reload here picks up unit edits before the restart.
+    - name: restart quicknotes
+      ansible.builtin.systemd_service:
+        name: quicknotes
+        state: restarted
+        daemon_reload: true
