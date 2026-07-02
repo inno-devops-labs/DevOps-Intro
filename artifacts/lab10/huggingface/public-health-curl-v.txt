@@ -1,0 +1,79 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Host lubem-quicknotes-lab10.hf.space:443 was resolved.
+* IPv6: (none)
+* IPv4: 52.208.30.199, 108.133.38.41, 52.48.128.222
+*   Trying 52.208.30.199:443...
+* Connected to lubem-quicknotes-lab10.hf.space (52.208.30.199) port 443
+* ALPN: curl offers h2,http/1.1
+} [5 bytes data]
+* TLSv1.3 (OUT), TLS handshake, Client hello (1):
+} [512 bytes data]
+*  CAfile: /etc/ssl/certs/ca-certificates.crt
+*  CApath: /etc/ssl/certs
+{ [5 bytes data]
+* TLSv1.3 (IN), TLS handshake, Server hello (2):
+{ [104 bytes data]
+* TLSv1.2 (IN), TLS handshake, Certificate (11):
+{ [3785 bytes data]
+* TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+{ [333 bytes data]
+* TLSv1.2 (IN), TLS handshake, Server finished (14):
+{ [4 bytes data]
+* TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+} [70 bytes data]
+* TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
+} [1 bytes data]
+* TLSv1.2 (OUT), TLS handshake, Finished (20):
+} [16 bytes data]
+* TLSv1.2 (IN), TLS handshake, Finished (20):
+{ [16 bytes data]
+* SSL connection using TLSv1.2 / ECDHE-RSA-AES128-GCM-SHA256 / prime256v1 / rsaEncryption
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: CN=hf.space
+*  start date: Oct 27 00:00:00 2025 GMT
+*  expire date: Nov 25 23:59:59 2026 GMT
+*  subjectAltName: host "lubem-quicknotes-lab10.hf.space" matched cert's "*.hf.space"
+*  issuer: C=US; O=Amazon; CN=Amazon RSA 2048 M01
+*  SSL certificate verify ok.
+*   Certificate level 0: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+*   Certificate level 1: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+*   Certificate level 2: Public key type RSA (2048/112 Bits/secBits), signed using sha256WithRSAEncryption
+{ [5 bytes data]
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://lubem-quicknotes-lab10.hf.space/health
+* [HTTP/2] [1] [:method: GET]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: lubem-quicknotes-lab10.hf.space]
+* [HTTP/2] [1] [:path: /health]
+* [HTTP/2] [1] [user-agent: curl/8.5.0]
+* [HTTP/2] [1] [accept: */*]
+} [5 bytes data]
+> GET /health HTTP/2
+> Host: lubem-quicknotes-lab10.hf.space
+> User-Agent: curl/8.5.0
+> Accept: */*
+> 
+{ [5 bytes data]
+< HTTP/2 200 
+< date: Thu, 02 Jul 2026 14:44:18 GMT
+< content-type: application/json
+< content-length: 26
+< cache-control: no-store
+< content-security-policy: default-src 'none'
+< permissions-policy: camera=(), geolocation=(), microphone=()
+< referrer-policy: no-referrer
+< x-content-type-options: nosniff
+< x-frame-options: DENY
+< x-proxied-host: http://10.111.45.136
+< x-proxied-replica: o11zp0lp-krr7t
+< x-proxied-path: /health
+< link: <https://huggingface.co/spaces/lubem/quicknotes-lab10>;rel="canonical"
+< x-request-id: F_tE8p
+< vary: origin, access-control-request-method, access-control-request-headers
+< access-control-expose-headers: *
+< 
+{ [26 bytes data]
+100    26  100    26    0     0     25      0  0:00:01  0:00:01 --:--:--    25100    26  100    26    0     0     25      0  0:00:01  0:00:01 --:--:--    25
+* Connection #0 to host lubem-quicknotes-lab10.hf.space left intact

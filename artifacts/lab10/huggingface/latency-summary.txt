@@ -1,0 +1,6 @@
+warm_requests: 5
+warm_p50_seconds: 0.470079
+
+cold_cycle_1_seconds: 0.832342
+cold_cycle_2_seconds: 0.865489
+cold_cycle_3_seconds: 0.997414
