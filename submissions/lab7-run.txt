@@ -1,0 +1,203 @@
+
+========== restore Vagrantfile (it lives on the feature/lab5 branch) so vagrant can drive the VM ==========
+Vagrantfile present: True
+
+========== ensure VM up ==========
+Bringing machine 'default' up with 'hyperv' provider...
+==> default: Verifying Hyper-V is enabled...
+==> default: Verifying Hyper-V is accessible...
+==> default: Machine already provisioned. Run `vagrant provision` or use the `--provision`
+==> default: flag to force provisioning. Provisioners marked to run always will still run.
+
+========== clean any previous quicknotes install so Ansible deploys fresh ==========
+cleaned
+
+========== install ansible + git in the VM, fetch the playbook ==========
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv
+ansible [core 2.17.14]
+cloned
+
+========== TASK 1 -- first run (deploy) ==========
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Create the quicknotes system user (no login, no home)] *******************
+[0;33mchanged: [lab5-vm][0m
+
+TASK [Ensure the data directory exists] ****************************************
+[0;33mchanged: [lab5-vm][0m
+
+TASK [Ship the QuickNotes binary] **********************************************
+[0;33mchanged: [lab5-vm][0m
+
+TASK [Seed initial notes (only if not already present in data dir)] ************
+[0;33mchanged: [lab5-vm][0m
+
+TASK [Render the systemd unit from template] ***********************************
+[0;33mchanged: [lab5-vm][0m
+
+TASK [Enable and start QuickNotes] *********************************************
+[0;33mchanged: [lab5-vm][0m
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+[0;33mchanged: [lab5-vm][0m
+
+PLAY RECAP *********************************************************************
+[0;33mlab5-vm[0m                    : [0;32mok=7   [0m [0;33mchanged=7   [0m unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+
+========== TASK 1 -- service active + /health (in the VM) ==========
+active
+{"notes":4,"status":"ok"}
+
+========== TASK 1 -- /health from the host via port forward (18080) ==========
+host curl 127.0.0.1:18080/health => {"notes":4,"status":"ok"}
+
+========== TASK 2 -- second run (idempotency, expect changed=0) ==========
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Create the quicknotes system user (no login, no home)] *******************
+[0;32mok: [lab5-vm][0m
+
+TASK [Ensure the data directory exists] ****************************************
+[0;32mok: [lab5-vm][0m
+
+TASK [Ship the QuickNotes binary] **********************************************
+[0;32mok: [lab5-vm][0m
+
+TASK [Seed initial notes (only if not already present in data dir)] ************
+[0;32mok: [lab5-vm][0m
+
+TASK [Render the systemd unit from template] ***********************************
+[0;32mok: [lab5-vm][0m
+
+TASK [Enable and start QuickNotes] *********************************************
+[0;32mok: [lab5-vm][0m
+
+PLAY RECAP *********************************************************************
+[0;32mlab5-vm[0m                    : [0;32mok=6   [0m changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+
+========== TASK 2 -- one-variable change: listen_addr=:9090 (template + handler only) ==========
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Create the quicknotes system user (no login, no home)] *******************
+[0;32mok: [lab5-vm][0m
+
+TASK [Ensure the data directory exists] ****************************************
+[0;32mok: [lab5-vm][0m
+
+TASK [Ship the QuickNotes binary] **********************************************
+[0;32mok: [lab5-vm][0m
+
+TASK [Seed initial notes (only if not already present in data dir)] ************
+[0;32mok: [lab5-vm][0m
+
+TASK [Render the systemd unit from template] ***********************************
+[0;33mchanged: [lab5-vm][0m
+
+TASK [Enable and start QuickNotes] *********************************************
+[0;32mok: [lab5-vm][0m
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+[0;33mchanged: [lab5-vm][0m
+
+PLAY RECAP *********************************************************************
+[0;33mlab5-vm[0m                    : [0;32mok=7   [0m [0;33mchanged=2   [0m unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+
+========== TASK 2 -- --check --diff: listen_addr=:9091 ==========
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Create the quicknotes system user (no login, no home)] *******************
+[0;32mok: [lab5-vm][0m
+
+TASK [Ensure the data directory exists] ****************************************
+[0;32mok: [lab5-vm][0m
+
+TASK [Ship the QuickNotes binary] **********************************************
+[0;32mok: [lab5-vm][0m
+
+TASK [Seed initial notes (only if not already present in data dir)] ************
+[0;32mok: [lab5-vm][0m
+
+TASK [Render the systemd unit from template] ***********************************
+[0;31m--- before: /etc/systemd/system/quicknotes.service[0m
+[0;31m[0m[0;32m+++ after: /root/.ansible/tmp/ansible-local-14873w9zn7qxb/tmpn1kmv2uz/quicknotes.service.j2[0m
+[0;32m[0m[0;36m@@ -7,7 +7,7 @@[0m
+[0;36m[0m [Service]
+ User=quicknotes
+ WorkingDirectory=/var/lib/quicknotes
+[0;31m-Environment=ADDR=:9090[0m
+[0;31m[0m[0;32m+Environment=ADDR=:9091[0m
+[0;32m[0m Environment=DATA_PATH=/var/lib/quicknotes/notes.json
+ Environment=SEED_PATH=/var/lib/quicknotes/seed.json
+ ExecStart=/usr/local/bin/quicknotes
+
+[0;33mchanged: [lab5-vm][0m
+
+TASK [Enable and start QuickNotes] *********************************************
+[0;32mok: [lab5-vm][0m
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+[0;33mchanged: [lab5-vm][0m
+
+PLAY RECAP *********************************************************************
+[0;33mlab5-vm[0m                    : [0;32mok=7   [0m [0;33mchanged=2   [0m unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+
+========== restore listen_addr :8080 ==========
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Create the quicknotes system user (no login, no home)] *******************
+[0;32mok: [lab5-vm][0m
+
+TASK [Ensure the data directory exists] ****************************************
+[0;32mok: [lab5-vm][0m
+
+TASK [Ship the QuickNotes binary] **********************************************
+[0;32mok: [lab5-vm][0m
+
+TASK [Seed initial notes (only if not already present in data dir)] ************
+[0;32mok: [lab5-vm][0m
+
+TASK [Render the systemd unit from template] ***********************************
+[0;33mchanged: [lab5-vm][0m
+
+TASK [Enable and start QuickNotes] *********************************************
+[0;32mok: [lab5-vm][0m
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+[0;33mchanged: [lab5-vm][0m
+
+PLAY RECAP *********************************************************************
+[0;33mlab5-vm[0m                    : [0;32mok=7   [0m [0;33mchanged=2   [0m unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+
+========== BONUS -- install ansible-pull service + timer in the VM ==========
+Created symlink /etc/systemd/system/timers.target.wants/ansible-pull-quicknotes.timer тЖТ /etc/systemd/system/ansible-pull-quicknotes.timer.
+timer-installed
+
+========== BONUS -- systemctl list-timers ==========
+[0m[0;4mNEXT         [0m[0m[0;4m LEFT         [0m[0m[0;4m LAST          [0m[0m[0;4m PASSED [0m[0m[0;4m UNIT          [0m[0m[0;4m ACTIVATES     [0m
+Thu 2026-07-тАж 4min 34s left Thu 2026-07-0тАж 25s ago ansible-pull-тАж ansible-pull-тАж
+
+[0;1;39m1 timers listed.[0m
+Pass --all to see loaded but inactive timers, too.
+
+========== BONUS -- trigger one pull now, show it reconciles the node ==========
+Job for ansible-pull-quicknotes.service failed because the control process exited with error code.
+See "systemctl status ansible-pull-quicknotes.service" and "journalctl -xeu ansible-pull-quicknotes.service" for details.
+--- deployed unit ADDR ---
+Environment=ADDR=:8080
+active
+Hint: You are currently not seeing messages from other users and the system.
+      Users in groups 'adm', 'systemd-journal' can see all messages.
+      Pass -q to turn off this notice.
+-- No entries --
+
+========== DONE - results in submissions/lab7-run.txt ==========

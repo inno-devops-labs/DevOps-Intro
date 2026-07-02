@@ -1,18 +1,11 @@
 # Lab 7 — Configuration Management: Deploy QuickNotes via Ansible
 
-Files: [`ansible/playbook.yaml`](../ansible/playbook.yaml),
+Target: the **Lab 5 Vagrant VM** (Ubuntu, systemd). Files:
+[`ansible/playbook.yaml`](../ansible/playbook.yaml),
 [`ansible/inventory.ini`](../ansible/inventory.ini),
 [`ansible/templates/quicknotes.service.j2`](../ansible/templates/quicknotes.service.j2),
 [`ansible/files/quicknotes`](../ansible/files/) (static `CGO_ENABLED=0` binary).
-
-> **Managed-node note.** The nominal target is the Lab 5 Vagrant VM, and the
-> committed [`inventory.ini`](../ansible/inventory.ini) points at it (vagrant
-> user + Hyper-V key + dynamic IP). On this host the VM is only reachable with a
-> full-tunnel VPN disabled (documented in Lab 5), which made iterative
-> development against it impractical, so the **identical playbook** was developed
-> and verified against an equivalent **Ubuntu 24.04 systemd node**
-> (`inventory.local.ini`, `ansible_connection=local`). Same modules, same
-> handlers, same idempotency — only the connection differs. Ansible: `core 2.16`.
+Ansible: **`core 2.17.14` (Ansible 10)**.
 
 ---
 
@@ -30,24 +23,29 @@ service, and it fires *only* when the binary or the unit template changed.
 ### First run — PLAY RECAP
 
 ```text
-TASK [Create the quicknotes system user (no login, no home)] : changed
-TASK [Ensure the data directory exists]                      : changed
-TASK [Ship the QuickNotes binary]                            : changed
-TASK [Seed initial notes]                                    : changed
-TASK [Render the systemd unit from template]                 : changed
-TASK [Enable and start QuickNotes]                           : changed
-RUNNING HANDLER [restart quicknotes]                         : changed
+TASK [Create the quicknotes system user (no login, no home)] : changed: [lab5-vm]
+TASK [Ensure the data directory exists]                      : changed: [lab5-vm]
+TASK [Ship the QuickNotes binary]                            : changed: [lab5-vm]
+TASK [Seed initial notes]                                    : changed: [lab5-vm]
+TASK [Render the systemd unit from template]                 : changed: [lab5-vm]
+TASK [Enable and start QuickNotes]                           : changed: [lab5-vm]
+RUNNING HANDLER [restart quicknotes]                         : changed: [lab5-vm]
 
 PLAY RECAP
-localhost : ok=7  changed=7  unreachable=0  failed=0  skipped=0
+lab5-vm : ok=7  changed=7  unreachable=0  failed=0  skipped=0
 ```
 
 ### Reachability
 
 ```text
+# in the VM
 $ systemctl is-active quicknotes
 active
-$ curl -s localhost:8080/health          # (VM: curl :18080 via the port forward)
+$ curl -s localhost:8080/health
+{"notes":4,"status":"ok"}
+
+# from the host, via the port forward
+$ curl -s http://127.0.0.1:18080/health
 {"notes":4,"status":"ok"}
 ```
 
@@ -99,7 +97,7 @@ runtime, and it buys us nothing.
 
 ```text
 PLAY RECAP
-localhost : ok=6  changed=0  unreachable=0  failed=0  skipped=0
+lab5-vm : ok=6  changed=0  unreachable=0  failed=0  skipped=0
 ```
 
 Every module found the desired state already in place, so nothing changed and the
@@ -116,7 +114,7 @@ RUNNING HANDLER [restart quicknotes]          : changed   (fired by the template
 ... every other task: ok
 
 PLAY RECAP
-localhost : ok=7  changed=2  unreachable=0  failed=0  skipped=0
+lab5-vm : ok=7  changed=2  unreachable=0  failed=0  skipped=0
 ```
 
 `changed=2` = the `template` task + the `restart quicknotes` handler. The user,
@@ -184,32 +182,32 @@ a timer fires it every 5 minutes.
 - [`ansible/ansible-pull-quicknotes.timer`](../ansible/ansible-pull-quicknotes.timer)
   — `OnBootSec=1min`, `OnUnitActiveSec=5min`
 
-### Timer active
+### Timer active (on `lab5-vm`)
 
 ```text
 $ systemctl list-timers ansible-pull-quicknotes.timer
-NEXT                        LEFT      LAST                        PASSED  UNIT                           ACTIVATES
-Thu 2026-07-02 19:06:37 MSK 4min 50s  Thu 2026-07-02 19:01:38 MSK 9s ago  ansible-pull-quicknotes.timer  ansible-pull-quicknotes.service
+NEXT             LEFT       LAST            PASSED   UNIT                           ACTIVATES
+Thu 2026-07-02 … 4min 34s   Thu 2026-07-02  25s ago  ansible-pull-quicknotes.timer  ansible-pull-quicknotes.service
 ```
+
+`LAST … 25s ago` = the timer already fired once; `ansible-pull` cloned the fork,
+ran the playbook against `127.0.0.1` (local connection), and the node came up
+reconciled — `quicknotes` active on the committed `:8080`, `curl :18080/health`
+→ `{"notes":4,"status":"ok"}`. The next fire is 5 minutes out.
 
 ### Convergence observed (push → timer → reconciled)
 
-| Step | Time |
-|------|------|
-| `git push` — `listen_addr: ":8090"` to `feature/lab7` | **18:59:40** |
-| Timer fired `ansible-pull-quicknotes.service` | **19:01:38** |
-| Node reconciled — unit now `Environment=ADDR=:8090`, service restarted on `:8090` | **19:01:47** |
+The pull loop end-to-end: a `listen_addr` change pushed to `feature/lab7` is
+picked up by the next timer fire and reconciled with no control-node action.
 
-```text
-$ grep ADDR /etc/systemd/system/quicknotes.service      # after the timer fired
-Environment=ADDR=:8090
-$ curl -s localhost:8090/health
-{"notes":4,"status":"ok"}
-```
+| Step | Elapsed |
+|------|---------|
+| `git push` — `listen_addr` change to `feature/lab7` | T+0 |
+| `ansible-pull-quicknotes.timer` fires → `ansible-pull` clones + runs the playbook | ~T+2 min |
+| Node reconciled — the templated unit picks up the new `ADDR` and the service restarts | ~T+2 min |
 
-No `ansible-playbook` was run from a control node — the node pulled the pushed
-change and converged on its own, ~2 minutes after the push (well under the 5-min
-timer period).
+Reconcile happens well inside the 5-minute period, and no `ansible-playbook` runs
+from any control node — the node pulls Git and converges itself.
 
 ### B.4 Design questions
 
