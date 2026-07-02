@@ -7,7 +7,7 @@ Wants=network-online.target
 Type=oneshot
 Environment=ANSIBLE_HOST_KEY_CHECKING=False
 # Pull the fork, check out the branch, run the playbook against localhost.
-ExecStart=/usr/bin/ansible-pull \
+ExecStart=/usr/bin/env ansible-pull \
   -U https://github.com/rikire/DevOps-Intro.git \
   -C feature/lab7 \
   -i ansible/inventory.local.ini \

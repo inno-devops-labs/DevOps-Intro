@@ -58,7 +58,7 @@
       notify: restart quicknotes
 
     - name: Enable and start QuickNotes
-      ansible.builtin.systemd_service:
+      ansible.builtin.systemd:
         name: quicknotes
         enabled: true
         state: started
@@ -67,7 +67,7 @@
     # Fires only when the binary or the unit template actually changed. The
     # daemon_reload here picks up unit edits before the restart.
     - name: restart quicknotes
-      ansible.builtin.systemd_service:
+      ansible.builtin.systemd:
         name: quicknotes
         state: restarted
         daemon_reload: true
