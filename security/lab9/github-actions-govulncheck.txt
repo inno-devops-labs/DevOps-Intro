@@ -1,0 +1,16 @@
+GitHub Actions govulncheck evidence
+
+Green run on feature/lab9:
+https://github.com/BearAx/DevOps-Intro/actions/runs/28584341295
+status=completed
+conclusion=success
+
+Red run on temporary codex/lab9-govulncheck-red-demo branch:
+https://github.com/BearAx/DevOps-Intro/actions/runs/28584445468
+status=completed
+conclusion=failure
+
+The temporary branch added golang.org/x/text@v0.3.7 and a reachable
+language.ParseAcceptLanguage call. The branch was deleted after collecting
+the failing run evidence, so the final feature/lab9 branch does not contain
+the vulnerable dependency or probe file.

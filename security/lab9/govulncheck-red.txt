@@ -1,0 +1,20 @@
+govulncheck bonus red evidence
+
+Scanner: golang.org/x/vuln/cmd/govulncheck@v1.1.4
+Go runtime used for CI compatibility check: go1.24.13
+Command: govulncheck -format=json ./...
+Temporary change: added golang.org/x/text@v0.3.7 and an init() call to language.ParseAcceptLanguage("en-US,en;q=0.9").
+
+Reachable third-party vulnerabilities found:
+- GO-2022-1059
+
+Trace excerpt:
+Vulnerability #1: GO-2022-1059
+    Denial of service via crafted Accept-Language header in golang.org/x/text/language
+  Module: golang.org/x/text
+    Found in: golang.org/x/text@v0.3.7
+    Fixed in: golang.org/x/text@v0.3.8
+    Example traces found:
+      #1: vuln_probe.go:6:40: quicknotes.init#1 calls language.ParseAcceptLanguage
+
+Gate exit: 1

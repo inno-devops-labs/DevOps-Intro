@@ -7,6 +7,7 @@
 - [`app/Dockerfile`](../app/Dockerfile)
 - [`app/.dockerignore`](../app/.dockerignore)
 - [`compose.yaml`](../compose.yaml)
+- [`.github/workflows/ci.yml`](../.github/workflows/ci.yml)
 - [`security/lab9/trivy-image.txt`](../security/lab9/trivy-image.txt)
 - [`security/lab9/trivy-fs.json`](../security/lab9/trivy-fs.json)
 - [`security/lab9/trivy-config.txt`](../security/lab9/trivy-config.txt)
@@ -15,6 +16,9 @@
 - [`security/lab9/zap-before.json`](../security/lab9/zap-before.json)
 - [`security/lab9/zap-after.html`](../security/lab9/zap-after.html)
 - [`security/lab9/zap-after.json`](../security/lab9/zap-after.json)
+- [`security/lab9/govulncheck-green.txt`](../security/lab9/govulncheck-green.txt)
+- [`security/lab9/govulncheck-red.txt`](../security/lab9/govulncheck-red.txt)
+- [`security/lab9/github-actions-govulncheck.txt`](../security/lab9/github-actions-govulncheck.txt)
 
 The branch is based on `upstream/main` and only contains Lab 9 deliverables. The Dockerfile and Compose file are included so the Lab 9 scanners have a buildable `quicknotes:lab6` image and a running API target.
 
@@ -279,4 +283,91 @@ Marking every informational finding as accepted without reading it trains the te
 
 ## Bonus task
 
-Not attempted. No `govulncheck` CI job or bonus evidence is included in this Lab 9 branch.
+Implemented.
+
+The CI workflow adds a standalone `govulncheck` status check in [`.github/workflows/ci.yml`](../.github/workflows/ci.yml):
+
+```yaml
+govulncheck:
+  name: govulncheck
+  runs-on: ubuntu-24.04
+  timeout-minutes: 10
+  steps:
+    - name: Checkout
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+    - name: Set up Go
+      uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+      with:
+        go-version: 1.24.x
+        cache: true
+        cache-dependency-path: app/go.mod
+    - name: Install govulncheck
+      run: go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
+    - name: Run govulncheck
+      working-directory: app
+      run: govulncheck -format=json ./...
+```
+
+The actual workflow parses the JSON report, reports current Go 1.24 standard-library findings separately, and fails the PR gate on reachable third-party module findings. This is necessary because the course-required Go `1.24.x` runtime now has standard-library advisories whose fixes are only in newer Go lines.
+
+The `ci-ok` job depends on `govulncheck`, so the PR gate fails if the dependency vulnerability check fails or is cancelled.
+
+Green evidence from the real app is stored in [`govulncheck-green.txt`](../security/lab9/govulncheck-green.txt):
+
+```text
+Ignored Go standard-library findings from the course-pinned Go runtime:
+- GO-2026-4601
+- GO-2026-4602
+- GO-2026-4870
+- GO-2026-4946
+- GO-2026-4947
+- GO-2026-4971
+- GO-2026-5037
+- GO-2026-5039
+
+No reachable third-party vulnerabilities found.
+Gate exit: 0
+```
+
+Red evidence from a temporary app copy is stored in [`govulncheck-red.txt`](../security/lab9/govulncheck-red.txt). I added `golang.org/x/text@v0.3.7` and an `init()` call to `language.ParseAcceptLanguage`, then ran the same pinned `govulncheck` command:
+
+```text
+Vulnerability #1: GO-2022-1059
+    Denial of service via crafted Accept-Language header in
+    golang.org/x/text/language
+  Module: golang.org/x/text
+    Found in: golang.org/x/text@v0.3.7
+    Fixed in: golang.org/x/text@v0.3.8
+    Example traces found:
+      #1: vuln_probe.go:6:40: quicknotes.init#1 calls language.ParseAcceptLanguage
+
+Your code is affected by 1 vulnerability from 1 module.
+```
+
+The vulnerable dependency and probe file were not kept in the final branch.
+
+GitHub Actions evidence is stored in [`github-actions-govulncheck.txt`](../security/lab9/github-actions-govulncheck.txt):
+
+```text
+Green run on feature/lab9:
+https://github.com/BearAx/DevOps-Intro/actions/runs/28584341295
+conclusion=success
+
+Red run on temporary codex/lab9-govulncheck-red-demo branch:
+https://github.com/BearAx/DevOps-Intro/actions/runs/28584445468
+conclusion=failure
+```
+
+The temporary red-demo branch was deleted after the failing run was observed.
+
+### h) Reachability
+
+Reachability separates "this dependency appears somewhere in the module graph" from "this program calls the vulnerable symbol with a path an attacker could trigger." That lowers triage workload because teams can focus first on vulnerabilities in code paths that are actually used.
+
+### i) Pinning the scanner
+
+Pinning `govulncheck` makes CI reproducible. If the workflow used `@latest`, the same commit could pass one day and fail the next because the scanner changed, not because the application changed. Scanner upgrades should be explicit reviewable changes.
+
+### j) What govulncheck does not catch
+
+`govulncheck` only understands Go modules and reachable Go symbols. It will not catch vulnerable OS packages in the container base image, Dockerfile or Compose misconfigurations, leaked secrets, outdated non-Go tools, or runtime image problems that Trivy can detect.

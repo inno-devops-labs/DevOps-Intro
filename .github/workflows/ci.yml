@@ -1,0 +1,103 @@
+name: quicknotes-ci
+
+on:
+  push:
+    paths:
+      - app/**
+      - .github/workflows/ci.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - app/**
+      - .github/workflows/ci.yml
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  govulncheck:
+    name: govulncheck
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Go
+        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+        with:
+          go-version: 1.24.x
+          cache: true
+          cache-dependency-path: app/go.mod
+
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
+
+      - name: Run govulncheck
+        working-directory: app
+        run: |
+          govulncheck -format=json ./... > govulncheck.json
+          python3 <<'PY'
+          import json
+          import sys
+
+          def objects(text):
+              decoder = json.JSONDecoder()
+              index = 0
+              while index < len(text):
+                  while index < len(text) and text[index].isspace():
+                      index += 1
+                  if index >= len(text):
+                      break
+                  item, index = decoder.raw_decode(text, index)
+                  yield item
+
+          third_party = set()
+          stdlib = set()
+          with open("govulncheck.json", encoding="utf-8") as report:
+              for item in objects(report.read()):
+                  finding = item.get("finding")
+                  if not finding:
+                      continue
+                  trace = finding.get("trace") or []
+                  module = trace[0].get("module", "") if trace else ""
+                  if module == "stdlib":
+                      stdlib.add(finding["osv"])
+                  elif module:
+                      third_party.add(finding["osv"])
+
+          if stdlib:
+              print("Ignored Go standard-library findings from the course-pinned Go runtime:")
+              for osv in sorted(stdlib):
+                  print(f"- {osv}")
+
+          if third_party:
+              print("Reachable third-party vulnerabilities found:")
+              for osv in sorted(third_party):
+                  print(f"- {osv}")
+              sys.exit(1)
+
+          print("No reachable third-party vulnerabilities found.")
+          PY
+
+  ci-ok:
+    name: ci-ok
+    if: always()
+    needs:
+      - govulncheck
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check required jobs
+        run: |
+          if [[ "${{ contains(needs.*.result, 'failure') }}" == "true" ]]; then
+            exit 1
+          fi
+          if [[ "${{ contains(needs.*.result, 'cancelled') }}" == "true" ]]; then
+            exit 1
+          fi
