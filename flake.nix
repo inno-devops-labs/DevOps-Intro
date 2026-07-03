@@ -49,6 +49,16 @@
             chmod -R a+rwx $out/data
           '';
 
+          # Image `created` follows SOURCE_DATE_EPOCH so CI can prove the compare gate
+          # (workflow sets "0" in both jobs for green; "1" vs "0" in A/B for red demo).
+          created =
+            let
+              epochStr = builtins.getEnv "SOURCE_DATE_EPOCH";
+            in
+              if epochStr == "0" then "1970-01-01T00:00:00Z"
+              else if epochStr == "1" then "1970-01-01T00:00:01Z"
+              else "1970-01-01T00:00:01Z"; # local / unset — matches first reproducible baseline
+
           dockerImage = pkgs.dockerTools.buildImage {
             name = "quicknotes-nix";
             tag = "0.1.0";
@@ -65,7 +75,7 @@
                 "SEED_PATH=/data/seed.json"
               ];
             };
-            created = "1970-01-01T00:00:01Z";
+            inherit created;
           };
         in {
           default = quicknotes;

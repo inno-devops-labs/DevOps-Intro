@@ -132,9 +132,11 @@ Workflow: [`.github/workflows/nix-repro.yml`](../.github/workflows/nix-repro.yml
 - `DeterminateSystems/nix-installer-action` + `nix build .#docker`
 - `compare-digests` job fails if SHA-256 differ
 
-**Green run:** https://github.com/tdzdslippen/DevOps-Intro/actions/runs/28688299997
+**Green run:** https://github.com/tdzdslippen/DevOps-Intro/actions/runs/28688473209
 
-**Red run (intentional break):** temporarily set `SOURCE_DATE_EPOCH: "1"` only in `build-a` → compare job fails → revert → green again.
+**Red run (intentional break):** in `.github/workflows/nix-repro.yml` set `SOURCE_DATE_EPOCH: "1"` **only** in job `build-a` (leave `build-b` at `"0"`), push → `compare-repro-digests` fails → revert `build-a` to `"0"`.
+
+> First attempt stayed green because `created` was hardcoded in `flake.nix` — workflow env did nothing. Fixed: `created` now follows `SOURCE_DATE_EPOCH`.
 
 **Red run URL:** `https://github.com/tdzdslippen/DevOps-Intro/actions/runs/________`
 
