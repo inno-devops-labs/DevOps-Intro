@@ -1,0 +1,2 @@
+Nix .#docker tarball: 2.8M (dockerTools.buildImage, quicknotes binary + seed only)
+Lab 6 distroless image: 13MB (multi-stage golang builder + healthcheck sidecar + distroless base)

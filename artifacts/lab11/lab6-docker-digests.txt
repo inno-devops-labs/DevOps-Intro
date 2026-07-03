@@ -1,0 +1,6 @@
+Lab 6 Dockerfile (feature/lab6 app/), docker build --no-cache x2 on Lima/avito:
+
+run1 id=sha256:6dcae5ed0cee45a1b3a54bd8a5db8aed4b4a568fab83d592c816c7b7e94b912a size=13MB
+run2 id=sha256:286c1a59e327a16a9ef41b66fcbb28542c122f150c1803a6de3203bd72189060 size=13MB
+
+(different image IDs — non-reproducible layer metadata)
