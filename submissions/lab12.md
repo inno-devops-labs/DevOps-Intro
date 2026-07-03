@@ -104,6 +104,8 @@ It returns Moscow time as JSON with `unix`, `iso`, `hour_minute`, and `timezone`
     command = "tinygo build -target=wasip1 -buildmode=c-shared -no-debug -interp-timeout=10m -o main.wasm ."
     watch = ["**/*.go", "go.mod"]
 
+The build command preserves the scaffolded required `-target=wasip1` and `-buildmode=c-shared` flags. The extra `-interp-timeout=10m` only extends TinyGo's optimization timeout after the default 3-minute timeout was hit during a final rebuild on this WSL machine.
+
 ### Build and run evidence
 
     scaffold_command: spin new -t http-go moscow-time --accept-defaults
