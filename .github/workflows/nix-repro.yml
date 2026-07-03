@@ -29,14 +29,18 @@ jobs:
         run: |
           set -euo pipefail
           digest="$(sha256sum result | awk '{print $1}')"
+          cp --dereference result "quicknotes-nix-${{ matrix.replica }}.tar.gz"
           echo "${digest}" > "digest-${{ matrix.replica }}.txt"
           echo "digest=${digest}" >> "${GITHUB_STEP_SUMMARY}"
+          ls -lh "quicknotes-nix-${{ matrix.replica }}.tar.gz" "digest-${{ matrix.replica }}.txt"
 
-      - name: Upload digest artifact
+      - name: Upload build artifact
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: nix-digest-${{ matrix.replica }}
-          path: digest-${{ matrix.replica }}.txt
+          name: nix-build-${{ matrix.replica }}
+          path: |
+            digest-${{ matrix.replica }}.txt
+            quicknotes-nix-${{ matrix.replica }}.tar.gz
 
   compare:
     name: compare-digests
@@ -54,8 +58,8 @@ jobs:
           set -euo pipefail
           echo "Downloaded digests:"
           find digests -type f -name 'digest-*.txt' -print -exec cat {} \;
-          a="$(cat digests/nix-digest-a/digest-a.txt)"
-          b="$(cat digests/nix-digest-b/digest-b.txt)"
+          a="$(cat digests/nix-build-a/digest-a.txt)"
+          b="$(cat digests/nix-build-b/digest-b.txt)"
           echo "a=${a}"
           echo "b=${b}"
           test "${a}" = "${b}"
