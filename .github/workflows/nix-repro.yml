@@ -31,6 +31,13 @@ jobs:
       - name: Build OCI image
         run: nix build .#docker
 
+      - name: Deliberately perturb artifact for red proof
+        run: |
+          cp result result-broken
+          printf "x" >> result-broken
+          rm result
+          mv result-broken result
+
       - name: Compute image digest
         id: digest
         shell: bash
