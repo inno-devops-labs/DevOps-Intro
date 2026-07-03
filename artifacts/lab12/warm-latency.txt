@@ -1,11 +1,11 @@
 Benchmark 1: spin-time
   Time (mean ± σ):      11.3 ms ±   2.7 ms    [User: 4.7 ms, System: 4.6 ms]
   Range (min … max):     8.4 ms …  19.7 ms    50 runs
- 
+
 Benchmark 2: lab6-docker-health
   Time (mean ± σ):       9.8 ms ±   2.2 ms    [User: 4.8 ms, System: 3.9 ms]
   Range (min … max):     7.8 ms …  20.2 ms    50 runs
- 
+
 Summary
   lab6-docker-health ran
     1.15 ± 0.37 times faster than spin-time

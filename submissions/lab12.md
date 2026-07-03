@@ -40,63 +40,63 @@ It returns Moscow time as JSON with `unix`, `iso`, `hour_minute`, and `timezone`
 ### main.go
 
     package main
-    
+
     import (
-    	"fmt"
-    	"net/http"
-    	"time"
-    
-    	spinhttp "github.com/spinframework/spin-go-sdk/v2/http"
+        "fmt"
+        "net/http"
+        "time"
+
+        spinhttp "github.com/spinframework/spin-go-sdk/v2/http"
     )
-    
+
     func init() {
-    	spinhttp.Handle(func(w http.ResponseWriter, r *http.Request) {
-    		if r.Method != http.MethodGet {
-    			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-    			return
-    		}
-    
-    		if r.URL.Path != "/time" {
-    			http.NotFound(w, r)
-    			return
-    		}
-    
-    		now := time.Now().UTC()
-    		moscow := now.Add(3 * time.Hour)
-    
-    		iso := moscow.Format("2006-01-02T15:04:05") + "+03:00"
-    		hourMinute := moscow.Format("15:04")
-    
-    		w.Header().Set("Content-Type", "application/json")
-    		fmt.Fprintf(
-    			w,
-    			"{\"unix\":%d,\"iso\":%q,\"hour_minute\":%q,\"timezone\":%q}\n",
-    			now.Unix(),
-    			iso,
-    			hourMinute,
-    			"UTC+03:00",
-    		)
-    	})
+        spinhttp.Handle(func(w http.ResponseWriter, r *http.Request) {
+            if r.Method != http.MethodGet {
+                http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+                return
+            }
+
+            if r.URL.Path != "/time" {
+                http.NotFound(w, r)
+                return
+            }
+
+            now := time.Now().UTC()
+            moscow := now.Add(3 * time.Hour)
+
+            iso := moscow.Format("2006-01-02T15:04:05") + "+03:00"
+            hourMinute := moscow.Format("15:04")
+
+            w.Header().Set("Content-Type", "application/json")
+            fmt.Fprintf(
+                w,
+                "{\"unix\":%d,\"iso\":%q,\"hour_minute\":%q,\"timezone\":%q}\n",
+                now.Unix(),
+                iso,
+                hourMinute,
+                "UTC+03:00",
+            )
+        })
     }
-    
+
     func main() {}
 
 ### spin.toml
 
     #:schema https://schemas.spinframework.dev/spin/manifest-v2/latest.json
-    
+
     spin_manifest_version = 2
-    
+
     [application]
     name = "moscow-time"
     version = "0.1.0"
     authors = ["Tivdzualubem <tivdzualubem@gmail.com>"]
     description = ""
-    
+
     [[trigger.http]]
     route = "/time"
     component = "moscow-time"
-    
+
     [component.moscow-time]
     source = "main.wasm"
     allowed_outbound_hosts = []
@@ -148,10 +148,10 @@ d. The TinyGo stdlib gap handled here is time-zone data. Instead of `time.LoadLo
     hostname: DESKTOP-U1R4GKD
     kernel: Linux DESKTOP-U1R4GKD 6.18.33.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
     os:
-    Distributor ID:	Ubuntu
-    Description:	Ubuntu 24.04.1 LTS
-    Release:	24.04
-    Codename:	noble
+    Distributor ID:    Ubuntu
+    Description:    Ubuntu 24.04.1 LTS
+    Release:    24.04
+    Codename:    noble
     cpu:
     Architecture:                            x86_64
     CPU(s):                                  4
@@ -239,40 +239,40 @@ The same Moscow-time logic was rebuilt without the Spin SDK as a standalone WASI
 ### wasm-cli/main.go
 
     package main
-    
+
     import (
-    	"fmt"
-    	"os"
-    	"time"
+        "fmt"
+        "os"
+        "time"
     )
-    
+
     func main() {
-    	method := os.Getenv("REQUEST_METHOD")
-    	path := os.Getenv("PATH_INFO")
-    
-    	if method != "GET" {
-    		fmt.Fprintf(os.Stderr, "method not allowed: %s\n", method)
-    		os.Exit(1)
-    	}
-    
-    	if path != "/time" {
-    		fmt.Fprintf(os.Stderr, "not found: %s\n", path)
-    		os.Exit(1)
-    	}
-    
-    	now := time.Now().UTC()
-    	moscow := now.Add(3 * time.Hour)
-    
-    	iso := moscow.Format("2006-01-02T15:04:05") + "+03:00"
-    	hourMinute := moscow.Format("15:04")
-    
-    	fmt.Printf(
-    		"{\"unix\":%d,\"iso\":%q,\"hour_minute\":%q,\"timezone\":%q}\n",
-    		now.Unix(),
-    		iso,
-    		hourMinute,
-    		"UTC+03:00",
-    	)
+        method := os.Getenv("REQUEST_METHOD")
+        path := os.Getenv("PATH_INFO")
+
+        if method != "GET" {
+            fmt.Fprintf(os.Stderr, "method not allowed: %s\n", method)
+            os.Exit(1)
+        }
+
+        if path != "/time" {
+            fmt.Fprintf(os.Stderr, "not found: %s\n", path)
+            os.Exit(1)
+        }
+
+        now := time.Now().UTC()
+        moscow := now.Add(3 * time.Hour)
+
+        iso := moscow.Format("2006-01-02T15:04:05") + "+03:00"
+        hourMinute := moscow.Format("15:04")
+
+        fmt.Printf(
+            "{\"unix\":%d,\"iso\":%q,\"hour_minute\":%q,\"timezone\":%q}\n",
+            now.Unix(),
+            iso,
+            hourMinute,
+            "UTC+03:00",
+        )
     }
 
 ### Build, run, and size evidence
