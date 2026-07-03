@@ -1,0 +1,12 @@
+scaffold_command: spin new -t http-go moscow-time --accept-defaults
+build_command: spin build
+run_command: spin up --listen 127.0.0.1:3000
+route: /time
+wasm_size: -rw-r--r-- 1 teeroyce teeroyce 355K Jul  3 17:57 main.wasm;main.wasm bytes=363281;
+response: {"unix":1783090869,"iso":"2026-07-03T18:01:09+03:00","hour_minute":"18:01","timezone":"UTC+03:00"}
+headers:
+HTTP/1.1 200 OK
+content-type: application/json
+content-length: 99
+date: Fri, 03 Jul 2026 15:01:09 GMT
+

@@ -1,0 +1,4 @@
+Building component moscow-time with `tinygo build -target=wasip1 -buildmode=c-shared -no-debug -o main.wasm .`
+go: downloading github.com/spinframework/spin-go-sdk/v2 v2.2.1
+go: downloading github.com/julienschmidt/httprouter v1.3.0
+Finished building all Spin components

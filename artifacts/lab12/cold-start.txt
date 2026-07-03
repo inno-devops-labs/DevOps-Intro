@@ -1,0 +1,22 @@
+spin sample 1: 1829.145 ms attempts=29
+spin sample 2: 717.656 ms attempts=13
+spin sample 3: 345.051 ms attempts=8
+spin sample 4: 226.485 ms attempts=6
+spin sample 5: 333.234 ms attempts=6
+docker sample 1: 2749.837 ms attempts=1
+docker sample 2: 2700.065 ms attempts=1
+docker sample 3: 1325.120 ms attempts=1
+docker sample 4: 1553.595 ms attempts=1
+docker sample 5: 9077.770 ms attempts=1
+
+spin
+  samples_ms: 226.485, 333.234, 345.051, 717.656, 1829.145
+  p50_ms: 345.051
+  p95_ms: 1829.145
+  mean_ms: 690.314
+docker
+  samples_ms: 1325.120, 1553.595, 2700.065, 2749.837, 9077.770
+  p50_ms: 2700.065
+  p95_ms: 9077.770
+  mean_ms: 3481.277
+

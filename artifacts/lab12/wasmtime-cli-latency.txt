@@ -1,0 +1,4 @@
+Benchmark 1: wasmtime-cli-time
+  Time (mean ± σ):      14.3 ms ±   4.0 ms    [User: 6.8 ms, System: 8.6 ms]
+  Range (min … max):    11.8 ms …  34.6 ms    50 runs
+ 

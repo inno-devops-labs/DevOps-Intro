@@ -1,0 +1,62 @@
+[
+  {
+    "sample": 1,
+    "runtime": "spin",
+    "ms": 1829.1446949988313,
+    "attempts": 29
+  },
+  {
+    "sample": 2,
+    "runtime": "spin",
+    "ms": 717.6562230015406,
+    "attempts": 13
+  },
+  {
+    "sample": 3,
+    "runtime": "spin",
+    "ms": 345.05082000032417,
+    "attempts": 8
+  },
+  {
+    "sample": 4,
+    "runtime": "spin",
+    "ms": 226.4848799968604,
+    "attempts": 6
+  },
+  {
+    "sample": 5,
+    "runtime": "spin",
+    "ms": 333.23362699957215,
+    "attempts": 6
+  },
+  {
+    "sample": 1,
+    "runtime": "docker",
+    "ms": 2749.8366289983096,
+    "attempts": 1
+  },
+  {
+    "sample": 2,
+    "runtime": "docker",
+    "ms": 2700.0654479998047,
+    "attempts": 1
+  },
+  {
+    "sample": 3,
+    "runtime": "docker",
+    "ms": 1325.1199899968924,
+    "attempts": 1
+  },
+  {
+    "sample": 4,
+    "runtime": "docker",
+    "ms": 1553.5946389973105,
+    "attempts": 1
+  },
+  {
+    "sample": 5,
+    "runtime": "docker",
+    "ms": 9077.770187999704,
+    "attempts": 1
+  }
+]

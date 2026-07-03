@@ -1,0 +1,2 @@
+Building component moscow-time with `tinygo build -target=wasip1 -buildmode=c-shared -no-debug -interp-timeout=10m -o main.wasm .`
+Finished building all Spin components

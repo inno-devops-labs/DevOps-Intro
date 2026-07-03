@@ -1,0 +1,78 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile:
+#1 transferring dockerfile: 1.59kB 0.0s done
+#1 DONE 0.3s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#2 DONE 0.0s
+
+#3 docker-image://docker.io/docker/dockerfile:1.7
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/golang:1.24.13-alpine
+#4 ...
+
+#5 [internal] load metadata for gcr.io/distroless/static-debian12:nonroot
+#5 DONE 1.0s
+
+#4 [internal] load metadata for docker.io/library/golang:1.24.13-alpine
+#4 ...
+
+#6 [auth] library/golang:pull token for registry-1.docker.io
+#6 DONE 0.0s
+
+#4 [internal] load metadata for docker.io/library/golang:1.24.13-alpine
+#4 DONE 3.6s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 2B done
+#7 DONE 0.0s
+
+#8 [builder 1/7] FROM docker.io/library/golang:1.24.13-alpine@sha256:8bee1901f1e530bfb4a7850aa7a479d17ae3a18beb6e09064ed54cfd245b7191
+#8 DONE 0.0s
+
+#9 [runtime 1/6] FROM gcr.io/distroless/static-debian12:nonroot@sha256:d093aa3e30dbadd3efe1310db061a14da60299baff8450a17fe0ccc514a16639
+#9 DONE 0.0s
+
+#10 [internal] load build context
+#10 transferring context: 211B 0.0s done
+#10 DONE 0.0s
+
+#11 [builder 4/7] RUN go mod download
+#11 CACHED
+
+#12 [builder 5/7] COPY *.go ./
+#12 CACHED
+
+#13 [runtime 4/6] COPY --from=builder --chown=65532:65532 /out/data /data
+#13 CACHED
+
+#14 [builder 2/7] WORKDIR /src
+#14 CACHED
+
+#15 [builder 3/7] COPY go.mod ./
+#15 CACHED
+
+#16 [runtime 2/6] COPY --from=builder --chown=65532:65532 /out/quicknotes /quicknotes
+#16 CACHED
+
+#17 [runtime 3/6] COPY --from=builder --chown=65532:65532 /out/healthcheck /healthcheck
+#17 CACHED
+
+#18 [builder 7/7] RUN <<'BUILD_HEALTHCHECK' (cat > /tmp/healthcheck.go <<'GO'...)
+#18 CACHED
+
+#19 [builder 6/7] RUN mkdir -p /out/data &&     CGO_ENABLED=0 GOOS=linux go test ./... &&     CGO_ENABLED=0 GOOS=linux go build       -trimpath       -ldflags="-s -w"       -o /out/quicknotes       .
+#19 CACHED
+
+#20 [runtime 5/6] COPY --chown=65532:65532 seed.json /seed.json
+#20 CACHED
+
+#21 exporting to image
+#21 exporting layers done
+#21 writing image sha256:cdb60389fc889120915e7fc5c6caa27b8dcbd1c93b35ee1f65e708b74e8193e5 0.0s done
+#21 naming to docker.io/library/quicknotes-lab6:lab12
+#21 naming to docker.io/library/quicknotes-lab6:lab12 0.0s done
+#21 DONE 0.1s

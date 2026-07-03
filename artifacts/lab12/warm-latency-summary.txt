@@ -1,0 +1,10 @@
+spin-time
+  runs: 50
+  p50_ms: 10.233
+  p95_ms: 16.530
+  mean_ms: 11.258
+lab6-docker-health
+  runs: 50
+  p50_ms: 9.108
+  p95_ms: 12.851
+  mean_ms: 9.777

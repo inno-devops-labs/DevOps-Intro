@@ -1,0 +1,2 @@
+-rw-r--r-- 1 teeroyce teeroyce 355K Jul  3 17:57 main.wasm
+main.wasm bytes=363281

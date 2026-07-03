@@ -1,0 +1,6 @@
+spin: spin 3.4.0 (4f671be 2025-08-26)
+tinygo: tinygo version 0.41.1 linux/amd64 (using go version go1.24.13 and LLVM version 20.1.1)
+wasmtime: wasmtime 44.0.1 (f302ebd6b 2026-04-30)
+hyperfine: hyperfine 1.18.0
+docker: Docker version 29.2.1, build a5c7197
+go: go version go1.24.13 linux/amd64

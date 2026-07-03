@@ -1,0 +1,28 @@
+date: 2026-07-03T18:18:33+03:00
+hostname: DESKTOP-U1R4GKD
+kernel: Linux DESKTOP-U1R4GKD 6.18.33.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+os:
+Distributor ID:	Ubuntu
+Description:	Ubuntu 24.04.1 LTS
+Release:	24.04
+Codename:	noble
+cpu:
+Architecture:                            x86_64
+CPU(s):                                  4
+On-line CPU(s) list:                     0-3
+Model name:                              Intel(R) Core(TM) i5-4300M CPU @ 2.60GHz
+Thread(s) per core:                      2
+Core(s) per socket:                      2
+Socket(s):                               1
+NUMA node0 CPU(s):                       0-3
+memory:
+               total        used        free      shared  buff/cache   available
+Mem:           5.8Gi       1.7Gi       1.8Gi       3.7Mi       2.4Gi       4.1Gi
+Swap:          2.0Gi       695Mi       1.3Gi
+tools:
+spin: spin 3.4.0 (4f671be 2025-08-26)
+tinygo: tinygo version 0.41.1 linux/amd64 (using go version go1.24.13 and LLVM version 20.1.1)
+wasmtime: wasmtime 44.0.1 (f302ebd6b 2026-04-30)
+hyperfine: hyperfine 1.18.0
+docker: Docker version 29.2.1, build a5c7197
+go: go version go1.24.13 linux/amd64

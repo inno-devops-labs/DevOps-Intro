@@ -1,0 +1,5 @@
+wasmtime-cli-time
+  runs: 50
+  p50_ms: 12.855
+  p95_ms: 22.028
+  mean_ms: 14.339
