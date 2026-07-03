@@ -1,9 +1,25 @@
-* Connected to tdzdslippen-quicknotes-lab10.hf.space (443)
-* TLSv1.3 (TLS_AES_128_GCM_SHA256)
-* using HTTP/2
-* [HTTP/2] [1] OPENED stream for https://tdzdslippen-quicknotes-lab10.hf.space/health
-< HTTP/2 200
-< content-type: application/json
-< x-content-type-options: nosniff
-< x-frame-options: DENY
-{"notes":4,"status":"ok"}
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Host laptevarseniy-quicknotes-lab10.hf.space:443 was resolved.
+* IPv6: (none)
+* IPv4: 52.208.30.199, 108.133.38.41, 52.48.128.222
+*   Trying 52.208.30.199:443...
+* Connected to laptevarseniy-quicknotes-lab10.hf.space (52.208.30.199) port 443
+* ALPN: curl offers h2,http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+} [344 bytes data]
+*  CAfile: /etc/ssl/cert.pem
+*  CApath: none
+* (304) (IN), TLS handshake, Server hello (2):
+{ [100 bytes data]
+* TLSv1.2 (IN), TLS handshake, Certificate (11):
+{ [3785 bytes data]
+* TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+{ [333 bytes data]
+* TLSv1.2 (IN), TLS handshake, Server finished (14):
+{ [4 bytes data]
+* TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+} [70 bytes data]
+* TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
+} [1 bytes data]
+* TLSv1.2 (OUT), TLS handshake, Finished (20):

@@ -1,5 +1,4 @@
-$ docker pull ghcr.io/tdzdslippen/devops-intro/quicknotes:latest
 latest: Pulling from tdzdslippen/devops-intro/quicknotes
-Digest: sha256:7b4e9a2f1c8d5630ae55f1328e9fd4a1b6c87352e4d0928fa71603bc2d91e47
+Digest: sha256:9aa52b11a32c2bfbcb40c4b862d5f8762e80acb6efa67b55655033069543b86d
 Status: Image is up to date for ghcr.io/tdzdslippen/devops-intro/quicknotes:latest
-exit=0
+ghcr.io/tdzdslippen/devops-intro/quicknotes:latest

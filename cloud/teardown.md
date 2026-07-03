@@ -2,7 +2,7 @@
 
 ## Hugging Face Space
 
-Держу **tdzdslippen/quicknotes-lab10** публичным до проверки.
+Держу **laptevarseniy/quicknotes-lab10** публичным до проверки.
 
 После — HF → Space → Settings → Delete this Space.
 

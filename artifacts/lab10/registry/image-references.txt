@@ -4,6 +4,6 @@ Tags:
   ghcr.io/tdzdslippen/devops-intro/quicknotes:v0.1.0
   ghcr.io/tdzdslippen/devops-intro/quicknotes:latest
 
-Registry digest: sha256:7b4e9a2f1c8d5630ae55f1328e9fd4a1b6c87352e4d0928fa71603bc2d91e47
-Image ID:      sha256:1d8f3c22a94e5b0671c2f8910de445a7e96381fc04b2ae7129f0c4d5e6a7b8c
+Registry digest: sha256:9aa52b11a32c2bfbcb40c4b862d5f8762e80acb6efa67b55655033069543b86d
+Image ID:      sha256:7944919a41ddebb1d43410769ca19214c54dbaea09afbbb2386e44dfb3bbfdd1
 Platform:      linux/amd64
