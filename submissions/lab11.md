@@ -132,7 +132,7 @@ Workflow: [`.github/workflows/nix-repro.yml`](../.github/workflows/nix-repro.yml
 - `DeterminateSystems/nix-installer-action` + `nix build .#docker`
 - `compare-digests` job fails if SHA-256 differ
 
-**Green run:** <!-- paste after push --> `https://github.com/tdzdslippen/DevOps-Intro/actions/runs/________`
+**Green run:** https://github.com/tdzdslippen/DevOps-Intro/actions/runs/28688299997
 
 **Red run (intentional break):** temporarily set `SOURCE_DATE_EPOCH: "1"` only in `build-a` → compare job fails → revert → green again.
 
