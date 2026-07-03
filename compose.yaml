@@ -1,0 +1,34 @@
+name: quicknotes
+
+services:
+  quicknotes:
+    build: ./app
+    image: quicknotes:lab6
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: /data/notes.json
+      SEED_PATH: /seed.json
+    volumes:
+      - quicknotes-data:/data          # named volume — survives `down`, dies on `down -v`
+    healthcheck:
+      test: ["CMD", "/healthcheck"]      # distroless has no shell — use the baked-in probe
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 3s
+    restart: unless-stopped
+
+    # ---- Bonus: the 6 hardening defaults ----
+    # (1) USER nonroot and (2) distroless base come from the Dockerfile.
+    read_only: true                      # (4) read-only root filesystem
+    tmpfs:
+      - /tmp                             #     ...with a writable tmpfs for scratch
+    cap_drop:
+      - ALL                              # (3) drop every Linux capability
+    security_opt:
+      - no-new-privileges:true           # (5) no privilege escalation
+
+volumes:
+  quicknotes-data:

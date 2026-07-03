@@ -1,0 +1,2 @@
+idle_window_minutes: 38
+note: closed HF Space tab, no API calls

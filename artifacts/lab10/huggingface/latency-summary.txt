@@ -1,0 +1,6 @@
+Warm p50: 0.512847 s
+
+Cold (~38 min idle, no browser tabs on Space, 3 cycles):
+  cycle 1: 0.876231 s
+  cycle 2: 0.914502 s
+  cycle 3: 1.043891 s

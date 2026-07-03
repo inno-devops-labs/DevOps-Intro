@@ -1,0 +1,4 @@
+endpoint: https://tdzdslippen-quicknotes-lab10.hf.space/health
+samples: 5 consecutive warm requests (curl time_total)
+p50: 0.512847 seconds
+host: MacBook M1 Max, home Wi-Fi, 2026-07-04 ~01:10 UTC+3

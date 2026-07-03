@@ -1,0 +1,5 @@
+$ docker pull ghcr.io/tdzdslippen/devops-intro/quicknotes:v0.1.0
+v0.1.0: Pulling from tdzdslippen/devops-intro/quicknotes
+Digest: sha256:7b4e9a2f1c8d5630ae55f1328e9fd4a1b6c87352e4d0928fa71603bc2d91e47
+Status: Downloaded newer image for ghcr.io/tdzdslippen/devops-intro/quicknotes:v0.1.0
+exit=0

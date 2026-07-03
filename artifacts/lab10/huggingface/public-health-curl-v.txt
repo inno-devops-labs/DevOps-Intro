@@ -1,0 +1,9 @@
+* Connected to tdzdslippen-quicknotes-lab10.hf.space (443)
+* TLSv1.3 (TLS_AES_128_GCM_SHA256)
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://tdzdslippen-quicknotes-lab10.hf.space/health
+< HTTP/2 200
+< content-type: application/json
+< x-content-type-options: nosniff
+< x-frame-options: DENY
+{"notes":4,"status":"ok"}

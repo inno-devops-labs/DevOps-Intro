@@ -1,0 +1,6 @@
+Release workflow run (green):
+https://github.com/tdzdslippen/DevOps-Intro/actions/runs/28543710846
+
+Tag: v0.1.0
+Commit: 52a6c881905b48b6f29e52b0eb8216304b2c3329
+Verified: git verify-tag v0.1.0

@@ -1,0 +1,6 @@
+package_visibility: public
+version_pull_status: 0
+latest_pull_status: 0
+same_image_status: 0
+health_status: 0
+notes_status: 0
