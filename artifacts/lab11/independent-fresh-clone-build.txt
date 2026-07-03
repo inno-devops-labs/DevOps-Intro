@@ -1,0 +1,7 @@
+environment: fresh clone from origin feature/lab11
+clone_path: /tmp/qn-lab11-fresh
+commit: 4ce9bb75403e26ed59502eb869b43dd8a9fc607c
+quicknotes_result_path: /nix/store/1ljpx7aw07wwzkaf6ym7abdkjannc59b-quicknotes-0.1.0
+quicknotes_store_hash: sha256:1hv80kblj0zqcz82z0wihvxz63kylgwkqqgv5naykf0ar4f26w8k
+docker_result_path: /nix/store/bzn1kbyivjlkv2s0mljp0avljq58zzb1-docker-image-quicknotes-nix.tar.gz
+docker_tarball_sha256: c17c1b5a1bea9ce0839f4a3ade27329ef3db586dbad0805f32b14559058ad886

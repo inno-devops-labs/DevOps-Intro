@@ -1,0 +1,8 @@
+source_repo: /home/teeroyce/devops-labs/DevOps-Intro-lab6
+source_app: /home/teeroyce/devops-labs/DevOps-Intro-lab6/app
+source_commit: 01c34d55d5b64ed6ff288226ce2b55d6dab4c9ef
+run1: id=sha256:25a35c50bc88c9f4d2191699e8127d08f95f03e07a707b392076aa613c2e6ddc size=13538083 created=2026-07-03T12:10:14.228018915Z
+run2: id=sha256:cdb60389fc889120915e7fc5c6caa27b8dcbd1c93b35ee1f65e708b74e8193e5 size=13538083 created=2026-07-03T12:12:38.54570022Z
+nix_image: id=sha256:6c0a2c0bd7dd758c58d19f4e5df02a136150163ed1d78ce10394b2a28381c939 size=8506897 created=1970-01-01T00:00:01Z
+nix_tarball_sha256: c17c1b5a1bea9ce0839f4a3ade27329ef3db586dbad0805f32b14559058ad886
+result: Lab 6 Docker run1 and run2 produced different image IDs.

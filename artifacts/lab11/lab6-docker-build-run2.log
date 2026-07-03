@@ -1,0 +1,76 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.59kB 0.0s done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#2 DONE 0.0s
+
+#3 docker-image://docker.io/docker/dockerfile:1.7
+#3 CACHED
+
+#4 [internal] load metadata for docker.io/library/golang:1.24.13-alpine
+#4 ...
+
+#5 [auth] library/golang:pull token for registry-1.docker.io
+#5 DONE 0.0s
+
+#6 [internal] load metadata for gcr.io/distroless/static-debian12:nonroot
+#6 DONE 1.6s
+
+#4 [internal] load metadata for docker.io/library/golang:1.24.13-alpine
+#4 DONE 1.8s
+
+#7 [internal] load .dockerignore
+#7 transferring context: 2B done
+#7 DONE 0.0s
+
+#8 [builder 1/7] FROM docker.io/library/golang:1.24.13-alpine@sha256:8bee1901f1e530bfb4a7850aa7a479d17ae3a18beb6e09064ed54cfd245b7191
+#8 DONE 0.0s
+
+#9 [runtime 1/6] FROM gcr.io/distroless/static-debian12:nonroot@sha256:d093aa3e30dbadd3efe1310db061a14da60299baff8450a17fe0ccc514a16639
+#9 CACHED
+
+#10 [builder 2/7] WORKDIR /src
+#10 CACHED
+
+#11 [internal] load build context
+#11 transferring context: 211B 0.0s done
+#11 DONE 0.0s
+
+#12 [builder 3/7] COPY go.mod ./
+#12 DONE 0.1s
+
+#13 [builder 4/7] RUN go mod download
+#13 0.404 go: no module dependencies to download
+#13 DONE 0.4s
+
+#14 [builder 5/7] COPY *.go ./
+#14 DONE 0.1s
+
+#15 [builder 6/7] RUN mkdir -p /out/data &&     CGO_ENABLED=0 GOOS=linux go test ./... &&     CGO_ENABLED=0 GOOS=linux go build       -trimpath       -ldflags="-s -w"       -o /out/quicknotes       .
+#15 82.19 ok  	quicknotes	0.053s
+#15 DONE 130.6s
+
+#16 [builder 7/7] RUN <<'BUILD_HEALTHCHECK' (cat > /tmp/healthcheck.go <<'GO'...)
+#16 DONE 1.8s
+
+#17 [runtime 2/6] COPY --from=builder --chown=65532:65532 /out/quicknotes /quicknotes
+#17 DONE 1.4s
+
+#18 [runtime 3/6] COPY --from=builder --chown=65532:65532 /out/healthcheck /healthcheck
+#18 DONE 1.6s
+
+#19 [runtime 4/6] COPY --from=builder --chown=65532:65532 /out/data /data
+#19 DONE 0.1s
+
+#20 [runtime 5/6] COPY --chown=65532:65532 seed.json /seed.json
+#20 DONE 0.2s
+
+#21 exporting to image
+#21 exporting layers
+#21 exporting layers 0.3s done
+#21 writing image sha256:cdb60389fc889120915e7fc5c6caa27b8dcbd1c93b35ee1f65e708b74e8193e5 done
+#21 naming to docker.io/library/qn-lab6:run2 0.0s done
+#21 DONE 0.4s

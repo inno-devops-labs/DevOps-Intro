@@ -1,0 +1,1 @@
+User=65532:65532 Entrypoint=["/bin/quicknotes"] Env=["ADDR=:8080","DATA_PATH=/tmp/notes.json","SEED_PATH=/seed.json"] ExposedPorts={"8080/tcp":{}}

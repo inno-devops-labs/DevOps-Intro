@@ -1,0 +1,6 @@
+command: nix build .#quicknotes
+result_path: /nix/store/1ljpx7aw07wwzkaf6ym7abdkjannc59b-quicknotes-0.1.0
+store_hash: sha256:1hv80kblj0zqcz82z0wihvxz63kylgwkqqgv5naykf0ar4f26w8k
+binary_file: result/bin/quicknotes: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, stripped
+health_url: http://127.0.0.1:18080/health
+health_response: {"notes":4,"status":"ok"}

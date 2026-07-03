@@ -1,0 +1,3 @@
+green_run_url: https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28661327106
+green_head_sha: eacacb28d039f19307dbcf7791ff2105515f2292
+green_result: success; both matrix jobs produced the same Nix docker tarball digest and uploaded build artifacts

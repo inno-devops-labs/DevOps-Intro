@@ -1,0 +1,3 @@
+red_run_url: https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28660572075
+red_head_sha: 195f11979703922a71d9791a50ec17d25b2fe641
+red_result: failure caused by deliberately mismatched digest in replica a
