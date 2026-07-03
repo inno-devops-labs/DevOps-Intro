@@ -1,0 +1,13 @@
+apiVersion: 1
+
+providers:
+  - name: golden-signals
+    orgId: 1
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      # Where the dashboard JSON is mounted inside the Grafana container.
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false

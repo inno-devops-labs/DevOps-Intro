@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 15s
+
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+scrape_configs:
+  # One job for QuickNotes. Prometheus resolves the target by its Compose
+  # service name on the shared network; QuickNotes serves metrics on :8080/metrics.
+  - job_name: quicknotes
+    static_configs:
+      - targets: ["quicknotes:8080"]

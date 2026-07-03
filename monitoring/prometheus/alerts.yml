@@ -1,0 +1,19 @@
+groups:
+  - name: quicknotes
+    rules:
+      # Symptom alert: users are seeing errors. Fires only when the 4xx+5xx
+      # ratio stays above 5% for a sustained 5 minutes, so a single bad request
+      # (or a short burst) does not page anyone.
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(quicknotes_http_responses_by_code_total{code=~"[45].."}[5m]))
+            /
+          sum(rate(quicknotes_http_responses_by_code_total[5m]))
+            > 0.05
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "QuickNotes error ratio above 5% for 5 minutes"
+          description: "4xx+5xx responses are >5% of all responses over the last 5m."
+          runbook_url: "https://github.com/rikire/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md"
