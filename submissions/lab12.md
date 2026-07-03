@@ -290,6 +290,17 @@ The same Moscow-time logic was rebuilt without the Spin SDK as a standalone WASI
       p95_ms: 22.028
       mean_ms: 14.339
 
+### Bonus comparison
+
+| Dimension | Spin wasi-http component | Standalone wasmtime CLI |
+|---|---:|---:|
+| Module size | 363,281 bytes | 196,686 bytes |
+| Cold/per-invocation p50 | 345.051 ms cold server start | 12.855 ms per invocation |
+| Repeated request p50 | 10.233 ms warm HTTP request | 12.855 ms per invocation |
+| Execution model | Persistent HTTP server via Spin | One-shot CLI process via wasmtime run |
+
+The numbers are not identical workloads: Spin's cold number includes starting the Spin HTTP host and polling until the server answers, while the standalone CLI number is one `wasmtime run` invocation that starts, prints one JSON response, and exits.
+
 ### Design answers h-j
 
 h. The Task 1 Spin component cannot run under bare `wasmtime run` because it is a `wasi-http` component, not a CLI module with a normal `_start` entrypoint. It exports handler functionality for a wasi-http host such as Spin.
