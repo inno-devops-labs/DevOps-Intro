@@ -1,8 +1,9 @@
 # syntax=docker/dockerfile:1
 
-# Builder: official Go, pinned to the latest 1.24 patch (not :latest). Staying
-# current within 1.24 clears the standard-library CVEs that have a 1.24 fix.
-FROM golang:1.24.13 AS builder
+# Builder: official Go, pinned to the latest patch of a supported line (not
+# :latest). Go 1.24 is EOL and the 2026 stdlib CVEs that Trivy flags only have
+# fixes in the 1.25/1.26 lines, so the builder tracks the current 1.26 patch.
+FROM golang:1.26.4 AS builder
 WORKDIR /src
 
 # Dependency manifest first so the module layer caches apart from the source.
