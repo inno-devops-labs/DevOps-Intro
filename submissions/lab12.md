@@ -167,6 +167,6 @@ Spin embeds wasmtime but adds: **manifest routing** (`spin.toml` triggers), the 
 
 ### Submission
 
-- [ ] Course PR: https://github.com/inno-devops-labs/DevOps-Intro/compare/main...selysecr332:feature/lab12?expand=1
-- [ ] Fork PR: https://github.com/selysecr332/DevOps-Intro/compare/main...feature/lab12?expand=1
-- [ ] Moodle URLs submitted (paste both PR URLs after opening)
+- [x] Course PR: https://github.com/inno-devops-labs/DevOps-Intro/pull/1315
+- [x] Fork PR: https://github.com/selysecr332/DevOps-Intro/pull/13
+- [ ] Moodle URLs submitted (paste **course** PR #1315 + fork PR #13)
