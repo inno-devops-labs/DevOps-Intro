@@ -1,0 +1,3 @@
+http://qn-zap-before:8080/health
+http://qn-zap-before:8080/notes
+http://qn-zap-before:8080/metrics

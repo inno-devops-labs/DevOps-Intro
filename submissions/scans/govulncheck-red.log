@@ -1,0 +1,322 @@
+Fetching vulnerabilities from the database...
+
+Checking the code against the vulnerabilities...
+
+The package pattern matched the following root package:
+  quicknotes
+Govulncheck scanned the following 2 modules and the go1.24.13 standard library:
+  quicknotes
+  golang.org/x/crypto@v0.17.0
+
+=== Symbol Results ===
+
+Vulnerability #1: GO-2026-5039
+    Arbitrary inputs are included in errors without any escaping in
+    net/textproto
+  More info: https://pkg.go.dev/vuln/GO-2026-5039
+  Standard library
+    Found in: net/textproto@go1.24.13
+    Fixed in: net/textproto@go1.25.11
+    Example traces found:
+      #1: main.go:37:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls textproto.Reader.ReadMIMEHeader
+
+Vulnerability #2: GO-2026-5037
+    Inefficient candidate hostname parsing in crypto/x509
+  More info: https://pkg.go.dev/vuln/GO-2026-5037
+  Standard library
+    Found in: crypto/x509@go1.24.13
+    Fixed in: crypto/x509@go1.25.11
+    Example traces found:
+      #1: main.go:37:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls x509.Certificate.Verify
+      #2: main.go:37:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls x509.Certificate.VerifyHostname
+      #3: main.go:20:13: quicknotes.main calls log.Fatalf, which eventually calls x509.HostnameError.Error
+
+Vulnerability #3: GO-2026-4971
+    Panic in Dial and LookupPort when handling NUL byte on Windows in net
+  More info: https://pkg.go.dev/vuln/GO-2026-4971
+  Standard library
+    Found in: net@go1.24.13
+    Fixed in: net@go1.25.10
+    Example traces found:
+      #1: main.go:37:31: quicknotes.main calls http.Server.ListenAndServe, which calls net.Listen
+
+Vulnerability #4: GO-2026-4947
+    Unexpected work during chain building in crypto/x509
+  More info: https://pkg.go.dev/vuln/GO-2026-4947
+  Standard library
+    Found in: crypto/x509@go1.24.13
+    Fixed in: crypto/x509@go1.25.9
+    Example traces found:
+      #1: main.go:37:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls x509.Certificate.Verify
+
+Vulnerability #5: GO-2026-4946
+    Inefficient policy validation in crypto/x509
+  More info: https://pkg.go.dev/vuln/GO-2026-4946
+  Standard library
+    Found in: crypto/x509@go1.24.13
+    Fixed in: crypto/x509@go1.25.9
+    Example traces found:
+      #1: main.go:37:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls x509.Certificate.Verify
+
+Vulnerability #6: GO-2026-4870
+    Unauthenticated TLS 1.3 KeyUpdate record can cause persistent connection
+    retention and DoS in crypto/tls
+  More info: https://pkg.go.dev/vuln/GO-2026-4870
+  Standard library
+    Found in: crypto/tls@go1.24.13
+    Fixed in: crypto/tls@go1.25.9
+    Example traces found:
+      #1: main.go:37:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls tls.Conn.HandshakeContext
+      #2: main.go:43:15: quicknotes.main calls signal.Notify, which eventually calls tls.Conn.Read
+
+Vulnerability #7: GO-2026-4601
+    Incorrect parsing of IPv6 host literals in net/url
+  More info: https://pkg.go.dev/vuln/GO-2026-4601
+  Standard library
+    Found in: net/url@go1.24.13
+    Fixed in: net/url@go1.25.8
+    Example traces found:
+      #1: main.go:43:15: quicknotes.main calls signal.Notify, which eventually calls url.Parse
+      #2: main.go:37:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls url.ParseRequestURI
+
+=== Package Results ===
+
+Vulnerability #1: GO-2026-5038
+    Quadratic complexity in WordDecoder.DecodeHeader in mime
+  More info: https://pkg.go.dev/vuln/GO-2026-5038
+  Standard library
+    Found in: mime@go1.24.13
+    Fixed in: mime@go1.25.11
+
+Vulnerability #2: GO-2026-5023
+    Invoking VerifiedPublicKeyCallback permissions skip enforcement in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5023
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #3: GO-2026-5020
+    Invoking infinite loop on large channel writes in golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5020
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #4: GO-2026-5019
+    Invoking bypass of FIDO/U2F security keys physical interaction in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5019
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #5: GO-2026-5018
+    Invoking pathological RSA/DSA parameters may cause DoS in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5018
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #6: GO-2026-5017
+    Invoking client can cause server deadlock on unexpected responses in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5017
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #7: GO-2026-5016
+    Invoking memory leak when rejecting channels can lead to DoS in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5016
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #8: GO-2026-5015
+    Invoking server panic during CheckHostKey/Authenticate in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5015
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #9: GO-2026-5014
+    Invoking bypass of certificate restrictions in golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5014
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #10: GO-2026-5013
+    Invoking byte arithmetic causes underflow and panic in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5013
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #11: GO-2026-4981
+    Crash when handling long CNAME response in net
+  More info: https://pkg.go.dev/vuln/GO-2026-4981
+  Standard library
+    Found in: net@go1.24.13
+    Fixed in: net@go1.25.10
+
+Vulnerability #12: GO-2026-4918
+    Infinite loop in HTTP/2 transport when given bad SETTINGS_MAX_FRAME_SIZE in
+    net/http/internal/http2 in golang.org/x/net
+  More info: https://pkg.go.dev/vuln/GO-2026-4918
+  Standard library
+    Found in: net/http@go1.24.13
+    Fixed in: net/http@go1.25.10
+
+Vulnerability #13: GO-2026-4864
+    TOCTOU permits root escape on Linux via Root.Chmod in os in
+    internal/syscall/unix
+  More info: https://pkg.go.dev/vuln/GO-2026-4864
+  Standard library
+    Found in: internal/syscall/unix@go1.24.13
+    Fixed in: internal/syscall/unix@go1.25.9
+    Platforms: linux
+
+Vulnerability #14: GO-2026-4602
+    FileInfo can escape from a Root in os
+  More info: https://pkg.go.dev/vuln/GO-2026-4602
+  Standard library
+    Found in: os@go1.24.13
+    Fixed in: os@go1.25.8
+
+Vulnerability #15: GO-2025-4134
+    Unbounded memory consumption in golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2025-4134
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.45.0
+
+Vulnerability #16: GO-2025-3487
+    Potential denial of service in golang.org/x/crypto
+  More info: https://pkg.go.dev/vuln/GO-2025-3487
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.35.0
+
+Vulnerability #17: GO-2024-3321
+    Misuse of connection.serverAuthenticate may cause authorization bypass in
+    golang.org/x/crypto
+  More info: https://pkg.go.dev/vuln/GO-2024-3321
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.31.0
+
+=== Module Results ===
+
+Vulnerability #1: GO-2026-5033
+    Invoking pathological inputs can lead to client panic in
+    golang.org/x/crypto/ssh/agent
+  More info: https://pkg.go.dev/vuln/GO-2026-5033
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #2: GO-2026-5021
+    Invoking auth bypass via unenforced @revoked status in
+    golang.org/x/crypto/ssh/knownhosts
+  More info: https://pkg.go.dev/vuln/GO-2026-5021
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #3: GO-2026-5006
+    Invoking agent constraints dropped when forwarding keys in
+    golang.org/x/crypto/ssh/agent
+  More info: https://pkg.go.dev/vuln/GO-2026-5006
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #4: GO-2026-5005
+    Invoking key constraints not enforced in golang.org/x/crypto/ssh/agent
+  More info: https://pkg.go.dev/vuln/GO-2026-5005
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #5: GO-2026-4986
+    Quadratic string concatentation in consumeComment in net/mail
+  More info: https://pkg.go.dev/vuln/GO-2026-4986
+  Standard library
+    Found in: stdlib@go1.24.13
+    Fixed in: stdlib@go1.25.10
+
+Vulnerability #6: GO-2026-4982
+    Bypass of meta content URL escaping causes XSS in html/template
+  More info: https://pkg.go.dev/vuln/GO-2026-4982
+  Standard library
+    Found in: stdlib@go1.24.13
+    Fixed in: stdlib@go1.25.10
+
+Vulnerability #7: GO-2026-4980
+    Escaper bypass leads to XSS in html/template
+  More info: https://pkg.go.dev/vuln/GO-2026-4980
+  Standard library
+    Found in: stdlib@go1.24.13
+    Fixed in: stdlib@go1.25.10
+
+Vulnerability #8: GO-2026-4977
+    Quadratic string concatenation in consumePhrase in net/mail
+  More info: https://pkg.go.dev/vuln/GO-2026-4977
+  Standard library
+    Found in: stdlib@go1.24.13
+    Fixed in: stdlib@go1.25.10
+
+Vulnerability #9: GO-2026-4976
+    ReverseProxy forwards queries with more than urlmaxqueryparams parameters in
+    net/http/httputil
+  More info: https://pkg.go.dev/vuln/GO-2026-4976
+  Standard library
+    Found in: stdlib@go1.24.13
+    Fixed in: stdlib@go1.25.10
+
+Vulnerability #10: GO-2026-4869
+    Unbounded allocation for old GNU sparse in archive/tar
+  More info: https://pkg.go.dev/vuln/GO-2026-4869
+  Standard library
+    Found in: stdlib@go1.24.13
+    Fixed in: stdlib@go1.25.9
+
+Vulnerability #11: GO-2026-4865
+    JsBraceDepth Context Tracking Bugs (XSS) in html/template
+  More info: https://pkg.go.dev/vuln/GO-2026-4865
+  Standard library
+    Found in: stdlib@go1.24.13
+    Fixed in: stdlib@go1.25.9
+
+Vulnerability #12: GO-2026-4603
+    URLs in meta content attribute actions are not escaped in html/template
+  More info: https://pkg.go.dev/vuln/GO-2026-4603
+  Standard library
+    Found in: stdlib@go1.24.13
+    Fixed in: stdlib@go1.25.8
+
+Vulnerability #13: GO-2025-4135
+    Malformed constraint may cause denial of service in
+    golang.org/x/crypto/ssh/agent
+  More info: https://pkg.go.dev/vuln/GO-2025-4135
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.45.0
+
+Vulnerability #14: GO-2025-4116
+    Potential denial of service in golang.org/x/crypto/ssh/agent
+  More info: https://pkg.go.dev/vuln/GO-2025-4116
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.17.0
+    Fixed in: golang.org/x/crypto@v0.43.0
+
+Your code is affected by 7 vulnerabilities from the Go standard library.
+This scan also found 17 vulnerabilities in packages you import and 14
+vulnerabilities in modules you require, but your code doesn't appear to call
+these vulnerabilities.
