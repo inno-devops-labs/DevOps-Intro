@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # ---- builder ---------------------------------------------------------------
-FROM golang:1.24 AS builder
+FROM golang:1.25 AS builder
 WORKDIR /src
 
 # Copy the module manifest first so `go mod download` is cached independently

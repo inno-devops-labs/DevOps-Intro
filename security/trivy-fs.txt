@@ -1,0 +1,26 @@
+2026-07-03T14:16:34Z	INFO	[vulndb] Need to update DB
+2026-07-03T14:16:34Z	INFO	[vulndb] Downloading vulnerability DB...
+2026-07-03T14:16:34Z	INFO	[vulndb] Downloading artifact...	repo="mirror.gcr.io/aquasec/trivy-db:2"
+2026-07-03T14:16:48Z	INFO	[vulndb] Artifact successfully downloaded	repo="mirror.gcr.io/aquasec/trivy-db:2"
+2026-07-03T14:16:48Z	INFO	[vuln] Vulnerability scanning is enabled
+2026-07-03T14:16:48Z	INFO	[secret] Secret scanning is enabled
+2026-07-03T14:16:48Z	INFO	[secret] If your scanning is slow, please try '--scanners vuln' to disable secret scanning
+2026-07-03T14:16:48Z	INFO	[secret] Please see also https://aquasecurity.github.io/trivy/v0.59/docs/scanner/secret#recommendation for faster secret detection
+2026-07-03T14:16:49Z	INFO	Number of language-specific files	num=1
+2026-07-03T14:16:49Z	INFO	[gomod] Detecting vulnerabilities...
+
+.vagrant/machines/default/hyperv/private_key (secrets)
+======================================================
+Total: 1 (HIGH: 1, CRITICAL: 0)
+
+HIGH: AsymmetricPrivateKey (private-key)
+════════════════════════════════════════
+Asymmetric Private Key
+────────────────────────────────────────
+ .vagrant/machines/default/hyperv/private_key:1
+────────────────────────────────────────
+   1 [ BEGIN OPENSSH PRIVATE KEY-----*******************************************************************************************************************************************************************************************************************************************************************************************************************************************-----END OPENSSH PRI
+   2   
+────────────────────────────────────────
+
+

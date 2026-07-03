@@ -26,7 +26,7 @@ func NewServer(store *Store) *Server {
 	return &Server{store: store, requestsByCode: by}
 }
 
-func (s *Server) Routes() *http.ServeMux {
+func (s *Server) Routes() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", s.wrap(s.handleHealth))
 	mux.HandleFunc("GET /metrics", s.wrap(s.handleMetrics))
@@ -34,7 +34,24 @@ func (s *Server) Routes() *http.ServeMux {
 	mux.HandleFunc("POST /notes", s.wrap(s.handleCreateNote))
 	mux.HandleFunc("GET /notes/{id}", s.wrap(s.handleGetNote))
 	mux.HandleFunc("DELETE /notes/{id}", s.wrap(s.handleDeleteNote))
-	return mux
+	// Security headers applied once, to every route (Lab 9 — ZAP hardening).
+	return securityHeaders(mux)
+}
+
+// securityHeaders wraps the whole router so every response carries a consistent
+// set of hardening headers. QuickNotes is a JSON API, so `default-src 'none'`
+// (the strictest CSP) is safe — the app serves no HTML/JS/CSS that a CSP could
+// break — and no-store keeps note data out of shared caches.
+func securityHeaders(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		h := w.Header()
+		h.Set("X-Content-Type-Options", "nosniff")
+		h.Set("Content-Security-Policy", "default-src 'none'")
+		h.Set("X-Frame-Options", "DENY")
+		h.Set("Referrer-Policy", "no-referrer")
+		h.Set("Cache-Control", "no-store")
+		next.ServeHTTP(w, r)
+	})
 }
 
 type statusWriter struct {

@@ -131,3 +131,22 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	}
 }
 
+func TestSecurityHeaders_PresentOnEveryResponse(t *testing.T) {
+	srv := newTestServer(t)
+	// Hit an ordinary route; the headers come from the router-level middleware,
+	// so this fails if securityHeaders() is removed from Routes().
+	rec := do(t, srv, http.MethodGet, "/health", nil)
+	want := map[string]string{
+		"X-Content-Type-Options":  "nosniff",
+		"Content-Security-Policy": "default-src 'none'",
+		"X-Frame-Options":         "DENY",
+		"Referrer-Policy":         "no-referrer",
+		"Cache-Control":           "no-store",
+	}
+	for k, v := range want {
+		if got := rec.Header().Get(k); got != v {
+			t.Errorf("header %s = %q, want %q", k, got, v)
+		}
+	}
+}
+
