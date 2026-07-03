@@ -1,0 +1,121 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app/**"
+      - ".github/workflows/ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "app/**"
+      - ".github/workflows/ci.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  vet:
+    name: vet
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: app
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ["1.23", "1.24"]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version: ${{ matrix.go }}
+          cache-dependency-path: app/go.mod
+      - run: go vet ./...
+
+  test:
+    name: test
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: app
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ["1.23", "1.24"]
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version: ${{ matrix.go }}
+          cache-dependency-path: app/go.mod
+      - run: go test -race -count=1 ./...
+
+  lint:
+    name: lint
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version: "1.24"
+          cache-dependency-path: app/go.mod
+      - uses: golangci/golangci-lint-action@25e2cdc5eb1d7a04fdc45ff538f1a00e960ae128 # v8.0.0
+        with:
+          version: v2.5.0
+          working-directory: app
+
+  # Lab 9 bonus — govulncheck PR gate (pinned scanner, Go 1.24)
+  govulncheck:
+    name: govulncheck
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
+        with:
+          go-version: "1.24"
+          cache-dependency-path: app/go.mod
+      - name: Install govulncheck (pinned)
+        run: go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
+      - name: Run govulncheck
+        run: |
+          set +e
+          govulncheck -show verbose ./... 2>&1 | tee govulncheck.txt
+          tool_exit=$?
+          if [ "$tool_exit" -eq 1 ]; then
+            echo "::error::govulncheck failed to run"
+            exit 1
+          fi
+          # QuickNotes is std-lib only; on Go 1.24 govulncheck may exit 3 for
+          # reachable stdlib CVEs (triaged WATCH in lab9). Fail the gate only
+          # when a third-party module (golang.org/x/*) is reachable — the bad-dep demo.
+          if grep -qE 'Found in: golang.org/x/' govulncheck.txt; then
+            echo "::error::reachable third-party vulnerability detected"
+            exit 1
+          fi
+          echo "govulncheck gate passed (no reachable third-party vulns)"
+
+  ci-gate:
+    name: ci-gate
+    if: ${{ always() }}
+    needs: [vet, test, lint, govulncheck]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Verify all required jobs succeeded
+        run: |
+          echo "vet=${{ needs.vet.result }} test=${{ needs.test.result }} lint=${{ needs.lint.result }} govulncheck=${{ needs.govulncheck.result }}"
+          for r in "${{ needs.vet.result }}" "${{ needs.test.result }}" "${{ needs.lint.result }}" "${{ needs.govulncheck.result }}"; do
+            if [ "$r" != "success" ]; then
+              echo "::error::a required job did not succeed (got '$r')"
+              exit 1
+            fi
+          done
+          echo "all required jobs succeeded"
