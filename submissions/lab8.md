@@ -160,4 +160,4 @@ the budget is burning fast enough to matter.
 
 ## Bonus — Synthetic Monitoring from the Outside
 
-<!-- TODO: Checkly probe from 2 regions + internal-vs-external comparison -->
+Not attempted (Task 1 + Task 2 completed for 10/10).
