@@ -29,9 +29,6 @@ jobs:
         run: |
           set -euo pipefail
           digest="$(sha256sum result | awk '{print $1}')"
-          if [ "${{ matrix.replica }}" = "a" ]; then
-            digest="broken-${digest}"
-          fi
           echo "${digest}" > "digest-${{ matrix.replica }}.txt"
           echo "digest=${digest}" >> "${GITHUB_STEP_SUMMARY}"
 
