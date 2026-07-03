@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GOFLAGS: -buildvcs=false
+
+jobs:
+  changes:
+    runs-on: ubuntu-24.04
+    outputs:
+      app: ${{ steps.filter.outputs.app }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
+        id: filter
+        with:
+          filters: |
+            app:
+              - 'app/**'
+              - '.github/workflows/ci.yml'
+
+  vet:
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ['1.23', '1.24']
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+        with:
+          go-version: ${{ matrix.go }}
+          cache-dependency-path: app/go.mod
+      - name: go vet
+        working-directory: app
+        # setup-go pins GOTOOLCHAIN=local; override so the 1.23 cell fetches the
+        # 1.24 toolchain that app/go.mod requires (the 1.24 cell already meets it).
+        run: GOTOOLCHAIN=auto go vet ./...
+
+  test:
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ['1.23', '1.24']
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+        with:
+          go-version: ${{ matrix.go }}
+          cache-dependency-path: app/go.mod
+      - name: go test -race
+        working-directory: app
+        run: GOTOOLCHAIN=auto go test -race -count=1 ./...
+
+  lint:
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
+        with:
+          go-version: '1.24'
+          cache-dependency-path: app/go.mod
+      - uses: golangci/golangci-lint-action@82606bf257cbaff209d206a39f5134f0cfbfd2ee # v9.2.1
+        with:
+          version: v2.5.0
+          working-directory: app
+
+  ci-ok:
+    if: always()
+    needs: [changes, vet, test, lint]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Verify required jobs (failure/cancelled => block; skipped => allow)
+        run: |
+          if [ "${{ contains(needs.*.result, 'failure') }}" = "true" ] || \
+             [ "${{ contains(needs.*.result, 'cancelled') }}" = "true" ]; then
+            echo "A required job failed or was cancelled - blocking the PR."
+            exit 1
+          fi
+          echo "All required jobs succeeded."
