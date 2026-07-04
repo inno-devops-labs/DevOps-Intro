@@ -132,13 +132,13 @@ Workflow: [`.github/workflows/nix-repro.yml`](../.github/workflows/nix-repro.yml
 - `DeterminateSystems/nix-installer-action` + `nix build .#docker`
 - `compare-digests` job fails if SHA-256 differ
 
-**Green run:** https://github.com/tdzdslippen/DevOps-Intro/actions/runs/28688551510
+**Green run:** https://github.com/tdzdslippen/DevOps-Intro/actions/runs/28688824921
 
 **Red run (intentional break):** in `.github/workflows/nix-repro.yml` set `SOURCE_DATE_EPOCH: "1"` **only** in job `build-a` (leave `build-b` at `"0"`). Both jobs must use `nix build .#docker --impure` (otherwise `builtins.getEnv` is ignored in pure mode). Push → `compare-repro-digests` fails → revert `build-a` to `"0"`.
 
 > **Why it stayed green twice:** (1) `created` was hardcoded; (2) even after wiring `getEnv`, plain `nix build` is **pure** — GitHub `env:` never reached the flake. Fix: `--impure` on both build steps.
 
-**Red run URL:** https://github.com/tdzdslippen/DevOps-Intro/actions/runs/28688654619
+**Red run URL:** https://github.com/tdzdslippen/DevOps-Intro/actions/runs/28688847091
 
 Log excerpt (green):
 
