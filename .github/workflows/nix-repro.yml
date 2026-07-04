@@ -1,0 +1,69 @@
+# Reproducibility gate: two independent runners build the same flake output
+# and a third job fails the workflow if the image digests differ.
+#
+# build-a and build-b are spelled out as separate jobs instead of a matrix:
+# matrix cells share one outputs namespace, so the second digest would
+# silently overwrite the first and the comparison would always pass.
+name: nix-repro
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-a:
+    name: nix build (runner a)
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+      - name: Build OCI image with Nix
+        run: nix build .#docker
+      - name: Record image digest
+        id: digest
+        run: echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  build-b:
+    name: nix build (runner b)
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+      - name: Build OCI image with Nix
+        run: nix build .#docker
+      - name: Record image digest
+        id: digest
+        run: echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  compare:
+    name: digests must match
+    runs-on: ubuntu-latest
+    needs: [build-a, build-b]
+    steps:
+      - name: Compare the two digests
+        env:
+          DIGEST_A: ${{ needs.build-a.outputs.digest }}
+          DIGEST_B: ${{ needs.build-b.outputs.digest }}
+        run: |
+          echo "runner a: $DIGEST_A"
+          echo "runner b: $DIGEST_B"
+          if [ -z "$DIGEST_A" ] || [ -z "$DIGEST_B" ]; then
+            echo "missing digest output, refusing to pass vacuously"
+            exit 1
+          fi
+          if [ "$DIGEST_A" != "$DIGEST_B" ]; then
+            echo "build is NOT reproducible across runners"
+            exit 1
+          fi
+          echo "identical digests, build is reproducible"
