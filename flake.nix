@@ -39,6 +39,35 @@
           ldflags = [ "-s" "-w" ];
         };
         default = quicknotes;
+
+        # OCI image built without Docker. The tarball is a pure function of
+        # the flake inputs: fixed timestamps, no builder daemon, no network,
+        # so two independent builds are byte-identical.
+        docker = pkgs.dockerTools.buildImage {
+          name = "quicknotes";
+          tag = "nix";
+
+          # The image gets a writable /tmp for the notes file and the same
+          # seed data the Lab 6 image ships.
+          extraCommands = ''
+            mkdir -m 1777 tmp
+            cp ${./app/seed.json} seed.json
+          '';
+
+          config = {
+            # Exec form; the binary is addressed by its store path inside
+            # the image, which pulls the Task 1 package into the layer.
+            Entrypoint = [ "${quicknotes}/bin/quicknotes" ];
+            ExposedPorts."8080/tcp" = { };
+            Env = [
+              "DATA_PATH=/tmp/notes.json"
+              "SEED_PATH=/seed.json"
+            ];
+            # Same nonroot uid the Lab 6 distroless image uses. Numeric so
+            # no /etc/passwd is needed.
+            User = "65532:65532";
+          };
+        };
       });
 
       # nix develop drops collaborators into a shell with the pinned
