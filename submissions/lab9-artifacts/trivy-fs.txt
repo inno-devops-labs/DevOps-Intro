@@ -1,0 +1,42 @@
+2026-07-04T12:25:38+03:00	INFO	[vuln] Vulnerability scanning is enabled
+2026-07-04T12:25:38+03:00	INFO	[secret] Secret scanning is enabled
+2026-07-04T12:25:38+03:00	INFO	[secret] If your scanning is slow, please try '--scanners vuln' to disable secret scanning
+2026-07-04T12:25:38+03:00	INFO	[secret] Please see https://trivy.dev/docs/v0.72/guide/scanner/secret#recommendation for faster secret detection
+2026-07-04T12:25:38+03:00	INFO	Number of language-specific files	num=1
+2026-07-04T12:25:38+03:00	INFO	[gomod] Detecting vulnerabilities...
+
+Report Summary
+
+┌────────────────────────────────────────────┬───────┬─────────────────┬─────────┐
+│                   Target                   │ Type  │ Vulnerabilities │ Secrets │
+├────────────────────────────────────────────┼───────┼─────────────────┼─────────┤
+│ app/go.mod                                 │ gomod │        0        │    -    │
+├────────────────────────────────────────────┼───────┼─────────────────┼─────────┤
+│ .vagrant/machines/default/qemu/private_key │ text  │        -        │    1    │
+└────────────────────────────────────────────┴───────┴─────────────────┴─────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+
+.vagrant/machines/default/qemu/private_key (secrets)
+====================================================
+Total: 1 (HIGH: 1, CRITICAL: 0)
+
+HIGH: AsymmetricPrivateKey (private-key)
+════════════════════════════════════════
+Asymmetric Private Key
+────────────────────────────────────────
+ .vagrant/machines/default/qemu/private_key:2-7 (offset: 36 bytes)
+────────────────────────────────────────
+   1   -----BEGIN OPENSSH PRIVATE KEY-----
+   2 ┌ ************************************************************
+   3 │ ************************************************************
+   4 │ ************************************************************
+   5 │ ************************************************************
+   6 │ ************************************************************
+   7 └ ************************
+   8   -----END OPENSSH PRIVATE KEY-----
+────────────────────────────────────────
+
+

@@ -1,0 +1,12 @@
+=== AFTER (with security headers middleware) ===
+$ curl -sI http://localhost:8080/health
+HTTP/1.1 200 OK
+Content-Security-Policy: default-src 'none'
+Content-Type: application/json
+Referrer-Policy: no-referrer
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-Xss-Protection: 0
+Date: Sat, 04 Jul 2026 09:38:52 GMT
+Content-Length: 26
+

@@ -1,0 +1,6 @@
+=== BEFORE (without security headers middleware) ===
+$ curl -sI http://localhost:8080/health
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Sat, 04 Jul 2026 09:36:47 GMT
+Content-Length: 26
