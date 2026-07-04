@@ -342,8 +342,6 @@ decision on its very first run, see below.
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
-          # NOT 1.24.x like the rest of CI because Go 1.24 is EOL, its stdlib carries
-          # 9 reachable unfixable vulns
           go-version: "1.25.x"
           cache: true
           cache-dependency-path: app/go.mod
@@ -353,52 +351,52 @@ decision on its very first run, see below.
         run: govulncheck ./...
 ```
 
-### The gate caught something real before I even fed it a bad dep
+### So, why I took 1.25.x
 
 First run, clean code, zero third-party deps — and the job went **red** anyway:
 with `go-version: "1.24.x"` govulncheck evaluates the stdlib of the analyzing
 toolchain (1.24.13, EOL), and found **9 reachable stdlib vulnerabilities** — all
 fixed only in 1.25.x, so under 1.24 they are unfixable:
-
-```text
-Vulnerability #7: GO-2026-4870
-    Unauthenticated TLS 1.3 KeyUpdate record can cause persistent connection
-    retention and DoS in crypto/tls
-    Found in: crypto/tls@go1.24.13
-    Fixed in: crypto/tls@go1.25.9
-Error:  #1: main.go:37:31: quicknotes.main calls http.Server.ListenAndServe,
-        which eventually calls tls.Conn.HandshakeContext
-...
-Your code is affected by 9 vulnerabilities from the Go standard library.
-Error: Process completed with exit code 3.
-```
-
 Red run: 
 
 !["prered"](prered.png)
 
-This is the Task 1 WATCH finding showing up again, now with reachability proof —
-`ListenAndServe` really does walk into the vulnerable code paths. Decision: the
+Decision: the
 gate moves to a supported toolchain (1.25.x) so it can ever be green and keeps
 blocking on new findings; the shipped image stays on `golang:1.24.13` per the
 lab pin, and those stdlib CVEs remain WATCHed in the Task 1 triage table. A gate
 that is red forever is not a gate — everyone just learns to ignore it (same alert-
 fatigue rule as lab 8).
 
+I changed to 1.25: 
+
+!["1.25 fix"](good_with_25.png)
+
 ### Bad dep catch
 QuickNotes has no deps, so I temporarily add a known-vulnerable one and call it, push,
 watch the gate go red, then revert.
 
+```
 
-1. CI `govulncheck` job goes **red**:
-   ```text
-   <!-- PASTE: the red run — govulncheck reporting the x/text vuln (e.g. GO-2022-1059), job failed -->
-   ```
+import "golang.org/x/text/language"
 
-2. CI `govulncheck` job back to **green**:
-   ```text
-   <!-- PASTE: the green run after revert -->
-   ```
+
+func init() { 
+	_, _, _ = language.ParseAcceptLanguage("en-US,en;q=0.9") 
+}
+```
+
+
+1. CI `govulncheck` job goes red:
+   
+  !["catch bad dep"](bad_dep.png)
+
+2. CI `govulncheck` job back to 
+**green**:
+
+  !["catch bad dep"](green_dep.png)
+   
+   
 
 
 ### Design questions
