@@ -329,8 +329,10 @@ read it, understood it, here's why it is fine" — not just clicke. This is simi
 ## Bonus Task — `govulncheck` as a CI PR gate
 
 Added a `govulncheck` job to the lab 3 CI (`.github/workflows/ci.yml`). It's pinned
-(not `@latest`), runs against `app/`, Go 1.24, and has its own status check — a
-reachable Go vuln fails it and blocks the PR.
+(not `@latest`), runs against `app/`, and has its own status check — a reachable Go
+vuln fails it and blocks the PR. One deliberate deviation from the lab text: the job
+runs on Go **1.25.x**, not 1.24 like the rest of CI — the gate itself forced that
+decision on its very first run, see below.
 
 ```yaml
   govulncheck:
@@ -340,7 +342,9 @@ reachable Go vuln fails it and blocks the PR.
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
-          go-version: "1.24.x"
+          # NOT 1.24.x like the rest of CI because Go 1.24 is EOL, its stdlib carries
+          # 9 reachable unfixable vulns
+          go-version: "1.25.x"
           cache: true
           cache-dependency-path: app/go.mod
       - name: Install govulncheck (pinned, not @latest)
@@ -349,60 +353,72 @@ reachable Go vuln fails it and blocks the PR.
         run: govulncheck ./...
 ```
 
-### Demonstrate it catches a bad dep
+### The gate caught something real before I even fed it a bad dep
+
+First run, clean code, zero third-party deps — and the job went **red** anyway:
+with `go-version: "1.24.x"` govulncheck evaluates the stdlib of the analyzing
+toolchain (1.24.13, EOL), and found **9 reachable stdlib vulnerabilities** — all
+fixed only in 1.25.x, so under 1.24 they are unfixable:
+
+```text
+Vulnerability #7: GO-2026-4870
+    Unauthenticated TLS 1.3 KeyUpdate record can cause persistent connection
+    retention and DoS in crypto/tls
+    Found in: crypto/tls@go1.24.13
+    Fixed in: crypto/tls@go1.25.9
+Error:  #1: main.go:37:31: quicknotes.main calls http.Server.ListenAndServe,
+        which eventually calls tls.Conn.HandshakeContext
+...
+Your code is affected by 9 vulnerabilities from the Go standard library.
+Error: Process completed with exit code 3.
+```
+
+Red run: 
+
+!["prered"](prered.png)
+
+This is the Task 1 WATCH finding showing up again, now with reachability proof —
+`ListenAndServe` really does walk into the vulnerable code paths. Decision: the
+gate moves to a supported toolchain (1.25.x) so it can ever be green and keeps
+blocking on new findings; the shipped image stays on `golang:1.24.13` per the
+lab pin, and those stdlib CVEs remain WATCHed in the Task 1 triage table. A gate
+that is red forever is not a gate — everyone just learns to ignore it (same alert-
+fatigue rule as lab 8).
+
+### Bad dep catch
 QuickNotes has no deps, so I temporarily add a known-vulnerable one and call it, push,
 watch the gate go red, then revert.
 
-1. In `app/`, add a reachable call into an old, vulnerable `golang.org/x/text`:
-   ```go
-   import "golang.org/x/text/language"
-   // ... somewhere reachable, e.g. in an init:
-   _, _, _ = language.ParseAcceptLanguage("en-US,en;q=0.9")
-   ```
-   ```bash
-   cd app && go get golang.org/x/text@v0.3.0 && go mod tidy
-   git commit -S -s -am "TEMP: vulnerable dep to prove govulncheck" && git push
-   ```
-2. CI `govulncheck` job goes **red**:
+
+1. CI `govulncheck` job goes **red**:
    ```text
    <!-- PASTE: the red run — govulncheck reporting the x/text vuln (e.g. GO-2022-1059), job failed -->
    ```
-3. Revert it:
-   ```bash
-   git revert --no-edit HEAD   # or undo the import + go mod tidy
-   git push
-   ```
-4. CI `govulncheck` job back to **green**:
+
+2. CI `govulncheck` job back to **green**:
    ```text
    <!-- PASTE: the green run after revert -->
    ```
 
-> Note: if the clean run is already red from **Go 1.24 stdlib** vulns (1.24 is EOL),
-> that's the Task-1 finding showing up again — honest fix is bumping the toolchain to
-> 1.25.x; under the lab's 1.24 pin it's expected.
 
 ### Design questions
 
 **h) Reachability — "module has a CVE but we don't call the affected function" vs "module has a CVE" — what it means for triage workload.**
 Huge difference in how much you actually have to do. "Module has a CVE" (what Trivy /
-plain SCA says) flags every dependency that *contains* vulnerable code — including
+plain SCA says) flags every dependency that contains vulnerable code — including
 CVEs in functions you never call, so you drown in findings that don't affect you.
 govulncheck does **reachability**: it only flags a CVE if your code actually calls
 into the vulnerable function through the call graph. So instead of triaging 50
-"present" CVEs you triage the 3 that are genuinely reachable. Way less busywork, and
-what's left is real.
+"present" CVEs you triage the 3 that are genuinely reachable. 
 
 **i) Why pin the version of govulncheck instead of `@latest`?**
 Same reason you pin anything in CI — reproducibility and no surprises. `@latest`
 means tomorrow's release can change behaviour, add checks, or just break, and CI goes
 red (or green) for reasons unrelated to my code — and two runs of the "same" commit
-aren't the same. Pinning `@v1.1.4` makes the gate deterministic; I bump it on
-purpose, in a reviewed commit, not by accident.
+aren't the same. Pinning `@v1.1.4` makes the gate deterministic
 
 **j) govulncheck only knows Go — what won't it catch that Trivy (image scan) would?**
 It only sees the Go module graph + stdlib. It's blind to everything else in the
 image: OS packages (the debian/alpine layer — openssl, libc, apt), system binaries,
 non-Go stuff, base-image CVEs, Dockerfile misconfigs. Trivy's image scan catches
-those. So they're complementary: govulncheck = "is my Go code reaching a vulnerable
-Go function", Trivy image = "is anything in the whole container image vulnerable".
-You want both.
+those.
