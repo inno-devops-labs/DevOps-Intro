@@ -1,5 +1,5 @@
 package main
-
+import "golang.org/x/text/language"
 import (
 	"context"
 	"errors"
@@ -82,4 +82,9 @@ func dirname(p string) string {
 		}
 	}
 	return "."
+}
+
+func init() 
+{ 
+	_, _, _ = language.ParseAcceptLanguage("en-US,en;q=0.9") 
 }
