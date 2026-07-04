@@ -1,0 +1,3 @@
+spin main.wasm:   368418 bytes
+wasm-cli main.wasm:   195479 bytes
+docker quicknotes:lab6: 13MB (4a1e8e8eed9e)

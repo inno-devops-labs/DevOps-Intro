@@ -1,0 +1,5 @@
+sample 1: 92.4 ms
+sample 2: 93.2 ms
+sample 3: 91.3 ms
+sample 4: 89.4 ms
+sample 5: 89.1 ms

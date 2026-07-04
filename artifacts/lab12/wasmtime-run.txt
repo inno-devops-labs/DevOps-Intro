@@ -1,0 +1,4 @@
+Status: 200 OK
+Content-Type: application/json
+
+{"unix":1783135453,"iso":"2026-07-04T03:24:13Z","hour_minute":"03:24"}

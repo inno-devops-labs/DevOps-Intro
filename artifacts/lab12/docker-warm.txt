@@ -1,0 +1,4 @@
+Benchmark 1: curl -sf -o /dev/null http://127.0.0.1:8080/health
+  Time (mean ± σ):      11.1 ms ±   1.2 ms    [User: 3.2 ms, System: 2.9 ms]
+  Range (min … max):     9.0 ms …  13.6 ms    50 runs
+ 

@@ -1,0 +1,4 @@
+Benchmark 1: curl -sf -o /dev/null http://127.0.0.1:3000/time
+  Time (mean ± σ):      10.1 ms ±   0.4 ms    [User: 3.1 ms, System: 3.0 ms]
+  Range (min … max):     9.4 ms …  11.3 ms    50 runs
+ 

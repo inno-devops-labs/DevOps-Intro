@@ -1,0 +1,21 @@
+#:schema https://schemas.spinframework.dev/spin/manifest-v2/latest.json
+
+spin_manifest_version = 2
+
+[application]
+name = "moscow-time"
+version = "0.1.0"
+authors = ["tdzdslippen"]
+description = "QuickNotes-style Moscow time endpoint (Lab 12)"
+
+[[trigger.http]]
+route = "/time"
+component = "moscow-time"
+
+[component.moscow-time]
+source = "main.wasm"
+allowed_outbound_hosts = []
+
+[component.moscow-time.build]
+command = "tinygo build -target=wasip1 -buildmode=c-shared -no-debug -o main.wasm ."
+watch = ["**/*.go", "go.mod"]
