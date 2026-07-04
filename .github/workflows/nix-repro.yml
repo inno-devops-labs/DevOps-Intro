@@ -21,8 +21,8 @@ jobs:
 
       - name: nix build .#docker
         env:
-          SOURCE_DATE_EPOCH: "1"
-        run: nix build .#docker --print-build-logs
+          SOURCE_DATE_EPOCH: "0"
+        run: nix build .#docker --impure --print-build-logs
 
       - id: out
         run: |
@@ -43,7 +43,7 @@ jobs:
       - name: nix build .#docker
         env:
           SOURCE_DATE_EPOCH: "0"
-        run: nix build .#docker --print-build-logs
+        run: nix build .#docker --impure --print-build-logs
 
       - id: out
         run: |

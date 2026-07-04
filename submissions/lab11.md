@@ -134,11 +134,11 @@ Workflow: [`.github/workflows/nix-repro.yml`](../.github/workflows/nix-repro.yml
 
 **Green run:** https://github.com/tdzdslippen/DevOps-Intro/actions/runs/28688551510
 
-**Red run (intentional break):** in `.github/workflows/nix-repro.yml` set `SOURCE_DATE_EPOCH: "1"` **only** in job `build-a` (leave `build-b` at `"0"`), push → `compare-repro-digests` fails → revert `build-a` to `"0"`.
+**Red run (intentional break):** in `.github/workflows/nix-repro.yml` set `SOURCE_DATE_EPOCH: "1"` **only** in job `build-a` (leave `build-b` at `"0"`). Both jobs must use `nix build .#docker --impure` (otherwise `builtins.getEnv` is ignored in pure mode). Push → `compare-repro-digests` fails → revert `build-a` to `"0"`.
 
-> First attempt stayed green because `created` was hardcoded in `flake.nix` — workflow env did nothing. Fixed: `created` now follows `SOURCE_DATE_EPOCH`.
+> **Why it stayed green twice:** (1) `created` was hardcoded; (2) even after wiring `getEnv`, plain `nix build` is **pure** — GitHub `env:` never reached the flake. Fix: `--impure` on both build steps.
 
-**Red run URL:** `https://github.com/tdzdslippen/DevOps-Intro/actions/runs/________`
+**Red run URL:** https://github.com/tdzdslippen/DevOps-Intro/actions/runs/28688654619
 
 Log excerpt (green):
 
