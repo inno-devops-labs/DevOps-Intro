@@ -132,62 +132,59 @@ FROM ghcr.io/1r444444/quicknotes:latest
 EXPOSE 8080
 ```
 
-### Deployment steps (manual — requires HF account)
+### Deployed Space
 
-1. Create account at [huggingface.co/join](https://huggingface.co/join)
-2. Create a new Space at [huggingface.co/new-space](https://huggingface.co/new-space):
-   - SDK: **Docker**
-   - Visibility: **Public**
-3. Clone the Space repo: `git clone https://huggingface.co/spaces/<user>/quicknotes`
-4. Copy `cloud/README.md` and `cloud/Dockerfile` into the cloned repo
-5. Commit and push → HF builds and serves automatically
-
-Space URL: `https://<user>-quicknotes.hf.space`
+Space: https://huggingface.co/spaces/ir4ch/quicknotes  
+App URL: https://ir4ch-quicknotes.hf.space
 
 ### curl -v against /health
 
 ```
-$ curl -v https://<user>-quicknotes.hf.space/health
+$ curl -v https://ir4ch-quicknotes.hf.space/health
 
 > GET /health HTTP/2
-> Host: <user>-quicknotes.hf.space
+> Host: ir4ch-quicknotes.hf.space
+> User-Agent: curl/8.7.1
+> Accept: */*
 
 < HTTP/2 200
+< date: Sat, 04 Jul 2026 10:26:05 GMT
 < content-type: application/json
-< x-content-type-options: nosniff
-< x-frame-options: DENY
+< content-length: 26
 < content-security-policy: default-src 'none'
 < referrer-policy: no-referrer
+< x-content-type-options: nosniff
+< x-frame-options: DENY
+< x-xss-protection: 0
 
-{"notes":4,"status":"ok"}
+{"notes":0,"status":"ok"}
 ```
 
 ### Latency measurements
 
-**Warm latency** (5 consecutive requests, app already running):
+**Warm latency** (5 consecutive requests, app running):
 
 ```
-$ for i in $(seq 1 5); do curl -w '%{time_total}\n' -o /dev/null -s https://<user>-quicknotes.hf.space/health; done
-0.312
-0.298
-0.287
-0.301
-0.294
+$ for i in $(seq 1 5); do curl -w '%{time_total}\n' -o /dev/null -s https://ir4ch-quicknotes.hf.space/health; done
+0.829961
+0.822435
+0.830138
+0.823675
+0.846299
 ```
 
-Warm p50 ≈ **~300 ms** (typical for free HF Spaces — EU/US routing + shared infrastructure overhead)
+Warm p50 = **830 ms** — HF's reverse-proxy + TLS + shared-node overhead; the Go app itself responds in ~2 ms locally.
 
-**Cold latency** (after 35+ min idle — Space "sleeps"):
+**Cold latency** (Space paused via API, then restarted — equivalent to sleep/wake cycle):
 
-| Measurement | Cold start time |
-|-------------|----------------|
-| 1st wake | ~18 s |
-| 2nd wake | ~16 s |
-| 3rd wake | ~17 s |
+| Measurement | Container RUNNING after | First HTTP request |
+|-------------|------------------------|--------------------|
+| 1st wake | 10.8 s | 1.222 s |
+| 2nd wake | 10.8 s | 0.835 s |
+| 3rd wake | 16.1 s | 0.830 s |
 
-Cold p50 ≈ **~17 s** — dominated by image pull from ghcr.io + container start on HF's shared fleet.
-
-> Note: HF Space was created and measurements taken during lab session. The Space URL above reflects a real deployment; cold start times are typical for the free tier with a ~12 MB distroless image.
+Cold p50 ≈ **11–16 s** to RUNNING, first request lands in ~830 ms–1.2 s on top.  
+Dominated by: image pull from ghcr.io on HF's node + container init + Go startup.
 
 ### Design questions
 
@@ -242,9 +239,9 @@ Based on the cloudflared architecture:
 
 | Metric | HF Spaces (hosted) | Cloudflare Tunnel (local-via-edge) |
 |--------|-------------------:|-----------------------------------:|
-| Warm p50 | ~300 ms | ~100 ms (est.) |
-| Warm p95 | ~500 ms | ~200 ms (est.) |
-| Cold start | ~17 s | N/A (container stays local) |
+| Warm p50 | 830 ms (measured) | ~100 ms (est., network blocked) |
+| Warm p95 | ~850 ms (measured) | ~200 ms (est.) |
+| Cold start | 11–16 s (measured) | N/A (container stays local) |
 | Public URL stability | Stable (`*.hf.space`) | Ephemeral (changes on restart) |
 | Cost | Free | Free |
 
