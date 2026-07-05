@@ -36,6 +36,7 @@ By the end:
 - Read [Reading 11](../lectures/reading11.md)
 - Install Nix with Flakes enabled:
   - [Determinate Nix Installer](https://determinate.systems/posts/determinate-nix-installer/) (recommended)
+  - If `install.determinate.systems` is unreachable or times out from your network, use the [official installer](https://nixos.org/download/) (`sh <(curl -L https://nixos.org/nix/install) --daemon`) — it is served from a different CDN. Enable flakes afterwards: add `experimental-features = nix-command flakes` to `~/.config/nix/nix.conf`
 - ≥ 8 GB free disk
 - A second machine, fresh Docker container (`docker run -it nixos/nix bash`), or a colleague — for verifying reproducibility
 
@@ -47,7 +48,7 @@ By the end:
 
 Your `flake.nix` at the **repo root** MUST:
 
-1. Pin **nixpkgs** to a specific channel revision in `inputs:` (e.g. `nixos-24.11`)
+1. Pin **nixpkgs** to a specific channel revision in `inputs:` (e.g. `nixos-25.11`) — note that `app/go.mod` requires **Go ≥ 1.24**, so the channel's default `buildGoModule` must ship at least that (see Common Pitfalls)
 2. Expose a package `quicknotes` (and `default`) that **builds the QuickNotes Go source from `app/`**
 3. Use `buildGoModule` (or `buildGoApplication`, etc. — your choice; document why)
 4. Set **`CGO_ENABLED = 0`** so the binary is static
@@ -248,6 +249,8 @@ In `submissions/lab11.md`:
 - 🪤 **Different hashes on two machines** — usually means `flake.lock` is not committed. The lockfile pins nixpkgs to a specific revision
 - 🪤 **Out of disk** — Nix store grows. `nix store gc` reclaims unreferenced paths
 - 🪤 **`nix build` requires internet on first run** — downloads pre-built artifacts from cache.nixos.org. Subsequent builds are mostly local
+- 🪤 **`go.mod requires go >= 1.24` from `buildGoModule`** — your pinned nixpkgs ships an older default Go (e.g. `nixos-24.11` → Go 1.23). Fix it **in the flake**: pin `nixos-25.11` or newer, or use `buildGo124Module` / `buildGoModule.override { go = pkgs.go_1_24; }`. Don't downgrade `app/go.mod` — the app source is not yours to edit
+- 🪤 **Installer or build times out on `install.determinate.systems`** — the host may be unreachable from your network even when a plain `curl -I` returns 200. Check from the *same terminal* where you run nix (a browser VPN does not cover WSL2 traffic): `curl -I https://install.determinate.systems` vs `curl -I https://cache.nixos.org/nix-cache-info`. Fall back to the official nixos.org installer (different CDN); builds themselves only need cache.nixos.org and github.com. If cache.nixos.org is also blocked, use a mirror substituter: `--option substituters "https://mirrors.tuna.tsinghua.edu.cn/nix-channels/store"`
 - 🪤 **WSL2 multi-user Nix is finicky** — use the Determinate installer; or single-user on WSL2
 
 ---
