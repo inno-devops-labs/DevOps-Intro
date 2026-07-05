@@ -1,0 +1,3 @@
+2026-07-01T15:53:30Z	INFO	[misconfig] Misconfiguration scanning is enabled
+2026-07-01T15:53:30Z	INFO	No downloadable policies were loaded as --skip-check-update is enabled
+2026-07-01T15:53:33Z	INFO	Detected config files	num=1

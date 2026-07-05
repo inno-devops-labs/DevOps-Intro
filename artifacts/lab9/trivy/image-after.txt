@@ -1,0 +1,10 @@
+2026-07-01T15:51:41Z	INFO	[vuln] Vulnerability scanning is enabled
+2026-07-01T15:51:43Z	INFO	Detected OS	family="debian" version="12.14"
+2026-07-01T15:51:43Z	INFO	[debian] Detecting vulnerabilities...	os_version="12" pkg_num=4
+2026-07-01T15:51:43Z	INFO	Number of language-specific files	num=2
+2026-07-01T15:51:43Z	INFO	[gobinary] Detecting vulnerabilities...
+
+quicknotes:lab6 (debian 12.14)
+==============================
+Total: 0 (HIGH: 0, CRITICAL: 0)
+

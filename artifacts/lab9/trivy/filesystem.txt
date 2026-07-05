@@ -1,0 +1,3 @@
+2026-07-01T15:51:45Z	INFO	[vuln] Vulnerability scanning is enabled
+2026-07-01T15:51:45Z	INFO	Number of language-specific files	num=1
+2026-07-01T15:51:45Z	INFO	[gomod] Detecting vulnerabilities...

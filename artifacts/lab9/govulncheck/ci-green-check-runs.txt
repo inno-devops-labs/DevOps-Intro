@@ -1,0 +1,11 @@
+CORRECTED GO 1.24 GREEN CI CHECK EVIDENCE
+=========================================
+Commit: b1d2060
+Fork PR: https://github.com/tivdzualubem/DevOps-Intro/pull/9
+
+govulncheck-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022578
+lint | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022511
+test-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022529
+test-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022557
+vet-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022565
+vet-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532682601/job/84586022581

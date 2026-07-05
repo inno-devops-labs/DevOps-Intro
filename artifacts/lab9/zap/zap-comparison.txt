@@ -1,0 +1,22 @@
+ZAP BEFORE/AFTER COMPARISON
+===========================
+
+BEFORE: 2 alert types
+- Plugin ID: 10116 | Alert reference: 10116 | Name: ZAP is Out of Date | Risk: Low (High) | Instances: 1
+  URL: http://localhost:8080 | Method: GET | Parameter: none
+- Plugin ID: 10049 | Alert reference: 10049-3 | Name: Storable and Cacheable Content | Risk: Informational (Medium) | Instances: 2
+  URL: http://localhost:8080 | Method: GET | Parameter: none
+  URL: http://localhost:8080/robots.txt | Method: GET | Parameter: none
+
+AFTER: 2 alert types
+- Plugin ID: 10116 | Alert reference: 10116 | Name: ZAP is Out of Date | Risk: Low (High) | Instances: 1
+  URL: http://localhost:8080 | Method: GET | Parameter: none
+- Plugin ID: 10049 | Alert reference: 10049-1 | Name: Non-Storable Content | Risk: Informational (Medium) | Instances: 1
+  URL: http://localhost:8080 | Method: GET | Parameter: none
+
+Removed alert names: Storable and Cacheable Content
+New alert names: Non-Storable Content
+Remaining alert names: ZAP is Out of Date
+
+RESULT: PASS — 'Storable and Cacheable Content' was removed by the Cache-Control: no-store middleware.
+The remaining 'Non-Storable Content' entry is a different informational sub-alert produced because caching is now disabled.

@@ -1,0 +1,11 @@
+HTTP/1.1 200 OK
+Cache-Control: no-store
+Content-Security-Policy: default-src 'none'
+Content-Type: application/json
+Permissions-Policy: camera=(), geolocation=(), microphone=()
+Referrer-Policy: no-referrer
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+Date: Wed, 01 Jul 2026 14:57:31 GMT
+Content-Length: 26
+

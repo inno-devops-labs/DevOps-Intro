@@ -1,0 +1,11 @@
+CORRECTED GO 1.24 RED CI CHECK EVIDENCE
+=======================================
+Commit: c28305d
+Fork PR: https://github.com/tivdzualubem/DevOps-Intro/pull/9
+
+govulncheck-go-1.24 | status=completed | conclusion=failure | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532494217/job/84585373873
+lint | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532494217/job/84585373736
+test-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532494217/job/84585373898
+test-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532494217/job/84585373894
+vet-go-1.23 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532494217/job/84585373919
+vet-go-1.24 | status=completed | conclusion=success | url=https://github.com/tivdzualubem/DevOps-Intro/actions/runs/28532494217/job/84585373905

@@ -1,0 +1,199 @@
+{
+  "SchemaVersion": 2,
+  "CreatedAt": "2026-07-01T15:51:44.873648023Z",
+  "ArtifactName": "quicknotes:lab6",
+  "ArtifactType": "container_image",
+  "Metadata": {
+    "OS": {
+      "Family": "debian",
+      "Name": "12.14"
+    },
+    "ImageID": "sha256:425f2c41b00e896f9e9741b9c2691a2913136a3494031326a89e170ec50b552f",
+    "DiffIDs": [
+      "sha256:9ac0db7cd6b389001b18856f7926a18dff7f834c84523445e5030fd753f09245",
+      "sha256:8fa10c0194df9b7c054c90dbe482585f768a54428fc90a5b78a0066a123b1bba",
+      "sha256:35b5ba6e08cdd034b8d1920f9c7203e5d66f258e1915f164a01de0af14f34710",
+      "sha256:114dde0fefebbca13165d0da9c500a66190e497a82a53dcaabc3172d630be1e9",
+      "sha256:4d049f83d9cf21d1f5cc0e11deaf36df02790d0e60c1a3829538fb4b61685368",
+      "sha256:af5aa97ebe6ce1604747ec1e21af7136ded391bcabe4acef882e718a87c86bcc",
+      "sha256:6f1cdceb6a3146f0ccb986521156bef8a422cdbb0863396f7f751f575ba308f4",
+      "sha256:bd3cdfae1d3fdd83a2231d608969b38b82349777c2fff9a7c12d54f8ac5c9b38",
+      "sha256:4cde6b0bb6f50a5f255eef7b2a42162c661cf776b803225dcac9a659e396bb6b",
+      "sha256:ad51d0769d16ba578106a177987dfe3d2e02c1668c852b795b2f6b024068242a",
+      "sha256:6e7fbcf090d09b73a4aa85f9dce690d0ace73877c150b7c56955487b6e7a822a",
+      "sha256:33b37ab0b0901175c2699d81c10b0c887f0dff944de74763cca00c155904d6fb",
+      "sha256:7c310e1215ccb87fd5246df7232d26313673cfb2efba33ef0355b9b76a903c4e",
+      "sha256:b84ae9003c9f59e7346a07fae4c5b8ef1c0cf09b4c2ff090c96d33ed51dd6ea0",
+      "sha256:03496a3bc73427beb81a3d6bdb0fe7b93f9d4b2bef226f2bc0264de2800aa4e7",
+      "sha256:d723eab065ed7e94a11bfaf8eb9a3bccace2baac9575b876df4fd8164b02b850"
+    ],
+    "RepoTags": [
+      "quicknotes:lab6"
+    ],
+    "ImageConfig": {
+      "architecture": "amd64",
+      "created": "2026-07-01T14:57:23.066376418Z",
+      "history": [
+        {
+          "created": "1970-01-01T00:00:00Z",
+          "created_by": "bazel build @bookworm//base-files/amd64:data_statusd"
+        },
+        {
+          "created": "1970-01-01T00:00:00Z",
+          "created_by": "bazel build @bookworm//netbase/amd64:data_statusd"
+        },
+        {
+          "created": "1970-01-01T00:00:00Z",
+          "created_by": "bazel build @bookworm//tzdata/amd64:data_statusd"
+        },
+        {
+          "created": "1970-01-01T00:00:00Z",
+          "created_by": "bazel build @bookworm//media-types/amd64:data_statusd"
+        },
+        {
+          "created": "1970-01-01T00:00:00Z",
+          "created_by": "bazel build //common:rootfs"
+        },
+        {
+          "created": "1970-01-01T00:00:00Z",
+          "created_by": "bazel build //common:passwd"
+        },
+        {
+          "created": "1970-01-01T00:00:00Z",
+          "created_by": "bazel build //common:home"
+        },
+        {
+          "created": "1970-01-01T00:00:00Z",
+          "created_by": "bazel build //common:group"
+        },
+        {
+          "created": "1970-01-01T00:00:00Z",
+          "created_by": "bazel build //common:tmp"
+        },
+        {
+          "created": "1970-01-01T00:00:00Z",
+          "created_by": "bazel build //static:nsswitch"
+        },
+        {
+          "created": "1970-01-01T00:00:00Z",
+          "created_by": "bazel build //common:os_release_debian12"
+        },
+        {
+          "created": "1970-01-01T00:00:00Z",
+          "created_by": "bazel build //common:cacerts_debian12_amd64"
+        },
+        {
+          "created": "2026-07-01T14:57:22Z",
+          "created_by": "WORKDIR /",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2026-07-01T14:57:22Z",
+          "created_by": "COPY --chown=65532:65532 /out/quicknotes /quicknotes # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2026-07-01T14:57:22Z",
+          "created_by": "COPY --chown=65532:65532 /out/healthcheck /healthcheck # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2026-07-01T14:57:22Z",
+          "created_by": "COPY --chown=65532:65532 /out/data /data # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2026-07-01T14:57:23Z",
+          "created_by": "COPY --chown=65532:65532 seed.json /seed.json # buildkit",
+          "comment": "buildkit.dockerfile.v0"
+        },
+        {
+          "created": "2026-07-01T14:57:23Z",
+          "created_by": "ENV ADDR=:8080 DATA_PATH=/data/notes.json SEED_PATH=/seed.json",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2026-07-01T14:57:23Z",
+          "created_by": "EXPOSE map[8080/tcp:{}]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2026-07-01T14:57:23Z",
+          "created_by": "USER 65532:65532",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        },
+        {
+          "created": "2026-07-01T14:57:23Z",
+          "created_by": "ENTRYPOINT [\"/quicknotes\"]",
+          "comment": "buildkit.dockerfile.v0",
+          "empty_layer": true
+        }
+      ],
+      "os": "linux",
+      "rootfs": {
+        "type": "layers",
+        "diff_ids": [
+          "sha256:9ac0db7cd6b389001b18856f7926a18dff7f834c84523445e5030fd753f09245",
+          "sha256:8fa10c0194df9b7c054c90dbe482585f768a54428fc90a5b78a0066a123b1bba",
+          "sha256:35b5ba6e08cdd034b8d1920f9c7203e5d66f258e1915f164a01de0af14f34710",
+          "sha256:114dde0fefebbca13165d0da9c500a66190e497a82a53dcaabc3172d630be1e9",
+          "sha256:4d049f83d9cf21d1f5cc0e11deaf36df02790d0e60c1a3829538fb4b61685368",
+          "sha256:af5aa97ebe6ce1604747ec1e21af7136ded391bcabe4acef882e718a87c86bcc",
+          "sha256:6f1cdceb6a3146f0ccb986521156bef8a422cdbb0863396f7f751f575ba308f4",
+          "sha256:bd3cdfae1d3fdd83a2231d608969b38b82349777c2fff9a7c12d54f8ac5c9b38",
+          "sha256:4cde6b0bb6f50a5f255eef7b2a42162c661cf776b803225dcac9a659e396bb6b",
+          "sha256:ad51d0769d16ba578106a177987dfe3d2e02c1668c852b795b2f6b024068242a",
+          "sha256:6e7fbcf090d09b73a4aa85f9dce690d0ace73877c150b7c56955487b6e7a822a",
+          "sha256:33b37ab0b0901175c2699d81c10b0c887f0dff944de74763cca00c155904d6fb",
+          "sha256:7c310e1215ccb87fd5246df7232d26313673cfb2efba33ef0355b9b76a903c4e",
+          "sha256:b84ae9003c9f59e7346a07fae4c5b8ef1c0cf09b4c2ff090c96d33ed51dd6ea0",
+          "sha256:03496a3bc73427beb81a3d6bdb0fe7b93f9d4b2bef226f2bc0264de2800aa4e7",
+          "sha256:d723eab065ed7e94a11bfaf8eb9a3bccace2baac9575b876df4fd8164b02b850"
+        ]
+      },
+      "config": {
+        "Entrypoint": [
+          "/quicknotes"
+        ],
+        "Env": [
+          "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt",
+          "ADDR=:8080",
+          "DATA_PATH=/data/notes.json",
+          "SEED_PATH=/seed.json"
+        ],
+        "Labels": {
+          "com.docker.compose.project": "devops-intro-lab9",
+          "com.docker.compose.service": "quicknotes",
+          "com.docker.compose.version": "5.0.2"
+        },
+        "User": "65532:65532",
+        "WorkingDir": "/",
+        "ExposedPorts": {
+          "8080": {}
+        }
+      }
+    }
+  },
+  "Results": [
+    {
+      "Target": "quicknotes:lab6 (debian 12.14)",
+      "Class": "os-pkgs",
+      "Type": "debian"
+    },
+    {
+      "Target": "healthcheck",
+      "Class": "lang-pkgs",
+      "Type": "gobinary"
+    },
+    {
+      "Target": "quicknotes",
+      "Class": "lang-pkgs",
+      "Type": "gobinary"
+    }
+  ]
+}
