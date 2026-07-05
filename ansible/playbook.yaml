@@ -1,0 +1,53 @@
+- name: Deploy QuickNotes
+  hosts: quicknotes
+  become: true
+
+  vars:
+    service_user: quicknotes
+    data_path: /var/lib/quicknotes
+    listen_addr: ":9090"
+    seed_path: "/var/lib/quicknotes/seed.json"
+
+  handlers:
+    - name: restart quicknotes
+      systemd:
+        name: quicknotes
+        state: restarted
+
+  tasks:
+    - name: Create system user
+      user:
+        name: quicknotes
+        system: yes
+        shell: /usr/sbin/nologin
+
+    - name: Create data directory
+      file:
+        path: /var/lib/quicknotes
+        state: directory
+        owner: quicknotes
+        group: quicknotes
+        mode: "0750"
+
+    - name: Copy binary
+      copy:
+        src: files/quicknotes
+        dest: /usr/local/bin/quicknotes
+        mode: "0755"
+      notify: restart quicknotes
+
+    - name: Install systemd service
+      template:
+        src: templates/quicknotes.service.j2
+        dest: /etc/systemd/system/quicknotes.service
+      notify: restart quicknotes
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: true
+
+    - name: Enable and start service
+      systemd:
+        name: quicknotes
+        enabled: true
+        state: started
