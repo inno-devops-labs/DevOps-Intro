@@ -1,0 +1,22 @@
+#:schema https://schemas.spinframework.dev/spin/manifest-v2/latest.json
+
+spin_manifest_version = 2
+
+[application]
+name = "moscow-time"
+version = "0.1.0"
+authors = ["Irina <irina.bychkova06@mail.ru>"]
+description = ""
+
+[[trigger.http]]
+route = "/time"
+component = "moscow-time"
+
+[component.moscow-time]
+source = "main.wasm"
+allowed_outbound_hosts = []
+[component.moscow-time.build]
+# TinyGo 0.41 overlays files from Go 1.26; set GOROOT to the 1.26 SDK.
+# Install: go install golang.org/dl/go1.26.4@latest && go1.26.4 download
+command = "sh -c 'GOROOT=$(go1.26.4 env GOROOT 2>/dev/null || go env GOROOT) tinygo build -target=wasip1 -buildmode=c-shared -no-debug -o main.wasm .'"
+watch = ["**/*.go", "go.mod"]
