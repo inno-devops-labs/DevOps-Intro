@@ -17,6 +17,16 @@ curl -X POST http://localhost:8080/notes \
   -d '{"title":"first","body":"hello"}'
 ```
 
+you can also run it via docker 
+
+```bash
+docker build -t quicknotes:local .
+docker run --rm -p 8080:8080 quicknotes:local
+
+# or via makefile
+make docker-run
+```
+
 ## Endpoints
 
 | Method | Path           | Returns |
