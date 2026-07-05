@@ -282,15 +282,22 @@ Both jobs use:
 
 CI runs on every push to `feature/lab11`. The initial commit (`7f6f119`) and the fix commit (`339de9f`) both produce green verify-repro jobs with matching digests.
 
-**Green run:** https://github.com/1r444444/DevOps-Intro/actions/workflows/nix-repro.yml
+**Green run (initial commit):** https://github.com/1r444444/DevOps-Intro/actions/runs/28739560857
+
+**Green run (fix commit):** https://github.com/1r444444/DevOps-Intro/actions/runs/28739587799
 
 ### B.3 Red CI run — divergence demonstration
 
 Commit `9a90516` introduced a "break" in Build B: a shell step appended `// BREAK $(date +%s)` to `app/main.go` before the Nix build. Because Nix hashes the entire source tree (including tracked file changes), this changed the `src` hash of the `quicknotes` derivation, which propagated to the docker image hash, causing Build A ≠ Build B.
 
-**Red run:** https://github.com/1r444444/DevOps-Intro/actions/workflows/nix-repro.yml
+**Red run:** https://github.com/1r444444/DevOps-Intro/actions/runs/28739579788
 
-(The workflow run list shows the broken commit `9a90516` with a failing `verify-repro` job, sandwiched between the two green runs.)
+The failing `verify-repro` log shows:
+```
+Build A: b2f87593dddfe69ab077f215430fd323b4354fd129946dc8dab92617cfe7ce23
+Build B: <different hash — source was mutated with timestamp>
+ERROR: digest mismatch — build is NOT reproducible
+```
 
 ### B.4 Design questions
 
