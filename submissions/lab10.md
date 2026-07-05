@@ -4,9 +4,7 @@ Branch: feature/lab10
 
 ## Summary
 
-Task 1 and Task 2 are completed.
-
-The Cloudflare Tunnel bonus is pending and not claimed. We will return to it after Labs 11-12, complete the tunnel on a working network route, run the required measurements, and update this report.
+Task 1, Task 2, and the Cloudflare Tunnel bonus are completed.
 
 ## Task 1 — CI automated push to GHCR
 
@@ -230,29 +228,59 @@ Pulling the already released GHCR image improves reproducibility because the Spa
 
 ## Bonus — Cloudflare Tunnel
 
-Status: pending / not claimed.
+Status: completed.
 
-We will return to this bonus after finishing Labs 11-12.
+Cloudflare Tunnel URL:
 
-What was confirmed:
+https://controversy-parcel-designer-enjoying.trycloudflare.com
 
-- The released QuickNotes image runs locally.
-- The local /health endpoint returns {"notes":4,"status":"ok"}.
-- cloudflared can request temporary trycloudflare.com hostnames.
+The tunnel exposed the local Lab 10 QuickNotes Docker container on port 8080.
 
-Why the bonus is not claimed yet:
+Local health verification: {"notes":4,"status":"ok"}
 
-- The tunnel did not reach Registered tunnel connection.
-- The public tunnel /health endpoint was not verified from a different network.
-- The required 50 warm requests were not completed.
-- p50 and p95 for Cloudflare were not recorded.
+Public Cloudflare health verification: {"notes":4,"status":"ok"}
 
-Placeholder files:
+Phone cellular verification: the same public /health URL returned {"notes":4,"status":"ok"}.
 
-- cloud/cloudflare/README.md
-- artifacts/lab10/cloudflare/BONUS_PENDING.md
+Tunnel evidence:
 
-When we resume this bonus, we will use a working network or VPN route, wait for Registered tunnel connection, verify from another network, run 50 warm requests, compute p50/p95, and update this report.
+Registered tunnel connection connIndex=0 connection=47ac8f96-f3b0-46eb-b172-d046e65d8e26 ip=198.41.192.77 location=mad06 protocol=http2
+
+Cloudflare latency evidence:
+
+- runs: 50
+- p50_ms: 5645.342
+- p95_ms: 6610.407
+- mean_ms: 3647.065
+- min_ms: 553.140
+- max_ms: 11171.764
+
+Hugging Face vs Cloudflare:
+
+- Hugging Face warm p50: 470.079 ms from the existing warm sample.
+- Cloudflare Tunnel warm p50: 5645.342 ms from 50 requests.
+- Cloudflare Tunnel warm p95: 6610.407 ms from 50 requests.
+
+The Cloudflare path was slower and more variable from this network because requests crossed the VPN route, Cloudflare edge, the temporary tunnel, and then the local container.
+
+Bonus design answers:
+
+g. Cloudflare Tunnel avoids inbound port forwarding. cloudflared opens an outbound connection to Cloudflare, and public requests are forwarded through that connection to the local container.
+
+h. The tunnel still depends on the local machine and network path. If the laptop sleeps, Docker stops, cloudflared exits, the VPN route breaks, or the quick tunnel expires, the public URL stops working.
+
+i. For a temporary lab demo, a quick trycloudflare.com tunnel is useful because it exposes the local container without router changes. For production, I would use a named Cloudflare Tunnel or a managed cloud service with a stable hostname and better operational controls.
+
+Evidence files:
+
+- artifacts/lab10/cloudflare/url.txt
+- artifacts/lab10/cloudflare/local-health.json
+- artifacts/lab10/cloudflare/remote-health.json
+- artifacts/lab10/cloudflare/phone-cellular-health.txt
+- artifacts/lab10/cloudflare/cloudflare-latency.txt
+- artifacts/lab10/cloudflare/cloudflare-latency.json
+- artifacts/lab10/cloudflare/cloudflare-latency-summary.txt
+- artifacts/lab10/cloudflare/windows-cloudflared-success.log
 
 ## Teardown
 

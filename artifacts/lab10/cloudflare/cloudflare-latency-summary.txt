@@ -1,0 +1,7 @@
+cloudflare-health
+  runs: 50
+  p50_ms: 5645.342
+  p95_ms: 6610.407
+  mean_ms: 3647.065
+  min_ms: 553.140
+  max_ms: 11171.764

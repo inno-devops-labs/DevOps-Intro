@@ -1,0 +1,11 @@
+URL: https://controversy-parcel-designer-enjoying.trycloudflare.com
+
+Connectivity prechecks:
+UDP region1 PASS
+UDP region2 PASS
+TCP region1 PASS
+TCP region2 PASS
+Cloudflare API PASS
+
+Registered tunnel connection:
+connIndex=0 connection=47ac8f96-f3b0-46eb-b172-d046e65d8e26 ip=198.41.192.77 location=mad06 protocol=http2

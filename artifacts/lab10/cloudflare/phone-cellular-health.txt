@@ -1,0 +1,5 @@
+Verified from phone over cellular network:
+https://controversy-parcel-designer-enjoying.trycloudflare.com/health
+
+Response:
+{"notes":4,"status":"ok"}

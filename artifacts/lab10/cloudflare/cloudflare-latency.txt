@@ -1,0 +1,4 @@
+Benchmark 1: cloudflare-health
+  Time (mean ± σ):      3.647 s ±  2.840 s    [User: 0.081 s, System: 0.017 s]
+  Range (min … max):    0.553 s … 11.172 s    50 runs
+ 
