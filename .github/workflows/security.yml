@@ -27,7 +27,10 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@3041bf56c941b39c61721a86cd11f3bb1338122a # v5.2.0
         with:
-          go-version: '1.24'                 # aligned with the Lab 3 pipeline
+          # Scan on a patched toolchain: on Go 1.24 govulncheck reports reachable
+          # stdlib CVEs fixed only in >=1.25.x, so the gate would be permanently
+          # red. Bumping to 1.25.11 is the remediation (see submissions/lab9.md).
+          go-version: '1.25.11'
           cache-dependency-path: |
             app/go.sum
             app/go.mod

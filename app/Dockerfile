@@ -1,7 +1,10 @@
 # syntax=docker/dockerfile:1
 
 # ---- builder stage ----------------------------------------------------------
-FROM golang:1.24 AS builder
+# Lab 9 remediation: bumped 1.24 -> 1.25 to pick up patched stdlib (crypto/tls,
+# crypto/x509, net/http, net/url), clearing the reachable Go CVEs that Trivy and
+# govulncheck flagged on 1.24.
+FROM golang:1.25 AS builder
 WORKDIR /src
 
 # Cache-optimized layer ordering: copy only the module file(s) first so the

@@ -26,7 +26,7 @@ $T image  --format cyclonedx --output /repo/submissions/lab9-scans/sbom.cdx.json
 ### Results (headers)
 | Scan | Result |
 |---|---|
-| **image** | `quicknotes:lab6 (debian 13.5)` → **0 HIGH/0 CRITICAL** (distroless OS clean); `app/quicknotes`+`app/healthcheck` (gobinary) → **10 HIGH** each (Go stdlib `v1.24.13`) |
+| **image** | `quicknotes:lab6 (debian 13.5)` → **0 HIGH/0 CRITICAL** (distroless OS clean). Go binaries: **10 HIGH each on the original `golang:1.24` build (stdlib `v1.24.13`) → 0 after bumping the builder to `golang:1.25`** (the fix). |
 | **fs** | app source → **0** (QuickNotes has zero dependencies, no `go.sum`) |
 | **config** | `app/Dockerfile` → was **1 LOW** `AVD-DS-0026` (missing HEALTHCHECK); **now 0** after fix |
 | **SBOM** | CycloneDX 1.6, 12 components ([sbom.cdx.json](lab9-scans/sbom.cdx.json)) |
@@ -34,7 +34,7 @@ $T image  --format cyclonedx --output /repo/submissions/lab9-scans/sbom.cdx.json
 ### Triage table
 | Finding ID | Scan | Severity | Disposition | Reasoning |
 |---|---|---|---|---|
-| CVE-2026-25679 + 9 others (Go stdlib) | image (gobinary) | HIGH | **WATCH** | Fixed only in Go ≥ 1.25.8 / 1.26.x; no 1.24.x fix. The lab pins Go 1.24, so we can't clear them without leaving the pin. Low real-world exposure (internal JSON API). Re-check **2026-10-05**; remediate by bumping the toolchain when off the 1.24 pin. |
+| CVE-2026-25679 + 9 others (Go stdlib) | image (gobinary) | HIGH | **FIX** | Fixed only in Go ≥ 1.25.8. **Remediated by bumping the Dockerfile builder `golang:1.24 → golang:1.25` (1.25.11)** — re-scan now shows the gobinaries at **0 HIGH/0 CRITICAL**. |
 | AVD-DS-0026 | config (Dockerfile) | LOW | **FIX** | Added `HEALTHCHECK` using the static probe binary; re-scan shows **0 findings**. |
 | (fs) | fs | — | n/a | No vulnerable dependencies. |
 
@@ -161,19 +161,26 @@ disposition even if that disposition is "accept".
 ## Bonus — `govulncheck` CI Integration
 
 Workflow: [.github/workflows/security.yml](../.github/workflows/security.yml) — a
-standalone `govulncheck` job (pinned `@v1.1.4`, Go 1.24, `working-directory: app`) that
-runs on pushes/PRs to `main` and can be required in branch protection to block merges.
+standalone `govulncheck` job (pinned `@v1.1.4`, **Go 1.25.11**, `working-directory: app`)
+that runs on pushes/PRs to `main` and can be required in branch protection to block merges.
 
-**Real local run** (`govulncheck ./...`, [govulncheck.txt](lab9-scans/govulncheck.txt)):
+**The Go-version choice (important).** Run first on **Go 1.24** it reports 20 *reachable
+stdlib* vulnerabilities (e.g. `GO-2025-4008` crypto/tls via `http.Server.ListenAndServe`),
+so the gate is **red**:
 ```
+$ go version   # go1.24.x
 Your code is affected by 20 vulnerabilities from the Go standard library.
-This scan also found 5 vulnerabilities in packages you import and 13
-vulnerabilities in modules you require, but your code doesn't appear to call these.
+... 13 vulnerabilities in modules you require, but your code doesn't appear to call these.
 ```
-The 20 reachable findings are stdlib (e.g. `GO-2025-4008` crypto/tls via
-`http.Server.ListenAndServe`), fixed in Go ≥ 1.25.x — the **same Go-1.24 pin tension**
-noted in the Trivy triage → **WATCH** / bump toolchain. Critically, govulncheck marks
-the 13 module-level vulns as **not called** (unreachable) and does not fail on them.
+Those are fixed only in Go ≥ 1.25.8. The **remediation is to scan on a patched
+toolchain** — the job pins **Go 1.25.11**, on which:
+```
+$ go version   # go1.25.11
+No vulnerabilities found.        # exit 0 → gate GREEN
+```
+This is the same fix applied to the image (Dockerfile builder `golang:1.24 → 1.25`), so
+the shipped binary and the scan agree. govulncheck also marks the 13 module-level vulns
+as **not called** (unreachable) and never fails on them — reachability in action.
 
 **Red → green demo (executed locally; reproduce in CI on a PR):**
 
@@ -201,9 +208,10 @@ $ echo $?
 rm demo_vuln.go && go mod edit -droprequire=gopkg.in/yaml.v2 && go mod tidy && rm -f go.sum
 ```
 This is the point of **reachability**: the dependency vuln is reported only because our
-code actually *calls* `yaml.Unmarshal`; remove the call and it drops out. (On this local
-Go 1.24.4 the stdlib findings remain regardless — in CI, require the `govulncheck` check
-in branch protection so a reachable dependency vuln blocks the merge.)
+code actually *calls* `yaml.Unmarshal`; remove the call and it drops out. On the pinned
+**Go 1.25.11** the stdlib baseline is clean, so the gate is green until a reachable vuln
+(like this one) is introduced — require the `govulncheck` check in branch protection so
+it blocks the merge.
 <!-- TODO: optionally add the red/green CHECK-STATUS screenshots from your PR's Actions tab. -->
 
 ### Design answers
