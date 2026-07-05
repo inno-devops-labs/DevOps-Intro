@@ -1,0 +1,74 @@
+name: Nix Reproducibility Gate
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  build-a:
+    name: Build A
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.hash.outputs.digest }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+        with:
+          extra-conf: |
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+            substituters = https://cache.nixos.org
+
+      - name: Build OCI image
+        run: nix build .#docker
+
+      - name: Compute digest
+        id: hash
+        run: |
+          digest=$(sha256sum result | cut -d' ' -f1)
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+          echo "Build A digest: $digest"
+
+  build-b:
+    name: Build B
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.hash.outputs.digest }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+        with:
+          extra-conf: |
+            trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+            substituters = https://cache.nixos.org
+
+      - name: Build OCI image
+        run: nix build .#docker
+
+      - name: Compute digest
+        id: hash
+        run: |
+          digest=$(sha256sum result | cut -d' ' -f1)
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+          echo "Build B digest: $digest"
+
+  verify-repro:
+    name: Verify Reproducibility
+    runs-on: ubuntu-latest
+    needs: [build-a, build-b]
+    steps:
+      - name: Compare digests
+        env:
+          DIGEST_A: ${{ needs.build-a.outputs.digest }}
+          DIGEST_B: ${{ needs.build-b.outputs.digest }}
+        run: |
+          echo "Build A: $DIGEST_A"
+          echo "Build B: $DIGEST_B"
+          if [ "$DIGEST_A" != "$DIGEST_B" ]; then
+            echo "ERROR: digest mismatch — build is NOT reproducible"
+            exit 1
+          fi
+          echo "Digests match — build is reproducible"
