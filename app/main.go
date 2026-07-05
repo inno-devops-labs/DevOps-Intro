@@ -26,9 +26,10 @@ func main() {
 	}
 
 	server := NewServer(store)
+	handler := securityHeaders(server.Routes())
 	srv := &http.Server{
 		Addr:              addr,
-		Handler:           server.Routes(),
+		Handler:           handler,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
