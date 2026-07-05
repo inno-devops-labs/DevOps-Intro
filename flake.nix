@@ -39,16 +39,20 @@
             name = "quicknotes";
             tag = "nix";
 
-            copyToRoot = pkgs.buildEnv {
-              name = "image-root";
-              paths = [ quicknotes ];
-              pathsToLink = [ "/bin" ];
-            };
+            # Seed data and writable /tmp for notes storage; mirrors Lab 6 image.
+            extraCommands = ''
+              mkdir -m 1777 tmp
+              cp ${./app/seed.json} seed.json
+            '';
 
             config = {
-              # Exec-form entrypoint — no shell needed.
-              Entrypoint = [ "/bin/quicknotes" ];
+              # Exec-form entrypoint addressed via Nix store path.
+              Entrypoint = [ "${quicknotes}/bin/quicknotes" ];
               ExposedPorts = { "8080/tcp" = {}; };
+              Env = [
+                "DATA_PATH=/tmp/notes.json"
+                "SEED_PATH=/seed.json"
+              ];
               # Nonroot UID 65532 — mirrors Lab 6 distroless:nonroot discipline.
               User = "65532:65532";
             };

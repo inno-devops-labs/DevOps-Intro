@@ -167,16 +167,22 @@ docker = pkgs.dockerTools.buildImage {
   name = "quicknotes";
   tag = "nix";
 
-  copyToRoot = pkgs.buildEnv {
-    name = "image-root";
-    paths = [ quicknotes ];
-    pathsToLink = [ "/bin" ];
-  };
+  # Seed data and writable /tmp for notes storage; mirrors Lab 6 image.
+  extraCommands = ''
+    mkdir -m 1777 tmp
+    cp ${./app/seed.json} seed.json
+  '';
 
   config = {
-    Entrypoint = [ "/bin/quicknotes" ];
+    # Exec-form entrypoint addressed via Nix store path.
+    Entrypoint = [ "${quicknotes}/bin/quicknotes" ];
     ExposedPorts = { "8080/tcp" = {}; };
-    User = "65532:65532";  # nonroot UID — mirrors Lab 6 distroless:nonroot
+    Env = [
+      "DATA_PATH=/tmp/notes.json"
+      "SEED_PATH=/seed.json"
+    ];
+    # Nonroot UID 65532 — mirrors Lab 6 distroless:nonroot discipline.
+    User = "65532:65532";
   };
 };
 ```
@@ -189,18 +195,27 @@ Built entirely by Nix — no Docker daemon involved.
 # Environment 1 (fresh nixos/nix container)
 $ nix build .#docker
 $ sha256sum result
-b2f87593dddfe69ab077f215430fd323b4354fd129946dc8dab92617cfe7ce23  result
+819acdf1dff634d108a4e0d90224eed7c6a8bb7f5981cdd7986c1a3ea748e52b  result
 
 # Environment 2 (second fresh nixos/nix container)
 $ nix build .#docker
 $ sha256sum result
-b2f87593dddfe69ab077f215430fd323b4354fd129946dc8dab92617cfe7ce23  result
+819acdf1dff634d108a4e0d90224eed7c6a8bb7f5981cdd7986c1a3ea748e52b  result
 ```
 
-**Both digests are identical.** The result symlink also points to the same Nix store path:
-`/nix/store/vi7az3i6sk1zqkkhpzdmglpy02vsdyqc-docker-image-quicknotes.tar.gz`
+**Both digests are identical.** The result symlink points to the same Nix store path:
+`/nix/store/4y0gwi25d636zlxbzmzf2ai20ngyy5an-docker-image-quicknotes.tar.gz`
 
 Note the file timestamp: `Jan  1  1970` — Nix zeroes all timestamps (SOURCE_DATE_EPOCH=0).
+
+The image is fully functional — loading and running it serves `/health`:
+
+```bash
+$ docker load -i result
+$ docker run --rm -p 8080:8080 quicknotes:nix
+$ curl -s http://localhost:8080/health
+{"notes":4,"status":"ok"}
+```
 
 ### 2.3 Comparison with Lab 6 Dockerfile build
 

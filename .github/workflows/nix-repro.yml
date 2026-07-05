@@ -2,9 +2,10 @@ name: Nix Reproducibility Gate
 
 on:
   push:
-    branches: ["**"]
   pull_request:
-    branches: ["**"]
+
+permissions:
+  contents: read
 
 jobs:
   build-a:
@@ -67,6 +68,10 @@ jobs:
         run: |
           echo "Build A: $DIGEST_A"
           echo "Build B: $DIGEST_B"
+          if [ -z "$DIGEST_A" ] || [ -z "$DIGEST_B" ]; then
+            echo "ERROR: one or both digests are empty — refusing to pass vacuously"
+            exit 1
+          fi
           if [ "$DIGEST_A" != "$DIGEST_B" ]; then
             echo "ERROR: digest mismatch — build is NOT reproducible"
             exit 1
