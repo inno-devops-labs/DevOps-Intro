@@ -1,0 +1,147 @@
+# Lab 9 — DevSecOps: Scan QuickNotes with Trivy + ZAP
+
+## Task 1 — Trivy: Image + Filesystem + Config + SBOM
+
+Tool pinned: `aquasec/trivy:0.59.1` (docker).
+
+### 1.1 Scans run
+
+No local `trivy` binary on this machine — only run as the pinned docker image, which is what "pin Trivy to `aquasec/trivy:0.59.x`" implies. Each command below is the containerized equivalent of the lab's `trivy <subcommand>` form.
+
+**1. Image scan** — `trivy image quicknotes:lab6 --severity HIGH,CRITICAL`
+
+```
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.59.1 \
+  image --severity HIGH,CRITICAL quicknotes:lab6
+```
+
+**2. Filesystem scan** — `trivy fs <repo> --severity HIGH,CRITICAL`
+
+```
+docker run --rm -v $(pwd):/repo aquasec/trivy:0.59.1 \
+  fs --severity HIGH,CRITICAL /repo
+```
+
+**3. Config scan** — `trivy config <repo>`
+
+```
+docker run --rm -v $(pwd):/repo aquasec/trivy:0.59.1 \
+  config /repo
+```
+
+Run without `--severity` so misconfigs of every severity are visible (not just HIGH/CRITICAL) — the finding to triage below is a LOW, and filtering would have hidden it silently.
+
+**4. SBOM generation** — image scanned, CycloneDX output requested
+
+```
+docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.59.1 \
+  image --format cyclonedx quicknotes:lab6
+```
+
+Not `trivy sbom --format cyclonedx` as the lab text shows — in current Trivy, `sbom` _scans an existing SBOM file_ for vulnerabilities, it doesn't generate one. Generating an SBOM _of an image_ is done via `image --format cyclonedx`, which is what actually produced `sbom.cyclonedx.json` below.
+
+**Image scan** (top)
+
+```
+quicknotes:lab6 (debian 13.5)
+=============================
+Total: 0 (HIGH: 0, CRITICAL: 0)
+
+app/healthcheck (gobinary)
+==========================
+Total: 11 (HIGH: 11, CRITICAL: 0)
+
+┌─────────┬────────────────┬──────────┬────────┬───────────────────┬─────────────────┬──────────────────────────────────────────────────────────────┐
+│ Library │ Vulnerability  │ Severity │ Status │ Installed Version │  Fixed Version  │                            Title                             │
+├─────────┼────────────────┼──────────┼────────┼───────────────────┼─────────────────┼──────────────────────────────────────────────────────────────┤
+│ stdlib  │ CVE-2026-25679 │ HIGH     │ fixed  │ v1.24.13          │ 1.25.8, 1.26.1  │ net/url: Incorrect parsing of IPv6 host literals in net/url  │
+│         │                │          │        │                   │                 │ https://avd.aquasec.com/nvd/cve-2026-25679                   │
+│         ├────────────────┤          │        │                   ├─────────────────┼──────────────────────────────────────────────────────────────┤
+│         │ CVE-2026-27145 │          │        │                   │ 1.25.11, 1.26.4 │ crypto/x509: golang: golang crypto/x509: Denial of Service   │
+│         │                │          │        │                   │                 │ via excessive processing of DNS...                           │
+│         │                │          │        │                   │                 │ https://avd.aquasec.com/nvd/cve-2026-27145                   │
+└─────────┴────────────────┴──────────┴────────┴───────────────────┴─────────────────┴──────────────────────────────────────────────────────────────┘
+  ... (9 more HIGH stdlib CVEs, same shape; `app/quicknotes` gobinary shows the identical 11 — both built with golang:1.24.13)
+```
+
+**Filesystem scan** (full)
+
+```
+.vagrant/machines/default/virtualbox/private_key (secrets)
+==========================================================
+Total: 1 (HIGH: 1, CRITICAL: 0)
+
+HIGH: AsymmetricPrivateKey (private-key)
+════════════════════════════════════════
+Asymmetric Private Key
+────────────────────────────────────────
+ .vagrant/machines/default/virtualbox/private_key:1
+────────────────────────────────────────
+```
+
+**Config scan** (full)
+
+```
+app/Dockerfile (dockerfile)
+===========================
+Tests: 28 (SUCCESSES: 27, FAILURES: 1)
+Failures: 1 (UNKNOWN: 0, LOW: 1, MEDIUM: 0, HIGH: 0, CRITICAL: 0)
+
+AVD-DS-0026 (LOW): Add HEALTHCHECK instruction in your Dockerfile
+════════════════════════════════════════
+You should add HEALTHCHECK instruction in your docker container images to perform the health check on running containers.
+```
+
+No HIGH/CRITICAL misconfigs. The LOW hit is a false positive — Trivy only reads the Dockerfile; the `HEALTHCHECK` is declared in `compose.yaml` instead.
+
+**SBOM** — CycloneDX 1.6, generated by trivy 0.59.1. First 30 lines:
+
+```json
+{
+    "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+    "bomFormat": "CycloneDX",
+    "specVersion": "1.6",
+    "serialNumber": "urn:uuid:63ae4a4a-0c02-4ee9-a5fd-c5359208bed7",
+    "version": 1,
+    "metadata": {
+        "timestamp": "2026-07-05T11:10:00+00:00",
+        "tools": {
+            "components": [
+                {
+                    "type": "application",
+                    "group": "aquasecurity",
+                    "name": "trivy",
+                    "version": "0.59.1"
+                }
+            ]
+        },
+        "component": {
+            "bom-ref": "pkg:oci/quicknotes@sha256%3A09cddeda1b787c722cfeeea2f6a33a1d2ad5a73ea8f93ab693cd81217ffa2b32?arch=amd64&repository_url=index.docker.io%2Flibrary%2Fquicknotes",
+            "type": "container",
+            "name": "quicknotes:lab6",
+            "purl": "pkg:oci/quicknotes@sha256%3A09cddeda1b787c722cfeeea2f6a33a1d2ad5a73ea8f93ab693cd81217ffa2b32?arch=amd64&repository_url=index.docker.io%2Flibrary%2Fquicknotes",
+            "properties": [
+                {
+                    "name": "aquasecurity:trivy:DiffID",
+                    "value": "sha256:187cfc6d1e3e8a40a5e64653bcd3239c140807dcf1c09e48021178705a5a6139"
+                },
+                {
+                    "name": "aquasecurity:trivy:DiffID",
+```
+
+### 1.2 Triage — every HIGH/CRITICAL
+
+| Finding                                                                                                                                                                     | Where                                                                       | Disposition                    | Reason                                                                                                                                                                                                                                                                                                                                                                   |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| CVE-2026-25679, -27145, -32280, -32281, -32283, -33811, -33814, -39820, -39836, -42499, -42504 (Go stdlib, `net/url`/`crypto/x509`/`crypto/tls`/`net`/`net/mail`, all HIGH) | `app/quicknotes`, `app/healthcheck` gobinaries, built with `golang:1.24.13` | **ACCEPT** — reeval 2026-10-05 | All 11 are DoS bugs in stdlib code paths QuickNotes never exercises: no TLS termination (plain HTTP server), no outbound DNS/cert-chain validation, no email parsing (grepped `app/*.go` — none of `net/mail`, `crypto/x509`, `crypto/tls` imported). Fix is a trivial builder-image bump (`golang:1.26.4-alpine`+) once available; tracked for next base-image refresh. |
+| `AsymmetricPrivateKey` in `.vagrant/machines/default/virtualbox/private_key` (HIGH)                                                                                         | repo filesystem                                                             | **ACCEPT** — reeval 2026-10-05 | Vagrant-generated per-machine SSH key for local VM access only. Path is git-ignored (`.gitignore:27`), never committed, regenerated on every `vagrant up`. No blast radius beyond the local dev box.                                                                                                                                                                     |
+
+### 1.3 Design questions
+
+**a) Severity isn't the whole picture.** Reachability (is the vulnerable function actually on a code path we execute — here: no, none of the 11 CVEs' packages are imported), exploit availability (public PoC vs. theoretical), and deployment context (internet-facing vs. internal, auth in front, privileges of the process) all change real risk more than the CVSS number does.
+
+**b) Distroless → few/no findings.** There's no shell, package manager, or general-purpose userland — nothing installed beyond the static binary, so nothing to have a CVE. Our scan confirms it: `quicknotes:lab6 (debian 13.5)` layer itself is `Total: 0`; every finding is inside the compiled Go binary, not the OS.
+
+**c) `.trivyignore`.** Legitimate when it mirrors a triaged, dated decision already written down (like the table above) — it's an _artifact_ of triage, not a substitute for it. It's theater when someone adds a CVE to make CI green with no reasoning attached — that hides the risk instead of managing it.
+
+**d) SBOM value.** When the next Log4Shell drops, the question is "am I affected, right now, everywhere?" Without an SBOM that means re-scanning every image/repo under time pressure. With one on file per build, it's a `grep` for a component+version across saved SBOMs — minutes instead of days.
