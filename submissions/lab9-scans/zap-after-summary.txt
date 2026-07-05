@@ -1,0 +1,5 @@
+PASS: X-Content-Type-Options Header Missing [10021]
+PASS: Insufficient Site Isolation Against Spectre Vulnerability [90004]
+WARN-NEW: Non-Storable Content [10049] x 4 
+WARN-NEW: ZAP is Out of Date [10116] x 1 
+FAIL-NEW: 0	FAIL-INPROG: 0	WARN-NEW: 2	WARN-INPROG: 0	INFO: 0	IGNORE: 0	PASS: 65

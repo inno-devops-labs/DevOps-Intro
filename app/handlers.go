@@ -37,6 +37,27 @@ func (s *Server) Routes() *http.ServeMux {
 	return mux
 }
 
+// Handler is the top-level HTTP handler: the router wrapped in security
+// middleware so hardening headers apply uniformly to every route.
+func (s *Server) Handler() http.Handler {
+	return securityHeaders(s.Routes())
+}
+
+// securityHeaders sets hardening response headers on every response. QuickNotes
+// is a JSON API that serves no HTML, so a maximally strict CSP is appropriate.
+func securityHeaders(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		h := w.Header()
+		h.Set("X-Content-Type-Options", "nosniff")
+		h.Set("X-Frame-Options", "DENY")
+		h.Set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'")
+		h.Set("Referrer-Policy", "no-referrer")
+		h.Set("Cross-Origin-Resource-Policy", "same-origin")
+		h.Set("Cache-Control", "no-store")
+		next.ServeHTTP(w, r)
+	})
+}
+
 type statusWriter struct {
 	http.ResponseWriter
 	code int

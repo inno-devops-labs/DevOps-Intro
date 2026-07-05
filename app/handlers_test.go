@@ -112,6 +112,27 @@ func TestDeleteNote_RemovesAndReturns204(t *testing.T) {
 	}
 }
 
+func TestSecurityHeaders_PresentOnAllResponses(t *testing.T) {
+	srv := newTestServer(t)
+	// Go through Handler() (router + middleware), not Routes() directly,
+	// so this test fails if the security middleware is ever removed.
+	want := map[string]string{
+		"X-Content-Type-Options":  "nosniff",
+		"X-Frame-Options":         "DENY",
+		"Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
+	}
+	for _, target := range []string{"/health", "/notes"} {
+		req := httptest.NewRequest(http.MethodGet, target, nil)
+		rec := httptest.NewRecorder()
+		srv.Handler().ServeHTTP(rec, req)
+		for k, v := range want {
+			if got := rec.Header().Get(k); got != v {
+				t.Errorf("%s: header %q = %q, want %q", target, k, got, v)
+			}
+		}
+	}
+}
+
 func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	srv := newTestServer(t)
 	_ = do(t, srv, http.MethodPost, "/notes", map[string]string{"title": "x"})
