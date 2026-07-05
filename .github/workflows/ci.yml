@@ -19,6 +19,7 @@ jobs:
         with:
           go-version: "1.26"
           cache: true
+          cache-dependency-path: app/go.mod
       - run: go test ./...
 
   govulncheck:
@@ -33,6 +34,7 @@ jobs:
         with:
           go-version: "1.26"
           cache: true
+          cache-dependency-path: app/go.mod
       - name: Install govulncheck
         run: go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
       - name: Run govulncheck
