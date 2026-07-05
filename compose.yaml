@@ -1,0 +1,36 @@
+services:
+  quicknotes:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: quicknotes:lab6
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/app/seed.json"
+    volumes:
+      - quicknotes-data:/data
+    healthcheck:
+      # Distroless has no shell/curl, so we exec our own static probe binary.
+      test: ["CMD", "/app/healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 2s
+    restart: unless-stopped
+
+    # --- Bonus: security hardening (six defaults) ---------------------------
+    user: "65532:65532"            # 1) non-root (also baked into the image)
+    cap_drop:                      # 3) drop all Linux capabilities
+      - ALL
+    security_opt:
+      - no-new-privileges:true     # 5) block privilege escalation
+    read_only: true                # 4) read-only root filesystem
+    tmpfs:
+      - /tmp                       #    writable scratch via tmpfs
+    # 2) shell-less image and 6) Trivy scan are verified in submissions/lab6.md.
+
+volumes:
+  quicknotes-data:
