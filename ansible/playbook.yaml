@@ -1,0 +1,70 @@
+---
+- name: Deploy QuickNotes to Vagrant VM
+  hosts: quicknotes_vm
+  become: true
+  gather_facts: false
+
+  vars:
+    quicknotes_user: quicknotes
+    quicknotes_data_dir: /var/lib/quicknotes
+    quicknotes_bin: /usr/local/bin/quicknotes
+    quicknotes_service: quicknotes
+    listen_addr: ":8080"
+    data_path: /var/lib/quicknotes/notes.json
+    seed_path: /var/lib/quicknotes/seed.json
+
+  handlers:
+    - name: restart quicknotes
+      ansible.builtin.systemd:
+        name: "{{ quicknotes_service }}"
+        state: restarted
+        daemon_reload: true
+
+  tasks:
+    - name: Create quicknotes system user
+      ansible.builtin.user:
+        name: "{{ quicknotes_user }}"
+        system: true
+        shell: /usr/sbin/nologin
+        create_home: false
+
+    - name: Ensure data directory exists
+      ansible.builtin.file:
+        path: "{{ quicknotes_data_dir }}"
+        state: directory
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_user }}"
+        mode: "0750"
+
+    - name: Copy QuickNotes binary
+      ansible.builtin.copy:
+        src: files/quicknotes
+        dest: "{{ quicknotes_bin }}"
+        owner: root
+        group: root
+        mode: "0755"
+      notify: restart quicknotes
+
+    - name: Copy seed.json to data directory
+      ansible.builtin.copy:
+        src: files/seed.json
+        dest: "{{ quicknotes_data_dir }}/seed.json"
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_user }}"
+        mode: "0640"
+
+    - name: Render systemd unit from template
+      ansible.builtin.template:
+        src: templates/quicknotes.service.j2
+        dest: /etc/systemd/system/quicknotes.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify: restart quicknotes
+
+    - name: Enable and start quicknotes service
+      ansible.builtin.systemd:
+        name: "{{ quicknotes_service }}"
+        enabled: true
+        state: started
+        daemon_reload: true
