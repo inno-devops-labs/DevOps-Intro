@@ -284,13 +284,6 @@ Evidence files:
 
 ## Teardown
 
-Teardown notes are recorded in:
+Teardown instructions are documented in:
 
 cloud/teardown.md
-
-Summary:
-
-- Keep the Hugging Face Space public until grading is complete.
-- After grading, delete the Hugging Face Space from its Settings page.
-- Stop any Cloudflare quick tunnel with Ctrl+C. Its temporary URL then expires.
-- The public GHCR image may remain available for reproducibility.
