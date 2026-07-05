@@ -16,6 +16,11 @@ Vagrant.configure("2") do |config|
     vb.memory = 1024
   end
 
+  config.vm.provider "libvirt" do |lv|
+    lv.cpus = 2
+    lv.memory = 1024
+  end
+
   config.vm.provision "shell", inline: <<-SHELL
     set -euo pipefail
 

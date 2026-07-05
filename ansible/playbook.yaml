@@ -1,0 +1,148 @@
+---
+- name: Deploy QuickNotes
+  hosts: quicknotes
+  become: true
+  vars:
+    quicknotes_user: quicknotes
+    data_dir: /var/lib/quicknotes
+    listen_addr: ":8080"
+    seed_path: /usr/local/share/quicknotes/seed.json
+
+  handlers:
+    - name: restart quicknotes
+      ansible.builtin.systemd:
+        name: quicknotes
+        state: restarted
+        daemon_reload: true
+
+  tasks:
+    - name: Create quicknotes system user
+      ansible.builtin.user:
+        name: "{{ quicknotes_user }}"
+        system: true
+        shell: /usr/sbin/nologin
+        create_home: false
+
+    - name: Ensure data directory
+      ansible.builtin.file:
+        path: "{{ data_dir }}"
+        state: directory
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_user }}"
+        mode: "0750"
+
+    - name: Ensure seed directory
+      ansible.builtin.file:
+        path: /usr/local/share/quicknotes
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Copy seed.json
+      ansible.builtin.copy:
+        src: files/seed.json
+        dest: "{{ seed_path }}"
+        mode: "0644"
+
+    - name: Copy QuickNotes binary
+      ansible.builtin.copy:
+        src: files/quicknotes
+        dest: /usr/local/bin/quicknotes
+        mode: "0755"
+        owner: root
+        group: root
+      notify: restart quicknotes
+
+    - name: Render systemd unit
+      ansible.builtin.template:
+        src: templates/quicknotes.service.j2
+        dest: /etc/systemd/system/quicknotes.service
+        mode: "0644"
+      notify: restart quicknotes
+
+    - name: Enable and start quicknotes
+      ansible.builtin.systemd:
+        name: quicknotes
+        enabled: true
+        state: started
+        daemon_reload: true
+
+- name: Bootstrap ansible-pull GitOps timer
+  hosts: quicknotes
+  become: true
+  vars:
+    fork_url: "https://github.com/Ten-Do/DevOps-Intro.git"
+    branch: feature/lab7
+
+  tasks:
+    - name: Install ansible and git
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        state: present
+        update_cache: true
+
+    - name: Ensure /etc/ansible directory exists
+      ansible.builtin.file:
+        path: /etc/ansible
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Write local inventory
+      ansible.builtin.copy:
+        dest: /etc/ansible/local-inventory.ini
+        content: |
+          [quicknotes]
+          127.0.0.1 ansible_connection=local
+        mode: "0644"
+
+    - name: Write ansible-pull service unit
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/ansible-pull.service
+        content: |
+          [Unit]
+          Description=ansible-pull convergence run
+
+          [Service]
+          Type=oneshot
+          ExecStart=/usr/bin/ansible-pull \
+            -U {{ fork_url }} \
+            -C {{ branch }} \
+            -i /etc/ansible/local-inventory.ini \
+            ansible/playbook.yaml
+          StandardOutput=journal
+          StandardError=journal
+        mode: "0644"
+      notify: reload systemd
+
+    - name: Write ansible-pull timer unit
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/ansible-pull.timer
+        content: |
+          [Unit]
+          Description=Run ansible-pull every 5 minutes
+
+          [Timer]
+          OnBootSec=1min
+          OnUnitActiveSec=5min
+
+          [Install]
+          WantedBy=timers.target
+        mode: "0644"
+      notify: reload systemd
+
+    - name: Enable and start ansible-pull timer
+      ansible.builtin.systemd:
+        name: ansible-pull.timer
+        enabled: true
+        state: started
+        daemon_reload: true
+
+  handlers:
+    - name: reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
