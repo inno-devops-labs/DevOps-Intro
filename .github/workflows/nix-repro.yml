@@ -32,7 +32,7 @@ jobs:
           echo "Build A digest: $digest"
 
   build-b:
-    name: Build B
+    name: Build B (BROKEN — diverges from A intentionally)
     runs-on: ubuntu-latest
     outputs:
       digest: ${{ steps.hash.outputs.digest }}
@@ -44,6 +44,11 @@ jobs:
           extra-conf: |
             trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
             substituters = https://cache.nixos.org
+
+      # Deliberately mutate the Go source so the Nix src hash differs from Build A.
+      # This simulates what would happen if the source were not identical across runners.
+      - name: Introduce divergence (demo only)
+        run: echo "// BREAK $(date +%s)" >> app/main.go
 
       - name: Build OCI image
         run: nix build .#docker
