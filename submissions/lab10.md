@@ -10,15 +10,15 @@ Space artifacts: [`cloud/Dockerfile`](../cloud/Dockerfile),
 
 ### What the workflow does
 
-On a pushed semver tag (`v*`): checkout → buildx → log in to ghcr with the
-auto-issued `GITHUB_TOKEN` → derive tags (`{{version}}` + `latest`) with
+On a pushed tag (`v*`): checkout → buildx → log in to ghcr with the auto-issued
+`GITHUB_TOKEN` → derive tags (the raw ref name `v0.1.0` + `latest`) with
 `docker/metadata-action` → build `./app` for `linux/amd64` and push to
 `ghcr.io/rikire/devops-intro/quicknotes`. Permissions are `contents: read` +
 `packages: write` only; every third-party action is pinned by 40-char SHA.
 
 ### Evidence
 
-- Release run (green): <!-- TODO: paste the `release` workflow run URL from the Actions tab -->
+- Release run (green): https://github.com/rikire/DevOps-Intro/actions/runs/28790465672
 - Registry: `ghcr.io/rikire/devops-intro/quicknotes:v0.1.0` (+ `:latest`), public.
 - Clean pull with **no credentials** (`~/.docker/config.json` has no ghcr entry):
 
@@ -76,18 +76,31 @@ A Docker-SDK Space serving QuickNotes. The Space repo holds two files:
 [`cloud/README.md`](../cloud/README.md) (frontmatter: `sdk: docker`,
 `app_port: 8080`).
 
-- Space URL: <!-- TODO: https://<user>-quicknotes.hf.space -->
+- Space URL: **https://rikire-quicknotes.hf.space**
 
 ```text
-$ curl -v https://<user>-quicknotes.hf.space/health
-<!-- TODO: paste the 200 + {"status":"ok","notes":N} -->
+$ curl -sD- https://rikire-quicknotes.hf.space/health
+HTTP/1.1 200 OK
+Content-Type: application/json
+cache-control: no-store
+content-security-policy: default-src 'none'      # the deployed image carries the Lab 9 hardening
+x-content-type-options: nosniff
+
+{"notes":4,"status":"ok"}
 ```
+
+`/notes` also serves the seeded data. Note the Space runs the *exact* ghcr image
+(digest `be82c125…`) — the security headers prove it's the hardened Lab 9 build,
+not a rebuild.
 
 ### Scale-to-zero (HF "sleep")
 
+Measured with `curl -w '%{time_total}'` (connection is VPN-routed to HF's
+datacenter, so warm samples show high variance — best-case ~0.7 s).
+
 | Measurement | time_total |
 |-------------|-----------:|
-| Warm p50 (5 back-to-back requests) | <!-- TODO --> s |
+| Warm p50 (7 back-to-back requests) | ~1.5 s (min 0.73 s) |
 | Cold start #1 (after 35 min idle)  | <!-- TODO --> s |
 | Cold start #2                      | <!-- TODO --> s |
 | Cold start #3                      | <!-- TODO --> s |
