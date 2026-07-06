@@ -206,3 +206,203 @@ A minimal base image removes unnecessary operating system packages, shells, pack
 ### d. The SBOM is a list of components. What concrete future problem does having it today solve?
 
 The SBOM lets the team quickly answer whether QuickNotes contains a newly vulnerable component when a future CVE is announced. For example, during an incident like Log4Shell, teams with SBOMs can search known shipped components immediately instead of rebuilding dependency knowledge from memory or manually inspecting every image after the fact.
+
+## Task 2 - OWASP ZAP Baseline and Security Header Fix
+
+### ZAP version
+
+Pinned ZAP image:
+
+```text
+ghcr.io/zaproxy/zaproxy:2.16.1
+```
+
+### Artifact files
+
+- `submissions/lab9-artifacts/zap-before-console.txt`
+- `submissions/lab9-artifacts/zap-before.html`
+- `submissions/lab9-artifacts/zap-before.json`
+- `submissions/lab9-artifacts/zap-after-console.txt`
+- `submissions/lab9-artifacts/zap-after.html`
+- `submissions/lab9-artifacts/zap-after.json`
+
+### Before scan
+
+Command:
+
+```bash
+docker run --rm --network host \
+  -v "$PWD/submissions/lab9-artifacts:/zap/wrk:rw" \
+  "$ZAP_IMAGE" \
+  zap-baseline.py \
+  -t http://127.0.0.1:8080/health \
+  -r zap-before.html \
+  -J zap-before.json \
+  -I \
+  2>&1 | tee submissions/lab9-artifacts/zap-before-console.txt
+```
+
+Before scan summary:
+
+```text
+WARN-NEW: X-Content-Type-Options Header Missing [10021] x 1
+        http://127.0.0.1:8080/health (200 OK)
+WARN-NEW: Storable and Cacheable Content [10049] x 4
+        http://127.0.0.1:8080/ (404 Not Found)
+        http://127.0.0.1:8080/health (200 OK)
+        http://127.0.0.1:8080/robots.txt (404 Not Found)
+        http://127.0.0.1:8080/sitemap.xml (404 Not Found)
+WARN-NEW: ZAP is Out of Date [10116] x 1
+        http://127.0.0.1:8080/sitemap.xml (404 Not Found)
+WARN-NEW: Insufficient Site Isolation Against Spectre Vulnerability [90004] x 1
+        http://127.0.0.1:8080/health (200 OK)
+FAIL-NEW: 0     FAIL-INPROG: 0  WARN-NEW: 4     WARN-INPROG: 0  INFO: 0 IGNORE: 0       PASS: 63
+```
+
+### ZAP findings triage
+
+| ID | Name | Risk | Affected URL / parameter | Disposition | Reason |
+| --- | --- | --- | --- | --- | --- |
+| 10021 | X-Content-Type-Options Header Missing | Low (Medium) | `http://127.0.0.1:8080/health`, parameter `x-content-type-options` | FIX | Added security headers middleware that sets `X-Content-Type-Options: nosniff` on all routes. The after scan reports this check as `PASS`. |
+| 90004 | Insufficient Site Isolation Against Spectre Vulnerability | Low (Medium) | `http://127.0.0.1:8080/health`, parameter `Cross-Origin-Resource-Policy` | FIX | Added `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Resource-Policy: same-origin` in the same middleware. The after scan reports this check as `PASS`. |
+| 10049 | Storable and Cacheable Content | Informational (Medium) | `http://127.0.0.1:8080/`, `/health`, `/robots.txt`, `/sitemap.xml` | ACCEPT | Added `Cache-Control: no-store`. The after scan changed this to `Non-Storable Content`, which is acceptable for this API because the response is explicitly marked non-cacheable. Re-check if QuickNotes later serves browser assets. |
+| 10116 | ZAP is Out of Date | Low (High) | `http://127.0.0.1:8080/sitemap.xml` before scan, `http://127.0.0.1:8080/` after scan | ACCEPT | The lab requires a pinned ZAP image instead of `latest`; `ghcr.io/zaproxy/zaproxy:2.16.1` was used for reproducibility. This finding is about the scanner image, not a QuickNotes runtime vulnerability. Re-check when updating the pinned scanner version. |
+
+### Code fix
+
+Files changed:
+
+- `app/handlers.go`
+- `app/handlers_test.go`
+
+Summary:
+
+- Changed `Routes()` to return `http.Handler`.
+- Added `securityHeaders` middleware around the router.
+- Applied security headers to all routes, not only `/health`.
+- Added `TestSecurityHeaders_AppliesToResponses` to verify the headers are present.
+
+Relevant code diff:
+
+```diff
+-func (s *Server) Routes() *http.ServeMux {
++func (s *Server) Routes() http.Handler {
+        mux := http.NewServeMux()
+        mux.HandleFunc("GET /health", s.wrap(s.handleHealth))
+        mux.HandleFunc("GET /metrics", s.wrap(s.handleMetrics))
+        mux.HandleFunc("GET /notes", s.wrap(s.handleListNotes))
+        mux.HandleFunc("POST /notes", s.wrap(s.handleCreateNote))
+        mux.HandleFunc("GET /notes/{id}", s.wrap(s.handleGetNote))
+        mux.HandleFunc("DELETE /notes/{id}", s.wrap(s.handleDeleteNote))
+-       return mux
++       return securityHeaders(mux)
+ }
++
++func securityHeaders(next http.Handler) http.Handler {
++       return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++               w.Header().Set("X-Content-Type-Options", "nosniff")
++               w.Header().Set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; base-uri 'none'")
++               w.Header().Set("X-Frame-Options", "DENY")
++               w.Header().Set("Referrer-Policy", "no-referrer")
++               w.Header().Set("Cache-Control", "no-store")
++               w.Header().Set("Cross-Origin-Opener-Policy", "same-origin")
++               w.Header().Set("Cross-Origin-Resource-Policy", "same-origin")
++               next.ServeHTTP(w, r)
++       })
++}
+```
+
+### Validation
+
+Unit tests:
+
+```bash
+cd app
+gofmt -w handlers.go handlers_test.go
+go test ./...
+cd ..
+```
+
+Result:
+
+```text
+ok      quicknotes      0.005s
+?       quicknotes/cmd/healthcheck      [no test files]
+```
+
+Rebuild:
+
+```bash
+docker compose up -d --build quicknotes
+```
+
+Manual header check:
+
+```bash
+curl -i http://localhost:8080/health
+```
+
+Relevant output:
+
+```text
+HTTP/1.1 200 OK
+Cache-Control: no-store
+Content-Security-Policy: default-src 'none'; frame-ancestors 'none'; base-uri 'none'
+Content-Type: application/json
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Referrer-Policy: no-referrer
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+```
+
+### After scan
+
+Command:
+
+```bash
+docker run --rm --network host \
+  -v "$PWD/submissions/lab9-artifacts:/zap/wrk:rw" \
+  "$ZAP_IMAGE" \
+  zap-baseline.py \
+  -t http://127.0.0.1:8080/health \
+  -r zap-after.html \
+  -J zap-after.json \
+  -I \
+  2>&1 | tee submissions/lab9-artifacts/zap-after-console.txt
+```
+
+After scan summary:
+
+```text
+PASS: X-Content-Type-Options Header Missing [10021]
+PASS: Insufficient Site Isolation Against Spectre Vulnerability [90004]
+WARN-NEW: Non-Storable Content [10049] x 3
+        http://127.0.0.1:8080/ (404 Not Found)
+        http://127.0.0.1:8080/health (200 OK)
+        http://127.0.0.1:8080/sitemap.xml (404 Not Found)
+WARN-NEW: ZAP is Out of Date [10116] x 1
+        http://127.0.0.1:8080/ (404 Not Found)
+FAIL-NEW: 0     FAIL-INPROG: 0  WARN-NEW: 2     WARN-INPROG: 0  INFO: 0 IGNORE: 0       PASS: 65
+```
+
+Before/after evidence:
+
+- Before: `X-Content-Type-Options Header Missing [10021]` was reported as `WARN-NEW`.
+- After: `X-Content-Type-Options Header Missing [10021]` was reported as `PASS`.
+- Before: `Insufficient Site Isolation Against Spectre Vulnerability [90004]` was reported as `WARN-NEW`.
+- After: `Insufficient Site Isolation Against Spectre Vulnerability [90004]` was reported as `PASS`.
+
+## Task 2 Design Questions
+
+### e. Why a middleware and not per-handler header sets?
+
+Middleware puts the security policy in one place and applies it consistently to every route. Per-handler header calls are easy to forget when adding a new endpoint, and they create duplicated security behavior that can drift over time. Wrapping the router means `/health`, `/metrics`, `/notes`, and future routes get the same baseline headers.
+
+### f. `Content-Security-Policy: default-src 'none'` is the strictest CSP. What does it break? Why is it OK for QuickNotes (an API) but not for a website?
+
+`default-src 'none'` blocks scripts, stylesheets, images, fonts, frames, connections, and other browser-loaded resources unless they are explicitly allowed. That would break a normal website that needs JavaScript, CSS, images, analytics, or API calls from browser code. It is acceptable for QuickNotes because this service is a JSON API, not a browser-rendered web application.
+
+### g. False positives vs accepted findings: ZAP often flags informational issues that are not real problems. What is the cost of marking them all accepted without reading them?
+
+Marking all informational findings as accepted without review creates blind spots. Some findings are harmless in the current deployment, but others may reveal weak defaults, missing headers, excessive caching, or useful reconnaissance for attackers. Reading each finding keeps the acceptance decision intentional and makes it easier to notice when a future change turns a low-risk warning into a real issue.

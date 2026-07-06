@@ -131,3 +131,24 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	}
 }
 
+func TestSecurityHeaders_AppliesToResponses(t *testing.T) {
+	srv := newTestServer(t)
+
+	rec := do(t, srv, http.MethodGet, "/health", nil)
+
+	wantHeaders := map[string]string{
+		"X-Content-Type-Options":       "nosniff",
+		"Content-Security-Policy":      "default-src 'none'; frame-ancestors 'none'; base-uri 'none'",
+		"X-Frame-Options":              "DENY",
+		"Referrer-Policy":              "no-referrer",
+		"Cache-Control":                "no-store",
+		"Cross-Origin-Opener-Policy":   "same-origin",
+		"Cross-Origin-Resource-Policy": "same-origin",
+	}
+
+	for name, want := range wantHeaders {
+		if got := rec.Header().Get(name); got != want {
+			t.Errorf("%s = %q, want %q", name, got, want)
+		}
+	}
+}
