@@ -9,9 +9,13 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"golang.org/x/text/language"
 )
 
 func main() {
+	// TEMPORARY for Lab 9 bonus red/green demo - GO-2021-0113, revert after CI run
+	_, _ = language.Parse("en-US")
 	addr := envOrDefault("ADDR", ":8080")
 	dataPath := envOrDefault("DATA_PATH", "data/notes.json")
 	seedPath := envOrDefault("SEED_PATH", "seed.json")
@@ -83,3 +87,4 @@ func dirname(p string) string {
 	}
 	return "."
 }
+
