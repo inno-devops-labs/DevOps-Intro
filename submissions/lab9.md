@@ -401,19 +401,15 @@ func init() {
 
 ### Design questions
 
-**h) Reachability — "module has a CVE but we don't call the affected function" vs "module has a CVE" — what it means for triage workload.**
-Huge difference in how much you actually have to do. "Module has a CVE" (what Trivy /
-plain SCA says) flags every dependency that contains vulnerable code — including
+**h) Reachability — "module has a CVE but we don't call the affected function" vs "module has a CVE".**
+Huge difference in how much you actually have to do. "Module has a CVE" flags every dependency that contains vulnerable code — including
 CVEs in functions you never call, so you drown in findings that don't affect you.
 govulncheck does **reachability**: it only flags a CVE if your code actually calls
 into the vulnerable function through the call graph. So instead of triaging 50
 "present" CVEs you triage the 3 that are genuinely reachable. 
 
 **i) Why pin the version of govulncheck instead of `@latest`?**
-Same reason you pin anything in CI — reproducibility and no surprises. `@latest`
-means tomorrow's release can change behaviour, add checks, or just break, and CI goes
-red (or green) for reasons unrelated to my code — and two runs of the "same" commit
-aren't the same. Pinning `@v1.1.4` makes the gate deterministic
+Same reason you pin anything in CI — reproducibility and no surprises.
 
 **j) govulncheck only knows Go — what won't it catch that Trivy (image scan) would?**
 It only sees the Go module graph + stdlib. It's blind to everything else in the
