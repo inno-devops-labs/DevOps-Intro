@@ -227,6 +227,9 @@ Added `.github/workflows/ci.yml` with a dedicated status check:
         run: govulncheck ./...
 ```
 
+Failed CI job:
+![vulncheck](img/vulncheck.png)
+
 ### Bonus Design Questions
 
 h) Reachability means a vulnerable module is not automatically a vulnerable application. If QuickNotes does not call the affected function, triage can focus first on reachable issues.
