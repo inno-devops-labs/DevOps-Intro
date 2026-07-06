@@ -112,6 +112,16 @@ func TestDeleteNote_RemovesAndReturns204(t *testing.T) {
 	}
 }
 
+func TestSecurityHeaders_PresentOnAllRoutes(t *testing.T) {
+	srv := newTestServer(t)
+	for _, target := range []string{"/health", "/notes", "/metrics"} {
+		rec := do(t, srv, http.MethodGet, target, nil)
+		if got := rec.Header().Get("Cache-Control"); got != "no-store" {
+			t.Errorf("%s: Cache-Control = %q, want no-store", target, got)
+		}
+	}
+}
+
 func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	srv := newTestServer(t)
 	_ = do(t, srv, http.MethodPost, "/notes", map[string]string{"title": "x"})
