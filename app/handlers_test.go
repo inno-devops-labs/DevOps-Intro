@@ -131,3 +131,24 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	}
 }
 
+
+func TestNoStoreCache_AppliesToAllResponses(t *testing.T) {
+srv := newTestServer(t)
+
+// Registered route (200 OK)
+rec := do(t, srv, http.MethodGet, "/health", nil)
+if got := rec.Header().Get("Cache-Control"); got != "no-store" {
+t.Errorf("GET /health: Cache-Control = %q, want %q", got, "no-store")
+}
+
+// Unregistered route (mux 404) - this is the path ZAP flagged
+// (WARN-NEW: Storable and Cacheable Content [10049]) because it had
+// no Cache-Control header at all.
+rec = do(t, srv, http.MethodGet, "/", nil)
+if rec.Code != http.StatusNotFound {
+t.Fatalf("GET /: status = %d, want %d", rec.Code, http.StatusNotFound)
+}
+if got := rec.Header().Get("Cache-Control"); got != "no-store" {
+t.Errorf("GET / (404): Cache-Control = %q, want %q", got, "no-store")
+}
+}
