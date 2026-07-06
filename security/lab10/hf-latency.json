@@ -1,0 +1,48 @@
+{
+  "url": "https://medvax-quicknotes.hf.space/health",
+  "warm_5_consecutive": {
+    "runs_ms": [642.6, 448.7, 668.7, 500.8, 443.3],
+    "p50_ms": 500.8
+  },
+  "warm_50_request_sample": {
+    "runs": 50,
+    "mean_ms": 479.2,
+    "stddev_ms": 59.9,
+    "min_ms": 426.0,
+    "max_ms": 694.1,
+    "p50_ms": 452.0,
+    "p95_ms": 648.0
+  },
+  "cold_start_pause_restart": {
+    "method": "POST /api/spaces/MedvAx/quicknotes/pause, POST /api/spaces/MedvAx/quicknotes/restart, then time first successful GET /health",
+    "runs": [
+      {
+        "run": 1,
+        "pause_stage": "PAUSED",
+        "restart_stage": "BUILDING",
+        "status": 200,
+        "request_ms": 9903.8,
+        "total_to_first_ok_s": 9.9,
+        "body": "{\"notes\":4,\"status\":\"ok\"}"
+      },
+      {
+        "run": 2,
+        "pause_stage": "PAUSED",
+        "restart_stage": "BUILDING",
+        "status": 200,
+        "request_ms": 8366.9,
+        "total_to_first_ok_s": 8.4,
+        "body": "{\"notes\":4,\"status\":\"ok\"}"
+      },
+      {
+        "run": 3,
+        "pause_stage": "PAUSED",
+        "restart_stage": "BUILDING",
+        "status": 200,
+        "request_ms": 18980.2,
+        "total_to_first_ok_s": 19.0,
+        "body": "{\"notes\":4,\"status\":\"ok\"}"
+      }
+    ]
+  }
+}

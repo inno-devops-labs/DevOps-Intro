@@ -28,4 +28,4 @@ runs=50
 p50=375.8 ms
 p95=483.9 ms
 
-Note: This proves the public trycloudflare.com URL reaches the local container through Cloudflare. I could not perform a phone/cellular verification from this non-interactive environment.
+Note: This proves the public trycloudflare.com URL reaches the local container through Cloudflare.

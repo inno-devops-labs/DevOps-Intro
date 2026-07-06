@@ -1,0 +1,34 @@
+Hugging Face Spaces evidence
+
+Account: MedvAx
+Space repo: MedvAx/quicknotes
+Space URL: https://huggingface.co/spaces/MedvAx/quicknotes
+App URL: https://medvax-quicknotes.hf.space
+Commit URL: https://huggingface.co/spaces/MedvAx/quicknotes/commit/ae7ced6a187e5663cc2a5e81617e3303e8b6c072
+Commit SHA: ae7ced6a187e5663cc2a5e81617e3303e8b6c072
+
+Runtime after deploy:
+stage=RUNNING
+hardware.current=cpu-basic
+hardware.requested=cpu-basic
+replicas.current=1
+replicas.requested=1
+domain=medvax-quicknotes.hf.space
+domain.stage=READY
+runtime.sha=ae7ced6a187e5663cc2a5e81617e3303e8b6c072
+
+curl -v /health evidence:
+curl.exe -v https://medvax-quicknotes.hf.space/health
+
+> GET /health HTTP/1.1
+> Host: medvax-quicknotes.hf.space
+> User-Agent: curl/8.19.0
+> Accept: */*
+>
+< HTTP/1.1 200 OK
+< Date: Mon, 06 Jul 2026 10:08:56 GMT
+< Content-Type: application/json
+< Content-Length: 26
+< link: <https://huggingface.co/spaces/MedvAx/quicknotes>;rel="canonical"
+<
+{"notes":4,"status":"ok"}

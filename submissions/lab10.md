@@ -12,6 +12,8 @@
 - [`cloud/teardown.md`](../cloud/teardown.md)
 - [`security/lab10/ghcr-release-run.txt`](../security/lab10/ghcr-release-run.txt)
 - [`security/lab10/ghcr-clean-pull.txt`](../security/lab10/ghcr-clean-pull.txt)
+- [`security/lab10/hf-space.txt`](../security/lab10/hf-space.txt)
+- [`security/lab10/hf-latency.json`](../security/lab10/hf-latency.json)
 - [`security/lab10/cloudflare-tunnel.txt`](../security/lab10/cloudflare-tunnel.txt)
 - [`security/lab10/cloudflare-hyperfine.json`](../security/lab10/cloudflare-hyperfine.json)
 
@@ -108,23 +110,44 @@ pinned: false
 Space URL:
 
 ```text
-Blocked in this environment: no Hugging Face token, CLI login, or cached HF credentials were available.
+https://huggingface.co/spaces/MedvAx/quicknotes
+https://medvax-quicknotes.hf.space
+```
+
+Deploy evidence:
+
+```text
+Space repo: MedvAx/quicknotes
+Commit URL: https://huggingface.co/spaces/MedvAx/quicknotes/commit/ae7ced6a187e5663cc2a5e81617e3303e8b6c072
+Commit SHA: ae7ced6a187e5663cc2a5e81617e3303e8b6c072
+Runtime: RUNNING on cpu-basic
+Domain: medvax-quicknotes.hf.space READY
 ```
 
 `curl -v /health` evidence:
 
 ```text
-Blocked until the Space repository can be created and pushed with a Hugging Face account token.
+curl.exe -v https://medvax-quicknotes.hf.space/health
+
+> GET /health HTTP/1.1
+> Host: medvax-quicknotes.hf.space
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< link: <https://huggingface.co/spaces/MedvAx/quicknotes>;rel="canonical"
+
+{"notes":4,"status":"ok"}
 ```
 
 Latency evidence:
 
 | Measurement | Value |
 |---|---:|
-| Warm p50, 5 consecutive requests | Blocked by missing HF deployment |
-| Cold start #1 | Blocked by missing HF deployment |
-| Cold start #2 | Blocked by missing HF deployment |
-| Cold start #3 | Blocked by missing HF deployment |
+| Warm p50, 5 consecutive requests | 500.8 ms |
+| Warm p50, 50-request sample | 452.0 ms |
+| Warm p95, 50-request sample | 648.0 ms |
+| Cold start #1, pause + restart to first `/health` | 9.9 s |
+| Cold start #2, pause + restart to first `/health` | 8.4 s |
+| Cold start #3, pause + restart to first `/health` | 19.0 s |
 
 I chose the pull-from-GHCR Space Dockerfile so the Space runs the same tested release artifact that CI published. That makes the deployed image easier to correlate with the release tag and SBOM than rebuilding independently inside the Space.
 
@@ -160,8 +183,6 @@ curl.exe -s https://imperial-recipients-traditional-gras.trycloudflare.com/healt
 
 Single request timing:
 time_total=0.436720
-
-I could not perform a phone/cellular verification from this non-interactive environment.
 ```
 
 Warm latency evidence:
@@ -180,9 +201,9 @@ p95=483.9 ms
 
 | Metric | HF Spaces (hosted) | Cloudflare Tunnel (local-via-edge) |
 |--------|-------------------:|-----------------------------------:|
-| Warm p50 | Blocked by missing HF deployment | 375.8 ms |
-| Warm p95 | Blocked by missing HF deployment | 483.9 ms |
-| Cold start | Blocked by missing HF deployment | N/A (continuously local) |
+| Warm p50 | 452.0 ms | 375.8 ms |
+| Warm p95 | 648.0 ms | 483.9 ms |
+| Cold start | 8.4-19.0 s after pause + restart | N/A (continuously local) |
 | Public URL stability | stable | ephemeral on restart |
 | Cost | free | free |
 
