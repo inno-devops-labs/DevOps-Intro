@@ -1,0 +1,25 @@
+{
+  "SchemaVersion": 2,
+  "CreatedAt": "2026-07-05T16:43:36.566305837Z",
+  "ArtifactName": "/repo",
+  "ArtifactType": "filesystem",
+  "Metadata": {
+    "ImageConfig": {
+      "architecture": "",
+      "created": "0001-01-01T00:00:00Z",
+      "os": "",
+      "rootfs": {
+        "type": "",
+        "diff_ids": null
+      },
+      "config": {}
+    }
+  },
+  "Results": [
+    {
+      "Target": "app/go.mod",
+      "Class": "lang-pkgs",
+      "Type": "gomod"
+    }
+  ]
+}

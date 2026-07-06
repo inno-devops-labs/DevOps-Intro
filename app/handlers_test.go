@@ -54,6 +54,27 @@ func TestHealth_ReportsCount(t *testing.T) {
 	}
 }
 
+func TestRoutes_AddSecurityHeaders(t *testing.T) {
+	srv := newTestServer(t)
+	rec := do(t, srv, http.MethodGet, "/notes", nil)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", rec.Code)
+	}
+	for name, want := range map[string]string{
+		"Content-Security-Policy":      "default-src 'none'; frame-ancestors 'none'",
+		"Cross-Origin-Resource-Policy": "same-origin",
+		"Cache-Control":                "no-store",
+		"Pragma":                       "no-cache",
+		"X-Content-Type-Options":       "nosniff",
+		"X-Frame-Options":              "DENY",
+		"Referrer-Policy":              "no-referrer",
+	} {
+		if got := rec.Header().Get(name); got != want {
+			t.Errorf("%s = %q, want %q", name, got, want)
+		}
+	}
+}
+
 func TestCreateNote_RoundTrip(t *testing.T) {
 	srv := newTestServer(t)
 	rec := do(t, srv, http.MethodPost, "/notes", map[string]string{
@@ -130,4 +151,3 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 		}
 	}
 }
-
