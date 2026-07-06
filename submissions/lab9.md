@@ -352,6 +352,127 @@ silently swallowing an actual security regression.
 
 ## Bonus — `govulncheck` as a CI PR Gate
 
-*(Section below documents the CI job added to the Lab 3 `ci.yml` workflow: job definition, the
-red -> green demonstration with a deliberately introduced vulnerable dependency, and design
-questions h-j. See PR description / CI run links for the live logs.)*
+### Job added to Lab 3 CI (`.github/workflows/ci.yml`)
+
+```yaml
+  govulncheck:
+    name: govulncheck
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
+        with:
+          go-version: "1.26.4"
+          cache: true
+          cache-dependency-path: app/go.mod
+      - name: install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@v1.4.0
+      - name: govulncheck
+        working-directory: app
+        run: govulncheck ./...
+```
+
+Pinned scanner version `v1.4.0` (not `@latest`). The Go toolchain used to run the check is `1.26.4`
+— deliberately *not* matched to the `vet`/`test` matrix (`1.23`/`1.24`), because this job's purpose
+is scanning the same Go version that actually ships in the production image (`app/Dockerfile`'s
+builder stage), not testing source-level compatibility across Go versions.
+
+### Unplanned first finding — a real toolchain drift, caught immediately
+
+The job was first wired up with `go-version: "1.24"` to match the rest of CI. On the very first run
+it went **red** — not from a staged example, but from a genuine mismatch: CI was scanning against
+`go1.24.13` while the production Dockerfile had already been bumped to `golang:1.26.4-alpine` (Task 1
+fix). `govulncheck` found 8 reachable stdlib CVEs with concrete call traces, e.g.:
+
+```
+Vulnerability #2: GO-2026-5037
+    Inefficient candidate hostname parsing in crypto/x509
+    Found in: crypto/x509@go1.24.13   Fixed in: crypto/x509@go1.25.11
+    #1: main.go:37:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls x509.Certificate.Verify
+```
+
+Fixed by pointing the job's `go-version` at `1.26.4` (same commit history as this PR) — this is
+itself a live demonstration of the tool doing its job: it caught a real drift between "what we scan"
+and "what we ship" before it could hide a false sense of security.
+
+### Deliberate red -> green demonstration
+
+To satisfy B.2.5 explicitly, a known-vulnerable dependency was introduced on top of the (by-then
+clean) state:
+
+1. Added `golang.org/x/text v0.3.6` to `app/go.mod` and a reachable call `language.Parse("en-US")` in
+   `main()`. This version carries **GO-2021-0113** (out-of-bounds read in BCP 47 tag parsing).
+2. Verified locally first: `govulncheck ./...` reported the vulnerability with an exact trace
+   (`main.go:18:23: quicknotes.main calls language.Parse`), fixed in `v0.3.7`.
+3. Pushed to a demo PR (`ivanalpatov2003-design/DevOps-Intro#5`, opened against my own fork's `main`
+   since the upstream course repo does not run Actions for external-fork PRs — see below). CI's
+   `govulncheck` job went **red**, all other jobs (`vet`, `test`, `lint`) stayed green — the security
+   gate failed in isolation, exactly as intended:
+
+```
+govulncheck — failed now in 33s
+=== Symbol Results ===
+Vulnerability #1: GO-2021-0113
+    Out-of-bounds read in golang.org/x/text/language
+    Module: golang.org/x/text
+    Found in: golang.org/x/text@v0.3.6   Fixed in: golang.org/x/text@v0.3.7
+    Example traces found:
+      #1: main.go:18:23: quicknotes.main calls language.Parse
+Your code is affected by 1 vulnerability from 1 module.
+Error: Process completed with exit code 3.
+```
+
+![govulncheck red](img/lab9_ci_red.png)
+
+4. Reverted `main.go` and `go.mod` to their prior clean state, pushed again. CI returned to **green**
+   across all 6 checks (`vet` x2, `test` x2, `lint`, `govulncheck`).
+
+![govulncheck green](img/lab9_ci_green.png)
+
+*Note on where this ran:* `inno-devops-labs/DevOps-Intro` does not trigger Actions runs for pull
+requests opened from external forks (confirmed: zero `ci` workflow runs appear under the repo's own
+Actions tab for PR #1350, only an unrelated `Copilot code review` workflow). To get a real CI
+execution for this red/green demonstration, the same branch was also opened as a PR against my own
+fork's `main` (`ivanalpatov2003-design/DevOps-Intro#5`), where `pull_request` correctly triggers the
+workflow. The `govulncheck` job itself is identical either way — only the repo triggering it differs.
+
+### Design questions
+
+**h) Reachability vs. presence.**
+"This module has a CVE" (Trivy's module-presence view) and "this module has a CVE *and my code calls
+the affected function*" (govulncheck's reachability view) are very different triage inputs. A module
+can sit in `go.mod` for one small helper function while carrying a CVE in a completely unrelated part
+of its API surface that the project never touches — that's a CVE with zero actual exposure. Our own
+scan is a live example: `govulncheck` reported the app affected by 1 vulnerability it actually calls,
+but *also* found "4 vulnerabilities in packages you import and 8 vulnerabilities in modules you
+require" that the code doesn't call — those don't even make it into the failing "Symbol Results"
+section. Without reachability, every one of those 12 non-reachable findings would need the same
+manual triage effort as the one that actually matters, multiplying investigation workload for
+findings that carry no real risk. Reachability turns "how many CVEs does this dependency tree have"
+into "how many of them can actually hurt us" — a much smaller and more actionable number.
+
+**i) Why pin the scanner version, not just `@latest`.**
+A vulnerability *database* update (new CVEs added) should change what govulncheck reports — that's
+the whole point of running it regularly. But a *scanner tool version* update can change reachability
+analysis behavior, output format, or exit-code semantics between releases, silently altering what
+counts as a CI failure without anyone touching application code. `@latest` in a CI gate means the
+gate's pass/fail criteria can shift on a schedule you don't control — a run that was green yesterday
+could turn red today purely because the tool itself changed, with no code change to investigate. The
+same discipline that applies to pinning `prom/prometheus` or `grafana/grafana` images in Lab 8 applies
+here: pin the tool, let the vulnerability *data* stay current (it's fetched live from vuln.go.dev on
+every run regardless of scanner version), and upgrade the scanner version deliberately, in its own
+reviewed commit.
+
+**j) What govulncheck misses that Trivy's image scan catches.**
+`govulncheck` only understands the Go module graph and Go source/binary symbols — it has no idea the
+container exists. Trivy's image scan additionally covers everything govulncheck structurally cannot
+see: **OS package vulnerabilities** in the base image's Debian/Alpine layer (though in our distroless
+case that layer is empty by design — see Task 1 design question b); **secrets accidentally baked into
+the image** (an API key in an env var or a leftover credential file); **IaC/config misconfigurations**
+in the Dockerfile or Compose file itself (the `config` scan's job, not `govulncheck`'s); and
+vulnerabilities in **non-Go artifacts** shipped in the same image (a vendored binary, a static asset,
+a `seed.json` with unexpected content). The two tools are complementary by design: govulncheck is a
+precise, reachability-aware scalpel for the Go dependency graph specifically; Trivy is the broader
+sweep across everything else that ends up inside the shipped container.
