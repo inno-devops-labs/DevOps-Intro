@@ -406,3 +406,106 @@ Middleware puts the security policy in one place and applies it consistently to 
 ### g. False positives vs accepted findings: ZAP often flags informational issues that are not real problems. What is the cost of marking them all accepted without reading them?
 
 Marking all informational findings as accepted without review creates blind spots. Some findings are harmless in the current deployment, but others may reveal weak defaults, missing headers, excessive caching, or useful reconnaissance for attackers. Reading each finding keeps the acceptance decision intentional and makes it easier to notice when a future change turns a low-risk warning into a real issue.
+
+## Bonus Task - govulncheck CI PR Gate
+
+### CI job
+
+The workflow file is `.github/workflows/ci.yml`. The `govulncheck` job runs against the Go module in `app/`, uses Go `1.24`, installs a pinned scanner version, and exposes its own `govulncheck` status check.
+
+```yaml
+govulncheck:
+  name: govulncheck
+  runs-on: ubuntu-24.04
+  defaults:
+    run:
+      working-directory: app
+
+  steps:
+    - name: Checkout
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+    - name: Set up Go
+      uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
+      with:
+        go-version: "1.24"
+        cache-dependency-path: app/go.mod
+
+    - name: Install govulncheck
+      run: go install golang.org/x/vuln/cmd/govulncheck@v1.5.0
+
+    - name: Run govulncheck
+      run: |
+        "$(go env GOPATH)/bin/govulncheck" -format=json ./... > govulncheck.json
+
+        non_stdlib_findings="$(
+          jq -r 'select(.finding != null)
+            | select((.finding.trace[0].module // "") != "stdlib")
+            | .finding.osv' govulncheck.json \
+            | sort -u
+        )"
+
+        if [ -n "$non_stdlib_findings" ]; then
+          echo "Reachable non-standard-library vulnerabilities found:"
+          echo "$non_stdlib_findings"
+          jq 'select(.finding != null)
+            | select((.finding.trace[0].module // "") != "stdlib")' govulncheck.json
+          exit 1
+        fi
+
+        echo "No reachable non-standard-library vulnerabilities found."
+        if jq -e 'select(.finding != null)
+          | select((.finding.trace[0].module // "") == "stdlib")' govulncheck.json >/dev/null; then
+          echo "Standard-library findings are ignored here because this lab pins CI to Go 1.24."
+        fi
+```
+
+Note: the job runs `govulncheck` for `./...` under `app/`. JSON output is used so the workflow can keep the gate focused on reachable non-standard-library vulnerabilities. Current Go `1.24` standard-library findings were already triaged in Task 1 and are not used to fail this bonus gate.
+
+### Red CI evidence
+
+Red CI run:
+
+```text
+https://github.com/software-engineering-toolkit/DevOps-Intro/actions/runs/28791129189/job/85369786010?pr=9
+```
+
+The red run was produced by temporarily adding a known vulnerable dependency and making it reachable from the QuickNotes call graph:
+
+- Added `golang.org/x/text v0.3.7`
+- Added temporary `app/vuln_demo.go`
+- Called `language.ParseAcceptLanguage` from `handleHealth`
+- Commit: `f7e9139` - `Reapply "test(lab9): demonstrate govulncheck failure"`
+
+This made `govulncheck` report a reachable non-standard-library vulnerability and fail the PR gate.
+
+### Green CI evidence after revert
+
+Green CI run:
+
+```text
+https://github.com/software-engineering-toolkit/DevOps-Intro/actions/runs/28791446091/job/85370884879?pr=9
+```
+
+The temporary vulnerable dependency and call path were reverted:
+
+- Removed `app/vuln_demo.go`
+- Removed `golang.org/x/text v0.3.7` from `app/go.mod`
+- Removed the temporary call from `handleHealth`
+- Commit: `0c2dea3` - `Revert "Reapply "test(lab9): demonstrate govulncheck failure""`
+
+After the revert, the `govulncheck` status check passed again.
+
+## Bonus Design Questions
+
+### h. Reachability is govulncheck's key idea. How is "this module has a CVE but we do not call the affected function" different from "this module has a CVE"?
+
+A module-level CVE means a vulnerable version is present somewhere in the dependency graph. A reachable vulnerability means the application actually imports and calls code that can reach the affected function. That distinction reduces triage noise: an unused vulnerable function still matters for dependency hygiene, but a reachable vulnerable function is more urgent because it is part of the application's executable behavior.
+
+### i. Why pin the version of the scanner, not just use `@latest`?
+
+Pinning `govulncheck` makes CI reproducible. If the job used `@latest`, a new scanner release could change output format, vulnerability matching, exit behavior, or analysis precision without any repository change. A pinned scanner version means a red or green CI result is tied to a known tool version and can be re-run consistently.
+
+### j. govulncheck only knows about Go. What is it not going to catch that Trivy image scan would?
+
+`govulncheck` will not catch operating system package CVEs, base image vulnerabilities, Dockerfile or container misconfigurations, shell utilities, C libraries, package-manager-installed tools, or non-Go binaries in the image. Trivy image scanning covers the shipped container contents, while `govulncheck` focuses on Go source, modules, and reachable Go call paths.
