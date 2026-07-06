@@ -18,14 +18,19 @@ auto-issued `GITHUB_TOKEN` → derive tags (`{{version}}` + `latest`) with
 
 ### Evidence
 
-- Release run (green): <!-- TODO: link to the successful `release` workflow run -->
-- Registry: `ghcr.io/rikire/devops-intro/quicknotes:v0.1.0` (+ `:latest`)
-- Clean pull (after flipping the package to **public** in the GH UI):
+- Release run (green): <!-- TODO: paste the `release` workflow run URL from the Actions tab -->
+- Registry: `ghcr.io/rikire/devops-intro/quicknotes:v0.1.0` (+ `:latest`), public.
+- Clean pull with **no credentials** (`~/.docker/config.json` has no ghcr entry):
 
 ```text
-$ docker rmi ghcr.io/rikire/devops-intro/quicknotes:v0.1.0   # remove local copy
-$ docker pull ghcr.io/rikire/devops-intro/quicknotes:v0.1.0  # no auth needed
-<!-- TODO: paste the successful pull output -->
+$ docker logout ghcr.io && docker rmi ghcr.io/rikire/devops-intro/quicknotes:v0.1.0
+$ docker pull ghcr.io/rikire/devops-intro/quicknotes:v0.1.0
+v0.1.0: Pulling from rikire/devops-intro/quicknotes
+Digest: sha256:be82c125e58a64e41c9eee6e08d814530f423d3ca7846affb74674c25dd9dcb9
+Status: Downloaded newer image for ghcr.io/rikire/devops-intro/quicknotes:v0.1.0
+
+$ docker run --rm -p 8099:8080 ghcr.io/…/quicknotes:v0.1.0 &  ; curl -s :8099/health
+{"notes":4,"status":"ok"}        # 200 — and carries the Lab 9 security headers
 ```
 
 ### 1.2 Design questions
