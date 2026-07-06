@@ -6,7 +6,7 @@ Release workflow:
 
 - `.github/workflows/release.yml`
 
-The workflow triggers on tags matching `v*`, builds from `app/`, and pushes:
+The workflow triggers on tags matching `v*`, builds from `app/`, and pushes a multi-architecture image for `linux/amd64` and `linux/arm64`:
 
 ```text
 ghcr.io/whynotgm/devops-intro/quicknotes:v0.1.0
@@ -50,8 +50,10 @@ Expected health response:
 Release run URL:
 
 ```text
-TODO: paste the green GitHub Actions release run URL after pushing v0.1.0.
+https://github.com/whynotgm/DevOps-Intro/actions/runs/28794687688/job/85381927054?pr=10
 ```
+
+![release](release.png)
 
 ### Design Questions
 
