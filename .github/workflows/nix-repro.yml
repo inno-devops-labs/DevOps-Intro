@@ -1,0 +1,53 @@
+name: Nix Reproducibility Check
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  build_a:
+    name: Machine A
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.hash.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@e50d5f73bfe71c2dd0aa4218de8f4afa59f8f81d
+      - name: Build Image
+        run: nix build .#docker -L --option substituters "https://cache.nixos.org"
+      - name: Export Digest
+        id: hash
+        run: echo "digest=$(sha256sum result | awk '{print $1}')" >> $GITHUB_OUTPUT
+
+  build_b:
+    name: Machine B
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.hash.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@e50d5f73bfe71c2dd0aa4218de8f4afa59f8f81d
+      - name: Build Image
+        run: nix build .#docker -L --option substituters "https://cache.nixos.org"
+      - name: Export Digest
+        id: hash
+        run: echo "digest=$(sha256sum result | awk '{print $1}')" >> $GITHUB_OUTPUT
+
+  compare:
+    name: Verify Digests
+    needs: [build_a, build_b]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compare Outputs
+        run: |
+          DIGEST_A="${{ needs.build_a.outputs.digest }}"
+          DIGEST_B="${{ needs.build_b.outputs.digest }}"
+          echo "Machine A: $DIGEST_A"
+          echo "Machine B: $DIGEST_B"
+          if [ "$DIGEST_A" != "$DIGEST_B" ]; then
+            echo "Mismatch! Reproducibility broken."
+            exit 1
+          fi
+          echo "Perfect match!"
