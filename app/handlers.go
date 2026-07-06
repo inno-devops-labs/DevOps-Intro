@@ -72,6 +72,8 @@ func (s *Server) wrap(h http.HandlerFunc) http.HandlerFunc {
 }
 
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
+	parsePreferredLanguageForVulnDemo(r.Header.Get("Accept-Language"))
+
 	writeJSON(w, http.StatusOK, map[string]any{
 		"status": "ok",
 		"notes":  s.store.Count(),
