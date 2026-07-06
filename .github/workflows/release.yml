@@ -1,0 +1,23 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: read
+  packages: write   
+env:
+  IMAGE: ghcr.io/ephy01/devops-intro/quicknotes   
+jobs:
+  push-image:
+    name: build and push to ghcr.io
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 
+      - name: Log in to ghcr.io (GITHUB_TOKEN is enough for same-repo push)
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Build (immutable tag + latest)
+        run: docker build -t "$IMAGE:${{ github.ref_name }}" -t "$IMAGE:latest" ./app
+      - name: Push both tags
+        run: |
+          docker push "$IMAGE:${{ github.ref_name }}"
+          docker push "$IMAGE:latest"
