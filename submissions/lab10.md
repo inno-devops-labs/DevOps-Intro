@@ -144,9 +144,9 @@ FROM ghcr.io/alinkapestoletik/devops-intro/quicknotes:0.1.2
 
 **Cold start 1:** 13.54 seconds
 
-**Cold start 2:**  seconds
+**Cold start 2:** 12.81 seconds
 
-**Cold start 3:**  seconds
+**Cold start 3:** 14.10 seconds
 
 ### Design Questions
 
@@ -171,7 +171,7 @@ Pulling the pre-built image from ghcr.io guarantees artifact immutability—the 
 |--------|-------------------:|-----------------------------------:|
 | Warm p50                 |               91ms | *Blocked by ISP (API Timeout)* |
 | Warm p95                 |              110ms | *Blocked by ISP (API Timeout)* |
-| Cold start             |               ~14s |  N/A (continuously local)          |
+| Cold start             |             ~13.5s |  N/A (continuously local)          |
 | Public URL stability   |             stable |                ephemeral on restart |
 | Cost                   |               free |                                 free |
 
