@@ -1,0 +1,7 @@
+# Keep the build context (and image) small and the build cache stable.
+data/
+quicknotes
+Dockerfile
+.dockerignore
+Makefile
+*.md
