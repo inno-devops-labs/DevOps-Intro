@@ -30,21 +30,17 @@ git push origin v0.1.0
 Clean pull evidence:
 
 ```bash
-docker pull ghcr.io/whynotgm/devops-intro/quicknotes:v0.1.0
-docker run -d --rm --name quicknotes-lab10-clean-pull \
-  -p 8080:8080 \
-  -e ADDR=:8080 \
-  -e DATA_PATH=/data/notes.json \
-  -e SEED_PATH=/app/seed.json \
-  ghcr.io/whynotgm/devops-intro/quicknotes:v0.1.0
-curl -s http://localhost:8080/health
-docker stop quicknotes-lab10-clean-pull
-```
-
-Expected health response:
-
-```json
-{"notes":4,"status":"ok"}
+% docker pull ghcr.io/whynotgm/devops-intro/quicknotes:v0.1.0
+v0.1.0: Pulling from whynotgm/devops-intro/quicknotes
+fe52b65677f1: Pull complete
+e75813d03227: Pull complete
+a0295c8016b1: Pull complete
+a7d03ba3f934: Pull complete
+de8f9e6fb75f: Pull complete
+a6186639cb8d: Download complete
+Digest: sha256:2582654efcb5f9646f313deaae2cb26b9b1c4dfcb90afe7c234ee28ccd107598
+Status: Downloaded newer image for ghcr.io/whynotgm/devops-intro/quicknotes:v0.1.0
+ghcr.io/whynotgm/devops-intro/quicknotes:v0.1.0
 ```
 
 Release run URL:
@@ -53,7 +49,7 @@ Release run URL:
 https://github.com/whynotgm/DevOps-Intro/actions/runs/28794687688/job/85381927054?pr=10
 ```
 
-![release](release.png)
+![release](img/release.png)
 
 ### Design Questions
 
@@ -75,18 +71,21 @@ The Space uses Docker SDK metadata with `app_port: 8080`, because QuickNotes lis
 Space URL:
 
 ```text
-TODO: paste https://<user>-<space>.hf.space after creating and pushing the Space repo.
+https://kotbanned-devops-intro.hf.space
 ```
 
 Health check evidence:
 
 ```bash
-curl -v https://<user>-<space>.hf.space/health
+curl -v https://kotbanned-devops-intro.hf.space/health
 ```
 
-Expected response body:
+Response excerpt:
 
-```json
+```text
+> GET /health HTTP/2
+< HTTP/2 200
+< content-type: application/json
 {"notes":4,"status":"ok"}
 ```
 
@@ -94,22 +93,22 @@ Warm latency command:
 
 ```bash
 for i in 1 2 3 4 5; do
-  curl -w "%{time_total}\n" -o /dev/null -s https://<user>-<space>.hf.space/health
+  curl -w "%{time_total}\n" -o /dev/null -s https://kotbanned-devops-intro.hf.space/health
 done
 ```
 
 Warm p50:
 
 ```text
-TODO: record the median of the five warm request times.
+0.468954s
 ```
 
 Cold latency samples:
 
 ```text
-TODO: sleep the Space for 35+ minutes, request /health once, and record sample 1.
-TODO: repeat sleep/wake and record sample 2.
-TODO: repeat sleep/wake and record sample 3.
+1) 0.529927
+2) 0.540441
+3) 0.498121
 ```
 
 ### Design Questions
@@ -129,29 +128,56 @@ Tunnel notes:
 Quick tunnel command:
 
 ```bash
-cloudflared tunnel --url http://localhost:8080
+/opt/homebrew/opt/cloudflared/bin/cloudflared tunnel \
+  --no-autoupdate \
+  --protocol http2 \
+  --edge-ip-version 4 \
+  --url http://localhost:18080
 ```
 
 External verification:
 
-```bash
-curl -v https://<random>.trycloudflare.com/health
+```text
+Quick tunnel URL:
+https://flame-occasionally-discussed-truck.trycloudflare.com
+
+curl -v https://flame-occasionally-discussed-truck.trycloudflare.com/health
+
+> GET /health HTTP/2
+< HTTP/2 200
+< content-type: application/json
+{"notes":4,"status":"ok"}
 ```
 
 Warm measurement:
 
 ```bash
-hyperfine --warmup 5 --runs 50 \
-  "curl -fsS -o /dev/null https://<random>.trycloudflare.com/health"
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 \
+  21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 \
+  41 42 43 44 45 46 47 48 49 50; do
+  curl -w "%{time_total}\n" -o /dev/null -s \
+    https://flame-occasionally-discussed-truck.trycloudflare.com/health
+done
 ```
 
 | Metric | HF Spaces (hosted) | Cloudflare Tunnel (local-via-edge) |
 |--------|-------------------:|-----------------------------------:|
-| Warm p50 | TODO | TODO |
-| Warm p95 | TODO | TODO |
-| Cold start | TODO | N/A, continuously local |
+| Warm p50 | 0.386301s | 0.297083s |
+| Warm p95 | 0.477753s | 0.394483s |
+| Cold start | 92.823509s observed wake request | N/A, continuously local |
 | Public URL stability | stable | ephemeral on restart |
 | Cost | free | free |
+
+Cloudflare attempt notes:
+
+```text
+Local QuickNotes container healthcheck passed.
+Host port 8080 was already occupied by another local container, so QuickNotes
+was published as 127.0.0.1:18080. Dockerized Cloudflared reached the quick
+tunnel API after VPN reconnect but produced unstable edge connections, so the
+final successful tunnel used native Homebrew `cloudflared` targeting
+http://localhost:18080 over HTTP/2.
+```
 
 ### Bonus Design Questions
 
