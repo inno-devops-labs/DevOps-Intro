@@ -252,3 +252,16 @@ index c534979..c9c1d54 100644
  
  type statusWriter struct {
 ```
+
+### ZAP Scans: Before and After
+[Before](./zap_old/zap_report.json)\
+[After](./zap_new/zap_report.json)
+
+### Design questions
+a) Risk assessment is heavily influenced by whether the vulnerable code path is actually reachable within the runtime application execution tree. Furthermore, remediation priority is dictated by the public availability of functional exploits and whether the asset is deployed inside an isolated internal network or exposed to the public internet.\
+b) By stripping away unnecessary OS utilities, shells, and package managers, the overall attack surface of the container runtime is dramatically reduced. Even if an application-layer vulnerability is discovered, arbitrary code execution and lateral movement are severely restricted due to the complete absence of system execution binaries.\
+c) Suppression via `.trivyignore` is considered acceptable when a finding is formally verified as a false positive or when a vulnerability is confirmed to be unexploitable within the given application architecture. Conversely, it degenerates into security theater when risks are hidden solely to achieve a passing pipeline grade without implementing compensating controls or peer reviews.\
+d) Instantaneous inventory lookups can be executed across an entire infrastructure layout the moment a new zero-day vulnerability (such as Log4Shell) is suddenly disclosed. Manually auditing disparate codebases or executing intensive runtime scans is avoided, reducing emergency vulnerability impact analysis from days to seconds.\
+e) Uniform header application is centrally guaranteed by using a single middleware layer, eliminating the possibility of human error inherent in manual per-handler configurations. Security boundaries are also automatically extended to cover implicit routing paths, such as standard 404 or 500 error handlers.\
+f) All external or inline script execution, stylesheet rendering, image loading, and font requests are completely blocked by this strict policy, which would break a traditional user-facing web interface. It is perfectly acceptable for the QuickNotes API because only structured JSON payloads are transferred, meaning no browser UI rendering context is required.\
+g) Alert fatigue is rapidly accelerated when scan findings are blindly accepted, causing critical or chainable low-tier risks to be completely overlooked. This systemic habit shifts security practices away from active risk mitigation and turns compliance into a superficial checkbox verification process.
