@@ -332,13 +332,13 @@ Warm p50:
 0.544091 seconds
 
 Cold latency sample 1:
-<PASTE_COLD_SAMPLE_1_HERE>
+2026-07-07 15:51:50 cold_sample_1 0.949721
 
 Cold latency sample 2:
-<PASTE_COLD_SAMPLE_2_HERE>
+2026-07-07 16:48:22 cold_sample_2 0.937064
 
 Cold latency sample 3:
-<PASTE_COLD_SAMPLE_3_HERE>
+2026-07-07 18:26:31 cold_sample_3 0.944652
 ```
 
 ### Visual evidence
@@ -372,11 +372,34 @@ Pulling the already-built GHCR image into Hugging Face makes the Space deploymen
 The key Space settings are `app_port: 8080` and a writable runtime data path. QuickNotes already listens on port 8080, while Hugging Face Docker Spaces default to port 7860 because many Spaces run Gradio apps. It is better to declare the correct port in the Space config and override the runtime data path in the wrapper image than to change the application only for one platform.
 I also cloned the real Space repository locally, replaced the placeholder README, added the deployment Dockerfile, and committed the result as `Deploy QuickNotes from GHCR`. The remaining step is an authenticated push to Hugging Face.
 
+I also checked the current Hugging Face documentation to verify the free-tier sleep behavior. The official docs do not say that a free Space sleeps after 30 minutes. For the default free `cpu-basic` runtime, Hugging Face documents automatic pause after **48 hours of inactivity**, not 30 minutes. Sources:
+- `https://huggingface.co/docs/hub/spaces-overview`
+- `https://huggingface.co/docs/huggingface_hub/guides/manage-spaces`
+- `https://huggingface.co/docs/huggingface_hub/package_reference/space_runtime`
+
+Because of that mismatch, the original “wait 35+ minutes” method from the lab text is not a reliable way to force a real documented sleep event on the current platform.
+
+To keep the experiment meaningful, I added one more cold-start style check: manually pause the Space, restart it, and then measure the first request to `/health`. I repeated that process three times to approximate a wake-after-idle experience with a controlled restart.
+
+Additional pause/restart measurements:
+
+```text
+$ curl -w '%{time_total}\n' -o /dev/null -s https://lime413-quicknotes.hf.space/health
+0.765286
+0.773619
+0.775265
+```
+
+Interpretation:
+- The three manual restart samples are tightly grouped around `0.77 s`, which suggests that the startup cost after a controlled restart is stable for this small API.
+- These values are lower than the earlier `0.94 s` measurements, so the earlier results probably captured normal network variance more than a true long-sleep wake-up penalty.
+- The main lesson is that QuickNotes itself starts fast, and the observed delay is mostly platform and network overhead rather than heavy application initialization.
+
 ### Design questions
 
 #### d) HF sleep vs Cloud Run scale to zero
 
-Both platforms stop idle workloads to save money, but they optimize for different product goals. Hugging Face Spaces on the free tier are designed for low-cost public demos, so wake-up time can include slower image pull and container startup behavior. Cloud Run is designed for production-like request handling, so it invests more in fast cold starts, autoscaling, and request routing.
+Both platforms stop idle workloads to save money, but they optimize for different product goals. Hugging Face Spaces on the free tier are designed for low-cost public demos, so wake-up time can include slower image pull and container startup behavior. Cloud Run is designed for production-like request handling, so it invests more in fast cold starts, autoscaling, and request routing. In addition, the current Hugging Face documentation says the default free `cpu-basic` Space sleeps after 48 hours of inactivity, which confirms that the platform is optimized for low-cost persistence rather than aggressive short-idle scale-to-zero behavior.
 
 #### e) Why `app_port: 8080`
 
@@ -512,7 +535,8 @@ If terminal access is not practical on the other device, a browser screenshot of
 |--------|-------------------:|-----------------------------------:|
 | Warm p50 | 0.544091 s | 0.326244 s |
 | Warm p95 | not measured | 0.403934 s |
-| Cold start | pending 3 samples | N/A (continuously local) |
+| Cold start | 0.949721 s / 0.937064 s / 0.944652 s | N/A |
+| Manual pause/restart check | 0.765286 s / 0.773619 s / 0.775265 s | N/A (continuously local) |
 | Public URL stability | stable | ephemeral on restart |
 | Cost | free | free |
 
