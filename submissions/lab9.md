@@ -190,3 +190,4 @@ You blanket-dismiss the real issue hiding in the noise, and you defeat the point
 ---
 
 ## Bonus Task - govulncheck CI gate
+

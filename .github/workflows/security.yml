@@ -1,0 +1,33 @@
+name: security
+
+# Runs on every push and PR so a reachable Go vulnerability blocks the merge.
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  govulncheck:
+    name: govulncheck (Go SCA, reachability)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          # Match the QuickNotes builder toolchain (Lab 9 bumped it to 1.25).
+          go-version: "1.25"
+          cache: false
+
+      # Pin the SCANNER version (not @latest) so CI results are reproducible.
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
+
+      # Reachability scan of the QuickNotes module. Exits non-zero if a
+      # vulnerability is actually reachable from the call graph -> fails the job
+      # -> blocks the PR.
+      - name: Run govulncheck against app/
+        working-directory: app
+        run: govulncheck ./...
