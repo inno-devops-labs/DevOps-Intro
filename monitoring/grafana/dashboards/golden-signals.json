@@ -1,0 +1,73 @@
+{
+  "id": null,
+  "uid": "quicknotes-golden-signals",
+  "title": "QuickNotes Golden Signals",
+  "tags": ["quicknotes", "sre", "golden-signals"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "15s",
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Latency Proxy - Request Rate",
+      "description": "QuickNotes does not expose a request duration histogram, so request rate is used as a latency proxy for this lab.",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate(quicknotes_http_requests_total[1m]))",
+          "legendFormat": "requests/sec"
+        }
+      ],
+      "datasource": { "type": "prometheus", "uid": "prometheus" }
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Traffic - HTTP Requests per Second",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate(quicknotes_http_requests_total[1m]))",
+          "legendFormat": "total rps"
+        }
+      ],
+      "datasource": { "type": "prometheus", "uid": "prometheus" }
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Errors - 4xx/5xx Error Ratio",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate(quicknotes_http_responses_by_code_total{code=~\"4..|5..\"}[1m])) / sum(rate(quicknotes_http_responses_by_code_total[1m]))",
+          "legendFormat": "error ratio"
+        }
+      ],
+      "datasource": { "type": "prometheus", "uid": "prometheus" }
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Saturation - Notes Stored",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "quicknotes_notes_total",
+          "legendFormat": "notes"
+        }
+      ],
+      "datasource": { "type": "prometheus", "uid": "prometheus" }
+    }
+  ]
+}
