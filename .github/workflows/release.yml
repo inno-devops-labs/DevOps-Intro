@@ -11,7 +11,7 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: minimizecdl/devops-intro/quicknotes
+  IMAGE_NAME: ${{ github.repository_owner }}/devops-intro/quicknotes
 
 jobs:
   build-and-push:
