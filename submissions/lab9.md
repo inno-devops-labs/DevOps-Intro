@@ -422,7 +422,15 @@ I first tried to keep the gate on Go `1.24`, but the PR checks showed reachable 
 
 ### B.2 Red and green proof
 
-Because a real GitHub Actions run needs a push, I created local proof with the same pinned scanner command.
+After pushing `feature/lab9` and opening a PR in my fork, GitHub Actions ran the dedicated security gate.
+
+Green CI evidence:
+
+![GitHub Actions workflow run](./workflow_run.png)
+
+The screenshot shows the workflow checks on the PR, including the passing `govulncheck` job.
+
+For the red case, I used a local reproducible demo with the same pinned scanner command.
 
 Red case:
 
@@ -453,7 +461,7 @@ No vulnerabilities found.
 
 Analysis:
 
-This is the key difference between simple dependency presence and reachability. The red case fails only after I introduce a vulnerable dependency and a reachable call path.
+This is the key difference between simple dependency presence and reachability. The red case fails only after I introduce a vulnerable dependency and a reachable call path. The green GitHub Actions run shows that the final branch passes the same gate with the fixed toolchain and the real project code.
 
 ### B.3 Design answers
 
@@ -481,5 +489,4 @@ Main engineering changes in this lab:
 
 Manual follow-up after push:
 
-- push `feature/lab9` to GitHub;
-- capture GitHub Actions screenshots for the bonus if you want visual evidence in addition to the local logs already saved here.
+- open the final PR to the course repository.
