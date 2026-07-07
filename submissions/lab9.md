@@ -191,3 +191,66 @@ You blanket-dismiss the real issue hiding in the noise, and you defeat the point
 
 ## Bonus Task - govulncheck CI gate
 
+### B.1 CI workflow (`.github/workflows/security.yml`)
+
+```yaml
+name: security
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  govulncheck:
+    name: govulncheck (Go SCA, reachability)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+          cache: false
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@v1.1.4   # pinned, not @latest
+      - name: Run govulncheck against app/
+        working-directory: app
+        run: govulncheck ./...
+```
+The job is its own status check; a non-zero `govulncheck` exit fails it and blocks the PR.
+
+### B.2 Demonstration - green -> red -> green
+
+| Run | Commit | Change | Result |
+|-----|--------|--------|--------|
+| `security #1` | `5900174` | baseline (clean, stdlib-only) | green |
+| `security #2` | `4ef50ad` | added `x/text@v0.3.0` + reachable `language.ParseAcceptLanguage` call | **red** |
+| `security #3` | `994be9d` | reverted the vulnerable dep | green |
+
+![baseline green](screenshots/lab9-govulncheck-baseline.png)
+![red - caught bad dep](screenshots/lab9-govulncheck-red.png)
+![green after revert](screenshots/lab9-govulncheck-green.png)
+
+Local proof the gate catches a **reachable** vuln (same as CI):
+```text
+$ go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...
+Vulnerability #1: GO-2022-1059  (Denial of service via crafted Accept-Language header)
+    Found in: golang.org/x/text@v0.3.0   Fixed in: golang.org/x/text@v0.3.8
+      #1: vuln_demo.go:14:40: quicknotes.init#1 calls language.ParseAcceptLanguage
+Vulnerability #2: GO-2021-0113  (Out-of-bounds read in golang.org/x/text/language)
+    Found in: golang.org/x/text@v0.3.0   Fixed in: golang.org/x/text@v0.3.7
+      #1: vuln_demo.go:14:40: quicknotes.init#1 calls language.ParseAcceptLanguage
+Your code is affected by 2 vulnerabilities from 1 module.
+... (exit status 3)
+```
+Note govulncheck also reported "1 vulnerability in modules you require, but your code doesn't appear to call" - it did **not** fail on that one (unreachable), which is the whole point of reachability.
+
+### B.3 Design Questions
+
+**h) Reachability - "has a CVE" vs "we call the affected function", and the triage-workload impact.**
+Generic SCA (Trivy) flags a CVE whenever the vulnerable **module is present** in your dependency tree, regardless of whether your code ever calls the affected function. govulncheck does **call-graph analysis** and only reports a vuln when a vulnerable **symbol is reachable** from your code. Module-presence produces long lists dominated by findings in code paths you never execute - each needs manual "are we actually exploitable?" investigation -> high, mostly-noise triage workload. Reachability pre-filters to the ones your code truly reaches -> you triage a handful of real issues and can confidently defer the rest (the tool proved they're not called). Our demo showed both sides: it failed on the 2 reachable vulns and explicitly did *not* fail on the 1 require-only, unreachable one.
+
+**i) Why pin the *scanner* version, not `@latest`?**
+Reproducibility and determinism. `@latest` means CI (or a teammate) may silently run a different govulncheck with different logic, so a build that passed yesterday can fail today for reasons unrelated to your code. Pinning `@v1.1.4` makes the gate deterministic and makes scanner upgrades a deliberate, reviewed change (bump the pin in a PR, see what new findings appear). It also guards against a regressed release breaking CI and against pulling an unexpected version (supply-chain hygiene). The vulnerability **database** still updates continuously - pinning the *tool* but not the *data* is the right balance: stable tool behavior, fresh vuln data.
+
+**j) govulncheck only knows Go - what won't it catch that Trivy would?**
+It only analyzes Go code + the Go vuln DB, so it misses: **OS-package CVEs** in the base image (glibc/openssl/Debian libs - Trivy image scan reads the OS package DB); **non-Go dependencies** (Python/npm/Java bundled in the image); **image misconfigurations** (running as root, missing `USER`, no drop-caps - Trivy config); and **secrets** baked into files/layers (Trivy secret scan). They're complementary: govulncheck is deep, reachability-aware, Go-only; Trivy is broad - whole image, multi-language, misconfig, secrets - but module-presence, not reachability. Use both (layered defense).
