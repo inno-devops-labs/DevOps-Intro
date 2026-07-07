@@ -403,7 +403,55 @@ Tunnel URL:
 https://read-prototype-russell-champions.trycloudflare.com
 
 Verification from another network:
-<PASTE_REMOTE_CHECK_OUTPUT_HERE>
+$ curl -v https://read-prototype-russell-champions.trycloudflare.com/health
+* Host read-prototype-russell-champions.trycloudflare.com:443 was resolved.
+* IPv6: (none)
+* IPv4: 104.16.230.132, 104.16.231.132
+*   Trying 104.16.230.132:443...
+* Connected to read-prototype-russell-champions.trycloudflare.com (104.16.230.132) port 443
+* ALPN: curl offers h2,http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+*  CAfile: /etc/ssl/cert.pem
+*  CApath: none
+* (304) (IN), TLS handshake, Server hello (2):
+* (304) (IN), TLS handshake, Unknown (8):
+* (304) (IN), TLS handshake, Certificate (11):
+* (304) (IN), TLS handshake, CERT verify (15):
+* (304) (IN), TLS handshake, Finished (20):
+* (304) (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256 / [blank] / UNDEF
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: CN=trycloudflare.com
+*  start date: Jun  9 19:45:39 2026 GMT
+*  expire date: Sep  7 20:45:24 2026 GMT
+*  subjectAltName: host "read-prototype-russell-champions.trycloudflare.com" matched cert's "*.trycloudflare.com"
+*  issuer: C=US; O=Google Trust Services; CN=WE1
+*  SSL certificate verify ok.
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://read-prototype-russell-champions.trycloudflare.com/health
+* [HTTP/2] [1] [:method: GET]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: read-prototype-russell-champions.trycloudflare.com]
+* [HTTP/2] [1] [:path: /health]
+* [HTTP/2] [1] [user-agent: curl/8.7.1]
+* [HTTP/2] [1] [accept: */*]
+> GET /health HTTP/2
+> Host: read-prototype-russell-champions.trycloudflare.com
+> User-Agent: curl/8.7.1
+> Accept: */*
+>
+* Request completely sent off
+< HTTP/2 200
+< date: Tue, 07 Jul 2026 12:21:51 GMT
+< content-type: application/json
+< content-length: 27
+< cf-ray: a176cfb46da71a5f-DFW
+< cf-cache-status: DYNAMIC
+< server: cloudflare
+<
+{"notes":84,"status":"ok"}
+* Connection #0 to host read-prototype-russell-champions.trycloudflare.com left intact
 
 Hyperfine summary:
 Cloudflare quick tunnel creation:
