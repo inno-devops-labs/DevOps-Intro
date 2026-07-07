@@ -397,7 +397,7 @@ govulncheck:
       run: go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
 
     - name: Run govulncheck
-      run: govulncheck ./...
+      run: $(go env GOPATH)/bin/govulncheck ./...
       env:
         GOFLAGS: -buildvcs=false
 ```
