@@ -20,7 +20,8 @@ services:
     restart: unless-stopped
 
     healthcheck:
-      test: ["CMD", "/quicknotes"]
+      disable: true
+      test: ["CMD", "/quicknotes", "-healthcheck"]
       interval: 30s
       timeout: 5s
       retries: 3
