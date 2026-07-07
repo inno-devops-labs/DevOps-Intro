@@ -29,9 +29,11 @@ jobs:
         uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9  # v6.1.0
         with:
           images: ghcr.io/${{ github.repository }}/quicknotes
+          # NOTE: no inline comments below — metadata-action bakes them into the tag.
+          # {{version}} -> the immutable "0.1.0" from tag v0.1.0; plus a "latest" pointer.
           tags: |
-            type=semver,pattern={{version}}   # e.g. v0.1.0 -> 0.1.0 (immutable)
-            type=raw,value=latest             # convenience pointer
+            type=semver,pattern={{version}}
+            type=raw,value=latest
 
       - name: Build and push
         uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf  # v7.2.0
