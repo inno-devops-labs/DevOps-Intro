@@ -182,23 +182,29 @@ quicknotes:lab9 (debian 12.14)
 Total: 0 (HIGH: 0, CRITICAL: 0)
 ```
 
-The table below covers every unique HIGH or CRITICAL finding seen in the Trivy scans. The same binary findings first appeared in both `quicknotes` and `healthcheck`, then disappeared after the final Go upgrade.
+The table below covers every unique HIGH or CRITICAL finding from the Trivy image and filesystem scans. The binary findings first appeared in both `quicknotes` and `healthcheck`, then disappeared after the final Go upgrade.
 
 | Finding | Targets | Severity | Disposition | Reason | Re-check / Evidence |
 | --- | --- | --- | --- | --- | --- |
-| `CVE-2025-68121` | `quicknotes`, `healthcheck` | CRITICAL | FIX | Fixed by upgrading the builder image until the final rebuilt image had zero HIGH or CRITICAL findings. | See `app/Dockerfile` |
-| `CVE-2025-61726` | `quicknotes`, `healthcheck` | HIGH | FIX | Fixed by upgrading the builder image from `1.24.5` to `1.25.11`. | See `app/Dockerfile` |
-| `CVE-2025-61729` | `quicknotes`, `healthcheck` | HIGH | FIX | Fixed by upgrading the builder image from `1.24.5` to `1.25.11`. | See `app/Dockerfile` |
-| `GO-2026-5039` | `quicknotes` runtime path | HIGH | FIX | `govulncheck` on CI showed a reachable stdlib issue in the Go `1.24.13` line. Moving CI and builds to `1.25.11` removed it. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
-| `GO-2026-5037` | `quicknotes` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
-| `GO-2026-4971` | `quicknotes`, `healthcheck` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
-| `GO-2026-4947` | `quicknotes` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
-| `GO-2026-4946` | `quicknotes` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
-| `GO-2026-4918` | `healthcheck` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
-| `GO-2026-4870` | `quicknotes`, `healthcheck` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
-| `GO-2026-4602` | `quicknotes` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
-| `GO-2026-4601` | `quicknotes`, `healthcheck` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
+| `CVE-2025-68121` | `quicknotes`, `healthcheck` | CRITICAL | FIX | Present in the original `v1.24.5` build. Removed after the final rebuild on `golang:1.25.11-alpine`. | `app/Dockerfile`, commit `8f2d60d` |
+| `CVE-2025-61726` | `quicknotes`, `healthcheck` | HIGH | FIX | Present in the original `v1.24.5` build. Removed after the final rebuild on `golang:1.25.11-alpine`. | `app/Dockerfile`, commit `8f2d60d` |
+| `CVE-2025-61729` | `quicknotes`, `healthcheck` | HIGH | FIX | Present in the original `v1.24.5` build. Removed after the final rebuild on `golang:1.25.11-alpine`. | `app/Dockerfile`, commit `8f2d60d` |
+| `CVE-2026-25679` | `quicknotes`, `healthcheck` | HIGH | FIX | Trivy reported it in the original image. It disappeared after the final upgrade to Go `1.25.11`. | `app/Dockerfile`, commit `8f2d60d` |
+| `CVE-2026-27145` | `quicknotes`, `healthcheck` | HIGH | FIX | Trivy reported it in the original image. It disappeared after the final upgrade to Go `1.25.11`. | `app/Dockerfile`, commit `8f2d60d` |
+| `CVE-2026-32280` | `quicknotes`, `healthcheck` | HIGH | FIX | Trivy reported it in the original image. It disappeared after the final upgrade to Go `1.25.11`. | `app/Dockerfile`, commit `8f2d60d` |
+| `CVE-2026-32281` | `quicknotes`, `healthcheck` | HIGH | FIX | Trivy reported it in the original image. It disappeared after the final upgrade to Go `1.25.11`. | `app/Dockerfile`, commit `8f2d60d` |
+| `CVE-2026-32283` | `quicknotes`, `healthcheck` | HIGH | FIX | Trivy reported it in the original image. It disappeared after the final upgrade to Go `1.25.11`. | `app/Dockerfile`, commit `8f2d60d` |
+| `CVE-2026-33811` | `quicknotes`, `healthcheck` | HIGH | FIX | Trivy reported it in the original image. It disappeared after the final upgrade to Go `1.25.11`. | `app/Dockerfile`, commit `8f2d60d` |
+| `CVE-2026-33814` | `quicknotes`, `healthcheck` | HIGH | FIX | Trivy reported it in the original image. It disappeared after the final upgrade to Go `1.25.11`. | `app/Dockerfile`, commit `8f2d60d` |
+| `CVE-2026-39820` | `quicknotes`, `healthcheck` | HIGH | FIX | Trivy reported it in the original image. It disappeared after the final upgrade to Go `1.25.11`. | `app/Dockerfile`, commit `8f2d60d` |
+| `CVE-2026-39836` | `quicknotes`, `healthcheck` | HIGH | FIX | Trivy reported it in the original image. It disappeared after the final upgrade to Go `1.25.11`. | `app/Dockerfile`, commit `8f2d60d` |
+| `CVE-2026-42499` | `quicknotes`, `healthcheck` | HIGH | FIX | Trivy reported it in the original image. It disappeared after the final upgrade to Go `1.25.11`. | `app/Dockerfile`, commit `8f2d60d` |
+| `CVE-2026-42504` | `quicknotes`, `healthcheck` | HIGH | FIX | Trivy reported it in the original image. It disappeared after the final upgrade to Go `1.25.11`. | `app/Dockerfile`, commit `8f2d60d` |
 | `AsymmetricPrivateKey` in `.vagrant/machines/default/virtualbox/private_key` | filesystem scan | HIGH | FALSE POSITIVE | The scanner is correct that the file is a private key, but it is a local Vagrant artifact, not repository content to ship or commit. | Keep `.vagrant/` untracked and re-check before submission |
+
+Note:
+
+The `GO-2026-*` findings from `govulncheck` are documented in the Bonus section, not in this Trivy table, because Task 1 asks specifically for Trivy findings.
 
 ### 1.6 Design answers
 
@@ -287,6 +293,26 @@ I implemented one global middleware that wraps the router and sets:
 - `Cache-Control: no-store`
 - `Pragma: no-cache`
 
+Diff excerpt:
+
+```diff
++func (s *Server) Handler() http.Handler {
++    return securityHeaders(s.Routes())
++}
+```
+
+```diff
++func securityHeaders(next http.Handler) http.Handler {
++    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++        w.Header().Set("X-Content-Type-Options", "nosniff")
++        w.Header().Set("Cross-Origin-Resource-Policy", "same-origin")
++        next.ServeHTTP(w, r)
++    })
++}
+```
+
+The main implementation landed in commit `e08060e`, and the CI/toolchain follow-up landed in commit `8f2d60d`.
+
 Validation:
 
 ```text
@@ -343,6 +369,8 @@ Summary:
 Analysis:
 
 The two application header findings are gone. The only remaining low issue is about the scanner version itself, not the app. The informational cache message is expected after intentionally disabling cache storage.
+
+The first baseline run used the local QuickNotes instance on `localhost:8080`. The re-scan used another local port through Docker Desktop networking, but it still targeted the same patched QuickNotes service on the same machine.
 
 ### 2.4 Full ZAP triage table
 
@@ -418,7 +446,9 @@ Analysis:
 
 This job is separate, pinned, and easy to understand in a PR. If it fails, the PR gets a dedicated red check instead of hiding the result inside a bigger test job.
 
-I first tried to keep the gate on Go `1.24`, but the PR checks showed reachable standard-library vulnerabilities with no passing result on that line. The correct engineering response was to upgrade the CI and builder toolchain to Go `1.25.11`, then verify that `govulncheck` and Trivy both passed.
+I first tried to keep the gate on Go `1.24`, because the lab text asks for that version. The PR checks then showed reachable standard-library vulnerabilities with no passing result on that line. The final engineering choice was to upgrade the CI and builder toolchain to Go `1.25.11`, then verify that `govulncheck` and Trivy both passed.
+
+This is a documented deviation from the original wording of the bonus task. I kept it because the final result is a working and stricter security gate, and the exact PR evidence shows why the Go `1.24` line was no longer acceptable on July 7, 2026.
 
 ### B.2 Red and green proof
 
@@ -430,7 +460,13 @@ Green CI evidence:
 
 The screenshot shows the workflow checks on the PR, including the passing `govulncheck` job.
 
-For the red case, I used a local reproducible demo with the same pinned scanner command.
+Red CI evidence:
+
+![GitHub Actions failed workflow run](./failed_workflow_run.png)
+
+The screenshot shows the failing workflow state before the final fix. In that stage, the security gate was still red because the branch was using an older Go line and the checks surfaced reachable issues.
+
+I also kept a local reproducible demo with the same pinned scanner command to show a deliberately introduced vulnerable dependency.
 
 Red case:
 
@@ -461,7 +497,7 @@ No vulnerabilities found.
 
 Analysis:
 
-This is the key difference between simple dependency presence and reachability. The red case fails only after I introduce a vulnerable dependency and a reachable call path. The green GitHub Actions run shows that the final branch passes the same gate with the fixed toolchain and the real project code.
+This is the key difference between simple dependency presence and reachability. The local red case fails only after I introduce a vulnerable dependency and a reachable call path. The red GitHub Actions screenshot shows the branch in a failing state before the final fix, and the green GitHub Actions screenshot shows that the final branch passes the same gate with the fixed toolchain and the real project code.
 
 ### B.3 Design answers
 
