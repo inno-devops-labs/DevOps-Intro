@@ -1,4 +1,4 @@
-FROM golang:1.24.5 AS build
+FROM golang:1.26.4 AS build
 
 RUN useradd -u 65532 nonroot
 
