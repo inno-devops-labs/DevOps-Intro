@@ -34,7 +34,9 @@ jobs:
         shell: bash
         run: |
           digest="$(sha256sum result | awk '{print $1}')"
-          digest="broken-${digest}"
+          if [[ "${{ github.event.inputs.break_repro || 'false' }}" == "true" ]]; then
+            digest="broken-${digest}"
+          fi
           echo "digest=${digest}" >> "$GITHUB_OUTPUT"
           echo "build-a digest: ${digest}"
 
