@@ -29,8 +29,7 @@ Repository, registry, and hosted deployment evidence already collected:
 
 Manual evidence still useful before final submission:
 
-1. Optional phone/cellular Cloudflare verification screenshot from a fresh quick tunnel.
-2. Optional HF Space logs screenshot.
+1. Optional HF Space logs screenshot.
 
 No secrets, private keys, tokens, or production data are stored in this repository.
 
@@ -481,8 +480,8 @@ hyperfine 1.20.0
 ### Local QuickNotes container
 
 ```text
-$ docker run -d --name quicknotes-lab10 -p 8080:8080 quicknotes:lab10
-4905d16c28b6a19af5b222e22b9800e330e54bf0926fe11c5d0987801843de28
+$ docker run --platform linux/amd64 -d --name quicknotes-lab10 -p 8080:8080 ghcr.io/hidancloud/devops-intro/quicknotes:v0.1.0
+67747b9a2f01e699f7c1d7790a392894ce085ebb30ca760e50ef1cbf1b721ee3
 
 $ curl -s http://localhost:8080/health
 {"notes":4,"status":"ok"}
@@ -491,61 +490,85 @@ $ curl -s http://localhost:8080/health
 ### Quick tunnel
 
 ```text
-$ cloudflared tunnel --url http://localhost:8080 --no-autoupdate
-2026-07-07T11:08:10Z INF Your quick Tunnel has been created! Visit it at:
-https://supplied-rational-varieties-margin.trycloudflare.com
-2026-07-07T11:08:10Z INF Version 2026.6.1
-2026-07-07T11:08:10Z INF Initial protocol quic
+$ cloudflared tunnel --url http://localhost:8080 --protocol http2 --no-autoupdate
+2026-07-07T20:11:03Z INF Your quick Tunnel has been created! Visit it at:
+https://headed-approval-feels-image.trycloudflare.com
+2026-07-07T20:11:03Z INF Version 2026.6.1
+2026-07-07T20:11:03Z INF Initial protocol http2
 ```
 
-This is an ephemeral quick-tunnel URL. It is valid only while the local `cloudflared` process keeps running. Later browser access failed because the quick-tunnel hostname no longer resolved, which is expected after the ephemeral tunnel is stopped or released.
+This is an ephemeral quick-tunnel URL. It is valid only while the local `cloudflared` process keeps running. I forced HTTP/2 because the first QUIC tunnel showed degraded transport and its generated hostname did not resolve reliably.
 
 ### Public `/health` verification from this machine
 
 ```text
-$ curl -v https://supplied-rational-varieties-margin.trycloudflare.com/health
-* Host supplied-rational-varieties-margin.trycloudflare.com:443 was resolved.
-* Connected to supplied-rational-varieties-margin.trycloudflare.com (104.16.231.132) port 443
+$ curl -v https://headed-approval-feels-image.trycloudflare.com/health
+* Host headed-approval-feels-image.trycloudflare.com:443 was resolved.
+* Connected to headed-approval-feels-image.trycloudflare.com (104.16.230.132) port 443
 * SSL connection using TLSv1.3 / AEAD-CHACHA20-POLY1305-SHA256
 * Server certificate:
 *  subject: CN=trycloudflare.com
-*  subjectAltName: host "supplied-rational-varieties-margin.trycloudflare.com" matched cert's "*.trycloudflare.com"
+*  subjectAltName: host "headed-approval-feels-image.trycloudflare.com" matched cert's "*.trycloudflare.com"
 * using HTTP/2
 > GET /health HTTP/2
-> Host: supplied-rational-varieties-margin.trycloudflare.com
+> Host: headed-approval-feels-image.trycloudflare.com
 < HTTP/2 200
 < content-type: application/json
-< cf-ray: a1766404b8ba187a-MIA
+< cf-ray: a1797f6f7a73d7b3-MIA
 < server: cloudflare
 {"notes":4,"status":"ok"}
 ```
 
-The lab asks to verify from a different machine or a phone on cellular. I could not perform the cellular check from this terminal, so that manual screenshot should be collected before final submission.
+### External network verification
+
+I used Check-Host as an external multi-region verifier, which proves the tunnel was reachable from networks other than the laptop running `cloudflared`.
+
+Evidence files:
+
+```text
+submissions/lab10-checkhost-cloudflare/summary.json
+submissions/lab10-checkhost-cloudflare/metadata.json
+```
+
+Summary excerpt:
+
+```json
+{
+  "target": "https://headed-approval-feels-image.trycloudflare.com/health",
+  "regions": ["DE", "SG", "US"],
+  "nodes": {
+    "DE": {"country": "Germany", "city": "Frankfurt am Main", "errors": 0, "statuses": [200], "p50_seconds": 0.439},
+    "SG": {"country": "Singapore", "city": "Singapore", "errors": 0, "statuses": [200], "p50_seconds": 0.935},
+    "US": {"country": "United States", "city": "Dallas", "errors": 0, "statuses": [200], "p50_seconds": 0.387}
+  },
+  "overall": {"checks": 3, "errors": 0, "p50_seconds": 0.439, "p95_seconds": 0.935}
+}
+```
 
 ### Warm latency measurement
 
 ```text
-$ hyperfine --warmup 3 --runs 50 "curl -o /dev/null -s https://supplied-rational-varieties-margin.trycloudflare.com/health"
-Benchmark 1: curl -o /dev/null -s https://supplied-rational-varieties-margin.trycloudflare.com/health
-  Time (mean +/- sigma):     737.3 ms +/-  58.9 ms    [User: 15.6 ms, System: 8.0 ms]
-  Range (min ... max):       667.0 ms ... 931.3 ms    50 runs
+$ hyperfine --warmup 3 --runs 50 "curl -o /dev/null -s https://headed-approval-feels-image.trycloudflare.com/health"
+Benchmark 1: curl -o /dev/null -s https://headed-approval-feels-image.trycloudflare.com/health
+  Time (mean +/- sigma):     696.2 ms +/-  27.2 ms    [User: 19.7 ms, System: 9.9 ms]
+  Range (min ... max):       661.9 ms ... 789.2 ms    50 runs
 ```
 
 Explicit p50/p95 using the repository helper:
 
 ```text
-$ ./cloud/scripts/measure-curl-latency.sh https://supplied-rational-varieties-margin.trycloudflare.com/health 50
+$ ./cloud/scripts/measure-curl-latency.sh https://headed-approval-feels-image.trycloudflare.com/health 50
 runs=50
-p50=0.694076s
-p95=0.846806s
+p50=0.675478s
+p95=0.746448s
 ```
 
 ### Comparison table
 
 | Metric | HF Spaces (hosted) | Cloudflare Tunnel (local-via-edge) |
 |--------|-------------------:|-----------------------------------:|
-| Warm p50 | 0.801118 s | 0.694076 s |
-| Warm p95 | 0.989296 s | 0.846806 s |
+| Warm p50 | 0.801118 s | 0.675478 s |
+| Warm p95 | 0.989296 s | 0.746448 s |
 | Cold start | Not attempted: current free `cpu-basic` sleep window is 48h | N/A, continuously local while tunnel runs |
 | Public URL stability | Stable for the Space name | Ephemeral on tunnel restart |
 | Cost | Free | Free |

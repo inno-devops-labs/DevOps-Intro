@@ -22,8 +22,12 @@ docker run --rm --name quicknotes-lab10 -p 8080:8080 quicknotes:lab10
 ## Start a quick tunnel
 
 ```bash
-cloudflared tunnel --url http://localhost:8080
+cloudflared tunnel --url http://localhost:8080 --protocol http2 --no-autoupdate
 ```
+
+The `--protocol http2` flag avoids relying on outbound QUIC/UDP. In this lab
+environment, the first QUIC quick tunnel registered but the generated hostname
+did not resolve reliably; forcing HTTP/2 produced a stable reachable quick URL.
 
 Copy the generated `https://<random>.trycloudflare.com` URL and verify it from a
 different network, for example a phone on cellular data:

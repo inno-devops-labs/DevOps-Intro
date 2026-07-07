@@ -1,0 +1,16 @@
+{
+  "target": "https://headed-approval-feels-image.trycloudflare.com/health",
+  "regions": [
+    "DE",
+    "SG",
+    "US"
+  ],
+  "window": {
+    "start": "2026-07-07T20:11:29Z",
+    "end": "2026-07-07T20:11:29Z",
+    "duration_seconds": 0,
+    "interval_seconds": 1,
+    "samples": 1
+  },
+  "samples": 1
+}

@@ -1,0 +1,88 @@
+{
+  "target": "https://headed-approval-feels-image.trycloudflare.com/health",
+  "regions": [
+    "DE",
+    "SG",
+    "US"
+  ],
+  "window": {
+    "start": "2026-07-07T20:11:29Z",
+    "end": "2026-07-07T20:11:29Z",
+    "duration_seconds": 0,
+    "interval_seconds": 1,
+    "samples": 1
+  },
+  "selected_nodes": {
+    "DE": {
+      "node": "DE-FFM-KRK",
+      "country": "Germany",
+      "city": "Frankfurt am Main",
+      "continent": "EU",
+      "monitoring_allowed": 1
+    },
+    "SG": {
+      "node": "SG-SIN-FDCServers",
+      "country": "Singapore",
+      "city": "Singapore",
+      "continent": "AS",
+      "monitoring_allowed": 0
+    },
+    "US": {
+      "node": "US-DAL-Leora",
+      "country": "United States",
+      "city": "Dallas",
+      "continent": "NA",
+      "monitoring_allowed": 0
+    }
+  },
+  "nodes": {
+    "DE": {
+      "node": "DE-FFM-KRK",
+      "country": "Germany",
+      "city": "Frankfurt am Main",
+      "continent": "EU",
+      "monitoring_allowed": 1,
+      "checks": 1,
+      "errors": 0,
+      "statuses": [
+        200
+      ],
+      "p50_seconds": 0.439,
+      "p95_seconds": 0.439
+    },
+    "SG": {
+      "node": "SG-SIN-FDCServers",
+      "country": "Singapore",
+      "city": "Singapore",
+      "continent": "AS",
+      "monitoring_allowed": 0,
+      "checks": 1,
+      "errors": 0,
+      "statuses": [
+        200
+      ],
+      "p50_seconds": 0.935,
+      "p95_seconds": 0.935
+    },
+    "US": {
+      "node": "US-DAL-Leora",
+      "country": "United States",
+      "city": "Dallas",
+      "continent": "NA",
+      "monitoring_allowed": 0,
+      "checks": 1,
+      "errors": 0,
+      "statuses": [
+        200
+      ],
+      "p50_seconds": 0.387,
+      "p95_seconds": 0.387
+    }
+  },
+  "overall": {
+    "checks": 3,
+    "errors": 0,
+    "p50_seconds": 0.439,
+    "p95_seconds": 0.935
+  }
+}
