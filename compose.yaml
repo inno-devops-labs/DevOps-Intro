@@ -36,45 +36,5 @@ services:
     security_opt:
       - no-new-privileges:true
 
-  prometheus:
-    image: prom/prometheus:v3.12.0
-    depends_on:
-      quicknotes:
-        condition: service_healthy
-    command:
-      - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.tsdb.path=/prometheus
-      - --web.enable-lifecycle
-    volumes:
-      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./monitoring/prometheus/rules:/etc/prometheus/rules:ro
-    ports:
-      - "9090:9090"
-    restart: unless-stopped
-
-  blackbox-exporter:
-    image: prom/blackbox-exporter:v0.28.0
-    command:
-      - --config.file=/etc/blackbox_exporter/blackbox.yml
-    volumes:
-      - ./monitoring/blackbox/blackbox.yml:/etc/blackbox_exporter/blackbox.yml:ro
-    ports:
-      - "9115:9115"
-    restart: unless-stopped
-
-  grafana:
-    image: grafana/grafana:13.1.0
-    depends_on:
-      - prometheus
-    environment:
-      GF_SECURITY_ADMIN_USER: quicknotes_admin
-      GF_SECURITY_ADMIN_PASSWORD: lab8-observability
-    volumes:
-      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
-      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
-    ports:
-      - "3000:3000"
-    restart: unless-stopped
-
 volumes:
   quicknotes-data:
