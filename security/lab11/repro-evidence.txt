@@ -1,0 +1,79 @@
+Lab 11 reproducibility evidence
+
+Repository freshness:
+upstream/main fetched to 8de962e docs(lab11): fix nixpkgs pin vs go.mod collision; add network fallback pitfalls
+feature/lab11 was created from upstream/main.
+
+Task 1 - Nix binary:
+nixpkgs input: github:NixOS/nixpkgs/nixos-25.11
+locked nixpkgs rev: b6018f87da91d19d0ab4cf979885689b469cdd41
+Go from nixpkgs: go-1.24.13
+
+Fresh Nix container A:
+nix build .#quicknotes
+OUT=/nix/store/dzv3p2bihk852l3zvjhayyjlf3c33kag-quicknotes-0.1.0
+nix-store --query --hash:
+sha256:1gvzai334rp8m2pdfrhf2g3zdbvfg098qcyladrdlinm9bgg9gin
+binary size: 5.6M
+
+Fresh Nix container B:
+nix build .#quicknotes
+OUT=/nix/store/dzv3p2bihk852l3zvjhayyjlf3c33kag-quicknotes-0.1.0
+nix-store --query --hash:
+sha256:1gvzai334rp8m2pdfrhf2g3zdbvfg098qcyladrdlinm9bgg9gin
+binary size: 5.6M
+
+Raw binary run:
+RUNNING=/nix/store/dzv3p2bihk852l3zvjhayyjlf3c33kag-quicknotes-0.1.0
+curl http://localhost:18081/health
+{"notes":4,"status":"ok"}
+
+Task 2 - Nix OCI image:
+nix build .#docker
+sha256sum result:
+0dd58ba83183c05e3c418f2aa3dd7a213778b3c93cddb9edb9b913ce111d7827
+image tarball path:
+/nix/store/biwyx6pimwi9drgkd3bbmm0lkqkrg40f-docker-image-quicknotes.tar.gz
+tarball size: 3.0M
+
+Fresh Nix container A and B both produced:
+0dd58ba83183c05e3c418f2aa3dd7a213778b3c93cddb9edb9b913ce111d7827
+
+Docker load/run evidence:
+docker load -i security/lab11/quicknotes-nix.tar
+Loaded image: quicknotes:nix
+docker image inspect quicknotes:nix:
+id=sha256:8efbbfc5682ea1900b64734559dfa8f3d67fed683b5ad2e29c5c4a00f2ad183b
+size=9503762
+user=65532:65532
+entrypoint=["/bin/quicknotes"]
+ports={"8080/tcp":{}}
+curl http://localhost:18080/health
+{"notes":4,"status":"ok"}
+
+Lab 6-style Docker baseline:
+docker build --no-cache -f security/lab11/lab6-baseline.Dockerfile -t qn-lab6:run1 app
+docker build --no-cache -f security/lab11/lab6-baseline.Dockerfile -t qn-lab6:run2 app
+
+docker images --no-trunc qn-lab6:
+qn-lab6 run1 sha256:0d880f581f13eb89661833758214722f01fe8b7eac0f3dc7d092fdfaf780f30d 8.39MB
+qn-lab6 run2 sha256:b6ec4bcbf2805e1ed59f7421934d0c5092fa79552f7c5ee2b2bbc3c2fc87cd09 8.39MB
+
+docker image inspect:
+tag=qn-lab6:run1 id=sha256:0d880f581f13eb89661833758214722f01fe8b7eac0f3dc7d092fdfaf780f30d size=2504917 created=2026-07-07T10:14:26.174297646Z
+tag=qn-lab6:run2 id=sha256:b6ec4bcbf2805e1ed59f7421934d0c5092fa79552f7c5ee2b2bbc3c2fc87cd09 size=2504917 created=2026-07-07T10:14:34.916363945Z
+
+Bonus CI:
+Red demo run:
+https://github.com/BearAx/DevOps-Intro/actions/runs/28859027758
+compare job failed:
+https://github.com/BearAx/DevOps-Intro/actions/runs/28859027758/job/85592815606
+
+Green fixed run:
+https://github.com/BearAx/DevOps-Intro/actions/runs/28859123120
+build A:
+https://github.com/BearAx/DevOps-Intro/actions/runs/28859123120/job/85592996750
+build B:
+https://github.com/BearAx/DevOps-Intro/actions/runs/28859123120/job/85592996813
+compare:
+https://github.com/BearAx/DevOps-Intro/actions/runs/28859123120/job/85593131697
