@@ -179,8 +179,17 @@ You train reviewers to ignore the report; real issues hide in noise. Each ACCEPT
 
 ### Red / green demonstration
 
-- **Red** (intentional `golang.org/x/crypto@v0.3.0` + `ssh.Dial` in isolated module): [`govulncheck-red.txt`](attachments/lab9/govulncheck-red.txt) — reports reachable `GO-2026-5020` etc.
-- **Green** (QuickNotes on Go 1.25.11): [`govulncheck-green.txt`](attachments/lab9/govulncheck-green.txt) — `No vulnerabilities found.`
+**Red CI** — `govulncheck` on Go 1.24.13 (8 reachable stdlib vulns, run [#16](https://github.com/markovav-official/DevOps-Intro/actions/runs/28897363064)):
+
+![govulncheck failed on Go 1.24.13](attachments/lab9/red_ci.png)
+
+Local trace with intentional bad dependency: [`govulncheck-red.txt`](attachments/lab9/govulncheck-red.txt) — `golang.org/x/crypto@v0.3.0` + `ssh.Dial` reports reachable `GO-2026-5020` etc.
+
+**Green CI** — `govulncheck` on Go 1.25.11 (clean QuickNotes, run [#17](https://github.com/markovav-official/DevOps-Intro/actions/runs/28897987423)):
+
+![govulncheck passed on Go 1.25.11](attachments/lab9/green_ci.png)
+
+[`govulncheck-green.txt`](attachments/lab9/govulncheck-green.txt) — `No vulnerabilities found.`
 
 ### Design questions (h–j)
 
@@ -205,4 +214,6 @@ OS packages in the container image, misconfigured `compose.yaml`, secrets in git
 | `app/security.go` | Security headers middleware |
 | `app/Dockerfile` | `USER nonroot:nonroot` (Trivy config fix) |
 | `.github/workflows/ci.yml` | + `govulncheck` job |
-| `submissions/attachments/lab9/` | Scan logs, SBOM, ZAP reports |
+| `submissions/attachments/lab9/` | Scan logs, SBOM, ZAP reports, CI screenshots |
+| `submissions/attachments/lab9/red_ci.png` | Failed CI run #16 (`govulncheck` on Go 1.24) |
+| `submissions/attachments/lab9/green_ci.png` | Successful CI run #17 (`govulncheck` on Go 1.25.11) |
