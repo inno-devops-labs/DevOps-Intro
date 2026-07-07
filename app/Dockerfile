@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.24-alpine AS builder
+FROM golang:1.26-alpine AS builder
 WORKDIR /src
 
 COPY go.mod ./
@@ -26,5 +26,8 @@ ENV ADDR=:8080 \
 
 USER nonroot
 EXPOSE 8080
+
+HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
+    CMD ["/quicknotes", "healthcheck"]
 
 ENTRYPOINT ["/quicknotes"]
