@@ -128,6 +128,13 @@ $ ruby -e 'require "yaml"; YAML.load_file(".github/workflows/release.yml"); YAML
 YAML parsed
 ```
 
+GitHub Actions workflow lint:
+
+```text
+$ actionlint .github/workflows/release.yml
+(no output, exit 0)
+```
+
 Local image build and smoke test:
 
 ```text
@@ -164,6 +171,31 @@ The intended release commands are:
 git tag -a -s v0.1.0 -m "Lab 10 release"
 git push origin feature/lab10
 git push origin v0.1.0
+```
+
+Local signed release evidence:
+
+```text
+$ git log --show-signature -1 --format=fuller
+commit 9c9bd0b102caee06c05da898953597650ae2a29f
+Good "git" signature for hidancloud@yandex.ru with ED25519 key SHA256:0suWfmEHZ/Xt+yrRNKc2HZQbjzw33ZGHOnxmXKllv54
+Author:     Arseny Pinigin <hidancloud@yandex.ru>
+AuthorDate: Tue Jul 7 14:12:45 2026 +0300
+Commit:     Arseny Pinigin <hidancloud@yandex.ru>
+CommitDate: Tue Jul 7 14:12:45 2026 +0300
+
+    feat(lab10): add cloud release workflow
+
+    Signed-off-by: Arseny Pinigin <hidancloud@yandex.ru>
+
+$ git tag -v v0.1.0
+Good "git" signature for hidancloud@yandex.ru with ED25519 key SHA256:0suWfmEHZ/Xt+yrRNKc2HZQbjzw33ZGHOnxmXKllv54
+object 9c9bd0b102caee06c05da898953597650ae2a29f
+type commit
+tag v0.1.0
+tagger Arseny Pinigin <hidancloud@yandex.ru> 1783422772 +0300
+
+Lab 10 release
 ```
 
 After the workflow succeeds, verify the image from an unauthenticated Docker session:
