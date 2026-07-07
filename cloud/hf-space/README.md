@@ -12,7 +12,7 @@ This Hugging Face Space runs the QuickNotes Docker image published by the Lab 10
 
 Image:
 
-ghcr.io/minimizecdl/devops-intro/quicknotes:v0.1.0
+ghcr.io/minimaxc/devops-intro/quicknotes:v0.1.0
 
 Health endpoint:
 
