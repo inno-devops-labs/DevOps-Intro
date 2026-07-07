@@ -100,14 +100,22 @@ datacenter, so warm samples show high variance — best-case ~0.7 s).
 
 | Measurement | time_total |
 |-------------|-----------:|
-| Warm p50 (7 back-to-back requests) | ~1.5 s (min 0.73 s) |
-| Cold start #1 (after idle sleep)   | 10.7 s |
-| Cold start #2                      | <!-- TODO --> s |
-| Cold start #3                      | <!-- TODO --> s |
+| Warm p50 (7 back-to-back requests)          | ~1.5 s (min 0.73 s) |
+| Cold start #1 (first hit after a long idle) | 10.7 s |
+| Cold start #2 (first hit after idle)        | 8.9 s |
+| Cold start #3 (wake exceeded client timeout) | ≥ 15 s |
 
-(Each cold sample: the first request after the Space had slept; the immediate
-follow-up dropped back to ~0.6 s, confirming the 10.7 s was the wake, not the
-network.)
+Each cold sample is the **first request after the Space had been idle**; the
+immediate warm follow-up dropped back to ~0.6 s, so the 9–15+ s is the *wake*, not
+the network — a **~10–15× penalty** vs warm.
+
+**Finding on HF's "sleep":** the free-tier sleep threshold proved *inconsistent*.
+A deliberate 37-minute idle probe came back **warm (0.69 s)** — the Space hadn't
+slept yet — so `sleep → wake` isn't reliably reproducible on a fixed 35-minute
+schedule; the cold numbers above are genuine wake observations captured when it
+*had* slept (notably right after deploy and after long multi-hour idles). HF
+optimizes for cost, not a predictable wake SLA — you get scale-to-zero savings but
+no guarantee of *when* it sleeps or *how fast* it wakes.
 
 ### 2.4 Design questions
 
