@@ -413,3 +413,112 @@ Blanket-accepting the informational noise trains the reviewer to rubber-stamp th
 - [`zap-before.html`](/submissions/lab9-artifacts/zap-before.html) / [`zap-before.json`](/submissions/lab9-artifacts/zap-before.json) — baseline before the fix (4 warnings)
 - [`zap-after.html`](/submissions/lab9-artifacts/zap-after.html) / [`zap-after.json`](/submissions/lab9-artifacts/zap-after.json) — baseline after the fix (`10021` gone)
 - [`app/middleware.go`](/app/middleware.go), [`app/middleware_test.go`](/app/middleware_test.go) — the fix and its guard test
+
+---
+
+## Bonus: `govulncheck` CI Gate
+
+### B.1 The job
+
+Added to the Lab 3 workflow, [`.github/workflows/ci.yml`](/.github/workflows/ci.yml), as a
+`govulncheck` job that runs `govulncheck ./...` against `app/`, with its own status check.
+It is wired into the `ci-ok` gate (`needs: [vet, test, lint, govulncheck]`), so a failure
+blocks the PR. govulncheck is pinned to `@v1.1.4`, not `@latest`.
+
+```yaml
+  govulncheck:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Go
+        uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5
+        with:
+          go-version: "1.26"
+          cache: true
+          cache-dependency-path: app/go.mod
+
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
+
+      - name: Run govulncheck
+        working-directory: app
+        run: govulncheck ./...
+
+  ci-ok:
+    if: always()
+    needs: [vet, test, lint, govulncheck]
+    # ... unchanged gate ...
+```
+
+**Why Go 1.26 and not the 1.24:** govulncheck derives standard-library findings
+from the toolchain that runs it. The release image now ships Go 1.26 (`app/Dockerfile`
+builder from Task 1), so the gate uses 1.26 to validate the same stdlib that is actually
+shipped. Pinning it to 1.24 would make govulncheck re-report the ten Go-stdlib CVEs that
+the Task 1 toolchain bump already fixed (they are patched only in 1.25/1.26), reddening
+the gate on code that is in fact clean.
+
+### B.2 Demonstration — the check catches a bad dep
+
+The two runs below are the exact command the CI job runs (`govulncheck ./...` in `app/`,
+govulncheck `@v1.1.4`, Go 1.26.4). Full logs:
+[`govulncheck-green.txt`](/submissions/lab9-artifacts/govulncheck-green.txt),
+[`govulncheck-red.txt`](/submissions/lab9-artifacts/govulncheck-red.txt).
+
+**Green: current code (exit 0):**
+
+```
+$ govulncheck ./...
+No vulnerabilities found.
+```
+
+**Red: after temporarily adding a known-vulnerable, reachable dependency**
+(`golang.org/x/text@v0.3.5` plus a `language.Parse` call in an `init`, the canonical
+govulncheck example), the gate fails with **exit code 3**:
+
+```
+$ go get golang.org/x/text@v0.3.5      # + a language.Parse() call
+$ govulncheck ./...
+=== Symbol Results ===
+
+Vulnerability #1: GO-2021-0113
+    Out-of-bounds read in golang.org/x/text/language
+  Module: golang.org/x/text
+    Found in: golang.org/x/text@v0.3.5
+    Fixed in: golang.org/x/text@v0.3.7
+    Example traces found:
+      #1: vulndemo_temp.go:10:23: quicknotes.init#1 calls language.Parse
+
+Your code is affected by 1 vulnerability from 1 module.
+```
+
+The finding is reported precisely because it is **reachable** (`init#1 calls
+language.Parse`); the demo dependency and call were then reverted, restoring the green
+run above. A non-zero exit fails the `govulncheck` job and therefore `ci-ok`, blocking
+the PR.
+
+> Evidence is captured as **command logs** rather than CI screenshots, for simplicity.
+> These are the exact command the `govulncheck` CI job runs, so the red/green outcome
+> (and the non-zero exit that fails the job) is identical to what GitHub Actions produces
+> on a pushed PR.
+
+### B.3 Design questions
+
+**h) Reachability is govulncheck's key idea. How is "this module has a CVE but we don't call the affected function" different from "this module has a CVE", and what does that mean for triage workload?**
+
+A version-based scanner (Trivy, most SCA tools) flags a module the moment a vulnerable *version* is present, whereas govulncheck reports it only when a vulnerable *symbol* is actually on the program's call path. Most present-but-unused vulnerabilities never reach a line of your code, so reachability filters them out and leaves a much shorter list of findings that genuinely matter. That collapses the triage workload: instead of dispositioning every CVE in every transitive dependency, the team looks only at the handful it actually calls.
+
+**i) `go install golang.org/x/vuln/cmd/govulncheck@<version>` — why pin the version of the *scanner*, not just `@latest`?**
+
+`@latest` resolves to whatever is newest at run time, so the scanner's behaviour, output format, and exit codes can change between two otherwise identical CI runs, making the gate non-deterministic and able to break a build with no code change. It is also a supply-chain concern, since `@latest` pulls and executes an unreviewed binary during CI. A pinned version gives reproducible results and a known, auditable tool that is upgraded deliberately.
+
+**j) govulncheck only knows about Go. What is it *not* going to catch that Trivy (image scan) would?**
+
+It sees only the Go module and the Go standard library, so it is blind to everything else in the shipped image: OS and base-image packages (libc, OpenSSL, a shell), system libraries, anything installed through a package manager, and vulnerabilities in non-Go components. Trivy's image scan covers that OS-package layer and the whole filesystem, along with secrets and misconfigurations. The two are complementary, with govulncheck for reachable Go-code risk and Trivy for the image and everything non-Go.
+
+### B.4 Bonus artifacts
+
+- [`.github/workflows/ci.yml`](/.github/workflows/ci.yml) — CI with the `govulncheck` job in the `ci-ok` gate
+- [`govulncheck-green.txt`](/submissions/lab9-artifacts/govulncheck-green.txt) — clean run (exit 0)
+- [`govulncheck-red.txt`](/submissions/lab9-artifacts/govulncheck-red.txt) — reachable finding GO-2021-0113 (exit 3)
