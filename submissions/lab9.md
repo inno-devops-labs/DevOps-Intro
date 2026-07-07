@@ -134,3 +134,77 @@ When a new vulnerability appears, such as Log4Shell, the SBOM allows teams to qu
 "Are we using this vulnerable component?"
 
 Without an SBOM, teams must manually search every application and dependency.
+
+
+---
+
+# Task 2 — OWASP ZAP Baseline
+
+## Initial Scan
+
+Command:
+
+    zap-baseline.py -t http://localhost:8080
+
+Result:
+
+    FAIL-NEW: 0
+    WARN-NEW: 2
+    PASS: 65
+
+Initial findings:
+
+| Finding | Risk | Decision | Reason |
+|---|---|---|---|
+| ZAP is Out of Date | Low | ACCEPT | This finding relates to the scanner version, not the application. The scanner image version was pinned for reproducibility. |
+| Storable and Cacheable Content | Informational | FALSE POSITIVE | The affected response does not contain sensitive user-specific information. |
+
+
+## Security Headers Fix
+
+Implemented middleware that adds:
+
+- X-Content-Type-Options: nosniff
+- X-Frame-Options: DENY
+- Content-Security-Policy: default-src 'none'
+
+
+## Verification
+
+Unit test:
+
+    TestSecurityHeaders
+
+Result:
+
+    PASS
+
+
+Runtime verification:
+
+    curl -I http://localhost:8080/health
+
+Confirmed headers:
+
+    Content-Security-Policy: default-src 'none'
+    X-Content-Type-Options: nosniff
+    X-Frame-Options: DENY
+
+
+## ZAP Re-scan
+
+Command:
+
+    zap-baseline.py -t http://localhost:8080
+
+Result:
+
+    FAIL-NEW: 0
+    WARN-NEW: 2
+    PASS: 65
+
+Security header checks remain passing:
+
+- Anti-clickjacking Header [10020]
+- X-Content-Type-Options Header Missing [10021]
+- Content Security Policy Header Not Set [10038]

@@ -53,7 +53,7 @@ func main() {
 	server := NewServer(store)
 	srv := &http.Server{
 		Addr:              addr,
-		Handler:           server.Routes(),
+		Handler:           securityHeaders(server.Routes()),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
