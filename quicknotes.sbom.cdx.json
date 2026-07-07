@@ -1,0 +1,34 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-06-24T10:00:00Z",
+    "tools": [
+      {
+        "vendor": "aquasecurity",
+        "name": "trivy",
+        "version": "0.59.1"
+      }
+    ],
+    "component": {
+      "type": "container",
+      "name": "quicknotes",
+      "version": "lab6",
+      "purl": "pkg:oci/quicknotes@lab6"
+    }
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "stdlib",
+      "version": "go1.24.5",
+      "purl": "pkg:golang/stdlib@go1.24.5",
+      "properties": [
+        { "name": "aquasecurity:trivy:PkgType", "value": "gobinary" }
+      ]
+    }
+  ],
+  "vulnerabilities": []
+}
