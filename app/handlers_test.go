@@ -112,6 +112,21 @@ func TestDeleteNote_RemovesAndReturns204(t *testing.T) {
 	}
 }
 
+func TestSecurityHeaders_SetOnEveryRoute(t *testing.T) {
+	srv := newTestServer(t)
+	// Every route flows through the securityHeaders middleware. If that wrapper
+	// is removed from Routes(), these headers vanish and this test fails.
+	for _, target := range []string{"/health", "/notes", "/metrics"} {
+		rec := do(t, srv, http.MethodGet, target, nil)
+		if got := rec.Header().Get("Content-Security-Policy"); got != "default-src 'none'; frame-ancestors 'none'" {
+			t.Errorf("%s: Content-Security-Policy = %q", target, got)
+		}
+		if got := rec.Header().Get("X-Content-Type-Options"); got != "nosniff" {
+			t.Errorf("%s: X-Content-Type-Options = %q, want nosniff", target, got)
+		}
+	}
+}
+
 func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	srv := newTestServer(t)
 	_ = do(t, srv, http.MethodPost, "/notes", map[string]string{"title": "x"})
