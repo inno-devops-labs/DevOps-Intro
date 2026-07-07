@@ -69,7 +69,7 @@ The signed tag `v0.1.0` is already created locally on the Lab 10 commit.
 ```text
 $ git tag -v v0.1.0
 Good "git" signature for limefox413@gmail.com with ED25519 key SHA256:uILBmFloXYwLzB7ZEV76znUjoz28KKEF7OZWNJr7Jio
-object f24f45f956946372344eb662976494804b5e827e
+object 96fbe3c3ff85de743662117e0f528fcb600b48d0
 type commit
 tag v0.1.0
 tagger Tatyana Shmykova <limefox413@gmail.com> 1783421828 +0300
