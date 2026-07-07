@@ -1,7 +1,0 @@
-modules:
-  http_2xx:
-    prober: http
-    timeout: 5s
-    http:
-      method: GET
-      preferred_ip_protocol: ip4
