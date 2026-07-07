@@ -14,7 +14,7 @@ The goal of this lab was to scan QuickNotes as both a container image and a runn
 | Trivy image | `aquasec/trivy:0.59.1` |
 | ZAP image | `ghcr.io/zaproxy/zaproxy:2.16.1` |
 | Go on host | `go1.26.4 darwin/arm64` |
-| CI Go version | `1.24.13`, matching the course CI major/minor requirement and using the patched 1.24 line |
+| CI Go version | `1.26.4`, matching the patched Docker builder used to remove Go stdlib CVEs |
 
 Generated artifacts are committed under `security/lab9/`:
 
@@ -370,7 +370,7 @@ It trains the team to ignore scanners and hides the one “informational” issu
 
 ### CI workflow change
 
-I restored the Lab 3 CI workflow and added a dedicated `govulncheck` job in `.github/workflows/ci.yml`. The job runs in `app/`, uses Go `1.24.13`, installs a pinned scanner version, and runs `govulncheck ./...`.
+I restored the Lab 3 CI workflow and added a dedicated `govulncheck` job in `.github/workflows/ci.yml`. The job runs in `app/`, uses Go `1.26.4`, installs a pinned scanner version, and runs `govulncheck ./...`.
 
 ```yaml
 govulncheck:
@@ -389,7 +389,7 @@ govulncheck:
     - name: Set up Go
       uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.5.0
       with:
-        go-version: "1.24.13"
+        go-version: "1.26.4"
         cache: true
         cache-dependency-path: app/go.mod
 
