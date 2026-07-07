@@ -1,6 +1,5 @@
 services:
   quicknotes:
-
     build:
       context: ./app
 
@@ -15,7 +14,7 @@ services:
       SEED_PATH: "/data/seed.json"
 
     volumes:
-      - quicknotes-data:/data
+      - ./data:/data
 
     restart: unless-stopped
 
@@ -25,6 +24,26 @@ services:
       timeout: 5s
       retries: 3
 
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    depends_on:
+      - quicknotes
 
-volumes:
-  quicknotes-data:
+  grafana:
+    image: grafana/grafana:13.0.3
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ChangeMe123!
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - prometheus
