@@ -82,18 +82,48 @@ docker pull ghcr.io/lime413/devops-intro/quicknotes:latest
 ```
 
 If the first pull fails without authentication, the package visibility on GitHub must be changed to **Public** once in the package UI.
+In my case, the package was already public, so no visibility change was needed.
 
 ### Evidence to paste after the manual GitHub run
 
 ```text
 Release workflow run URL:
-<PASTE_GITHUB_ACTIONS_RUN_URL_HERE>
+https://github.com/lime413/DevOps-Intro/actions/runs/28861442815
 
 GHCR package URL:
-<PASTE_GHCR_PACKAGE_URL_HERE>
+https://github.com/lime413/DevOps-Intro/pkgs/container/devops-intro%2Fquicknotes
 
 Clean pull output:
-<PASTE_DOCKER_PULL_OUTPUT_HERE>
+tatyana@Tatyanas-MacBook-Air DevOps-Intro copy % docker rmi ghcr.io/lime413/devops-intro/quicknotes:v0.1.0
+Untagged: ghcr.io/lime413/devops-intro/quicknotes:v0.1.0
+tatyana@Tatyanas-MacBook-Air DevOps-Intro copy % docker rmi ghcr.io/lime413/devops-intro/quicknotes:latest
+Untagged: ghcr.io/lime413/devops-intro/quicknotes:latest
+Deleted: sha256:bf238504da5b77d2dca607b2dc61523a30b92ef4e5a7ce2058f0ba3efbbef27d
+tatyana@Tatyanas-MacBook-Air DevOps-Intro copy % docker pull ghcr.io/lime413/devops-intro/quicknotes:v0.1.0
+v0.1.0: Pulling from lime413/devops-intro/quicknotes
+990a9c434e5e: Pull complete
+7c12895b777b: Pull complete
+99514eb0c003: Pull complete
+3214acf345c0: Pull complete
+875ea9878944: Pull complete
+52630fc75a18: Pull complete
+39dc083afc39: Pull complete
+dd64bf2dd177: Pull complete
+bf7a4185f015: Pull complete
+b839dfae01f6: Pull complete
+2780920e5dbf: Pull complete
+dcaa5a89b0cc: Pull complete
+71a727d8ed44: Pull complete
+069d1e267530: Pull complete
+e07f673c5da8: Pull complete
+Digest: sha256:bf238504da5b77d2dca607b2dc61523a30b92ef4e5a7ce2058f0ba3efbbef27d
+Status: Downloaded newer image for ghcr.io/lime413/devops-intro/quicknotes:v0.1.0
+ghcr.io/lime413/devops-intro/quicknotes:v0.1.0
+tatyana@Tatyanas-MacBook-Air DevOps-Intro copy % docker pull ghcr.io/lime413/devops-intro/quicknotes:latest
+latest: Pulling from lime413/devops-intro/quicknotes
+Digest: sha256:bf238504da5b77d2dca607b2dc61523a30b92ef4e5a7ce2058f0ba3efbbef27d
+Status: Downloaded newer image for ghcr.io/lime413/devops-intro/quicknotes:latest
+ghcr.io/lime413/devops-intro/quicknotes:latest
 ```
 
 ### Analysis
@@ -232,7 +262,7 @@ curl -w '%{time_total}\n' -o /dev/null -s https://<your-space>.hf.space/health
 
 ```text
 Space URL:
-<PASTE_SPACE_URL_HERE>
+https://huggingface.co/spaces/lime413/quicknotes
 
 curl -v /health output:
 <PASTE_CURL_V_OUTPUT_HERE>
@@ -258,6 +288,7 @@ Cold latency sample 3:
 Pulling the already-built GHCR image into Hugging Face makes the Space deployment smaller and more reproducible. The exact artifact built by GitHub Actions is the artifact deployed in the cloud. This reduces “works in CI but not in production” drift because the Space does not rebuild the application with a separate toolchain.
 
 The key Space settings are `app_port: 8080` and a writable runtime data path. QuickNotes already listens on port 8080, while Hugging Face Docker Spaces default to port 7860 because many Spaces run Gradio apps. It is better to declare the correct port in the Space config and override the runtime data path in the wrapper image than to change the application only for one platform.
+I also cloned the real Space repository locally, replaced the placeholder README, added the deployment Dockerfile, and committed the result as `Deploy QuickNotes from GHCR`. The remaining step is an authenticated push to Hugging Face.
 
 ### Design questions
 
