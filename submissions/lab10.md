@@ -202,21 +202,19 @@ Cold: after ~30+ min idle the Space sleeps and the next request wakes it. Comman
 $ curl -s -o /dev/null -w "cold total: %{time_total}s\n" https://g-akleh-quicknotes.hf.space/health
 ```
 
+Each cold sample follows a full ~35 min idle so the Space actually sleeps; the waking request is
+timed. 
+
 | Sample | Cold-start total |
 |--------|-----------------:|
-| 1      | _pending_ |
-| 2      | _pending_ |
-| 3      | _pending_ |
+| 1      | 9.708 s          |
+| 2      | 10.271 s         |
+| 3      | 8.929 s          |
 
-> **Not completed before the submission deadline.** Each cold sample requires a full ~30 min idle so
-> the Space actually sleeps, and three of them chained do not fit the remaining time. The warm figure
-> above is real; the cold measurements are left pending honestly rather than filled with invented
-> numbers, and will be added in a follow-up using the command shown. Expectation for HF free CPU:
-> multi-second cold starts (image pull + container boot), roughly an order of magnitude above the
-> ~0.55s warm p50.
+**Warm p50:** 0.554s
+**Average cold start time:** 9.636 s
 
-- **Warm p50:** 0.554s (real, measured)
-- **Cold (median of 3):** pending, see note above
+*Note: for better measurement multiple (different) hf images were used* 
 
 ### Design questions
 
