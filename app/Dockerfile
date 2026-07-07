@@ -1,5 +1,6 @@
 # ─── builder stage ───
-FROM golang:1.24-alpine AS builder
+# 1.26: Go 1.24 stdlib (1.24.13) carries 10 HIGH CVEs, fixes only land in 1.25.8+/1.26.x
+FROM golang:1.26-alpine AS builder
 WORKDIR /src
 
 
@@ -26,4 +27,6 @@ ENV ADDR=":8080" \
 
 USER nonroot
 EXPOSE 8080
+# exec form: distroless has no shell; the binary self-probes /health (Trivy AVD-DS-0026)
+HEALTHCHECK --interval=10s --timeout=3s --retries=5 CMD ["/quicknotes", "healthcheck"]
 ENTRYPOINT ["/quicknotes"]
