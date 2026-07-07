@@ -31,7 +31,7 @@ func do(t *testing.T, srv *Server, method, target string, body any) *httptest.Re
 	}
 	req := httptest.NewRequest(method, target, &buf)
 	rec := httptest.NewRecorder()
-	srv.Routes().ServeHTTP(rec, req)
+	srv.Handler().ServeHTTP(rec, req)
 	return rec
 }
 
@@ -131,3 +131,27 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	}
 }
 
+func TestSecurityHeaders_AppliedToAllRoutes(t *testing.T) {
+	srv := newTestServer(t)
+
+	okRec := do(t, srv, http.MethodGet, "/notes", nil)
+	if got := okRec.Header().Get("X-Content-Type-Options"); got != "nosniff" {
+		t.Fatalf("X-Content-Type-Options = %q", got)
+	}
+	if got := okRec.Header().Get("Cross-Origin-Opener-Policy"); got != "same-origin" {
+		t.Fatalf("Cross-Origin-Opener-Policy = %q", got)
+	}
+	if got := okRec.Header().Get("Cross-Origin-Resource-Policy"); got != "same-origin" {
+		t.Fatalf("Cross-Origin-Resource-Policy = %q", got)
+	}
+	if got := okRec.Header().Get("Cache-Control"); got != "no-store" {
+		t.Fatalf("Cache-Control = %q", got)
+	}
+
+	notFoundReq := httptest.NewRequest(http.MethodGet, "/missing", nil)
+	notFoundRec := httptest.NewRecorder()
+	srv.Handler().ServeHTTP(notFoundRec, notFoundReq)
+	if got := notFoundRec.Header().Get("X-Content-Type-Options"); got != "nosniff" {
+		t.Fatalf("not found X-Content-Type-Options = %q", got)
+	}
+}

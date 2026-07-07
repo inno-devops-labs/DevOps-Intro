@@ -37,6 +37,10 @@ func (s *Server) Routes() *http.ServeMux {
 	return mux
 }
 
+func (s *Server) Handler() http.Handler {
+	return securityHeaders(s.Routes())
+}
+
 type statusWriter struct {
 	http.ResponseWriter
 	code int

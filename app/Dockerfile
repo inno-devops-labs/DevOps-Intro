@@ -1,4 +1,4 @@
-FROM golang:1.24.5-alpine AS builder
+FROM golang:1.24.13-alpine AS builder
 
 WORKDIR /src
 
@@ -27,4 +27,5 @@ COPY --from=builder /src/seed.json /seed.json
 
 USER 65532:65532
 EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD ["/healthcheck"]
 ENTRYPOINT ["/quicknotes"]
