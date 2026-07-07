@@ -1,0 +1,8 @@
+2026-07-07T15:39:27Z	INFO	[vuln] Vulnerability scanning is enabled
+2026-07-07T15:39:27Z	INFO	[secret] Secret scanning is enabled
+2026-07-07T15:39:27Z	INFO	[secret] If your scanning is slow, please try '--scanners vuln' to disable secret scanning
+2026-07-07T15:39:27Z	INFO	[secret] Please see also https://aquasecurity.github.io/trivy/v0.59/docs/scanner/secret#recommendation for faster secret detection
+2026-07-07T15:39:29Z	INFO	Number of language-specific files	num=1
+2026-07-07T15:39:29Z	INFO	[gomod] Detecting vulnerabilities...
+
+Result after removing .vagrant/: 0 HIGH / 0 CRITICAL findings.
