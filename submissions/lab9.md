@@ -200,3 +200,180 @@ It becomes security theater when it is used to make CI green without changing ri
 This makes it possible to quickly determine whether a recently disclosed vulnerability, such as CVE-X, affects an artefact that has already been compiled.
 
 If an incident like Log4Shell were to recur, thanks to the SBOM, there would be no need to recompile images or search the entire repository using `grep` just to ascertain the extent of the vulnerability. You can check the list of components in the released artefact and, in a matter of minutes, determine whether `quicknotes:lab6` contains the vulnerable package and its version.
+
+## Task 2 — OWASP ZAP Baseline + Fix at Least One Finding (4 pts)
+
+Scan date: 2026-07-07
+
+Pinned scanner version:
+
+```text
+ghcr.io/zaproxy/zaproxy:2.16.1
+```
+
+Artifacts saved in `submissions/lab9-artifacts/`:
+
+- `zap-pre.html`
+- `zap-pre.json`
+- `zap-pre.md`
+- `zap-pre.txt`
+- `zap-post.html`
+- `zap-post.json`
+- `zap-post.md`
+- `zap-post.txt`
+
+Because ZAP was run in a container on macOS, the scan targeted the QuickNotes service on the Compose network at `http://quicknotes:8080` rather than host `localhost`.
+
+## Commands used
+
+```bash
+docker compose up -d --build quicknotes
+
+docker run --rm \
+  --network devops-intro_default \
+  -v "$PWD:/zap/wrk:rw" \
+  ghcr.io/zaproxy/zaproxy:2.16.1 \
+  zap-baseline.py \
+  -t http://quicknotes:8080 \
+  -r submissions/lab9-artifacts/zap-pre.html \
+  -J submissions/lab9-artifacts/zap-pre.json \
+  -w submissions/lab9-artifacts/zap-pre.md
+
+docker compose up -d --build quicknotes
+
+docker run --rm \
+  --network devops-intro_default \
+  -v "$PWD:/zap/wrk:rw" \
+  ghcr.io/zaproxy/zaproxy:2.16.1 \
+  zap-baseline.py \
+  -t http://quicknotes:8080 \
+  -r submissions/lab9-artifacts/zap-post.html \
+  -J submissions/lab9-artifacts/zap-post.json \
+  -w submissions/lab9-artifacts/zap-post.md
+```
+
+## ZAP summary
+
+Pre-fix summary:
+
+```text
+FAIL-NEW: 0  FAIL-INPROG: 0  WARN-NEW: 2  WARN-INPROG: 0  INFO: 0  IGNORE: 0  PASS: 65
+
+WARN-NEW: Storable and Cacheable Content [10049] x 2
+  http://quicknotes:8080 (404 Not Found)
+  http://quicknotes:8080/sitemap.xml (404 Not Found)
+
+WARN-NEW: ZAP is Out of Date [10116] x 1
+  http://quicknotes:8080 (404 Not Found)
+```
+
+Post-fix summary:
+
+```text
+FAIL-NEW: 0  FAIL-INPROG: 0  WARN-NEW: 2  WARN-INPROG: 0  INFO: 0  IGNORE: 0  PASS: 65
+
+WARN-NEW: Non-Storable Content [10049] x 3
+  http://quicknotes:8080 (404 Not Found)
+  http://quicknotes:8080/robots.txt (404 Not Found)
+  http://quicknotes:8080/sitemap.xml (404 Not Found)
+
+WARN-NEW: ZAP is Out of Date [10116] x 1
+  http://quicknotes:8080/sitemap.xml (404 Not Found)
+```
+
+## Full triage table for ZAP findings
+
+| Scan phase | ID | Name | Risk level | Affected URL / parameter | Disposition | Reason |
+|------------|----|------|------------|---------------------------|-------------|--------|
+| pre-fix | 10049 | Storable and Cacheable Content | Informational | `http://quicknotes:8080`, `http://quicknotes:8080/sitemap.xml` / none | FIX | Root and 404 responses were cacheable because no explicit cache-control headers were set. I fixed this by adding cache headers in middleware for every response. |
+| pre-fix | 10116 | ZAP is Out of Date | Low | `http://quicknotes:8080` / none | SUPPRESS | This is a scanner self-finding, not an application defect. The lab explicitly required a pinned 2.16.x image; for a real CI gate I would update the scanner image when the course no longer requires 2.16.x. |
+| post-fix | 10049 | Non-Storable Content | Informational | `http://quicknotes:8080`, `http://quicknotes:8080/robots.txt`, `http://quicknotes:8080/sitemap.xml` / none | ACCEPT | This is the expected result after the fix. The API now intentionally marks responses `no-store` so shared caches do not retain them. |
+| post-fix | 10116 | ZAP is Out of Date | Low | `http://quicknotes:8080/sitemap.xml` / none | SUPPRESS | Same reasoning as above: scanner version issue, not QuickNotes behavior. |
+
+## Code fix
+
+Files changed:
+
+- `app/handlers.go`
+- `app/handlers_test.go`
+
+Middleware excerpt:
+
+```go
+func withSecurityHeaders(next http.Handler) *http.ServeMux {
+    mux := http.NewServeMux()
+    mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Cache-Control", "no-store, max-age=0")
+        w.Header().Set("Content-Security-Policy", "default-src 'none'")
+        w.Header().Set("Expires", "0")
+        w.Header().Set("Pragma", "no-cache")
+        w.Header().Set("X-Content-Type-Options", "nosniff")
+        w.Header().Set("X-Frame-Options", "DENY")
+        next.ServeHTTP(w, r)
+    }))
+    return mux
+}
+```
+
+The router now returns `withSecurityHeaders(mux)` from `Routes()`, so the middleware applies to all routes, including `404` responses.
+
+Guarding test result:
+
+```text
+passed=13 failed=0
+```
+
+The tests assert the headers on both `/health` and an unmatched route, so they fail if the middleware is removed or stops wrapping the router globally.
+
+## Before/after proof for the fixed finding
+
+Before:
+
+```text
+WARN-NEW: Storable and Cacheable Content [10049] x 2
+  http://quicknotes:8080 (404 Not Found)
+  http://quicknotes:8080/sitemap.xml (404 Not Found)
+```
+
+After:
+
+```text
+WARN-NEW: Non-Storable Content [10049] x 3
+  http://quicknotes:8080 (404 Not Found)
+  http://quicknotes:8080/robots.txt (404 Not Found)
+  http://quicknotes:8080/sitemap.xml (404 Not Found)
+```
+
+This shows the original cacheability warning is gone. The same ZAP rule now reports the opposite condition, with evidence `no-store`, which is the intended safe outcome of the middleware fix.
+
+Live response header proof after rebuild:
+
+```text
+HTTP/1.1 200 OK
+Cache-Control: no-store, max-age=0
+Content-Security-Policy: default-src 'none'
+Expires: 0
+Pragma: no-cache
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+```
+
+## Design answers
+
+### e) Why a middleware and not per-handler header sets?
+
+Middleware fixes the policy once at the HTTP boundary instead of repeating it in every handler. That avoids drift, makes the behavior consistent for success and error responses, and ensures new routes inherit the same security defaults automatically.
+
+This mattered here because the ZAP finding was triggered on `404` responses from `/` and `/sitemap.xml`, not only on the business handlers. Per-handler header sets would miss those paths much more easily.
+
+### f) `Content-Security-Policy: default-src 'none'` is the strictest CSP. What does it break? Why is it OK for QuickNotes but not for a website?
+
+It blocks all scripts, styles, images, fonts, frames, fetches, and other browser-loaded resources unless they are explicitly allowed. A normal website would break immediately because its HTML, JavaScript, CSS, images, and third-party assets would all be denied by default.
+
+QuickNotes is an API that returns JSON and Prometheus text, not a browser UI. For that kind of service, a very strict CSP is acceptable because there is no front-end resource loading behavior to preserve.
+
+### g) False positives vs accepted findings: ZAP often flags informational issues that aren't real problems. What's the cost of marking them all "accepted" without reading them?
+
+The cost is alert fatigue and loss of trust in the scanner. Once everything is blindly marked accepted, real findings disappear into the noise and future reviewers cannot tell whether a decision was thoughtful or lazy.
+
+It also destroys re-evaluation discipline. A finding that is harmless today can become important after an architecture change, but if it was mass-accepted with no reasoning, there is no reliable record of what assumption the acceptance depended on.

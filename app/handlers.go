@@ -34,6 +34,20 @@ func (s *Server) Routes() *http.ServeMux {
 	mux.HandleFunc("POST /notes", s.wrap(s.handleCreateNote))
 	mux.HandleFunc("GET /notes/{id}", s.wrap(s.handleGetNote))
 	mux.HandleFunc("DELETE /notes/{id}", s.wrap(s.handleDeleteNote))
+	return withSecurityHeaders(mux)
+}
+
+func withSecurityHeaders(next http.Handler) *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "no-store, max-age=0")
+		w.Header().Set("Content-Security-Policy", "default-src 'none'")
+		w.Header().Set("Expires", "0")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("X-Content-Type-Options", "nosniff")
+		w.Header().Set("X-Frame-Options", "DENY")
+		next.ServeHTTP(w, r)
+	}))
 	return mux
 }
 
