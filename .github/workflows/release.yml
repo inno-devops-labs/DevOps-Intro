@@ -10,7 +10,7 @@ permissions:
   packages: write
 
 env:
-  IMAGE_NAME: ghcr.io/mystery0k1ng/devops-intro/quicknotes
+  IMAGE_NAME: ghcr.io/mysteri0k1ng/devops-intro/quicknotes
 
 jobs:
   build-and-push:
