@@ -1,9 +1,9 @@
 # Lab 10 — Cloud: Ship QuickNotes to a Real Cloud
 
-> **Status.** Task 2 (Hugging Face Space) is **live** — public URL, `/health`, and
-> warm+cold latency all measured below. Task 1's `release.yml` is written and
-> validated; making it *live* on ghcr.io just needs a `v0.1.0` tag push → CI. The
-> Bonus (Cloudflare Tunnel) is documented but not run.
+> **Status.** Task 1 is **live** — a signed `v0.1.0` tag fired the release workflow
+> (green) and pushed the image to ghcr.io (one manual flip-to-public remains). Task
+> 2 (Hugging Face Space) is **live** — public URL + warm/cold latency measured
+> below. The Bonus (Cloudflare Tunnel) is documented but not run.
 
 Artifacts: [`.github/workflows/release.yml`](../.github/workflows/release.yml),
 [`cloud/Dockerfile`](../cloud/Dockerfile), [`cloud/README.md`](../cloud/README.md),
@@ -20,16 +20,21 @@ logs in to ghcr with the built-in `GITHUB_TOKEN`, derives tags with
 to `contents: read` + `packages: write`; all three `docker/*` actions are pinned by
 40-char SHA (carried over from Lab 3). YAML validated.
 
-**To run it (needs push):**
+**Done (live):** pushed a signed `v0.1.0` tag → the workflow ran **green**
+([run 28883168854](https://github.com/RoukayaZaki/DevOps-Intro/actions/runs/28883168854)),
+`Build and push → success`. Image published to
+**`ghcr.io/roukayazaki/devops-intro/quicknotes`** with tags **`0.1.0`** and
+**`latest`**.
+
+One manual step remains for the "publicly pullable" bit: GitHub creates the
+package **private** on first push, and there's no API to change container-package
+visibility — flip it once in the UI (**your fork → Packages → `quicknotes` →
+Package settings → Change visibility → Public**). After that:
 ```
-git tag -a -s v0.1.0 -m "Lab 10 release"
-git push origin v0.1.0          # fires the workflow
-docker rmi ghcr.io/<owner>/<repo>/quicknotes:v0.1.0    # then pull on a clean machine:
-docker pull ghcr.io/<owner>/<repo>/quicknotes:v0.1.0   # works without auth once the package is public
+docker pull ghcr.io/roukayazaki/devops-intro/quicknotes:0.1.0   # no auth, clean machine
 ```
-Registry URL: `ghcr.io/<owner>/<repo>/quicknotes` · green run + clean-pull evidence:
-**PENDING PUSH** (first push creates a *private* package — flip it to public once in
-the package's GH UI).
+(Verified the push itself via the green run + an authenticated login; the
+anonymous pull 404s only because the package is still private.)
 
 ### Design questions
 
@@ -147,7 +152,7 @@ a datacenter, and a quick-tunnel URL isn't stable.
 
 | Task | Status |
 |------|--------|
-| 1 — Tag → CI → ghcr.io | `release.yml` written, SHA-pinned, least-privilege, YAML-validated; go-live = one `v0.1.0` tag push |
+| 1 — Tag → CI → ghcr.io | ✅ `v0.1.0` tag → **green release run** → image pushed to `ghcr.io/.../quicknotes:0.1.0,latest` (flip package public = 1 UI click) |
 | 2 — HF Spaces deploy | ✅ **live** at https://gammaviolet-quicknotes.hf.space, `app_port: 8080`, warm p50 0.565 s, cold 9–26 s |
 | Bonus — Cloudflare Tunnel | approach + comparison documented; measurements not run |
 | Design questions a–i | ✅ complete |
