@@ -1,4 +1,4 @@
-FROM golang:1.24.5 AS build
+FROM golang:1.24.13 AS build
 
 RUN groupadd -r appgroup && useradd -r -g appgroup -u 65532 nonroot
 
