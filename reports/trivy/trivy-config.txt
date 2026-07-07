@@ -1,0 +1,7 @@
+Trivy config scan completed.
+
+Command:
+docker run --rm -v "${PWD}:/repo" -v "${PWD}\reports\trivy:/reports" aquasec/trivy:0.59.1 config --severity HIGH,CRITICAL /repo --format json --output /reports/trivy-config.json
+
+Result:
+No HIGH or CRITICAL misconfiguration findings were reported in the JSON output.

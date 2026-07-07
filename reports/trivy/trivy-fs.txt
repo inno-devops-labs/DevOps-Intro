@@ -1,0 +1,11 @@
+Trivy filesystem scan completed.
+
+Command:
+docker run --rm -v "${PWD}:/repo" -v "${PWD}\reports\trivy:/reports" aquasec/trivy:0.59.1 fs --severity HIGH,CRITICAL --skip-dirs /repo/.vagrant /repo --format table --output /reports/trivy-fs.txt
+
+Result:
+No HIGH or CRITICAL filesystem vulnerability or secret findings were reported after excluding local Vagrant state.
+
+Note:
+The first scan detected .vagrant/machines/default/virtualbox/private_key as a HIGH secret finding.
+That file is local Vagrant machine state, is ignored by .gitignore, and is not tracked by Git.

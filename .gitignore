@@ -5,7 +5,6 @@
 # ONLY contain:
 #   (a) instructor-only paths (refs/), and
 #   (b) machine-generated junk that NOBODY should ever commit.
-#
 # Do NOT add lab DELIVERABLES here (scan reports, SBOMs, go.sum, k8s
 # manifests, CI workflows, Dockerfiles, playbooks, dashboards, …). Students
 # are told to commit those in their submission PRs — ignoring them upstream
@@ -15,43 +14,34 @@
 # Reference submissions (dry-run worked examples). Never pushed upstream;
 # students never see these. This is the one path that is intentionally hidden.
 refs/
-
 # ── Machine-generated junk (no one commits these) ───────────────
 # Compiled binaries / local runtime state
 app/quicknotes
 app/data/
 /quicknotes
 *.exe
-
 # Vagrant runtime state (Lab 5) — the Vagrantfile IS committed; .vagrant/ is not
 .vagrant/
-
 # Nix build symlinks (Lab 11) — flake.nix + flake.lock ARE committed; result is not
 result
 result-*
-
 # Terraform state — MUST never be committed (can contain secrets)
 *.tfstate
 *.tfstate.backup
 .terraform/
-
 # Python virtualenvs / caches
 .venv/
 __pycache__/
 *.pyc
-
 # Editor / IDE
 .vscode/
 .idea/
 *.swp
-
 # OS noise
 .DS_Store
 Thumbs.db
-
 # Local agent config (not part of the course)
 .claude/
-
 # NOTE: deliberately NOT ignored, because students commit them as lab evidence:
 #   submissions/labN.md        (lab reports)
 #   .github/workflows/*.yml    (Lab 3 CI)
