@@ -184,3 +184,21 @@ To suppress version checks, run Trivy scans with the --skip-version-check flag
         },
 ...
 ```
+
+### Security Triage
+| Vulnerability | Label | Reason                                          |
+| ------------- | ----- | ----------------------------------------------- |
+| CVE-2025-68121| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
+| CVE-2025-61726| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
+| CVE-2025-61729| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
+| CVE-2026-25679| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
+| CVE-2026-27145| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
+| CVE-2026-32280| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
+| CVE-2026-32281| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
+| CVE-2026-32283| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
+| CVE-2026-33811| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
+| CVE-2026-33814| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
+| CVE-2026-39820| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
+| CVE-2026-39836| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
+| CVE-2026-42499| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
+| CVE-2026-42504| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
