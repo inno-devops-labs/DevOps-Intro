@@ -1,0 +1,40 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:4ee1a9b4-26cd-47e7-a4ef-d586c2403124",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-07-07T20:15:26+00:00",
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "group": "aquasecurity",
+          "name": "trivy",
+          "version": "0.59.1"
+        }
+      ]
+    },
+    "component": {
+      "bom-ref": "pkg:oci/quicknotes@sha256%3Abc6608800edb9b891d140ad996406ea18146f315d21002f883d24cbddfe4aa1a?arch=amd64&repository_url=index.docker.io%2Flibrary%2Fquicknotes",
+      "type": "container",
+      "name": "quicknotes:lab6",
+      "purl": "pkg:oci/quicknotes@sha256%3Abc6608800edb9b891d140ad996406ea18146f315d21002f883d24cbddfe4aa1a?arch=amd64&repository_url=index.docker.io%2Flibrary%2Fquicknotes",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:114dde0fefebbca13165d0da9c500a66190e497a82a53dcaabc3172d630be1e9"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:17205d2b1ac5677df7647a5491d62bba00a448b96238f554a0896acbe54c4628"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:24dcaaa0cc6b962b906f28bd71dc8b30daac12ed710bf2991139be50d4a87cc0"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:33b37ab0b0901175c2699d81c10b0c887f0dff944de74763cca00c155904d6fb"
+        },

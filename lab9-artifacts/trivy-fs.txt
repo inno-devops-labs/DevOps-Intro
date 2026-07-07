@@ -1,0 +1,16 @@
+Unable to find image 'aquasec/trivy:0.59.1' locally
+0.59.1: Pulling from aquasec/trivy
+4784322f1001: Pulling fs layer
+b8fb5a6dd3c2: Pulling fs layer
+cb8611c9fe51: Pulling fs layer
+feb3d185a00a: Pulling fs layer
+4784322f1001: Download complete
+cb8611c9fe51: Download complete
+cb8611c9fe51: Pull complete
+feb3d185a00a: Download complete
+feb3d185a00a: Pull complete
+b8fb5a6dd3c2: Download complete
+4784322f1001: Pull complete
+b8fb5a6dd3c2: Pull complete
+Digest: sha256:029e990b328d149bf0a9ffe355919041e1f86192db2df47e217f8a36dd42ceac
+Status: Downloaded newer image for aquasec/trivy:0.59.1

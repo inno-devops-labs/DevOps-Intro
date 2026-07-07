@@ -1,0 +1,170 @@
+Fetching vulnerabilities from the database...
+
+Checking the code against the vulnerabilities...
+
+The package pattern matched the following root package:
+  quicknotes
+Govulncheck scanned the following 2 modules and the go1.26.4 standard library:
+  quicknotes
+  golang.org/x/crypto@v0.12.0
+
+=== Symbol Results ===
+
+No vulnerabilities found.
+
+=== Package Results ===
+
+No other vulnerabilities found.
+
+=== Module Results ===
+
+Vulnerability #1: GO-2026-5033
+    Invoking pathological inputs can lead to client panic in
+    golang.org/x/crypto/ssh/agent
+  More info: https://pkg.go.dev/vuln/GO-2026-5033
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #2: GO-2026-5023
+    Invoking VerifiedPublicKeyCallback permissions skip enforcement in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5023
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #3: GO-2026-5021
+    Invoking auth bypass via unenforced @revoked status in
+    golang.org/x/crypto/ssh/knownhosts
+  More info: https://pkg.go.dev/vuln/GO-2026-5021
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #4: GO-2026-5020
+    Invoking infinite loop on large channel writes in golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5020
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #5: GO-2026-5019
+    Invoking bypass of FIDO/U2F security keys physical interaction in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5019
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #6: GO-2026-5018
+    Invoking pathological RSA/DSA parameters may cause DoS in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5018
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #7: GO-2026-5017
+    Invoking client can cause server deadlock on unexpected responses in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5017
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #8: GO-2026-5016
+    Invoking memory leak when rejecting channels can lead to DoS in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5016
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #9: GO-2026-5015
+    Invoking server panic during CheckHostKey/Authenticate in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5015
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #10: GO-2026-5014
+    Invoking bypass of certificate restrictions in golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5014
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #11: GO-2026-5013
+    Invoking byte arithmetic causes underflow and panic in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5013
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #12: GO-2026-5006
+    Invoking agent constraints dropped when forwarding keys in
+    golang.org/x/crypto/ssh/agent
+  More info: https://pkg.go.dev/vuln/GO-2026-5006
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #13: GO-2026-5005
+    Invoking key constraints not enforced in golang.org/x/crypto/ssh/agent
+  More info: https://pkg.go.dev/vuln/GO-2026-5005
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+
+Vulnerability #14: GO-2025-4135
+    Malformed constraint may cause denial of service in
+    golang.org/x/crypto/ssh/agent
+  More info: https://pkg.go.dev/vuln/GO-2025-4135
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.45.0
+
+Vulnerability #15: GO-2025-4134
+    Unbounded memory consumption in golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2025-4134
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.45.0
+
+Vulnerability #16: GO-2025-4116
+    Potential denial of service in golang.org/x/crypto/ssh/agent
+  More info: https://pkg.go.dev/vuln/GO-2025-4116
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.43.0
+
+Vulnerability #17: GO-2025-3487
+    Potential denial of service in golang.org/x/crypto
+  More info: https://pkg.go.dev/vuln/GO-2025-3487
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.35.0
+
+Vulnerability #18: GO-2024-3321
+    Misuse of connection.serverAuthenticate may cause authorization bypass in
+    golang.org/x/crypto
+  More info: https://pkg.go.dev/vuln/GO-2024-3321
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.31.0
+
+Vulnerability #19: GO-2023-2402
+    Man-in-the-middle attacker can compromise integrity of secure channel in
+    golang.org/x/crypto
+  More info: https://pkg.go.dev/vuln/GO-2023-2402
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.12.0
+    Fixed in: golang.org/x/crypto@v0.17.0
+
+Your code is affected by 0 vulnerabilities.
+This scan also found 0 vulnerabilities in packages you import and 19
+vulnerabilities in modules you require, but your code doesn't appear to call
+these vulnerabilities.

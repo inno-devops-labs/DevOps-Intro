@@ -28,6 +28,7 @@ func NewServer(store *Store) *Server {
 
 func (s *Server) Routes() *http.ServeMux {
 	mux := http.NewServeMux()
+	mux.HandleFunc("GET /", s.wrap(s.handleRoot))
 	mux.HandleFunc("GET /health", s.wrap(s.handleHealth))
 	mux.HandleFunc("GET /metrics", s.wrap(s.handleMetrics))
 	mux.HandleFunc("GET /notes", s.wrap(s.handleListNotes))
@@ -56,6 +57,10 @@ func (s *Server) wrap(h http.HandlerFunc) http.HandlerFunc {
 			c.Add(1)
 		}
 	}
+}
+
+func (s *Server) handleRoot(w http.ResponseWriter, r *http.Request) {
+	writeJSON(w, http.StatusOK, map[string]string{"service": "quicknotes"})
 }
 
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {

@@ -1,0 +1,31 @@
+openapi: 3.0.3
+info:
+  title: QuickNotes
+  version: "1.0"
+servers:
+  - url: http://127.0.0.1:8080
+paths:
+  /:
+    get:
+      responses:
+        "200":
+          description: root
+  /health:
+    get:
+      responses:
+        "200":
+          description: health
+  /notes:
+    get:
+      responses:
+        "200":
+          description: list notes
+    post:
+      responses:
+        "201":
+          description: create note
+  /metrics:
+    get:
+      responses:
+        "200":
+          description: metrics
