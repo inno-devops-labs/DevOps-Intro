@@ -343,12 +343,27 @@ Cold latency sample 3:
 
 ### Visual evidence
 
-Screenshots saved in `submissions/`:
-- `workflow_run.png` shows the successful GitHub Actions release run
-- `create_space_1.png` and `create_space_2.png` show the Hugging Face Space setup
-- `build_app.png` shows the Hugging Face build/deploy stage
-- `running_space.png` shows the Space in the `Running` state
-- `start_app.png` shows the Space app page; the root path returns `404 page not found`, which is expected because QuickNotes is an API and does not serve `/`
+#### GitHub Actions release run
+
+![GitHub Actions release run](workflow_run.png)
+
+#### Hugging Face Space creation
+
+![Hugging Face Space creation step 1](create_space_1.png)
+
+![Hugging Face Space creation step 2](create_space_2.png)
+
+#### Hugging Face build and runtime state
+
+![Hugging Face build stage](build_app.png)
+
+![Hugging Face Space running](running_space.png)
+
+#### Hugging Face app root response
+
+The Space root page returns `404 page not found`, which is expected because QuickNotes is an API and does not serve `/`.
+
+![Hugging Face app root page](start_app.png)
 
 ### Analysis
 
