@@ -1,0 +1,566 @@
+Frame 4: 589 bytes on wire (4712 bits), 589 bytes captured (4712 bits)
+    Encapsulation type: Linux cooked-mode capture v2 (210)
+    Arrival Time: Jun 15, 2026 11:28:28.305818000 MSK
+    UTC Arrival Time: Jun 15, 2026 08:28:28.305818000 UTC
+    Epoch Arrival Time: 1781512108.305818000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.004353000 seconds]
+    [Time delta from previous displayed frame: 0.000000000 seconds]
+    [Time since reference or first frame: 0.004397000 seconds]
+    Frame Number: 4
+    Frame Length: 589 bytes (4712 bits)
+    Capture Length: 589 bytes (4712 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: sll:ethertype:ip:tcp:tls]
+Linux cooked capture v2
+    Protocol: IPv4 (0x0800)
+    Interface index: 1
+    Link-layer address type: Loopback (772)
+    Packet type: Unicast to us (0)
+    Link-layer address length: 6
+    Source: 00:00:00_00:00:00 (00:00:00:00:00:00)
+    Unused: 0000
+Internet Protocol Version 4, Src: 127.0.0.1, Dst: 127.0.0.1
+    0100 .... = Version: 4
+    .... 0101 = Header Length: 20 bytes (5)
+    Differentiated Services Field: 0x00 (DSCP: CS0, ECN: Not-ECT)
+        0000 00.. = Differentiated Services Codepoint: Default (0)
+        .... ..00 = Explicit Congestion Notification: Not ECN-Capable Transport (0)
+    Total Length: 569
+    Identification: 0x95ef (38383)
+    010. .... = Flags: 0x2, Don't fragment
+        0... .... = Reserved bit: Not set
+        .1.. .... = Don't fragment: Set
+        ..0. .... = More fragments: Not set
+    ...0 0000 0000 0000 = Fragment Offset: 0
+    Time to Live: 64
+    Protocol: TCP (6)
+    Header Checksum: 0xa4cd [validation disabled]
+    [Header checksum status: Unverified]
+    Source Address: 127.0.0.1
+    Destination Address: 127.0.0.1
+Transmission Control Protocol, Src Port: 44152, Dst Port: 8443, Seq: 1, Ack: 1, Len: 517
+    Source Port: 44152
+    Destination Port: 8443
+    [Stream index: 0]
+    [Conversation completeness: Incomplete, ESTABLISHED (7)]
+        ..0. .... = RST: Absent
+        ...0 .... = FIN: Absent
+        .... 0... = Data: Absent
+        .... .1.. = ACK: Present
+        .... ..1. = SYN-ACK: Present
+        .... ...1 = SYN: Present
+        [Completeness Flags: ···ASS]
+    [TCP Segment Len: 517]
+    Sequence Number: 1    (relative sequence number)
+    Sequence Number (raw): 2157975
+    [Next Sequence Number: 518    (relative sequence number)]
+    Acknowledgment Number: 1    (relative ack number)
+    Acknowledgment number (raw): 834201497
+    1000 .... = Header Length: 32 bytes (8)
+    Flags: 0x018 (PSH, ACK)
+        000. .... .... = Reserved: Not set
+        ...0 .... .... = Accurate ECN: Not set
+        .... 0... .... = Congestion Window Reduced: Not set
+        .... .0.. .... = ECN-Echo: Not set
+        .... ..0. .... = Urgent: Not set
+        .... ...1 .... = Acknowledgment: Set
+        .... .... 1... = Push: Set
+        .... .... .0.. = Reset: Not set
+        .... .... ..0. = Syn: Not set
+        .... .... ...0 = Fin: Not set
+        [TCP Flags: ·······AP···]
+    Window: 512
+    [Calculated window size: 65536]
+    [Window size scaling factor: 128]
+    Checksum: 0x002e [unverified]
+    [Checksum Status: Unverified]
+    Urgent Pointer: 0
+    Options: (12 bytes), No-Operation (NOP), No-Operation (NOP), Timestamps
+        TCP Option - No-Operation (NOP)
+            Kind: No-Operation (1)
+        TCP Option - No-Operation (NOP)
+            Kind: No-Operation (1)
+        TCP Option - Timestamps
+            Kind: Time Stamp Option (8)
+            Length: 10
+            Timestamp value: 3708445155: TSval 3708445155, TSecr 3708445151
+            Timestamp echo reply: 3708445151
+    [Timestamps]
+        [Time since first frame in this TCP stream: 0.004397000 seconds]
+        [Time since previous frame in this TCP stream: 0.004353000 seconds]
+    [SEQ/ACK analysis]
+        [iRTT: 0.000044000 seconds]
+        [Bytes in flight: 517]
+        [Bytes sent since last PSH flag: 517]
+    TCP payload (517 bytes)
+Transport Layer Security
+    TLSv1 Record Layer: Handshake Protocol: Client Hello
+        Content Type: Handshake (22)
+        Version: TLS 1.0 (0x0301)
+        Length: 512
+        Handshake Protocol: Client Hello
+            Handshake Type: Client Hello (1)
+            Length: 508
+            Version: TLS 1.2 (0x0303)
+            Random: 8cb594e1ad286ea2ad7b4e3e884d122fea2b09241c50239fc0fd766bd9f0b18a
+                GMT Unix Time: Oct 22, 2044 03:52:49.000000000 MSK
+                Random Bytes: ad286ea2ad7b4e3e884d122fea2b09241c50239fc0fd766bd9f0b18a
+            Session ID Length: 32
+            Session ID: be15ab8abb319e9b37f5eb11067d24a8096c816546e096790d5e6f64a51b9486
+            Cipher Suites Length: 62
+            Cipher Suites (31 suites)
+                Cipher Suite: TLS_AES_256_GCM_SHA384 (0x1302)
+                Cipher Suite: TLS_CHACHA20_POLY1305_SHA256 (0x1303)
+                Cipher Suite: TLS_AES_128_GCM_SHA256 (0x1301)
+                Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 (0xc02c)
+                Cipher Suite: TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)
+                Cipher Suite: TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 (0x009f)
+                Cipher Suite: TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256 (0xcca9)
+                Cipher Suite: TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xcca8)
+                Cipher Suite: TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xccaa)
+                Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 (0xc02b)
+                Cipher Suite: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (0xc02f)
+                Cipher Suite: TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 (0x009e)
+                Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384 (0xc024)
+                Cipher Suite: TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 (0xc028)
+                Cipher Suite: TLS_DHE_RSA_WITH_AES_256_CBC_SHA256 (0x006b)
+                Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 (0xc023)
+                Cipher Suite: TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256 (0xc027)
+                Cipher Suite: TLS_DHE_RSA_WITH_AES_128_CBC_SHA256 (0x0067)
+                Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA (0xc00a)
+                Cipher Suite: TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA (0xc014)
+                Cipher Suite: TLS_DHE_RSA_WITH_AES_256_CBC_SHA (0x0039)
+                Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA (0xc009)
+                Cipher Suite: TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA (0xc013)
+                Cipher Suite: TLS_DHE_RSA_WITH_AES_128_CBC_SHA (0x0033)
+                Cipher Suite: TLS_RSA_WITH_AES_256_GCM_SHA384 (0x009d)
+                Cipher Suite: TLS_RSA_WITH_AES_128_GCM_SHA256 (0x009c)
+                Cipher Suite: TLS_RSA_WITH_AES_256_CBC_SHA256 (0x003d)
+                Cipher Suite: TLS_RSA_WITH_AES_128_CBC_SHA256 (0x003c)
+                Cipher Suite: TLS_RSA_WITH_AES_256_CBC_SHA (0x0035)
+                Cipher Suite: TLS_RSA_WITH_AES_128_CBC_SHA (0x002f)
+                Cipher Suite: TLS_EMPTY_RENEGOTIATION_INFO_SCSV (0x00ff)
+            Compression Methods Length: 1
+            Compression Methods (1 method)
+                Compression Method: null (0)
+            Extensions Length: 373
+            Extension: ec_point_formats (len=4)
+                Type: ec_point_formats (11)
+                Length: 4
+                EC point formats Length: 3
+                Elliptic curves point formats (3)
+                    EC point format: uncompressed (0)
+                    EC point format: ansiX962_compressed_prime (1)
+                    EC point format: ansiX962_compressed_char2 (2)
+            Extension: supported_groups (len=22)
+                Type: supported_groups (10)
+                Length: 22
+                Supported Groups List Length: 20
+                Supported Groups (10 groups)
+                    Supported Group: x25519 (0x001d)
+                    Supported Group: secp256r1 (0x0017)
+                    Supported Group: x448 (0x001e)
+                    Supported Group: secp521r1 (0x0019)
+                    Supported Group: secp384r1 (0x0018)
+                    Supported Group: ffdhe2048 (0x0100)
+                    Supported Group: ffdhe3072 (0x0101)
+                    Supported Group: ffdhe4096 (0x0102)
+                    Supported Group: ffdhe6144 (0x0103)
+                    Supported Group: ffdhe8192 (0x0104)
+            Extension: application_layer_protocol_negotiation (len=14)
+                Type: application_layer_protocol_negotiation (16)
+                Length: 14
+                ALPN Extension Length: 12
+                ALPN Protocol
+                    ALPN string length: 2
+                    ALPN Next Protocol: h2
+                    ALPN string length: 8
+                    ALPN Next Protocol: http/1.1
+            Extension: encrypt_then_mac (len=0)
+                Type: encrypt_then_mac (22)
+                Length: 0
+            Extension: extended_master_secret (len=0)
+                Type: extended_master_secret (23)
+                Length: 0
+            Extension: post_handshake_auth (len=0)
+                Type: post_handshake_auth (49)
+                Length: 0
+            Extension: signature_algorithms (len=42)
+                Type: signature_algorithms (13)
+                Length: 42
+                Signature Hash Algorithms Length: 40
+                Signature Hash Algorithms (20 algorithms)
+                    Signature Algorithm: ecdsa_secp256r1_sha256 (0x0403)
+                        Signature Hash Algorithm Hash: SHA256 (4)
+                        Signature Hash Algorithm Signature: ECDSA (3)
+                    Signature Algorithm: ecdsa_secp384r1_sha384 (0x0503)
+                        Signature Hash Algorithm Hash: SHA384 (5)
+                        Signature Hash Algorithm Signature: ECDSA (3)
+                    Signature Algorithm: ecdsa_secp521r1_sha512 (0x0603)
+                        Signature Hash Algorithm Hash: SHA512 (6)
+                        Signature Hash Algorithm Signature: ECDSA (3)
+                    Signature Algorithm: ed25519 (0x0807)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: Unknown (7)
+                    Signature Algorithm: ed448 (0x0808)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: Unknown (8)
+                    Signature Algorithm: rsa_pss_pss_sha256 (0x0809)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: Unknown (9)
+                    Signature Algorithm: rsa_pss_pss_sha384 (0x080a)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: Unknown (10)
+                    Signature Algorithm: rsa_pss_pss_sha512 (0x080b)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: Unknown (11)
+                    Signature Algorithm: rsa_pss_rsae_sha256 (0x0804)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: SM2 (4)
+                    Signature Algorithm: rsa_pss_rsae_sha384 (0x0805)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: Unknown (5)
+                    Signature Algorithm: rsa_pss_rsae_sha512 (0x0806)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: Unknown (6)
+                    Signature Algorithm: rsa_pkcs1_sha256 (0x0401)
+                        Signature Hash Algorithm Hash: SHA256 (4)
+                        Signature Hash Algorithm Signature: RSA (1)
+                    Signature Algorithm: rsa_pkcs1_sha384 (0x0501)
+                        Signature Hash Algorithm Hash: SHA384 (5)
+                        Signature Hash Algorithm Signature: RSA (1)
+                    Signature Algorithm: rsa_pkcs1_sha512 (0x0601)
+                        Signature Hash Algorithm Hash: SHA512 (6)
+                        Signature Hash Algorithm Signature: RSA (1)
+                    Signature Algorithm: SHA224 ECDSA (0x0303)
+                        Signature Hash Algorithm Hash: SHA224 (3)
+                        Signature Hash Algorithm Signature: ECDSA (3)
+                    Signature Algorithm: SHA224 RSA (0x0301)
+                        Signature Hash Algorithm Hash: SHA224 (3)
+                        Signature Hash Algorithm Signature: RSA (1)
+                    Signature Algorithm: SHA224 DSA (0x0302)
+                        Signature Hash Algorithm Hash: SHA224 (3)
+                        Signature Hash Algorithm Signature: DSA (2)
+                    Signature Algorithm: SHA256 DSA (0x0402)
+                        Signature Hash Algorithm Hash: SHA256 (4)
+                        Signature Hash Algorithm Signature: DSA (2)
+                    Signature Algorithm: SHA384 DSA (0x0502)
+                        Signature Hash Algorithm Hash: SHA384 (5)
+                        Signature Hash Algorithm Signature: DSA (2)
+                    Signature Algorithm: SHA512 DSA (0x0602)
+                        Signature Hash Algorithm Hash: SHA512 (6)
+                        Signature Hash Algorithm Signature: DSA (2)
+            Extension: supported_versions (len=5) TLS 1.3, TLS 1.2
+                Type: supported_versions (43)
+                Length: 5
+                Supported Versions length: 4
+                Supported Version: TLS 1.3 (0x0304)
+                Supported Version: TLS 1.2 (0x0303)
+            Extension: psk_key_exchange_modes (len=2)
+                Type: psk_key_exchange_modes (45)
+                Length: 2
+                PSK Key Exchange Modes Length: 1
+                PSK Key Exchange Mode: PSK with (EC)DHE key establishment (psk_dhe_ke) (1)
+            Extension: key_share (len=38) x25519
+                Type: key_share (51)
+                Length: 38
+                Key Share extension
+                    Client Key Share Length: 36
+                    Key Share Entry: Group: x25519, Key Exchange length: 32
+                        Group: x25519 (29)
+                        Key Exchange Length: 32
+                        Key Exchange: 87dbad85af787e263e159ce509567459d1d5cbd4a63bed3df63700e8dfe46176
+            Extension: padding (len=202)
+                Type: padding (21)
+                Length: 202
+                Padding Data [truncated]: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+            [JA4: t13i3111h2_e8f1e7e78f70_b26ce05bbdd6]
+            [JA4_r [truncated]: t13i3111h2_002f,0033,0035,0039,003c,003d,0067,006b,009c,009d,009e,009f,00ff,1301,1302,1303,c009,c00a,c013,c014,c023,c024,c027,c028,c02b,c02c,c02f,c030,cca8,cca9,ccaa_000a,000b,000d,0015,0016,0017,002b,002d,0031,0033_0403]
+            [JA3 Fullstring [truncated]: 771,4866-4867-4865-49196-49200-159-52393-52392-52394-49195-49199-158-49188-49192-107-49187-49191-103-49162-49172-57-49161-49171-51-157-156-61-60-53-47-255,11-10-16-22-23-49-13-43-45-51-21,29-23-30-25-24-256-257-]
+            [JA3: 78f0dc5ac5b19daf131a133cfdee9691]
+
+Frame 14: 609 bytes on wire (4872 bits), 609 bytes captured (4872 bits)
+    Encapsulation type: Linux cooked-mode capture v2 (210)
+    Arrival Time: Jun 15, 2026 11:28:28.323420000 MSK
+    UTC Arrival Time: Jun 15, 2026 08:28:28.323420000 UTC
+    Epoch Arrival Time: 1781512108.323420000
+    [Time shift for this packet: 0.000000000 seconds]
+    [Time delta from previous captured frame: 0.003806000 seconds]
+    [Time delta from previous displayed frame: 0.017602000 seconds]
+    [Time since reference or first frame: 0.021999000 seconds]
+    Frame Number: 14
+    Frame Length: 609 bytes (4872 bits)
+    Capture Length: 609 bytes (4872 bits)
+    [Frame is marked: False]
+    [Frame is ignored: False]
+    [Protocols in frame: sll:ethertype:ipv6:tcp:tls]
+Linux cooked capture v2
+    Protocol: IPv6 (0x86dd)
+    Interface index: 1
+    Link-layer address type: Loopback (772)
+    Packet type: Unicast to us (0)
+    Link-layer address length: 6
+    Source: 00:00:00_00:00:00 (00:00:00:00:00:00)
+    Unused: 0000
+Internet Protocol Version 6, Src: ::1, Dst: ::1
+    0110 .... = Version: 6
+    .... 0000 0000 .... .... .... .... .... = Traffic Class: 0x00 (DSCP: CS0, ECN: Not-ECT)
+        .... 0000 00.. .... .... .... .... .... = Differentiated Services Codepoint: Default (0)
+        .... .... ..00 .... .... .... .... .... = Explicit Congestion Notification: Not ECN-Capable Transport (0)
+    .... 1110 1001 1100 0100 0110 = Flow Label: 0xe9c46
+    Payload Length: 549
+    Next Header: TCP (6)
+    Hop Limit: 64
+    Source Address: ::1
+    Destination Address: ::1
+Transmission Control Protocol, Src Port: 49408, Dst Port: 8443, Seq: 1, Ack: 1, Len: 517
+    Source Port: 49408
+    Destination Port: 8443
+    [Stream index: 1]
+    [Conversation completeness: Incomplete, ESTABLISHED (7)]
+        ..0. .... = RST: Absent
+        ...0 .... = FIN: Absent
+        .... 0... = Data: Absent
+        .... .1.. = ACK: Present
+        .... ..1. = SYN-ACK: Present
+        .... ...1 = SYN: Present
+        [Completeness Flags: ···ASS]
+    [TCP Segment Len: 517]
+    Sequence Number: 1    (relative sequence number)
+    Sequence Number (raw): 1663730631
+    [Next Sequence Number: 518    (relative sequence number)]
+    Acknowledgment Number: 1    (relative ack number)
+    Acknowledgment number (raw): 813048789
+    1000 .... = Header Length: 32 bytes (8)
+    Flags: 0x018 (PSH, ACK)
+        000. .... .... = Reserved: Not set
+        ...0 .... .... = Accurate ECN: Not set
+        .... 0... .... = Congestion Window Reduced: Not set
+        .... .0.. .... = ECN-Echo: Not set
+        .... ..0. .... = Urgent: Not set
+        .... ...1 .... = Acknowledgment: Set
+        .... .... 1... = Push: Set
+        .... .... .0.. = Reset: Not set
+        .... .... ..0. = Syn: Not set
+        .... .... ...0 = Fin: Not set
+        [TCP Flags: ·······AP···]
+    Window: 512
+    [Calculated window size: 65536]
+    [Window size scaling factor: 128]
+    Checksum: 0x022d [unverified]
+    [Checksum Status: Unverified]
+    Urgent Pointer: 0
+    Options: (12 bytes), No-Operation (NOP), No-Operation (NOP), Timestamps
+        TCP Option - No-Operation (NOP)
+            Kind: No-Operation (1)
+        TCP Option - No-Operation (NOP)
+            Kind: No-Operation (1)
+        TCP Option - Timestamps
+            Kind: Time Stamp Option (8)
+            Length: 10
+            Timestamp value: 392863708: TSval 392863708, TSecr 392863704
+            Timestamp echo reply: 392863704
+    [Timestamps]
+        [Time since first frame in this TCP stream: 0.003839000 seconds]
+        [Time since previous frame in this TCP stream: 0.003806000 seconds]
+    [SEQ/ACK analysis]
+        [iRTT: 0.000033000 seconds]
+        [Bytes in flight: 517]
+        [Bytes sent since last PSH flag: 517]
+    TCP payload (517 bytes)
+Transport Layer Security
+    TLSv1 Record Layer: Handshake Protocol: Client Hello
+        Content Type: Handshake (22)
+        Version: TLS 1.0 (0x0301)
+        Length: 512
+        Handshake Protocol: Client Hello
+            Handshake Type: Client Hello (1)
+            Length: 508
+            Version: TLS 1.2 (0x0303)
+            Random: a41fc1e02fdc70c280f6cdf744420af18adecd03b97aae66a652a9936d702189
+                GMT Unix Time: Apr  3, 2057 20:31:12.000000000 MSK
+                Random Bytes: 2fdc70c280f6cdf744420af18adecd03b97aae66a652a9936d702189
+            Session ID Length: 32
+            Session ID: af048ed4d8bf335189046ed3d4d516b3dd0e3dfec0e23a82bb022d119fc7f0a2
+            Cipher Suites Length: 62
+            Cipher Suites (31 suites)
+                Cipher Suite: TLS_AES_256_GCM_SHA384 (0x1302)
+                Cipher Suite: TLS_CHACHA20_POLY1305_SHA256 (0x1303)
+                Cipher Suite: TLS_AES_128_GCM_SHA256 (0x1301)
+                Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 (0xc02c)
+                Cipher Suite: TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)
+                Cipher Suite: TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 (0x009f)
+                Cipher Suite: TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256 (0xcca9)
+                Cipher Suite: TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xcca8)
+                Cipher Suite: TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256 (0xccaa)
+                Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 (0xc02b)
+                Cipher Suite: TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 (0xc02f)
+                Cipher Suite: TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 (0x009e)
+                Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384 (0xc024)
+                Cipher Suite: TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 (0xc028)
+                Cipher Suite: TLS_DHE_RSA_WITH_AES_256_CBC_SHA256 (0x006b)
+                Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256 (0xc023)
+                Cipher Suite: TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256 (0xc027)
+                Cipher Suite: TLS_DHE_RSA_WITH_AES_128_CBC_SHA256 (0x0067)
+                Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA (0xc00a)
+                Cipher Suite: TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA (0xc014)
+                Cipher Suite: TLS_DHE_RSA_WITH_AES_256_CBC_SHA (0x0039)
+                Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA (0xc009)
+                Cipher Suite: TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA (0xc013)
+                Cipher Suite: TLS_DHE_RSA_WITH_AES_128_CBC_SHA (0x0033)
+                Cipher Suite: TLS_RSA_WITH_AES_256_GCM_SHA384 (0x009d)
+                Cipher Suite: TLS_RSA_WITH_AES_128_GCM_SHA256 (0x009c)
+                Cipher Suite: TLS_RSA_WITH_AES_256_CBC_SHA256 (0x003d)
+                Cipher Suite: TLS_RSA_WITH_AES_128_CBC_SHA256 (0x003c)
+                Cipher Suite: TLS_RSA_WITH_AES_256_CBC_SHA (0x0035)
+                Cipher Suite: TLS_RSA_WITH_AES_128_CBC_SHA (0x002f)
+                Cipher Suite: TLS_EMPTY_RENEGOTIATION_INFO_SCSV (0x00ff)
+            Compression Methods Length: 1
+            Compression Methods (1 method)
+                Compression Method: null (0)
+            Extensions Length: 373
+            Extension: server_name (len=14) name=localhost
+                Type: server_name (0)
+                Length: 14
+                Server Name Indication extension
+                    Server Name list length: 12
+                    Server Name Type: host_name (0)
+                    Server Name length: 9
+                    Server Name: localhost
+            Extension: ec_point_formats (len=4)
+                Type: ec_point_formats (11)
+                Length: 4
+                EC point formats Length: 3
+                Elliptic curves point formats (3)
+                    EC point format: uncompressed (0)
+                    EC point format: ansiX962_compressed_prime (1)
+                    EC point format: ansiX962_compressed_char2 (2)
+            Extension: supported_groups (len=22)
+                Type: supported_groups (10)
+                Length: 22
+                Supported Groups List Length: 20
+                Supported Groups (10 groups)
+                    Supported Group: x25519 (0x001d)
+                    Supported Group: secp256r1 (0x0017)
+                    Supported Group: x448 (0x001e)
+                    Supported Group: secp521r1 (0x0019)
+                    Supported Group: secp384r1 (0x0018)
+                    Supported Group: ffdhe2048 (0x0100)
+                    Supported Group: ffdhe3072 (0x0101)
+                    Supported Group: ffdhe4096 (0x0102)
+                    Supported Group: ffdhe6144 (0x0103)
+                    Supported Group: ffdhe8192 (0x0104)
+            Extension: application_layer_protocol_negotiation (len=14)
+                Type: application_layer_protocol_negotiation (16)
+                Length: 14
+                ALPN Extension Length: 12
+                ALPN Protocol
+                    ALPN string length: 2
+                    ALPN Next Protocol: h2
+                    ALPN string length: 8
+                    ALPN Next Protocol: http/1.1
+            Extension: encrypt_then_mac (len=0)
+                Type: encrypt_then_mac (22)
+                Length: 0
+            Extension: extended_master_secret (len=0)
+                Type: extended_master_secret (23)
+                Length: 0
+            Extension: post_handshake_auth (len=0)
+                Type: post_handshake_auth (49)
+                Length: 0
+            Extension: signature_algorithms (len=42)
+                Type: signature_algorithms (13)
+                Length: 42
+                Signature Hash Algorithms Length: 40
+                Signature Hash Algorithms (20 algorithms)
+                    Signature Algorithm: ecdsa_secp256r1_sha256 (0x0403)
+                        Signature Hash Algorithm Hash: SHA256 (4)
+                        Signature Hash Algorithm Signature: ECDSA (3)
+                    Signature Algorithm: ecdsa_secp384r1_sha384 (0x0503)
+                        Signature Hash Algorithm Hash: SHA384 (5)
+                        Signature Hash Algorithm Signature: ECDSA (3)
+                    Signature Algorithm: ecdsa_secp521r1_sha512 (0x0603)
+                        Signature Hash Algorithm Hash: SHA512 (6)
+                        Signature Hash Algorithm Signature: ECDSA (3)
+                    Signature Algorithm: ed25519 (0x0807)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: Unknown (7)
+                    Signature Algorithm: ed448 (0x0808)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: Unknown (8)
+                    Signature Algorithm: rsa_pss_pss_sha256 (0x0809)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: Unknown (9)
+                    Signature Algorithm: rsa_pss_pss_sha384 (0x080a)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: Unknown (10)
+                    Signature Algorithm: rsa_pss_pss_sha512 (0x080b)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: Unknown (11)
+                    Signature Algorithm: rsa_pss_rsae_sha256 (0x0804)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: SM2 (4)
+                    Signature Algorithm: rsa_pss_rsae_sha384 (0x0805)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: Unknown (5)
+                    Signature Algorithm: rsa_pss_rsae_sha512 (0x0806)
+                        Signature Hash Algorithm Hash: Unknown (8)
+                        Signature Hash Algorithm Signature: Unknown (6)
+                    Signature Algorithm: rsa_pkcs1_sha256 (0x0401)
+                        Signature Hash Algorithm Hash: SHA256 (4)
+                        Signature Hash Algorithm Signature: RSA (1)
+                    Signature Algorithm: rsa_pkcs1_sha384 (0x0501)
+                        Signature Hash Algorithm Hash: SHA384 (5)
+                        Signature Hash Algorithm Signature: RSA (1)
+                    Signature Algorithm: rsa_pkcs1_sha512 (0x0601)
+                        Signature Hash Algorithm Hash: SHA512 (6)
+                        Signature Hash Algorithm Signature: RSA (1)
+                    Signature Algorithm: SHA224 ECDSA (0x0303)
+                        Signature Hash Algorithm Hash: SHA224 (3)
+                        Signature Hash Algorithm Signature: ECDSA (3)
+                    Signature Algorithm: SHA224 RSA (0x0301)
+                        Signature Hash Algorithm Hash: SHA224 (3)
+                        Signature Hash Algorithm Signature: RSA (1)
+                    Signature Algorithm: SHA224 DSA (0x0302)
+                        Signature Hash Algorithm Hash: SHA224 (3)
+                        Signature Hash Algorithm Signature: DSA (2)
+                    Signature Algorithm: SHA256 DSA (0x0402)
+                        Signature Hash Algorithm Hash: SHA256 (4)
+                        Signature Hash Algorithm Signature: DSA (2)
+                    Signature Algorithm: SHA384 DSA (0x0502)
+                        Signature Hash Algorithm Hash: SHA384 (5)
+                        Signature Hash Algorithm Signature: DSA (2)
+                    Signature Algorithm: SHA512 DSA (0x0602)
+                        Signature Hash Algorithm Hash: SHA512 (6)
+                        Signature Hash Algorithm Signature: DSA (2)
+            Extension: supported_versions (len=5) TLS 1.3, TLS 1.2
+                Type: supported_versions (43)
+                Length: 5
+                Supported Versions length: 4
+                Supported Version: TLS 1.3 (0x0304)
+                Supported Version: TLS 1.2 (0x0303)
+            Extension: psk_key_exchange_modes (len=2)
+                Type: psk_key_exchange_modes (45)
+                Length: 2
+                PSK Key Exchange Modes Length: 1
+                PSK Key Exchange Mode: PSK with (EC)DHE key establishment (psk_dhe_ke) (1)
+            Extension: key_share (len=38) x25519
+                Type: key_share (51)
+                Length: 38
+                Key Share extension
+                    Client Key Share Length: 36
+                    Key Share Entry: Group: x25519, Key Exchange length: 32
+                        Group: x25519 (29)
+                        Key Exchange Length: 32
+                        Key Exchange: b90903595dea9a0f2a49c8c79e677e0337b55f87ee311e76e381508106d7a378
+            Extension: padding (len=184)
+                Type: padding (21)
+                Length: 184
+                Padding Data [truncated]: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+            [JA4: t13d3112h2_e8f1e7e78f70_b26ce05bbdd6]
+            [JA4_r [truncated]: t13d3112h2_002f,0033,0035,0039,003c,003d,0067,006b,009c,009d,009e,009f,00ff,1301,1302,1303,c009,c00a,c013,c014,c023,c024,c027,c028,c02b,c02c,c02f,c030,cca8,cca9,ccaa_000a,000b,000d,0015,0016,0017,002b,002d,0031,0033_0403]
+            [JA3 Fullstring [truncated]: 771,4866-4867-4865-49196-49200-159-52393-52392-52394-49195-49199-158-49188-49192-107-49187-49191-103-49162-49172-57-49161-49171-51-157-156-61-60-53-47-255,0-11-10-16-22-23-49-13-43-45-51-21,29-23-30-25-24-256-25]
+            [JA3: 0149f47eabf9a20d0893e2a44e5a6323]
+

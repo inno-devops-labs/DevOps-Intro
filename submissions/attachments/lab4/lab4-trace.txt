@@ -1,0 +1,44 @@
+reading from file /root/lab4-work/DevOps-Intro/submissions/attachments/lab4/lab4-trace.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+11:26:23.201919 IP6 ::1.54280 > ::1.8080: Flags [S], seq 603843237, win 65476, options [mss 65476,sackOK,TS val 392738586 ecr 0,nop,wscale 7], length 0
+`	ul.(.@....................................#............0.........
+.h..........
+11:26:23.201946 IP6 ::1.8080 > ::1.54280: Flags [S.], seq 3905677142, ack 603843238, win 65464, options [mss 65476,sackOK,TS val 392738586 ecr 392738586,nop,wscale 7], length 0
+`.R..(.@.......................................V#........0.........
+.h...h......
+11:26:23.201968 IP6 ::1.54280 > ::1.8080: Flags [.], ack 1, win 512, options [nop,nop,TS val 392738586 ecr 392738586], length 0
+`	ul. .@....................................#......W.....(.....
+.h...h..
+11:26:23.202182 IP6 ::1.54280 > ::1.8080: Flags [P.], seq 1:175, ack 1, win 512, options [nop,nop,TS val 392738586 ecr 392738586], length 174: HTTP: POST /notes HTTP/1.1
+`	ul...@....................................#......W...........
+.h...h..POST /notes HTTP/1.1
+Host: localhost:8080
+User-Agent: curl/8.5.0
+Accept: */*
+Content-Type: application/json
+Content-Length: 39
+
+{"title":"trace me","body":"in flight"}
+11:26:23.202197 IP6 ::1.8080 > ::1.54280: Flags [.], ack 175, win 511, options [nop,nop,TS val 392738586 ecr 392738586], length 0
+`.R.. .@.......................................W#..T.....(.....
+.h...h..
+11:26:23.203056 IP6 ::1.8080 > ::1.54280: Flags [P.], seq 1:207, ack 175, win 512, options [nop,nop,TS val 392738587 ecr 392738586], length 206: HTTP: HTTP/1.1 201 Created
+`.R....@.......................................W#..T...........
+.h...h..HTTP/1.1 201 Created
+Content-Type: application/json
+Date: Mon, 15 Jun 2026 08:26:23 GMT
+Content-Length: 93
+
+{"id":5,"title":"trace me","body":"in flight","created_at":"2026-06-15T08:26:23.202595101Z"}
+
+11:26:23.203084 IP6 ::1.54280 > ::1.8080: Flags [.], ack 207, win 511, options [nop,nop,TS val 392738587 ecr 392738587], length 0
+`	ul. .@....................................#..T...%.....(.....
+.h...h..
+11:26:23.203444 IP6 ::1.54280 > ::1.8080: Flags [F.], seq 175, ack 207, win 512, options [nop,nop,TS val 392738588 ecr 392738587], length 0
+`	ul. .@....................................#..T...%.....(.....
+.h...h..
+11:26:23.204491 IP6 ::1.8080 > ::1.54280: Flags [F.], seq 207, ack 176, win 512, options [nop,nop,TS val 392738589 ecr 392738588], length 0
+`.R.. .@.......................................%#..U.....(.....
+.h...h..
+11:26:23.204535 IP6 ::1.54280 > ::1.8080: Flags [.], ack 208, win 512, options [nop,nop,TS val 392738589 ecr 392738589], length 0
+`	ul. .@....................................#..U...&.....(.....
+.h...h..
