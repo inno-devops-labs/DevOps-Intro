@@ -202,3 +202,53 @@ To suppress version checks, run Trivy scans with the --skip-version-check flag
 | CVE-2026-39836| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
 | CVE-2026-42499| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
 | CVE-2026-42504| FIX   | Fixed by bumping go version to 1.26.4 (cbf48cd) |
+
+### ZAP Triage
+| Alert ID | Finding Name | Risk Level | Affected URL / Parameter | Disposition | Reasoning / Mitigation Strategy |
+| --- | --- | --- | --- | --- | --- |
+| **90004** | Insufficient Site Isolation Against Spectre Vulnerability | Low (Medium) | `http://host.docker.internal:8080/health` Param: `Cross-Origin-Resource-Policy` | **FIX** | Mitigation involves explicitly setting the `Cross-Origin-Resource-Policy` header to `same-origin` to protect against cross-origin side-channel attacks. |
+| **10021** | X-Content-Type-Options Header Missing | Low (Medium) | `http://host.docker.internal:8080/health` Param: `x-content-type-options` | **FIX** | Enforced by adding the `X-Content-Type-Options: nosniff` header across all application endpoints via middleware to prevent browser MIME-sniffing. |
+| **10049** | Storable and Cacheable Content | Informational (Medium) | `http://host.docker.internal:8080/health` `http://host.docker.internal:8080/` | **FIX** | Caching dynamic API endpoints or health checks can lead to data leaks or stale states. Added explicit `Cache-Control` restrictions. |
+| **10116** | ZAP is Out of Date | Low (High) | `http://host.docker.internal:8080/robots.txt` | **SUPPRESS** | This is an informational alert regarding the pinned scanner container version (`zaproxy:2.16.0` vs upstream `2.17.0`). It does not impact the security posture of the application code itself. |
+
+### Patch
+```patch
+diff --git a/app/handlers.go b/app/handlers.go
+index c534979..c9c1d54 100644
+--- a/app/handlers.go
++++ b/app/handlers.go
+@@ -26,7 +26,23 @@ func NewServer(store *Store) *Server {
+ 	return &Server{store: store, requestsByCode: by}
+ }
+ 
+-func (s *Server) Routes() *http.ServeMux {
++func SecurityHeaders(next http.Handler) http.Handler {
++	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("X-Content-Type-Options", "nosniff")
++
++		w.Header().Set("Cross-Origin-Resource-Policy", "same-origin")
++
++		w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
++		w.Header().Set("Pragma", "no-cache")
++
++		w.Header().Set("X-Frame-Options", "DENY")
++		w.Header().Set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'")
++
++		next.ServeHTTP(w, r)
++	})
++}
++
++func (s *Server) Routes() http.Handler {
+ 	mux := http.NewServeMux()
+ 	mux.HandleFunc("GET /health", s.wrap(s.handleHealth))
+ 	mux.HandleFunc("GET /metrics", s.wrap(s.handleMetrics))
+@@ -34,7 +50,7 @@ func (s *Server) Routes() *http.ServeMux {
+ 	mux.HandleFunc("POST /notes", s.wrap(s.handleCreateNote))
+ 	mux.HandleFunc("GET /notes/{id}", s.wrap(s.handleGetNote))
+ 	mux.HandleFunc("DELETE /notes/{id}", s.wrap(s.handleDeleteNote))
+-	return mux
++	return SecurityHeaders(mux)
+ }
+ 
+ type statusWriter struct {
+```
