@@ -30,13 +30,13 @@ All third-party actions SHA-pinned (`checkout`, `setup-buildx`, `login`, `build-
 
 - **Image URL:** `ghcr.io/markovav-official/devops-intro/quicknotes:v0.1.0`
 - **Package:** https://github.com/markovav-official/DevOps-Intro/pkgs/container/devops-intro%2Fquicknotes
-- **Clean pull:** see [`attachments/lab10/docker-pull.txt`](attachments/lab10/docker-pull.txt)
+- **Clean pull:** see [`attachments/lab10/docker-pull.txt`](attachments/lab10/docker-pull.txt) — public package, digest `sha256:f540e365…`
 
-> After first push the package is **private** by default — set visibility to **Public** in GitHub Packages UI once.
+Package visibility set to **Public** (required for HF Spaces pull without auth).
 
 ### CI release run
 
-- **Green run:** <!-- paste https://github.com/markovav-official/DevOps-Intro/actions/runs/... after `git push origin v0.1.0` -->
+- **Green run:** [release #2 — `v0.1.0`](https://github.com/markovav-official/DevOps-Intro/actions/runs/28899025918)
 
 ### Design questions (a–c)
 

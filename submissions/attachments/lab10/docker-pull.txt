@@ -1,3 +1,12 @@
-# Run after release workflow succeeds (no local image present):
-# docker rmi ghcr.io/markovav-official/devops-intro/quicknotes:v0.1.0 2>/dev/null || true
-# docker pull ghcr.io/markovav-official/devops-intro/quicknotes:v0.1.0
+$ docker rmi ghcr.io/markovav-official/devops-intro/quicknotes:v0.1.0 2>/dev/null || true
+$ docker pull --platform linux/amd64 ghcr.io/markovav-official/devops-intro/quicknotes:v0.1.0
+v0.1.0: Pulling from markovav-official/devops-intro/quicknotes
+2baffef0768b: Pull complete
+561e2a537016: Pull complete
+15d4e2e513f5: Pull complete
+Digest: sha256:f540e365de05543453674d4cdc48e61111e1c2459da295a258ea9b7a63010544
+Status: Downloaded newer image for ghcr.io/markovav-official/devops-intro/quicknotes:v0.1.0
+ghcr.io/markovav-official/devops-intro/quicknotes:v0.1.0
+
+# Image is linux/amd64 only (CI release workflow). On arm64 host use --platform linux/amd64
+# (matches HF Spaces builders).
