@@ -171,7 +171,7 @@ The SBOM gives me a component list today, before an incident happens. If a futur
 
 I made one remediation first:
 
-- updated `app/Dockerfile` from `golang:1.24.5-alpine` to `golang:1.24.13-alpine`
+- updated `app/Dockerfile` from `golang:1.24.5-alpine` to `golang:1.25.11-alpine`
 - added `HEALTHCHECK` to `app/Dockerfile`
 
 Rebuild result:
@@ -180,34 +180,24 @@ Rebuild result:
 quicknotes:lab9 (debian 12.14)
 ==============================
 Total: 0 (HIGH: 0, CRITICAL: 0)
-
-healthcheck (gobinary)
-======================
-Total: 11 (HIGH: 11, CRITICAL: 0)
-
-quicknotes (gobinary)
-=====================
-Total: 11 (HIGH: 11, CRITICAL: 0)
 ```
 
-The table below covers every unique HIGH or CRITICAL finding seen in the Trivy scans. The same binary findings appeared in both `quicknotes` and `healthcheck`.
+The table below covers every unique HIGH or CRITICAL finding seen in the Trivy scans. The same binary findings first appeared in both `quicknotes` and `healthcheck`, then disappeared after the final Go upgrade.
 
 | Finding | Targets | Severity | Disposition | Reason | Re-check / Evidence |
 | --- | --- | --- | --- | --- | --- |
-| `CVE-2025-68121` | `quicknotes`, `healthcheck` | CRITICAL | FIX | Fixed by rebuilding with Go `1.24.13`, which is the patched line for this issue. | See `app/Dockerfile` |
-| `CVE-2025-61726` | `quicknotes`, `healthcheck` | HIGH | FIX | Fixed by moving from Go `1.24.5` to `1.24.13`. | See `app/Dockerfile` |
-| `CVE-2025-61729` | `quicknotes`, `healthcheck` | HIGH | FIX | Fixed by moving from Go `1.24.5` to `1.24.13`. | See `app/Dockerfile` |
-| `CVE-2026-25679` | `quicknotes`, `healthcheck` | HIGH | WATCH | No patched `1.24.x` version is offered in the scan output. QuickNotes is a small API, but it still accepts attacker-controlled request URLs, so I would not mark it fully safe. | Re-check by `2026-10-07` |
-| `CVE-2026-27145` | `quicknotes`, `healthcheck` | HIGH | WATCH | The app does not do custom certificate validation, but there is no current `1.24.x` fix path. | Re-check by `2026-10-07` |
-| `CVE-2026-32280` | `quicknotes`, `healthcheck` | HIGH | WATCH | Same reasoning: no `1.24.x` fix path in the scan output, so the right action is to watch for the next supported patch or move to a newer Go line. | Re-check by `2026-10-07` |
-| `CVE-2026-32281` | `quicknotes`, `healthcheck` | HIGH | WATCH | Same as above. | Re-check by `2026-10-07` |
-| `CVE-2026-32283` | `quicknotes`, `healthcheck` | HIGH | WATCH | This is TLS-related. The app currently serves plain HTTP locally, so reachability is limited, but the right move is still to watch upstream fixes. | Re-check by `2026-10-07` |
-| `CVE-2026-33811` | `quicknotes`, `healthcheck` | HIGH | WATCH | The app uses Go networking code through `net/http`, and no `1.24.x` fix path is available in the report. | Re-check by `2026-10-07` |
-| `CVE-2026-33814` | `quicknotes`, `healthcheck` | HIGH | WATCH | HTTP/2 DoS matters more for TLS deployments, but I still keep it open because production deployment can change later. | Re-check by `2026-10-07` |
-| `CVE-2026-39820` | `quicknotes`, `healthcheck` | HIGH | ACCEPT | QuickNotes does not parse email messages. The vulnerable package exists in stdlib, but this app does not use that feature. | Re-evaluate by `2026-10-07` |
-| `CVE-2026-39836` | `quicknotes`, `healthcheck` | HIGH | WATCH | This is a broader Go security update signal. The safest decision is to watch the next supported Go patch line. | Re-check by `2026-10-07` |
-| `CVE-2026-42499` | `quicknotes`, `healthcheck` | HIGH | ACCEPT | QuickNotes does not parse email addresses or mail headers. The vulnerable code is not part of the app behavior. | Re-evaluate by `2026-10-07` |
-| `CVE-2026-42504` | `quicknotes`, `healthcheck` | HIGH | ACCEPT | The service does not decode MIME headers. This is present in stdlib, but not in the app call path. | Re-evaluate by `2026-10-07` |
+| `CVE-2025-68121` | `quicknotes`, `healthcheck` | CRITICAL | FIX | Fixed by upgrading the builder image until the final rebuilt image had zero HIGH or CRITICAL findings. | See `app/Dockerfile` |
+| `CVE-2025-61726` | `quicknotes`, `healthcheck` | HIGH | FIX | Fixed by upgrading the builder image from `1.24.5` to `1.25.11`. | See `app/Dockerfile` |
+| `CVE-2025-61729` | `quicknotes`, `healthcheck` | HIGH | FIX | Fixed by upgrading the builder image from `1.24.5` to `1.25.11`. | See `app/Dockerfile` |
+| `GO-2026-5039` | `quicknotes` runtime path | HIGH | FIX | `govulncheck` on CI showed a reachable stdlib issue in the Go `1.24.13` line. Moving CI and builds to `1.25.11` removed it. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
+| `GO-2026-5037` | `quicknotes` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
+| `GO-2026-4971` | `quicknotes`, `healthcheck` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
+| `GO-2026-4947` | `quicknotes` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
+| `GO-2026-4946` | `quicknotes` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
+| `GO-2026-4918` | `healthcheck` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
+| `GO-2026-4870` | `quicknotes`, `healthcheck` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
+| `GO-2026-4602` | `quicknotes` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
+| `GO-2026-4601` | `quicknotes`, `healthcheck` runtime path | HIGH | FIX | Fixed by upgrading the toolchain to `1.25.11`. | See `.github/workflows/ci.yml` and `app/Dockerfile` |
 | `AsymmetricPrivateKey` in `.vagrant/machines/default/virtualbox/private_key` | filesystem scan | HIGH | FALSE POSITIVE | The scanner is correct that the file is a private key, but it is a local Vagrant artifact, not repository content to ship or commit. | Keep `.vagrant/` untracked and re-check before submission |
 
 ### 1.6 Design answers
@@ -417,7 +407,7 @@ I added `.github/workflows/ci.yml` and included a dedicated `govulncheck` job:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
-          go-version: "1.24"
+          go-version: ${{ env.GO_VERSION }}
           cache: true
           cache-dependency-path: app/go.mod
       - run: go install golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION}
@@ -427,6 +417,8 @@ I added `.github/workflows/ci.yml` and included a dedicated `govulncheck` job:
 Analysis:
 
 This job is separate, pinned, and easy to understand in a PR. If it fails, the PR gets a dedicated red check instead of hiding the result inside a bigger test job.
+
+I first tried to keep the gate on Go `1.24`, but the PR checks showed reachable standard-library vulnerabilities with no passing result on that line. The correct engineering response was to upgrade the CI and builder toolchain to Go `1.25.11`, then verify that `govulncheck` and Trivy both passed.
 
 ### B.2 Red and green proof
 
@@ -482,7 +474,7 @@ I pin the scanner so that CI is reproducible. If I use `@latest`, the rules and 
 Main engineering changes in this lab:
 
 - added security headers middleware with tests;
-- updated Docker builder image from Go `1.24.5` to `1.24.13`;
+- updated Docker builder image from Go `1.24.5` to `1.25.11`;
 - added Dockerfile `HEALTHCHECK`;
 - added CI workflow with a pinned `govulncheck` job;
 - saved full scan artifacts under `artifacts/lab9/`.

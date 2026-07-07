@@ -19,6 +19,7 @@ permissions:
 
 env:
   GOFLAGS: -buildvcs=false
+  GO_VERSION: "1.25.11"
   GOLANGCI_LINT_VERSION: v2.5.0
   GOVULNCHECK_VERSION: v1.1.4
 
@@ -33,7 +34,7 @@ jobs:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
-          go-version: "1.24"
+          go-version: ${{ env.GO_VERSION }}
           cache: true
           cache-dependency-path: app/go.mod
       - run: go vet ./...
@@ -48,7 +49,7 @@ jobs:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
-          go-version: "1.24"
+          go-version: ${{ env.GO_VERSION }}
           cache: true
           cache-dependency-path: app/go.mod
       - run: go test -race -count=1 ./...
@@ -76,7 +77,7 @@ jobs:
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         if: steps.lint-scope.outputs.skip != 'true'
         with:
-          go-version: "1.24"
+          go-version: ${{ env.GO_VERSION }}
           cache: true
           cache-dependency-path: app/go.mod
       - id: golangci-lint-binary
@@ -84,7 +85,7 @@ jobs:
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
         with:
           path: ~/go/bin/golangci-lint
-          key: ${{ runner.os }}-go-1.24-golangci-lint-${{ env.GOLANGCI_LINT_VERSION }}
+          key: ${{ runner.os }}-go-${{ env.GO_VERSION }}-golangci-lint-${{ env.GOLANGCI_LINT_VERSION }}
       - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae
         if: steps.lint-scope.outputs.skip != 'true'
         with:
@@ -109,7 +110,7 @@ jobs:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10
       - uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c
         with:
-          go-version: "1.24"
+          go-version: ${{ env.GO_VERSION }}
           cache: true
           cache-dependency-path: app/go.mod
       - run: go install golang.org/x/vuln/cmd/govulncheck@${GOVULNCHECK_VERSION}
