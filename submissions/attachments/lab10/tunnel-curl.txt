@@ -1,0 +1,2 @@
+# Paste curl from phone/cellular or second machine:
+# curl -fsS https://<random>.trycloudflare.com/health

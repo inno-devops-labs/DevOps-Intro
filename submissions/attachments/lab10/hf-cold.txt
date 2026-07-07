@@ -1,0 +1,2 @@
+# Paste 3 cold runs (35+ min idle between sessions):
+# ./cloud/scripts/measure-cold.sh https://<your-user>-quicknotes-lab10.hf.space

@@ -1,0 +1,2 @@
+# Paste output of:
+# curl -v https://<your-user>-quicknotes-lab10.hf.space/health

@@ -1,0 +1,2 @@
+# Paste output of:
+# ./cloud/scripts/measure-warm.sh https://<your-user>-quicknotes-lab10.hf.space
