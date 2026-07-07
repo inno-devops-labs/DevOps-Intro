@@ -1,0 +1,78 @@
+name: nix-repro
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      break_repro:
+        description: "Set to true to perturb one digest and demonstrate the compare gate."
+        required: false
+        default: "false"
+
+permissions:
+  contents: read
+
+jobs:
+  build-a:
+    name: build A
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: cachix/install-nix-action@b97f05dcb019ddea06450a50ef6203d2fdc19fee
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - name: Build deterministic OCI image
+        run: nix build .#docker
+      - name: Compute digest
+        id: digest
+        shell: bash
+        run: |
+          digest="$(sha256sum result | awk '{print $1}')"
+          digest="broken-${digest}"
+          echo "digest=${digest}" >> "$GITHUB_OUTPUT"
+          echo "build-a digest: ${digest}"
+
+  build-b:
+    name: build B
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: cachix/install-nix-action@b97f05dcb019ddea06450a50ef6203d2fdc19fee
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - name: Build deterministic OCI image
+        run: nix build .#docker
+      - name: Compute digest
+        id: digest
+        shell: bash
+        run: |
+          digest="$(sha256sum result | awk '{print $1}')"
+          echo "digest=${digest}" >> "$GITHUB_OUTPUT"
+          echo "build-b digest: ${digest}"
+
+  compare:
+    name: compare digests
+    runs-on: ubuntu-24.04
+    needs:
+      - build-a
+      - build-b
+    steps:
+      - name: Assert reproducibility
+        shell: bash
+        run: |
+          a="${{ needs.build-a.outputs.digest }}"
+          b="${{ needs.build-b.outputs.digest }}"
+          echo "build-a digest: ${a}"
+          echo "build-b digest: ${b}"
+          test -n "$a"
+          test -n "$b"
+          test "$a" = "$b"
