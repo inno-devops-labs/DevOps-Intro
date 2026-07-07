@@ -1,0 +1,145 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:1b679e1b-d46b-4dc0-adcf-33af94421951",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-07-07T10:55:10+00:00",
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "manufacturer": {
+            "name": "Aqua Security Software Ltd."
+          },
+          "group": "aquasecurity",
+          "name": "trivy",
+          "version": "0.70.0"
+        }
+      ]
+    },
+    "component": {
+      "bom-ref": "2a76c971-5edb-4106-8e24-cfbe6eb97f1d",
+      "type": "container",
+      "name": "quicknotes:lab6",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:a16cf4585eaa06c53a1a7beeaa7eba11d49ceae53b4133fd2304b5c0d7b4cadc"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:a4055389743d6624ef50eadfc09b2a908106197d7bd35fad6ec0aedcaf148671"
+        },
+        {
+          "name": "aquasecurity:trivy:ImageID",
+          "value": "sha256:2fa935265bf4c1eee1c004502862196fbf4c428222ad58cefc836f55a794461d"
+        },
+        {
+          "name": "aquasecurity:trivy:Reference",
+          "value": "quicknotes:lab6"
+        },
+        {
+          "name": "aquasecurity:trivy:RepoTag",
+          "value": "quicknotes:lab6"
+        },
+        {
+          "name": "aquasecurity:trivy:SchemaVersion",
+          "value": "2"
+        },
+        {
+          "name": "aquasecurity:trivy:Size",
+          "value": "5938176"
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "b512f86a-64b4-4be5-9aa9-42ea68161ff5",
+      "type": "application",
+      "name": "app/qn-bin",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:Class",
+          "value": "lang-pkgs"
+        },
+        {
+          "name": "aquasecurity:trivy:Type",
+          "value": "gobinary"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:golang/quicknotes",
+      "type": "library",
+      "name": "quicknotes",
+      "purl": "pkg:golang/quicknotes",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:LayerDiffID",
+          "value": "sha256:a16cf4585eaa06c53a1a7beeaa7eba11d49ceae53b4133fd2304b5c0d7b4cadc"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "quicknotes"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "gobinary"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:golang/stdlib@v1.24.5",
+      "type": "library",
+      "name": "stdlib",
+      "version": "v1.24.5",
+      "purl": "pkg:golang/stdlib@v1.24.5",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:LayerDiffID",
+          "value": "sha256:a16cf4585eaa06c53a1a7beeaa7eba11d49ceae53b4133fd2304b5c0d7b4cadc"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "stdlib@v1.24.5"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "gobinary"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "2a76c971-5edb-4106-8e24-cfbe6eb97f1d",
+      "dependsOn": [
+        "b512f86a-64b4-4be5-9aa9-42ea68161ff5"
+      ]
+    },
+    {
+      "ref": "b512f86a-64b4-4be5-9aa9-42ea68161ff5",
+      "dependsOn": [
+        "pkg:golang/quicknotes"
+      ]
+    },
+    {
+      "ref": "pkg:golang/quicknotes",
+      "dependsOn": [
+        "pkg:golang/stdlib@v1.24.5"
+      ]
+    },
+    {
+      "ref": "pkg:golang/stdlib@v1.24.5",
+      "dependsOn": []
+    }
+  ],
+  "vulnerabilities": []
+}
