@@ -120,3 +120,11 @@ Task 1 (CI to ghcr.io) is complete. The workflow successfully builds and pushes 
 Task 2 (HF Spaces deployment) is complete. The Space serves QuickNotes at a public URL with measured warm and cold latency.
 
 Bonus Task (Cloudflare Tunnel) was not attempted due to time constraints.
+
+---
+
+## References
+
+- Release workflow: `.github/workflows/release.yml`
+- Registry URL: `ghcr.io/venerabikbulatova/devops-intro/quicknotes`
+- HF Space URL: `https://venerabikbulatova-quicknotes.hf.space`
