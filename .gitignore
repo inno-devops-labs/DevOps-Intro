@@ -1,0 +1,5 @@
+.vagrant/
+Vagrantfile
+*.bak
+quicknotes
+playbook-*.txt
