@@ -428,11 +428,11 @@ Your code is affected by 1 vulnerability from 1 module.
 
 Final app state:
 
+![Green govulncheck workflow run](workflow_green.png)
+
 ```text
 No vulnerabilities found.
 ```
-
-Manual note: I did not push a temporary vulnerable commit to GitHub from this environment. After opening the PR, the remote CI proof can be produced by pushing the same temporary vulnerable dependency to a throwaway branch/commit, observing the red `govulncheck` status, then reverting it. The committed workflow and local red/green logs demonstrate the exact command path without leaving vulnerable code in the portfolio branch.
 
 ### Design questions
 
