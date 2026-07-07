@@ -1,0 +1,16 @@
+=== Symbol Results ===
+
+Vulnerability #1: GO-2022-1059
+    Denial of service via crafted Accept-Language header in
+    golang.org/x/text/language
+  More info: https://pkg.go.dev/vuln/GO-2022-1059
+  Module: golang.org/x/text
+    Found in: golang.org/x/text@v0.3.7
+    Fixed in: golang.org/x/text@v0.3.8
+    Example traces found:
+      #1: vuln_demo.go:6:37: quicknotes.vulnerableAcceptLanguage calls language.ParseAcceptLanguage
+
+Your code is affected by 1 vulnerability from 1 module.
+This scan found no other vulnerabilities in packages you import or modules you
+require.
+Use '-show verbose' for more details.

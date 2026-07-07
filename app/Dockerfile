@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
 
 # ─── builder stage ───
-# Official Go image, pinned to a 1.24 patch (not :latest).
-FROM golang:1.24.5 AS builder
+# Official Go image, pinned to a patched release (not :latest).
+FROM golang:1.26.4 AS builder
 WORKDIR /src
 
 # Copy dependency manifest first so the module layer is cached independently
@@ -40,5 +40,6 @@ ENV ADDR=":8080" \
     SEED_PATH="/seed.json"
 
 EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD ["/healthcheck"]
 USER nonroot
 ENTRYPOINT ["/quicknotes"]

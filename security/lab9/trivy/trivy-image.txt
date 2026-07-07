@@ -1,0 +1,17 @@
+2026-07-07T11:19:35Z	INFO	[vulndb] Need to update DB
+2026-07-07T11:19:35Z	INFO	[vulndb] Downloading vulnerability DB...
+2026-07-07T11:19:35Z	INFO	[vulndb] Downloading artifact...	repo="mirror.gcr.io/aquasec/trivy-db:2"
+2026-07-07T11:19:48Z	INFO	[vulndb] Artifact successfully downloaded	repo="mirror.gcr.io/aquasec/trivy-db:2"
+2026-07-07T11:19:48Z	INFO	[vuln] Vulnerability scanning is enabled
+2026-07-07T11:19:48Z	INFO	[secret] Secret scanning is enabled
+2026-07-07T11:19:48Z	INFO	[secret] If your scanning is slow, please try '--scanners vuln' to disable secret scanning
+2026-07-07T11:19:48Z	INFO	[secret] Please see also https://aquasecurity.github.io/trivy/v0.59/docs/scanner/secret#recommendation for faster secret detection
+2026-07-07T11:19:48Z	INFO	Detected OS	family="debian" version="13.5"
+2026-07-07T11:19:48Z	INFO	[debian] Detecting vulnerabilities...	os_version="13" pkg_num=5
+2026-07-07T11:19:48Z	INFO	Number of language-specific files	num=2
+2026-07-07T11:19:48Z	INFO	[gobinary] Detecting vulnerabilities...
+
+quicknotes:lab6 (debian 13.5)
+=============================
+Total: 0 (HIGH: 0, CRITICAL: 0)
+

@@ -131,3 +131,37 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	}
 }
 
+func TestSecurityHeaders_AppliedToAllRoutes(t *testing.T) {
+	srv := newTestServer(t)
+	routes := []struct {
+		method string
+		path   string
+		body   any
+	}{
+		{method: http.MethodGet, path: "/health"},
+		{method: http.MethodGet, path: "/metrics"},
+		{method: http.MethodGet, path: "/notes"},
+		{method: http.MethodPost, path: "/notes", body: map[string]string{"title": "secured"}},
+	}
+
+	for _, route := range routes {
+		t.Run(route.method+" "+route.path, func(t *testing.T) {
+			rec := do(t, srv, route.method, route.path, route.body)
+			headers := map[string]string{
+				"Cache-Control":                "no-store",
+				"Content-Security-Policy":      "default-src 'none'",
+				"Cross-Origin-Embedder-Policy": "require-corp",
+				"Cross-Origin-Opener-Policy":   "same-origin",
+				"Cross-Origin-Resource-Policy": "same-origin",
+				"Referrer-Policy":              "no-referrer",
+				"X-Content-Type-Options":       "nosniff",
+				"X-Frame-Options":              "DENY",
+			}
+			for name, want := range headers {
+				if got := rec.Header().Get(name); got != want {
+					t.Fatalf("%s = %q, want %q", name, got, want)
+				}
+			}
+		})
+	}
+}

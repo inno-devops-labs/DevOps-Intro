@@ -1,0 +1,233 @@
+2026-07-07T11:25:09Z	INFO	[misconfig] Misconfiguration scanning is enabled
+2026-07-07T11:25:09Z	INFO	No downloadable policies were loaded as --skip-check-update is enabled
+2026-07-07T11:25:10Z	INFO	Detected config files	num=1
+
+app/Dockerfile (dockerfile)
+===========================
+Tests: 28 (SUCCESSES: 28, FAILURES: 0)
+Failures: 0 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0)
+
+PASS: AVD-DS-0001 (MEDIUM): No issues found
+════════════════════════════════════════
+When using a 'FROM' statement you should use a specific tag to avoid uncontrolled behavior when the image is updated.
+
+See https://avd.aquasec.com/misconfig/ds001
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0002 (HIGH): No issues found
+════════════════════════════════════════
+Running containers with 'root' user can lead to a container escape situation. It is a best practice to run containers as non-root users, which can be done by adding a 'USER' statement to the Dockerfile.
+
+See https://avd.aquasec.com/misconfig/ds002
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0004 (MEDIUM): No issues found
+════════════════════════════════════════
+Exposing port 22 might allow users to SSH into the container.
+
+See https://avd.aquasec.com/misconfig/ds004
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0005 (LOW): No issues found
+════════════════════════════════════════
+You should use COPY instead of ADD unless you want to extract a tar file. Note that an ADD command will extract a tar file, which adds the risk of Zip-based vulnerabilities. Accordingly, it is advised to use a COPY command, which does not extract tar files.
+
+See https://avd.aquasec.com/misconfig/ds005
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0006 (CRITICAL): No issues found
+════════════════════════════════════════
+COPY '--from' should not mention the current FROM alias, since it is impossible to copy from itself.
+
+See https://avd.aquasec.com/misconfig/ds006
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0007 (CRITICAL): No issues found
+════════════════════════════════════════
+There can only be one ENTRYPOINT instruction in a Dockerfile. Only the last ENTRYPOINT instruction in the Dockerfile will have an effect.
+
+See https://avd.aquasec.com/misconfig/ds007
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0008 (CRITICAL): No issues found
+════════════════════════════════════════
+UNIX ports outside the range 0-65535 are exposed.
+
+See https://avd.aquasec.com/misconfig/ds008
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0009 (HIGH): No issues found
+════════════════════════════════════════
+For clarity and reliability, you should always use absolute paths for your WORKDIR.
+
+See https://avd.aquasec.com/misconfig/ds009
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0010 (CRITICAL): No issues found
+════════════════════════════════════════
+Avoid using 'RUN' with 'sudo' commands, as it can lead to unpredictable behavior.
+
+See https://avd.aquasec.com/misconfig/ds010
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0011 (CRITICAL): No issues found
+════════════════════════════════════════
+When a COPY command has more than two arguments, the last one should end with a slash.
+
+See https://avd.aquasec.com/misconfig/ds011
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0012 (CRITICAL): No issues found
+════════════════════════════════════════
+Different FROMs can't have the same alias defined.
+
+See https://avd.aquasec.com/misconfig/ds012
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0013 (MEDIUM): No issues found
+════════════════════════════════════════
+Use WORKDIR instead of proliferating instructions like 'RUN cd … && do-something', which are hard to read, troubleshoot, and maintain.
+
+See https://avd.aquasec.com/misconfig/ds013
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0014 (LOW): No issues found
+════════════════════════════════════════
+Avoid using both 'wget' and 'curl' since these tools have the same effect.
+
+See https://avd.aquasec.com/misconfig/ds014
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0015 (HIGH): No issues found
+════════════════════════════════════════
+You should use 'yum clean all' after using a 'yum install' command to clean package cached data and reduce image size.
+
+See https://avd.aquasec.com/misconfig/ds015
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0016 (HIGH): No issues found
+════════════════════════════════════════
+There can only be one CMD instruction in a Dockerfile. If you list more than one CMD then only the last CMD will take effect.
+
+See https://avd.aquasec.com/misconfig/ds016
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0017 (HIGH): No issues found
+════════════════════════════════════════
+The instruction 'RUN <package-manager> update' should always be followed by '<package-manager> install' in the same RUN statement.
+
+See https://avd.aquasec.com/misconfig/ds017
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0019 (HIGH): No issues found
+════════════════════════════════════════
+Cached package data should be cleaned after installation to reduce image size.
+
+See https://avd.aquasec.com/misconfig/ds019
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0020 (HIGH): No issues found
+════════════════════════════════════════
+The layer and image size should be reduced by deleting unneeded caches after running zypper.
+
+See https://avd.aquasec.com/misconfig/ds020
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0021 (HIGH): No issues found
+════════════════════════════════════════
+'apt-get' calls should use the flag '-y' to avoid manual user input.
+
+See https://avd.aquasec.com/misconfig/ds021
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0022 (HIGH): No issues found
+════════════════════════════════════════
+MAINTAINER has been deprecated since Docker 1.13.0.
+
+See https://avd.aquasec.com/misconfig/ds022
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0023 (MEDIUM): No issues found
+════════════════════════════════════════
+Providing more than one HEALTHCHECK instruction per stage is confusing and error-prone.
+
+See https://avd.aquasec.com/misconfig/ds023
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0024 (HIGH): No issues found
+════════════════════════════════════════
+'apt-get dist-upgrade' upgrades a major version so it doesn't make more sense in Dockerfile.
+
+See https://avd.aquasec.com/misconfig/ds024
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0025 (HIGH): No issues found
+════════════════════════════════════════
+You should use 'apk add' with '--no-cache' to clean package cached data and reduce image size.
+
+See https://avd.aquasec.com/misconfig/ds025
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0026 (LOW): No issues found
+════════════════════════════════════════
+You should add HEALTHCHECK instruction in your docker container images to perform the health check on running containers.
+
+See https://avd.aquasec.com/misconfig/ds026
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0027 (HIGH): No issues found
+════════════════════════════════════════
+Cached package data should be cleaned after installation to reduce image size.
+
+See https://avd.aquasec.com/misconfig/ds027
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0029 (HIGH): No issues found
+════════════════════════════════════════
+'apt-get' install should use '--no-install-recommends' to minimize image size.
+
+See https://avd.aquasec.com/misconfig/ds029
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0030 (HIGH): No issues found
+════════════════════════════════════════
+WORKDIR should not be mounted on system directories to avoid container breakouts
+
+See https://avd.aquasec.com/misconfig/ds030
+────────────────────────────────────────
+
+
+PASS: AVD-DS-0031 (CRITICAL): No issues found
+════════════════════════════════════════
+Passing secrets via `build-args` or envs or copying secret files can leak them out
+
+See https://avd.aquasec.com/misconfig/ds031
+────────────────────────────────────────
+
+

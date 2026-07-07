@@ -1,0 +1,4 @@
+REPOSITORY   TAG           IMAGE ID       SIZE
+quicknotes   lab6          7563fb5d9ff3   22.1MB
+quicknotes   lab10         fe7a68b4e8db   21.6MB
+quicknotes   lab9-before   3db41fc23854   21.6MB
