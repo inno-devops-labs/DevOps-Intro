@@ -181,4 +181,3 @@ func TestSecurityHeaders_PresentOnNotFoundResponse(t *testing.T) {
 		t.Fatalf("X-Frame-Options = %q", got)
 	}
 }
-
