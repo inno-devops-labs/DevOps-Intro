@@ -178,3 +178,116 @@ An SBOM records every software component included in an application. If a new vu
 ```
 
 The generated SBOM contains **6 components**: four Debian packages, the **QuickNotes** application, and the **Go standard library**
+
+## Task 2: OWASP ZAP Baseline + Fix at Least One Finding
+
+### 2.1 Run ZAP baseline
+
+ZAP was run in **baseline (passive) mode** using the pinned image
+`ghcr.io/zaproxy/zaproxy:2.16.1`. Since QuickNotes has no `/` endpoint, the scan targeted `/notes`, which returns a `200 OK` response.
+
+```bash
+# QuickNotes running on :8080
+docker run --rm -v "$PWD/submissions/lab9:/zap/wrk:rw" \
+  ghcr.io/zaproxy/zaproxy:2.16.1 \
+  zap-baseline.py -t http://host.docker.internal:8080/notes \
+  -r zap-baseline-before.html -J zap-baseline-before.json
+```
+
+Reports were saved as:
+
+- `zap-baseline-before.html`
+- `zap-baseline-before.json`
+- `zap-baseline-after.html`
+- `zap-baseline-after.json`
+
+### 2.2 Triage
+
+| ID | Finding | Risk | URL | Disposition | Reason |
+|----|---------|------|-----|-------------|--------|
+| 10021 | X-Content-Type-Options Header Missing | Low | `/notes` | **FIX** | Added `X-Content-Type-Options: nosniff` in middleware. |
+| 90004 | Insufficient Site Isolation Against Spectre | Low | `/notes` | **ACCEPT** | QuickNotes serves JSON, not HTML. Re-evaluate if a web UI is added. |
+| 10049 | Storable and Cacheable Content | Info | `/` | **ACCEPT** | Responses contain public, non-sensitive data. Re-evaluate if private data is served. |
+| 10116 | ZAP is Out of Date | Low | `/` | **FALSE POSITIVE** | Reports the scanner version, not an application issue. |
+
+The CSP, anti-clickjacking, and Permissions-Policy checks passed because they apply only to HTML responses, while QuickNotes serves JSON.
+
+### 2.3 Fix: Security Headers Middleware
+
+A `securityHeaders` middleware wraps the router so all routes automatically include the required security headers.
+
+```go
+func (s *Server) Routes() http.Handler {
+ mux := http.NewServeMux()
+ // ... routes ...
+ return securityHeaders(mux)
+}
+
+func securityHeaders(next http.Handler) http.Handler {
+ return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+  h := w.Header()
+  h.Set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'")
+  h.Set("X-Content-Type-Options", "nosniff")
+  h.Set("X-Frame-Options", "DENY")
+  h.Set("Referrer-Policy", "no-referrer")
+  next.ServeHTTP(w, r)
+ })
+}
+```
+
+The following unit test verifies that every route receives the security headers. It fails if the middleware is removed.
+
+```go
+func TestSecurityHeaders_SetOnEveryRoute(t *testing.T) {
+ srv := newTestServer(t)
+
+ for _, target := range []string{"/health", "/notes", "/metrics"} {
+  rec := do(t, srv, http.MethodGet, target, nil)
+
+  if got := rec.Header().Get("Content-Security-Policy"); got != "default-src 'none'; frame-ancestors 'none'" {
+   t.Errorf("%s: Content-Security-Policy = %q", target, got)
+  }
+
+  if got := rec.Header().Get("X-Content-Type-Options"); got != "nosniff" {
+   t.Errorf("%s: X-Content-Type-Options = %q, want nosniff", target, got)
+  }
+ }
+}
+```
+
+```text
+ok  quicknotes  0.8s
+```
+
+### 2.4 Before / After
+
+After rebuilding the image and rerunning ZAP, the missing `X-Content-Type-Options` finding no longer appeared.
+
+```text
+BEFORE: WARN-NEW: X-Content-Type-Options Header Missing [10021] x 1 (PASS: 63)
+AFTER:  PASS:     X-Content-Type-Options Header Missing [10021]     (PASS: 64)
+```
+
+`curl -i http://localhost:8080/notes` after the fix:
+
+```text
+HTTP/1.1 200 OK
+Content-Security-Policy: default-src 'none'; frame-ancestors 'none'
+Referrer-Policy: no-referrer
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+```
+
+### 2.5 Design questions
+
+**e) Why use middleware instead of setting headers in every handler?**
+
+Middleware applies the headers in one place, ensuring every route is protected. This avoids duplicated code and ensures new routes automatically receive the same security headers.
+
+**f) What does `Content-Security-Policy: default-src 'none'` do, and why is it appropriate here?**
+
+It blocks loading scripts, styles, images, fonts, and other resources. This would break a normal website, but QuickNotes is a JSON API, so the policy has no negative effect.
+
+**g) What is the cost of accepting informational findings without reviewing them?**
+
+Accepting findings without review creates alert fatigue and can hide real security issues. Each accepted finding should have a documented reason so future scans remain useful.
