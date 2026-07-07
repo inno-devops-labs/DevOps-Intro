@@ -1,0 +1,6 @@
+app/Dockerfile (dockerfile)
+===========================
+Tests: 28 (SUCCESSES: 28, FAILURES: 0)
+Failures: 0 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 0, CRITICAL: 0)
+
+(No misconfigurations. AVD-DS-0026 cleared by adding HEALTHCHECK.)
