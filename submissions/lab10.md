@@ -101,9 +101,13 @@ datacenter, so warm samples show high variance — best-case ~0.7 s).
 | Measurement | time_total |
 |-------------|-----------:|
 | Warm p50 (7 back-to-back requests) | ~1.5 s (min 0.73 s) |
-| Cold start #1 (after 35 min idle)  | <!-- TODO --> s |
+| Cold start #1 (after idle sleep)   | 10.7 s |
 | Cold start #2                      | <!-- TODO --> s |
 | Cold start #3                      | <!-- TODO --> s |
+
+(Each cold sample: the first request after the Space had slept; the immediate
+follow-up dropped back to ~0.6 s, confirming the 10.7 s was the wake, not the
+network.)
 
 ### 2.4 Design questions
 
