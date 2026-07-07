@@ -61,8 +61,20 @@ The steps below require GitHub access, so they must be done after pushing this b
 
 ```bash
 git push -u origin feature/lab10
-git tag -a -s v0.1.0 -m "Lab 10 release"
 git push origin v0.1.0
+```
+
+The signed tag `v0.1.0` is already created locally on the Lab 10 commit.
+
+```text
+$ git tag -v v0.1.0
+Good "git" signature for limefox413@gmail.com with ED25519 key SHA256:uILBmFloXYwLzB7ZEV76znUjoz28KKEF7OZWNJr7Jio
+object f24f45f956946372344eb662976494804b5e827e
+type commit
+tag v0.1.0
+tagger Tatyana Shmykova <limefox413@gmail.com> 1783421828 +0300
+
+Lab 10 release
 ```
 
 After the workflow finishes:
