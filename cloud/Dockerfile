@@ -1,0 +1,1 @@
+FROM ghcr.io/sparrow12345/devops-intro/quicknotes:0.1.0
