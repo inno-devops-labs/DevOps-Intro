@@ -26,7 +26,7 @@ func NewServer(store *Store) *Server {
 	return &Server{store: store, requestsByCode: by}
 }
 
-func (s *Server) Routes() *http.ServeMux {
+func (s *Server) Routes() http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", s.wrap(s.handleHealth))
 	mux.HandleFunc("GET /metrics", s.wrap(s.handleMetrics))
@@ -34,7 +34,8 @@ func (s *Server) Routes() *http.ServeMux {
 	mux.HandleFunc("POST /notes", s.wrap(s.handleCreateNote))
 	mux.HandleFunc("GET /notes/{id}", s.wrap(s.handleGetNote))
 	mux.HandleFunc("DELETE /notes/{id}", s.wrap(s.handleDeleteNote))
-	return mux
+	// Wrap the whole mux so security headers apply to every route (Lab 9).
+	return securityHeaders(mux)
 }
 
 type statusWriter struct {
