@@ -1,0 +1,47 @@
+name: Release to ghcr.io
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    name: Build and push to ghcr.io
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.2.2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f4d217afbe3c75edeaa7e52d3bb0fe33bb583ce7  # v3.9.0
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@0745a2d4f1316d30c0fc52c7b9d15fea66ae7cd0  # v4.1.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@8e54479c7c3cf07102c06b855df56ce36bd93261  # v5.7.0
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/quicknotes
+          tags: |
+            type=semver,pattern={{version}}
+            type=raw,value=latest
+
+      - name: Build and push
+        uses: docker/build-push-action@ca052bb54ab0790a636c9b5f226502c73d547a25  # v6.15.0
+        with:
+          context: ./app
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
