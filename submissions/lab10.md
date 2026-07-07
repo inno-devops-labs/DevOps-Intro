@@ -265,13 +265,71 @@ Space URL:
 https://huggingface.co/spaces/lime413/quicknotes
 
 curl -v /health output:
-<PASTE_CURL_V_OUTPUT_HERE>
+* Host lime413-quicknotes.hf.space:443 was resolved.
+* IPv6: (none)
+* IPv4: 52.210.144.142, 54.72.212.99, 52.48.128.222
+*   Trying 52.210.144.142:443...
+* Connected to lime413-quicknotes.hf.space (52.210.144.142) port 443
+* ALPN: curl offers h2,http/1.1
+* (304) (OUT), TLS handshake, Client hello (1):
+*  CAfile: /etc/ssl/cert.pem
+*  CApath: none
+* (304) (IN), TLS handshake, Server hello (2):
+* TLSv1.2 (IN), TLS handshake, Certificate (11):
+* TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+* TLSv1.2 (IN), TLS handshake, Server finished (14):
+* TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+* TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.2 (OUT), TLS handshake, Finished (20):
+* TLSv1.2 (IN), TLS change cipher, Change cipher spec (1):
+* TLSv1.2 (IN), TLS handshake, Finished (20):
+* SSL connection using TLSv1.2 / ECDHE-RSA-AES128-GCM-SHA256 / [blank] / UNDEF
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: CN=hf.space
+*  start date: Oct 27 00:00:00 2025 GMT
+*  expire date: Nov 25 23:59:59 2026 GMT
+*  subjectAltName: host "lime413-quicknotes.hf.space" matched cert's "*.hf.space"
+*  issuer: C=US; O=Amazon; CN=Amazon RSA 2048 M01
+*  SSL certificate verify ok.
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://lime413-quicknotes.hf.space/health
+* [HTTP/2] [1] [:method: GET]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: lime413-quicknotes.hf.space]
+* [HTTP/2] [1] [:path: /health]
+* [HTTP/2] [1] [user-agent: curl/8.7.1]
+* [HTTP/2] [1] [accept: */*]
+> GET /health HTTP/2
+> Host: lime413-quicknotes.hf.space
+> User-Agent: curl/8.7.1
+> Accept: */*
+>
+* Request completely sent off
+< HTTP/2 200
+< date: Tue, 07 Jul 2026 11:53:16 GMT
+< content-type: application/json
+< content-length: 26
+< x-proxied-host: http://10.111.85.248
+< x-proxied-replica: vefsx90g-rz4sj
+< x-proxied-path: /health
+< link: <https://huggingface.co/spaces/lime413/quicknotes>;rel="canonical"
+< x-request-id: a8J4ES
+< vary: origin, access-control-request-method, access-control-request-headers
+< access-control-expose-headers: *
+<
+{"notes":4,"status":"ok"}
+* Connection #0 to host lime413-quicknotes.hf.space left intact
 
 Warm latency samples:
-<PASTE_5_WARM_SAMPLES_HERE>
+0.694861
+1.131063
+0.544091
+0.411258
+0.411120
 
 Warm p50:
-<PASTE_WARM_P50_HERE>
+0.544091 seconds
 
 Cold latency sample 1:
 <PASTE_COLD_SAMPLE_1_HERE>
@@ -282,6 +340,15 @@ Cold latency sample 2:
 Cold latency sample 3:
 <PASTE_COLD_SAMPLE_3_HERE>
 ```
+
+### Visual evidence
+
+Screenshots saved in `submissions/`:
+- `workflow_run.png` shows the successful GitHub Actions release run
+- `create_space_1.png` and `create_space_2.png` show the Hugging Face Space setup
+- `build_app.png` shows the Hugging Face build/deploy stage
+- `running_space.png` shows the Space in the `Running` state
+- `start_app.png` shows the Space app page; the root path returns `404 page not found`, which is expected because QuickNotes is an API and does not serve `/`
 
 ### Analysis
 
