@@ -1,2 +1,10 @@
-# Paste output of:
-# curl -v https://<your-user>-quicknotes-lab10.hf.space/health
+* Connected to markovav-devops-intro.hf.space (52.48.128.222) port 443
+> GET /health HTTP/2
+> Host: markovav-devops-intro.hf.space
+< HTTP/2 200
+< content-type: application/json
+< cache-control: no-cache, no-store, must-revalidate, private
+< content-security-policy: default-src 'none'
+< x-content-type-options: nosniff
+< x-frame-options: DENY
+{"notes":0,"status":"ok"}

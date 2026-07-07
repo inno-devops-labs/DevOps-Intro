@@ -1,2 +1,6 @@
-# Paste output of:
-# ./cloud/scripts/measure-warm.sh https://<your-user>-quicknotes-lab10.hf.space
+0.970229
+1.039932
+0.773275
+0.900680
+0.812027
+p50: 0.9007s

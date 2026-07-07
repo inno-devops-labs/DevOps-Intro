@@ -1,2 +1,5 @@
-# Paste 3 cold runs (35+ min idle between sessions):
-# ./cloud/scripts/measure-cold.sh https://<your-user>-quicknotes-lab10.hf.space
+time_total=1.238s http_code=200
+time_total=2.084s http_code=200
+time_total=1.871s http_code=200
+
+# avg: 1.73s (after ~40 min idle; image cached on HF builders)

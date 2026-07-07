@@ -1,6 +1,6 @@
 # Lab 10 submission
 
-**Host:** Apple Silicon Mac. **Image:** `ghcr.io/markovav-official/devops-intro/quicknotes:v0.1.0`. **HF Space:** `https://markovav-official-quicknotes-lab10.hf.space` *(replace with your Space slug after create)*.
+**Host:** Apple Silicon Mac. **Image:** `ghcr.io/markovav-official/devops-intro/quicknotes:v0.1.0`. **HF Space:** https://markovav-devops-intro.hf.space
 
 ---
 
@@ -59,17 +59,16 @@ Package visibility set to **Public** (required for HF Spaces pull without auth).
 ### Space setup
 
 ```bash
-# 1. Create Space at https://huggingface.co/new-space — Docker SDK, public
-# 2. Clone and copy cloud/hf-space files:
-git clone https://huggingface.co/spaces/<your-user>/quicknotes-lab10 hf-space-repo
+git clone git@hf.co:spaces/markovav/DevOps-Intro hf-space-repo
 cp cloud/hf-space/Dockerfile cloud/hf-space/README.md hf-space-repo/
-cd hf-space-repo && git add . && git commit -m "Deploy QuickNotes from ghcr.io" && git push
+cd hf-space-repo && git add . && git commit -m "Deploy QuickNotes from ghcr.io v0.1.0" && git push
 ```
 
 ### Space URL & health check
 
-- **Space:** `https://markovav-official-quicknotes-lab10.hf.space`
-- **`curl -v` `/health`:** see [`attachments/lab10/hf-health.txt`](attachments/lab10/hf-health.txt)
+- **Space:** https://markovav-devops-intro.hf.space
+- **`curl -v` `/health`:** [`attachments/lab10/hf-health.txt`](attachments/lab10/hf-health.txt) — HTTP 200, security headers from Lab 9 middleware
+- **`/notes`:** `[]` (empty store on fresh Space)
 
 ### Space repo files
 
@@ -96,10 +95,12 @@ Measured with [`cloud/scripts/measure-warm.sh`](../cloud/scripts/measure-warm.sh
 
 | Measurement | Value (s) |
 |-------------|----------:|
-| Warm p50 (5 requests) | <!-- fill --> |
-| Cold #1 | <!-- fill --> |
-| Cold #2 | <!-- fill --> |
-| Cold #3 | <!-- fill --> |
+| Warm p50 (5 requests) | 0.901 |
+| Cold #1 | 1.24 |
+| Cold #2 | 2.08 |
+| Cold #3 | 1.87 |
+
+Warm p50 **0.9 s** → cold avg **~1.7 s** (~2×) after idle; image already on HF so wake is seconds, not tens of seconds.
 
 Raw logs: [`attachments/lab10/hf-warm.txt`](attachments/lab10/hf-warm.txt) · [`attachments/lab10/hf-cold.txt`](attachments/lab10/hf-cold.txt)
 
@@ -134,20 +135,22 @@ cloudflared tunnel --url http://localhost:8080
 # copy https://<random>.trycloudflare.com from output
 ```
 
-- **URL:** <!-- paste trycloudflare URL -->
-- **Verified from other network:** <!-- phone on cellular screenshot or curl from another host -->
+- **URL:** https://tenant-voting-composer-highly.trycloudflare.com
+- **Verified from other network:** `curl` from **University VM** (different network than Mac running `cloudflared`) → HTTP **200** `{"notes":44,"status":"ok"}` via Cloudflare (`cf-ray: a179ed132c12bb02-ARN`, edge **ARN**)
 
 Evidence: [`attachments/lab10/tunnel-curl.txt`](attachments/lab10/tunnel-curl.txt)
 
-Warm stats: `./cloud/scripts/tunnel-hyperfine.sh https://<random>.trycloudflare.com`
+Warm stats (University VM, 5 requests each): [`attachments/lab10/comparison-vm.txt`](attachments/lab10/comparison-vm.txt)
 
 ### Comparison table
 
+Measured from **University VM** (same client, 5 warm `curl` requests to `/health`).
+
 | Metric | HF Spaces (hosted) | Cloudflare Tunnel (local-via-edge) |
 |--------|-------------------:|-----------------------------------:|
-| Warm p50 | <!-- HF --> | <!-- tunnel --> |
-| Warm p95 | <!-- HF --> | <!-- tunnel --> |
-| Cold start | <!-- HF avg of 3 --> | N/A (continuously local) |
+| Warm p50 | 0.651 | 0.392 |
+| Warm p95 | 0.722 | 0.565 |
+| Cold start | ~1.7 (avg) | N/A (continuously local) |
 | Public URL stability | stable | ephemeral on restart |
 | Cost | free | free |
 

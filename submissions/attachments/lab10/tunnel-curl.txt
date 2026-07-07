@@ -1,2 +1,17 @@
-# Paste curl from phone/cellular or second machine:
-# curl -fsS https://<random>.trycloudflare.com/health
+# curl from University VM — different network than Mac running cloudflared
+# URL: https://tenant-voting-composer-highly.trycloudflare.com/health
+
+* Connected to tenant-voting-composer-highly.trycloudflare.com (104.16.231.132) port 443
+> GET /health HTTP/2
+> Host: tenant-voting-composer-highly.trycloudflare.com
+< HTTP/2 200
+< server: cloudflare
+< cf-ray: a179ed132c12bb02-ARN
+< content-type: application/json
+< cache-control: no-cache, no-store, must-revalidate, private
+< content-security-policy: default-src 'none'
+< x-content-type-options: nosniff
+< x-frame-options: DENY
+{"notes":44,"status":"ok"}
+
+# Total time (first request, includes TLS + cold path): ~15s

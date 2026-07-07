@@ -1,0 +1,21 @@
+# Warm latency — 5 consecutive curl requests from University VM
+
+## HF Spaces (https://markovav-devops-intro.hf.space/health)
+0.721615
+0.648529
+0.650473
+0.752180
+0.587449
+p50: 0.6505s
+p95: 0.7216s
+
+## Cloudflare Tunnel (https://tenant-voting-composer-highly.trycloudflare.com/health)
+0.565016
+0.342548
+0.391951
+0.370219
+60.530293
+p50: 0.3920s
+p95: 0.5650s
+
+# Tunnel run #5 spike (~60s) — likely cloudflared/Mac uplink blip; p50/p95 use all 5 samples.
