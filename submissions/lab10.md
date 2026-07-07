@@ -375,7 +375,9 @@ Pulling from GHCR improves reproducibility because GitHub Actions builds the rel
 
 ### What I prepared
 
-I did not automate the bonus because it depends on a real external tunnel URL and a measurement from another network. The repo now includes `cloud/teardown.md`, which documents how to clean up the quick tunnel after the measurement session.
+I completed most of the bonus locally. `cloudflared` was already installed, `hyperfine` was installed with Homebrew, the Lab 6 QuickNotes container was already running on `localhost:8080`, and I started a quick tunnel that exposed the service at a public `trycloudflare.com` URL.
+
+The repo already includes `cloud/teardown.md`, which documents how to clean up the quick tunnel after the measurement session.
 
 ### Manual steps still required
 
@@ -398,14 +400,58 @@ hyperfine --warmup 3 --runs 50 'curl -fsS https://<random>.trycloudflare.com/hea
 
 ```text
 Tunnel URL:
-<PASTE_TRYCLOUDFLARE_URL_HERE>
+https://read-prototype-russell-champions.trycloudflare.com
 
 Verification from another network:
 <PASTE_REMOTE_CHECK_OUTPUT_HERE>
 
 Hyperfine summary:
-<PASTE_HYPERFINE_OUTPUT_HERE>
+Cloudflare quick tunnel creation:
+2026-07-07T12:12:46Z INF Your quick Tunnel has been created!
+2026-07-07T12:12:46Z INF https://read-prototype-russell-champions.trycloudflare.com
+
+Local public-endpoint verification:
+$ curl -v https://read-prototype-russell-champions.trycloudflare.com/health
+...
+< HTTP/2 200
+< content-type: application/json
+< cf-ray: a176c493cf33d40f-FRA
+< cf-cache-status: DYNAMIC
+< server: cloudflare
+...
+{"notes":84,"status":"ok"}
+
+Hyperfine summary:
+$ hyperfine --warmup 3 --runs 50 --export-json /tmp/cloudflare-hyperfine.json 'curl -fsS https://read-prototype-russell-champions.trycloudflare.com/health > /dev/null'
+Time (mean ± σ):     333.5 ms ±  33.8 ms    [User: 13.9 ms, System: 8.1 ms]
+Range (min … max):   292.1 ms … 475.0 ms    50 runs
+
+Computed percentiles from the JSON export:
+- warm p50: 0.326244 s
+- warm p95: 0.403934 s
 ```
+
+### Remaining manual evidence
+
+The lab asks for proof from a different network. The only missing bonus evidence is a successful request to the tunnel URL from a phone on cellular or another machine on a different network.
+
+Recommended command:
+
+```bash
+curl -v https://read-prototype-russell-champions.trycloudflare.com/health
+```
+
+If terminal access is not practical on the other device, a browser screenshot of the `/health` response from cellular is also reasonable evidence.
+
+### Comparison table
+
+| Metric | HF Spaces (hosted) | Cloudflare Tunnel (local-via-edge) |
+|--------|-------------------:|-----------------------------------:|
+| Warm p50 | 0.544091 s | 0.326244 s |
+| Warm p95 | not measured | 0.403934 s |
+| Cold start | pending 3 samples | N/A (continuously local) |
+| Public URL stability | stable | ephemeral on restart |
+| Cost | free | free |
 
 ### Analysis
 
