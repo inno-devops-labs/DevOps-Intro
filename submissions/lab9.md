@@ -120,7 +120,9 @@ report, so next time you miss the one that mattered. Triage = read each once.
 
 Added a pinned `vuln` job to the Lab 3 workflow ([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)):
 `go install golang.org/x/vuln/cmd/govulncheck@v1.1.4` then `govulncheck ./...` in
-`app/`, on Go 1.24, its own required status check.
+`app/`, on Go 1.26 (the same toolchain the release image ships with — on 1.24 the
+gate flags stdlib CVEs already fixed in 1.25.x that aren't in the deployed binary),
+its own required status check.
 
 Clean run: `No vulnerabilities found.` (matches the fixed, Trivy-0 image.)
 
