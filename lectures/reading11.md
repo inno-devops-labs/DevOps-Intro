@@ -94,7 +94,7 @@ Flakes (Nix 2.4+, standard since ~2024) lock **all** external dependencies — i
 # flake.nix
 {
   description = "QuickNotes — DevOps-Intro project";
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
 
   outputs = { self, nixpkgs }:
     let pkgs = nixpkgs.legacyPackages.x86_64-linux;
