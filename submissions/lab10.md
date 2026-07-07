@@ -20,16 +20,17 @@ Publish the QuickNotes container image to GitHub Container Registry from a tag-t
 
 The repository-side implementation is complete: the release workflow, Hugging Face Space artifacts, Cloudflare tunnel notes, measurement helper, and this submission are included in the branch.
 
-Repository and registry evidence already collected:
+Repository, registry, and hosted deployment evidence already collected:
 
 1. GitHub Actions release run succeeded: `https://github.com/Hidancloud/DevOps-Intro/actions/runs/28892339659`.
 2. GHCR package is public and anonymously pullable.
 3. The published `v0.1.0` image was pulled and smoke-tested locally from GHCR.
+4. Hugging Face Space is live: `https://hiidancloud-inno-devops-quicknotes.hf.space`.
 
-Manual account-side evidence still needs to be collected for Hugging Face and final visual proof:
+Manual evidence still useful before final submission:
 
-1. Hugging Face Space creation under the course account, plus warm/cold latency evidence.
-2. Optional screenshot evidence: green release workflow, public package, HF Space logs, and phone/cellular Cloudflare verification.
+1. Three HF cold-start samples after 35+ minutes idle between each sample.
+2. Optional screenshots: green release workflow, public package, HF Space logs, and phone/cellular Cloudflare verification.
 
 No secrets, private keys, tokens, or production data are stored in this repository.
 
@@ -324,56 +325,109 @@ listens on port 8080. The public API endpoints are:
 ```
 ````
 
-### Deployment procedure
+### Deployment evidence
 
-Create a public Hugging Face Space with Docker SDK, then push the contents of `cloud/huggingface-space/` to the Space repository:
+Hugging Face Space repository:
+
+```text
+https://huggingface.co/spaces/HiidanCloud/inno-devops-quicknotes
+```
+
+Public Space URL:
+
+```text
+https://hiidancloud-inno-devops-quicknotes.hf.space
+```
+
+Space repo commit:
+
+```text
+$ git -C /tmp/inno-devops-quicknotes-hf log --oneline --decorate -2
+f4f172d (HEAD -> main, origin/main, origin/HEAD) Deploy QuickNotes release image
+d7e74f8 initial commit
+```
+
+The contents of `cloud/huggingface-space/` were pushed to the Space repository:
 
 ```bash
-# Example, replace USER and SPACE with real values.
-git clone https://huggingface.co/spaces/USER/SPACE
-cp cloud/huggingface-space/Dockerfile cloud/huggingface-space/README.md SPACE/
-cd SPACE
+git clone https://huggingface.co/spaces/HiidanCloud/inno-devops-quicknotes /tmp/inno-devops-quicknotes-hf
+cp cloud/huggingface-space/Dockerfile cloud/huggingface-space/README.md /tmp/inno-devops-quicknotes-hf/
+cd /tmp/inno-devops-quicknotes-hf
 git add Dockerfile README.md
 git commit -m "Deploy QuickNotes release image"
 git push
 ```
 
-Expected public URL shape:
+### Public health check
 
 ```text
-https://USER-SPACE.hf.space
-```
-
-Expected health check:
-
-```bash
-curl -v https://USER-SPACE.hf.space/health
-```
-
-Expected JSON response:
-
-```json
+$ curl -v https://hiidancloud-inno-devops-quicknotes.hf.space/health
+* Host hiidancloud-inno-devops-quicknotes.hf.space:443 was resolved.
+* Connected to hiidancloud-inno-devops-quicknotes.hf.space (35.175.32.85) port 443
+* SSL connection using TLSv1.2 / ECDHE-RSA-AES128-GCM-SHA256
+* Server certificate:
+*  subject: CN=hf.space
+*  subjectAltName: host "hiidancloud-inno-devops-quicknotes.hf.space" matched cert's "*.hf.space"
+* using HTTP/2
+> GET /health HTTP/2
+> Host: hiidancloud-inno-devops-quicknotes.hf.space
+< HTTP/2 200
+< content-type: application/json
+< x-proxied-replica: lo00sud0-z7xbb
+< link: <https://huggingface.co/spaces/HiidanCloud/inno-devops-quicknotes>;rel="canonical"
 {"notes":4,"status":"ok"}
 ```
 
-### Latency measurement plan
+The `/notes` endpoint also returns the seeded QuickNotes data:
 
-Warm latency:
-
-```bash
-for i in 1 2 3 4 5; do
-  curl -w '%{time_total}\n' -o /dev/null -s https://USER-SPACE.hf.space/health
-done
+```text
+[{
+  "id":4,
+  "title":"Endpoint cheat-sheet",
+  "body":"GET /notes  GET /notes/{id}  POST /notes  DELETE /notes/{id}  GET /health  GET /metrics",
+  "created_at":"2026-01-15T10:15:00Z"
+}, ...]
 ```
 
-Cold latency:
+### Warm latency
 
-```bash
-# Wait 35+ minutes between each cold sample.
-curl -w '%{time_total}\n' -o /dev/null -s https://USER-SPACE.hf.space/health
+Five consecutive warm requests:
+
+```text
+$ for i in 1 2 3 4 5; do curl -w '%{time_total}\n' -o /dev/null -s https://hiidancloud-inno-devops-quicknotes.hf.space/health; done
+0.868571
+0.813725
+0.754585
+0.797764
+0.802027
 ```
 
-The Space URL, `curl -v` output, warm p50, and three cold-start values must be added after the Space exists. I cannot create or access the Space from this machine because no Hugging Face token or authenticated CLI session is available.
+Warm p50 from the required five-request sample: `0.802027s`.
+
+Additional 50-run sample for p50/p95 comparison:
+
+```text
+$ ./cloud/scripts/measure-curl-latency.sh https://hiidancloud-inno-devops-quicknotes.hf.space/health 50
+runs=50
+p50=0.801118s
+p95=0.989296s
+```
+
+### Cold latency plan
+
+HF cold-start sampling still requires waiting for the free Space to sleep between samples. The exact command to run after each 35+ minute idle period is:
+
+```bash
+curl -w '%{time_total}\n' -o /dev/null -s https://hiidancloud-inno-devops-quicknotes.hf.space/health
+```
+
+Cold samples table:
+
+| Sample | Idle time before request | `time_total` |
+|--------|--------------------------|-------------:|
+| 1 | Pending 35+ min idle | Pending |
+| 2 | Pending 35+ min idle | Pending |
+| 3 | Pending 35+ min idle | Pending |
 
 ### Design questions
 
@@ -476,9 +530,9 @@ p95=0.846806s
 
 | Metric | HF Spaces (hosted) | Cloudflare Tunnel (local-via-edge) |
 |--------|-------------------:|-----------------------------------:|
-| Warm p50 | Pending Space measurement | 0.694076 s |
-| Warm p95 | Pending Space measurement | 0.846806 s |
-| Cold start | Pending 3 cold samples | N/A, continuously local while tunnel runs |
+| Warm p50 | 0.801118 s | 0.694076 s |
+| Warm p95 | 0.989296 s | 0.846806 s |
+| Cold start | Pending 3 cold samples after Space sleep | N/A, continuously local while tunnel runs |
 | Public URL stability | Stable for the Space name | Ephemeral on tunnel restart |
 | Cost | Free | Free |
 
