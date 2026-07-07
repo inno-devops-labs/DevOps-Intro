@@ -168,17 +168,19 @@ You train reviewers to ignore the report; real issues hide in noise. Each ACCEPT
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.2.2
       - uses: actions/setup-go@0aaccfd150d50ccaeb58ebd88d36e91967a5f35b # v5.4.0
         with:
-          go-version: '1.24'
+          go-version: '1.25.11'
       - run: go install golang.org/x/vuln/cmd/govulncheck@v1.1.4
       - run: govulncheck ./...
 ```
 
 `ci-ok` now depends on `govulncheck`.
 
+> **Why Go 1.25.11 for this job?** CI `vet`/`test` stay on Go 1.23/1.24. `govulncheck` on Go **1.24.13** reports **8 reachable stdlib vulnerabilities** (exit code 3) — fixes are in **1.25.11+**, not backported to 1.24. The gate runs on the patched toolchain so a clean app passes; the **red** demo still uses an intentional bad dependency.
+
 ### Red / green demonstration
 
 - **Red** (intentional `golang.org/x/crypto@v0.3.0` + `ssh.Dial` in isolated module): [`govulncheck-red.txt`](attachments/lab9/govulncheck-red.txt) — reports reachable `GO-2026-5020` etc.
-- **Green** (QuickNotes on CI Go 1.24): job passes on clean `app/` without vulnerable imports.
+- **Green** (QuickNotes on Go 1.25.11): [`govulncheck-green.txt`](attachments/lab9/govulncheck-green.txt) — `No vulnerabilities found.`
 
 ### Design questions (h–j)
 
