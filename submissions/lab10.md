@@ -29,8 +29,8 @@ Repository, registry, and hosted deployment evidence already collected:
 
 Manual evidence still useful before final submission:
 
-1. Three HF cold-start samples after 35+ minutes idle between each sample.
-2. Optional screenshots: green release workflow, public package, HF Space logs, and phone/cellular Cloudflare verification.
+1. Optional phone/cellular Cloudflare verification screenshot from a fresh quick tunnel.
+2. Optional HF Space logs screenshot.
 
 No secrets, private keys, tokens, or production data are stored in this repository.
 
@@ -234,9 +234,15 @@ $ curl -s 'https://api.github.com/repos/Hidancloud/DevOps-Intro/actions/workflow
 
 The GitHub UI also shows `Release image #1` as successful with a total duration of 50 seconds. The only annotation is a non-failing GitHub runner warning that Node.js 20 actions are being forced to run on Node.js 24.
 
+![GitHub Actions release workflow success](lab10-github-release-success.png)
+
 ### Public pull evidence
 
 This was tested after logging out from `ghcr.io`. Because this host is Apple Silicon and the release workflow intentionally published `linux/amd64` for GitHub/Hugging Face compatibility, the local verification uses `--platform linux/amd64`. On a normal `linux/amd64` clean machine, the same pull works without the platform override.
+
+The GitHub Packages UI shows the QuickNotes package as public:
+
+![GHCR public QuickNotes package](lab10-ghcr-public-package.png)
 
 ```text
 $ docker logout ghcr.io || true
@@ -339,6 +345,10 @@ Public Space URL:
 https://hiidancloud-inno-devops-quicknotes.hf.space
 ```
 
+The Space UI shows the Space as running. The browser view of the root path returns `404 page not found`, which is expected for this API-only service because QuickNotes exposes `/health`, `/notes`, and `/metrics`, not a homepage.
+
+![Hugging Face Space running with API-only root 404](lab10-hf-space-running-root-404.png)
+
 Space repo commit:
 
 ```text
@@ -413,21 +423,25 @@ p50=0.801118s
 p95=0.989296s
 ```
 
-### Cold latency plan
+### Cold latency note
 
-HF cold-start sampling still requires waiting for the free Space to sleep between samples. The exact command to run after each 35+ minute idle period is:
+Cold-start sampling was intentionally not completed. The lab text mentions waiting about 35 minutes, but the current Hugging Face documentation says free `cpu-basic` Spaces cannot configure a custom sleep time and are automatically paused after 48 hours of inactivity. Collecting three true cold samples would therefore require roughly six days of idle windows, which is out of proportion for this lab turn.
+
+Source: <https://huggingface.co/docs/huggingface_hub/en/guides/manage-spaces>
+
+If the Space is allowed to sleep naturally, the exact command to run after each idle period is:
 
 ```bash
 curl -w '%{time_total}\n' -o /dev/null -s https://hiidancloud-inno-devops-quicknotes.hf.space/health
 ```
 
-Cold samples table:
+Cold samples table, not attempted for the reason above:
 
 | Sample | Idle time before request | `time_total` |
 |--------|--------------------------|-------------:|
-| 1 | Pending 35+ min idle | Pending |
-| 2 | Pending 35+ min idle | Pending |
-| 3 | Pending 35+ min idle | Pending |
+| 1 | 48h inactivity required on free `cpu-basic` | Not attempted |
+| 2 | 48h inactivity required on free `cpu-basic` | Not attempted |
+| 3 | 48h inactivity required on free `cpu-basic` | Not attempted |
 
 ### Design questions
 
@@ -484,7 +498,7 @@ https://supplied-rational-varieties-margin.trycloudflare.com
 2026-07-07T11:08:10Z INF Initial protocol quic
 ```
 
-This is an ephemeral quick-tunnel URL. It is valid only while the local `cloudflared` process keeps running.
+This is an ephemeral quick-tunnel URL. It is valid only while the local `cloudflared` process keeps running. Later browser access failed because the quick-tunnel hostname no longer resolved, which is expected after the ephemeral tunnel is stopped or released.
 
 ### Public `/health` verification from this machine
 
@@ -532,7 +546,7 @@ p95=0.846806s
 |--------|-------------------:|-----------------------------------:|
 | Warm p50 | 0.801118 s | 0.694076 s |
 | Warm p95 | 0.989296 s | 0.846806 s |
-| Cold start | Pending 3 cold samples after Space sleep | N/A, continuously local while tunnel runs |
+| Cold start | Not attempted: current free `cpu-basic` sleep window is 48h | N/A, continuously local while tunnel runs |
 | Public URL stability | Stable for the Space name | Ephemeral on tunnel restart |
 | Cost | Free | Free |
 
