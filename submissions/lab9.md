@@ -446,9 +446,9 @@ Analysis:
 
 This job is separate, pinned, and easy to understand in a PR. If it fails, the PR gets a dedicated red check instead of hiding the result inside a bigger test job.
 
-I first tried to keep the gate on Go `1.24`, because the lab text asks for that version. The PR checks then showed reachable standard-library vulnerabilities with no passing result on that line. The final engineering choice was to upgrade the CI and builder toolchain to Go `1.25.11`, then verify that `govulncheck` and Trivy both passed.
+I first tried to keep the gate on Go `1.24`, because that was the original CI line. The PR checks then showed reachable standard-library vulnerabilities with no passing result on that line. I fixed this by upgrading the whole active CI workflow and the builder toolchain to Go `1.25.11`, so `govulncheck` now matches the rest of CI in the final branch state.
 
-This is a documented deviation from the original wording of the bonus task. I kept it because the final result is a working and stricter security gate, and the exact PR evidence shows why the Go `1.24` line was no longer acceptable on July 7, 2026.
+This is a documented deviation from the original wording of the bonus task, but it is consistent with the final branch: all CI jobs and the image build now use the same secure Go version, and the PR evidence shows why the old line was no longer acceptable on July 7, 2026.
 
 ### B.2 Red and green proof
 
@@ -464,9 +464,9 @@ Red CI evidence:
 
 ![GitHub Actions failed workflow run](./failed_workflow_run.png)
 
-The screenshot shows the failing workflow state before the final fix. In that stage, the security gate was still red because the branch was using an older Go line and the checks surfaced reachable issues.
+The screenshot shows the failing workflow state before the final fix. In that stage, the security gate was still red because the branch was using the older Go line and the checks surfaced reachable issues.
 
-I also kept a local reproducible demo with the same pinned scanner command to show a deliberately introduced vulnerable dependency.
+To demonstrate the "known vulnerable dependency" part in a controlled way, I also kept a local reproducible demo with the same pinned scanner command. I did not keep that intentionally vulnerable dependency on the final branch after validation.
 
 Red case:
 
@@ -497,7 +497,7 @@ No vulnerabilities found.
 
 Analysis:
 
-This is the key difference between simple dependency presence and reachability. The local red case fails only after I introduce a vulnerable dependency and a reachable call path. The red GitHub Actions screenshot shows the branch in a failing state before the final fix, and the green GitHub Actions screenshot shows that the final branch passes the same gate with the fixed toolchain and the real project code.
+This is the key difference between simple dependency presence and reachability. The local red case fails only after I introduce a vulnerable dependency and a reachable call path. The red GitHub Actions screenshot shows a real failing gate before the final fix, and the green GitHub Actions screenshot shows that the final branch passes the same gate with the fixed toolchain and the real project code.
 
 ### B.3 Design answers
 
