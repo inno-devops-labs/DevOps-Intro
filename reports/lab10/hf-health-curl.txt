@@ -1,0 +1,36 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Host mysteri0king-quicknotes-lab10.hf.space:443 was resolved.
+* IPv6: (none)
+* IPv4: 52.210.144.142, 52.48.128.222, 54.72.212.99
+*   Trying 52.210.144.142:443...
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* schannel: disabled automatic use of client certificate
+* Connected to mysteri0king-quicknotes-lab10.hf.space (52.210.144.142) port 443
+* using HTTP/1.x
+> GET /health HTTP/1.1
+> Host: mysteri0king-quicknotes-lab10.hf.space
+> User-Agent: curl/8.12.1
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 200 OK
+< Date: Tue, 07 Jul 2026 17:54:12 GMT
+< Content-Type: application/json
+< Content-Length: 26
+< Connection: keep-alive
+< cache-control: no-store
+< content-security-policy: default-src 'none'
+< pragma: no-cache
+< x-content-type-options: nosniff
+< x-proxied-host: http://10.111.6.132
+< x-proxied-replica: ee2w1y0b-mrq99
+< x-proxied-path: /health
+< link: <https://huggingface.co/spaces/mysteri0king/quicknotes-lab10>;rel="canonical"
+< x-request-id: mWIEiH
+< vary: origin, access-control-request-method, access-control-request-headers
+< access-control-expose-headers: *
+< 
+{ [26 bytes data]
+100    26  100    26    0     0     24      0  0:00:01  0:00:01 --:--:--    24{"notes":4,"status":"ok"}
+
+* Connection #0 to host mysteri0king-quicknotes-lab10.hf.space left intact

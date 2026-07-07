@@ -1,0 +1,36 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Host compounds-exec-proud-vault.trycloudflare.com:443 was resolved.
+* IPv6: 2606:4700::6810:e684, 2606:4700::6810:e784
+* IPv4: 104.16.231.132, 104.16.230.132
+*   Trying [2606:4700::6810:e684]:443...
+* connect to 2606:4700::6810:e684 port 443 from :: port 61330 failed: Network unreachable
+*   Trying [2606:4700::6810:e784]:443...
+* connect to 2606:4700::6810:e784 port 443 from :: port 61331 failed: Network unreachable
+*   Trying 104.16.231.132:443...
+* schannel: disabled automatic use of client certificate
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Connected to compounds-exec-proud-vault.trycloudflare.com (104.16.231.132) port 443
+* using HTTP/1.x
+> GET /health HTTP/1.1
+> Host: compounds-exec-proud-vault.trycloudflare.com
+> User-Agent: curl/8.12.1
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 200 OK
+< Date: Tue, 07 Jul 2026 18:04:34 GMT
+< Content-Type: application/json
+< Content-Length: 26
+< Connection: keep-alive
+< CF-Ray: a178c5bbbaa53254-VIE
+< CF-Cache-Status: DYNAMIC
+< Cache-Control: no-store
+< Server: cloudflare
+< Pragma: no-cache
+< content-security-policy: default-src 'none'
+< x-content-type-options: nosniff
+< 
+{ [26 bytes data]
+100    26  100    26    0     0     28      0 --:--:-- --:--:-- --:--:--    28{"notes":4,"status":"ok"}
+
+* Connection #0 to host compounds-exec-proud-vault.trycloudflare.com left intact

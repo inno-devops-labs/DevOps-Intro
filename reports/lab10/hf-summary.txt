@@ -1,0 +1,4 @@
+HF Space URL: https://mysteri0king-quicknotes-lab10.hf.space
+Health endpoint: /health returned HTTP 200 and {"notes":4,"status":"ok"}
+Warm latency p50: 0.810268 s
+GHCR image: ghcr.io/mysteri0k1ng/devops-intro/quicknotes:v0.1.2

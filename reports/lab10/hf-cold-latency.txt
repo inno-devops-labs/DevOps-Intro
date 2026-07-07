@@ -1,0 +1,12 @@
+Cold measurement 1
+Tue, Jul  7, 2026  9:36:37 PM
+0.839204
+
+Cold measurement 2
+Tue, Jul  7, 2026 10:12:22 PM
+1.697966
+
+Cold measurement 3
+Tue, Jul  7, 2026 10:55:47 PM
+1.295025
+
