@@ -1,0 +1,3 @@
+http://host.docker.internal:8080/health
+http://host.docker.internal:8080/notes
+http://host.docker.internal:8080/metrics

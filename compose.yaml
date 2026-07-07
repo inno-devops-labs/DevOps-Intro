@@ -43,5 +43,30 @@ services:
         done
     restart: unless-stopped
 
+  prometheus:
+    image: prom/prometheus:v3.6.0
+    depends_on:
+      - quicknotes
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/rules:/etc/prometheus/rules:ro
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:12.2.0
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: "lab8admin"
+      GF_SECURITY_ADMIN_PASSWORD: "lab8StrongPassword123!"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    restart: unless-stopped
+
 volumes:
   quicknotes-data:

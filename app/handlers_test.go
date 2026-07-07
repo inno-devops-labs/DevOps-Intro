@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"bytes"
 	"encoding/json"
 	"net/http"
@@ -131,3 +132,36 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	}
 }
 
+func TestSecurityHeadersPresent(t *testing.T) {
+	path := t.TempDir() + "/notes.json"
+	if err := os.WriteFile(path, []byte("[]"), 0o644); err != nil {
+		t.Fatalf("write test store: %v", err)
+	}
+
+	store, err := NewStore(path)
+	if err != nil {
+		t.Fatalf("new store: %v", err)
+	}
+
+	server := NewServer(store)
+
+	req := httptest.NewRequest(http.MethodGet, "/health", nil)
+	rr := httptest.NewRecorder()
+
+	server.Routes().ServeHTTP(rr, req)
+
+	tests := map[string]string{
+		"X-Content-Type-Options": "nosniff",
+		"X-Frame-Options":        "DENY",
+		"Referrer-Policy":        "no-referrer",
+		"Content-Security-Policy": "default-src 'none'",
+		"Permissions-Policy":     "camera=(), microphone=(), geolocation=()",
+		"Cache-Control":          "no-store",
+	}
+
+	for header, want := range tests {
+		if got := rr.Header().Get(header); got != want {
+			t.Fatalf("%s = %q, want %q", header, got, want)
+		}
+	}
+}
