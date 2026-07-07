@@ -76,6 +76,10 @@ listener.
 ```
 $ curl -s https://gammaviolet-quicknotes.hf.space/health
 {"notes":4,"status":"ok"}
+$ curl -s .../notes            # GET  -> 200, seeded notes
+[{"id":1,"title":"Welcome to QuickNotes",...}, ...]
+$ curl -X POST -d '{"title":"from-grader","body":"hi"}' .../notes   # -> 201 Created
+{"id":5,"title":"from-grader","body":"hi","created_at":"2026-07-07T16:52:29Z"}
 ```
 - **Warm p50: 0.565 s** (5 consecutive requests, 0.550–0.595 s)
 - **Cold start (3×): 26.3 s, 9.3 s, 9.7 s** — time from waking a paused Space to
