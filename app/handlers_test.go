@@ -31,7 +31,7 @@ func do(t *testing.T, srv *Server, method, target string, body any) *httptest.Re
 	}
 	req := httptest.NewRequest(method, target, &buf)
 	rec := httptest.NewRecorder()
-	srv.Routes().ServeHTTP(rec, req)
+	srv.Handler().ServeHTTP(rec, req)
 	return rec
 }
 
@@ -128,6 +128,29 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 		if !strings.Contains(body, want) {
 			t.Errorf("metrics missing %q", want)
 		}
+	}
+}
+
+func TestSecurityHeaders_PresentOnAllRoutes(t *testing.T) {
+	srv := newTestServer(t)
+	rec := do(t, srv, http.MethodGet, "/health", nil)
+	for _, key := range []string{
+		"X-Content-Type-Options",
+		"X-Frame-Options",
+		"Content-Security-Policy",
+		"Referrer-Policy",
+		"Permissions-Policy",
+		"Cache-Control",
+	} {
+		if got := rec.Header().Get(key); got == "" {
+			t.Errorf("missing %s header", key)
+		}
+	}
+	if got := rec.Header().Get("X-Frame-Options"); got != "DENY" {
+		t.Errorf("X-Frame-Options: got %q want DENY", got)
+	}
+	if got := rec.Header().Get("Content-Security-Policy"); got != "default-src 'none'" {
+		t.Errorf("CSP: got %q want default-src 'none'", got)
 	}
 }
 

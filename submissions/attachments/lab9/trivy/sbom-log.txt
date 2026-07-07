@@ -1,0 +1,3 @@
+2026-07-07T18:49:01Z	INFO	"--format cyclonedx" disables security scanning. Specify "--scanners vuln" explicitly if you want to include vulnerabilities in the "cyclonedx" report.
+2026-07-07T18:49:01Z	INFO	Detected OS	family="debian" version="12.14"
+2026-07-07T18:49:01Z	INFO	Number of language-specific files	num=1

@@ -1,0 +1,425 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:960d50bf-33b6-4206-8f4a-29751974aabb",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-07-07T18:49:01+00:00",
+    "tools": {
+      "components": [
+        {
+          "type": "application",
+          "group": "aquasecurity",
+          "name": "trivy",
+          "version": "0.59.1"
+        }
+      ]
+    },
+    "component": {
+      "bom-ref": "pkg:oci/quicknotes@sha256%3Af708ad475533dcf6d221d62bc69c3d62a8fb2f3a8c441d32a5a910a3ff10c0c6?arch=arm64&repository_url=index.docker.io%2Flibrary%2Fquicknotes",
+      "type": "container",
+      "name": "quicknotes:lab6",
+      "purl": "pkg:oci/quicknotes@sha256%3Af708ad475533dcf6d221d62bc69c3d62a8fb2f3a8c441d32a5a910a3ff10c0c6?arch=arm64&repository_url=index.docker.io%2Flibrary%2Fquicknotes",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:114dde0fefebbca13165d0da9c500a66190e497a82a53dcaabc3172d630be1e9"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:33b37ab0b0901175c2699d81c10b0c887f0dff944de74763cca00c155904d6fb"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:35b5ba6e08cdd034b8d1920f9c7203e5d66f258e1915f164a01de0af14f34710"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:4cde6b0bb6f50a5f255eef7b2a42162c661cf776b803225dcac9a659e396bb6b"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:4d049f83d9cf21d1f5cc0e11deaf36df02790d0e60c1a3829538fb4b61685368"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:531678dbb0358bce7a8a19ff56fcc39488beb8fe8bf17814e156d2986a47d43e"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:6e7fbcf090d09b73a4aa85f9dce690d0ace73877c150b7c56955487b6e7a822a"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:6f1cdceb6a3146f0ccb986521156bef8a422cdbb0863396f7f751f575ba308f4"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:80b1f42918092d58c439a051239e0788bf3e84802dae6f2ac4ecab0a7a08148e"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:8fa10c0194df9b7c054c90dbe482585f768a54428fc90a5b78a0066a123b1bba"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:a0ff877a11d72f1832840a3cddfeeb3962d2b3fae4e11aca8de212cb24ced9f3"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:ad51d0769d16ba578106a177987dfe3d2e02c1668c852b795b2f6b024068242a"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:af5aa97ebe6ce1604747ec1e21af7136ded391bcabe4acef882e718a87c86bcc"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:b3eb5fcfaf0fc8982e3f370bde32740bb83e3fb363c189290b4c58c2e1af965a"
+        },
+        {
+          "name": "aquasecurity:trivy:DiffID",
+          "value": "sha256:bd3cdfae1d3fdd83a2231d608969b38b82349777c2fff9a7c12d54f8ac5c9b38"
+        },
+        {
+          "name": "aquasecurity:trivy:ImageID",
+          "value": "sha256:f708ad475533dcf6d221d62bc69c3d62a8fb2f3a8c441d32a5a910a3ff10c0c6"
+        },
+        {
+          "name": "aquasecurity:trivy:Labels:com.docker.compose.project",
+          "value": "devops-intro"
+        },
+        {
+          "name": "aquasecurity:trivy:Labels:com.docker.compose.service",
+          "value": "quicknotes"
+        },
+        {
+          "name": "aquasecurity:trivy:Labels:com.docker.compose.version",
+          "value": "5.1.3"
+        },
+        {
+          "name": "aquasecurity:trivy:RepoDigest",
+          "value": "quicknotes@sha256:f708ad475533dcf6d221d62bc69c3d62a8fb2f3a8c441d32a5a910a3ff10c0c6"
+        },
+        {
+          "name": "aquasecurity:trivy:RepoTag",
+          "value": "quicknotes:lab6"
+        },
+        {
+          "name": "aquasecurity:trivy:SchemaVersion",
+          "value": "2"
+        }
+      ]
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "bb3b44f7-1ccf-4d1f-9352-0b50c061fb72",
+      "type": "operating-system",
+      "name": "debian",
+      "version": "12.14",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:Class",
+          "value": "os-pkgs"
+        },
+        {
+          "name": "aquasecurity:trivy:Type",
+          "value": "debian"
+        }
+      ]
+    },
+    {
+      "bom-ref": "f9af8480-f80b-4eea-b10b-5fe3b1b6e2e5",
+      "type": "application",
+      "name": "quicknotes",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:Class",
+          "value": "lang-pkgs"
+        },
+        {
+          "name": "aquasecurity:trivy:Type",
+          "value": "gobinary"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:deb/debian/base-files@12.4%2Bdeb12u14?arch=arm64&distro=debian-12.14",
+      "type": "library",
+      "supplier": {
+        "name": "Santiago Vila <sanvila@debian.org>"
+      },
+      "name": "base-files",
+      "version": "12.4+deb12u14",
+      "licenses": [
+        {
+          "license": {
+            "name": "GPL-2.0-or-later"
+          }
+        }
+      ],
+      "purl": "pkg:deb/debian/base-files@12.4%2Bdeb12u14?arch=arm64&distro=debian-12.14",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:LayerDiffID",
+          "value": "sha256:a0ff877a11d72f1832840a3cddfeeb3962d2b3fae4e11aca8de212cb24ced9f3"
+        },
+        {
+          "name": "aquasecurity:trivy:LayerDigest",
+          "value": "sha256:36a0d76d579d99971aa6e12b2d5460703b2c27df78ecb53cfb5385c7cfc1c8ff"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "base-files@12.4+deb12u14"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "debian"
+        },
+        {
+          "name": "aquasecurity:trivy:SrcName",
+          "value": "base-files"
+        },
+        {
+          "name": "aquasecurity:trivy:SrcVersion",
+          "value": "12.4+deb12u14"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:deb/debian/media-types@10.0.0?arch=all&distro=debian-12.14",
+      "type": "library",
+      "supplier": {
+        "name": "Mime-Support Packagers <team+debian-mimesupport-packagers@tracker.debian.org>"
+      },
+      "name": "media-types",
+      "version": "10.0.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "ad-hoc"
+          }
+        }
+      ],
+      "purl": "pkg:deb/debian/media-types@10.0.0?arch=all&distro=debian-12.14",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:LayerDiffID",
+          "value": "sha256:114dde0fefebbca13165d0da9c500a66190e497a82a53dcaabc3172d630be1e9"
+        },
+        {
+          "name": "aquasecurity:trivy:LayerDigest",
+          "value": "sha256:bf7a4185f01524837d19abde915ffde84e64368b250f5b5e9f6f75aea62a11d4"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "media-types@10.0.0"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "debian"
+        },
+        {
+          "name": "aquasecurity:trivy:SrcName",
+          "value": "media-types"
+        },
+        {
+          "name": "aquasecurity:trivy:SrcVersion",
+          "value": "10.0.0"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:deb/debian/netbase@6.4?arch=all&distro=debian-12.14",
+      "type": "library",
+      "supplier": {
+        "name": "Marco d'Itri <md@linux.it>"
+      },
+      "name": "netbase",
+      "version": "6.4",
+      "licenses": [
+        {
+          "license": {
+            "name": "GPL-2.0-only"
+          }
+        }
+      ],
+      "purl": "pkg:deb/debian/netbase@6.4?arch=all&distro=debian-12.14",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:LayerDiffID",
+          "value": "sha256:8fa10c0194df9b7c054c90dbe482585f768a54428fc90a5b78a0066a123b1bba"
+        },
+        {
+          "name": "aquasecurity:trivy:LayerDigest",
+          "value": "sha256:990a9c434e5e0f11549a8d4a41a1991e621b04e30cd63269adbc97b1dc38fd7e"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "netbase@6.4"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "debian"
+        },
+        {
+          "name": "aquasecurity:trivy:SrcName",
+          "value": "netbase"
+        },
+        {
+          "name": "aquasecurity:trivy:SrcVersion",
+          "value": "6.4"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:deb/debian/tzdata@2026b-0%2Bdeb12u1?arch=all&distro=debian-12.14",
+      "type": "library",
+      "supplier": {
+        "name": "GNU Libc Maintainers <debian-glibc@lists.debian.org>"
+      },
+      "name": "tzdata",
+      "version": "2026b-0+deb12u1",
+      "licenses": [
+        {
+          "license": {
+            "name": "public-domain"
+          }
+        }
+      ],
+      "purl": "pkg:deb/debian/tzdata@2026b-0%2Bdeb12u1?arch=all&distro=debian-12.14",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:LayerDiffID",
+          "value": "sha256:35b5ba6e08cdd034b8d1920f9c7203e5d66f258e1915f164a01de0af14f34710"
+        },
+        {
+          "name": "aquasecurity:trivy:LayerDigest",
+          "value": "sha256:39dc083afc39bd8dc43d456fe7ff7d39292e593bb2769972c11bb2e5f9119386"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "tzdata@2026b-0+deb12u1"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "debian"
+        },
+        {
+          "name": "aquasecurity:trivy:SrcName",
+          "value": "tzdata"
+        },
+        {
+          "name": "aquasecurity:trivy:SrcRelease",
+          "value": "0+deb12u1"
+        },
+        {
+          "name": "aquasecurity:trivy:SrcVersion",
+          "value": "2026b"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:golang/quicknotes",
+      "type": "library",
+      "name": "quicknotes",
+      "purl": "pkg:golang/quicknotes",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:LayerDiffID",
+          "value": "sha256:b3eb5fcfaf0fc8982e3f370bde32740bb83e3fb363c189290b4c58c2e1af965a"
+        },
+        {
+          "name": "aquasecurity:trivy:LayerDigest",
+          "value": "sha256:3630744617d50ad32e922cad3f543eaa52c9d626e9a973b5de9cf2e36bb544c8"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "quicknotes"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "gobinary"
+        }
+      ]
+    },
+    {
+      "bom-ref": "pkg:golang/stdlib@v1.24.13",
+      "type": "library",
+      "name": "stdlib",
+      "version": "v1.24.13",
+      "purl": "pkg:golang/stdlib@v1.24.13",
+      "properties": [
+        {
+          "name": "aquasecurity:trivy:LayerDiffID",
+          "value": "sha256:b3eb5fcfaf0fc8982e3f370bde32740bb83e3fb363c189290b4c58c2e1af965a"
+        },
+        {
+          "name": "aquasecurity:trivy:LayerDigest",
+          "value": "sha256:3630744617d50ad32e922cad3f543eaa52c9d626e9a973b5de9cf2e36bb544c8"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgID",
+          "value": "stdlib@v1.24.13"
+        },
+        {
+          "name": "aquasecurity:trivy:PkgType",
+          "value": "gobinary"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "bb3b44f7-1ccf-4d1f-9352-0b50c061fb72",
+      "dependsOn": [
+        "pkg:deb/debian/base-files@12.4%2Bdeb12u14?arch=arm64&distro=debian-12.14",
+        "pkg:deb/debian/media-types@10.0.0?arch=all&distro=debian-12.14",
+        "pkg:deb/debian/netbase@6.4?arch=all&distro=debian-12.14",
+        "pkg:deb/debian/tzdata@2026b-0%2Bdeb12u1?arch=all&distro=debian-12.14"
+      ]
+    },
+    {
+      "ref": "f9af8480-f80b-4eea-b10b-5fe3b1b6e2e5",
+      "dependsOn": [
+        "pkg:golang/quicknotes"
+      ]
+    },
+    {
+      "ref": "pkg:deb/debian/base-files@12.4%2Bdeb12u14?arch=arm64&distro=debian-12.14",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:deb/debian/media-types@10.0.0?arch=all&distro=debian-12.14",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:deb/debian/netbase@6.4?arch=all&distro=debian-12.14",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:deb/debian/tzdata@2026b-0%2Bdeb12u1?arch=all&distro=debian-12.14",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:golang/quicknotes",
+      "dependsOn": [
+        "pkg:golang/stdlib@v1.24.13"
+      ]
+    },
+    {
+      "ref": "pkg:golang/stdlib@v1.24.13",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:oci/quicknotes@sha256%3Af708ad475533dcf6d221d62bc69c3d62a8fb2f3a8c441d32a5a910a3ff10c0c6?arch=arm64&repository_url=index.docker.io%2Flibrary%2Fquicknotes",
+      "dependsOn": [
+        "bb3b44f7-1ccf-4d1f-9352-0b50c061fb72",
+        "f9af8480-f80b-4eea-b10b-5fe3b1b6e2e5"
+      ]
+    }
+  ],
+  "vulnerabilities": []
+}

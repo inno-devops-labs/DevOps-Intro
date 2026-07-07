@@ -1,0 +1,30 @@
+=== Symbol Results ===
+
+Vulnerability #1: GO-2026-5020
+    Invoking infinite loop on large channel writes in golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5020
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.3.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+    Example traces found:
+      #1: main.go:3:23: vulndemo.main calls ssh.Dial
+
+Vulnerability #2: GO-2026-5019
+    Invoking bypass of FIDO/U2F security keys physical interaction in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5019
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.3.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+    Example traces found:
+      #1: main.go:3:23: vulndemo.main calls ssh.Dial
+
+Vulnerability #3: GO-2026-5018
+    Invoking pathological RSA/DSA parameters may cause DoS in
+    golang.org/x/crypto/ssh
+  More info: https://pkg.go.dev/vuln/GO-2026-5018
+  Module: golang.org/x/crypto
+    Found in: golang.org/x/crypto@v0.3.0
+    Fixed in: golang.org/x/crypto@v0.52.0
+    Example traces found:
+      #1: main.go:3:23: vulndemo.main calls ssh.Dial

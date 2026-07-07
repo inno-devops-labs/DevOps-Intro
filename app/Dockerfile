@@ -16,5 +16,6 @@ FROM gcr.io/distroless/static-debian12:nonroot
 COPY --from=builder /quicknotes /quicknotes
 COPY --from=builder /src/seed.json /seed.json
 COPY --from=busybox /bin/busybox /busybox
+USER nonroot:nonroot
 EXPOSE 8080
 ENTRYPOINT ["/quicknotes"]

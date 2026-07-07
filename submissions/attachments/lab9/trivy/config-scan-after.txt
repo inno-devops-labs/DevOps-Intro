@@ -1,0 +1,1 @@
+No HIGH/CRITICAL misconfigurations after adding `USER nonroot:nonroot` to `app/Dockerfile`.

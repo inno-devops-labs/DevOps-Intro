@@ -26,6 +26,10 @@ func NewServer(store *Store) *Server {
 	return &Server{store: store, requestsByCode: by}
 }
 
+func (s *Server) Handler() http.Handler {
+	return securityHeaders(s.Routes())
+}
+
 func (s *Server) Routes() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", s.wrap(s.handleHealth))

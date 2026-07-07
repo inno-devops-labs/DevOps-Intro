@@ -1,0 +1,1 @@
+No HIGH/CRITICAL findings (trivy fs --skip-dirs .vagrant --skip-dirs .git /repo).
