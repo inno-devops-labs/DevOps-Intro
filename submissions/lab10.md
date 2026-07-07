@@ -1,11 +1,9 @@
 # Lab 10 — Cloud: Ship QuickNotes to a Real Cloud
 
-> **Execution note.** This lab is cloud-bound — it needs a Git **push** of a tag
-> (to fire CI → ghcr.io), a **Hugging Face account** (to host the Space), and a
-> public **tunnel**. Per the request, nothing was pushed and no accounts were used,
-> so the live URLs / latency numbers below are marked **PENDING**. The artifacts
-> (release workflow, Space `Dockerfile` + `README.md`, teardown) are complete and
-> validated, and every design question is answered.
+> **Status.** Task 2 (Hugging Face Space) is **live** — public URL, `/health`, and
+> warm+cold latency all measured below. Task 1's `release.yml` is written and
+> validated; making it *live* on ghcr.io just needs a `v0.1.0` tag push → CI. The
+> Bonus (Cloudflare Tunnel) is documented but not run.
 
 Artifacts: [`.github/workflows/release.yml`](../.github/workflows/release.yml),
 [`cloud/Dockerfile`](../cloud/Dockerfile), [`cloud/README.md`](../cloud/README.md),
@@ -60,16 +58,25 @@ caps the blast radius.
 
 ## Task 2 — Deploy to Hugging Face Spaces
 
-The Space is a Docker-SDK Space. [`cloud/Dockerfile`](../cloud/Dockerfile) does
-`FROM ghcr.io/.../quicknotes:v0.1.0` (run the CI artifact, don't rebuild) and points
-`DATA_PATH` at `/tmp` (HF gives no writable volume and runs an arbitrary UID).
-[`cloud/README.md`](../cloud/README.md) frontmatter sets `sdk: docker` and
-**`app_port: 8080`** so HF routes to QuickNotes' listener.
+The Space is **live**: https://huggingface.co/spaces/GammaViolet/quicknotes,
+serving at **https://gammaviolet-quicknotes.hf.space**. It's a Docker-SDK Space
+that **builds from source** ([`cloud/Dockerfile`](../cloud/Dockerfile) — a
+multi-stage build with the app source copied into the Space repo) rather than
+pulling the ghcr image, so it's self-contained and doesn't depend on the ghcr
+package being made public first. `DATA_PATH` points at `/tmp` (HF gives no writable
+volume and runs an arbitrary UID); [`cloud/README.md`](../cloud/README.md)
+frontmatter sets `sdk: docker` and **`app_port: 8080`** so HF routes to QuickNotes'
+listener.
 
-- Space URL + `curl -v /health`: **PENDING (needs an HF account + push to the Space repo)**
-- Warm p50 / cold latencies (3×): **PENDING** — method: `curl -w '%{time_total}'`
-  ×5 immediately for warm p50; idle 35 min so the Space sleeps; then single cold
-  requests ×3.
+```
+$ curl -s https://gammaviolet-quicknotes.hf.space/health
+{"notes":4,"status":"ok"}
+```
+- **Warm p50: 0.565 s** (5 consecutive requests, 0.550–0.595 s)
+- **Cold start (3×): 26.3 s, 9.3 s, 9.7 s** — time from waking a paused Space to
+  the first `200` (pause→restart; forcing the free-tier *idle*-sleep wasn't
+  practical to script, so I paused it to force the scale-from-zero wake). The first
+  wake is slowest; tens of seconds either way — consistent with design (d).
 
 ### Design questions
 
@@ -86,11 +93,13 @@ because most Spaces are ML demos built on those frameworks. QuickNotes listens o
 probes 7860, finds nothing, and the Space looks dead.
 
 **f) Pull the ghcr image vs build in the Space.** Pulling the prebuilt image is
-faster to start, reproducible, and means *the exact artifact CI tested and scanned
-is what runs* — no drift. Building inside the Space re-runs the build on HF's
-builder (slower cold deploys, can drift from CI) but keeps the Space self-contained
-and easy to tweak/debug in place. I chose **pull**: the CI artifact is the single
-source of truth (it's already Trivy-scanned from Lab 9).
+faster to start and means *the exact artifact CI tested runs* — no drift — but it
+requires the ghcr package to be public and adds a registry dependency. Building in
+the Space keeps it self-contained and editable in place, at the cost of a slower
+first build and possible drift from CI. **I chose build-from-source** here: it made
+the Space work end-to-end on its own (no ghcr public-flip in the loop), which was
+the pragmatic call. For a real release I'd pull the CI-scanned image so
+tested-artifact == deployed-artifact.
 
 ---
 
@@ -103,9 +112,9 @@ cellular), then `hyperfine` 50 runs for p50/p95.
 
 | Metric | HF Spaces (hosted) | Cloudflare Tunnel (local-via-edge) |
 |--------|-------------------:|-----------------------------------:|
-| Warm p50 | PENDING | PENDING |
-| Warm p95 | PENDING | PENDING |
-| Cold start | PENDING (tens of s) | N/A (always-on locally) |
+| Warm p50 | **0.565 s** | not run (bonus) |
+| Warm p95 | ~0.60 s | not run (bonus) |
+| Cold start | **9–26 s** (pause→wake) | N/A (always-on locally) |
 | URL stability | stable | ephemeral (changes on restart) |
 | Cost | free | free |
 
@@ -138,7 +147,7 @@ a datacenter, and a quick-tunnel URL isn't stable.
 
 | Task | Status |
 |------|--------|
-| 1 — Tag → CI → ghcr.io | `release.yml` written, SHA-pinned, least-privilege, YAML-validated; **live push/pull PENDING** |
-| 2 — HF Spaces deploy | Space `Dockerfile` + `README.md` (`app_port: 8080`) written; **live URL + latency PENDING (account/push)** |
-| Bonus — Cloudflare Tunnel | approach + comparison framework documented; **measurements PENDING (cloudflared + public exposure)** |
+| 1 — Tag → CI → ghcr.io | `release.yml` written, SHA-pinned, least-privilege, YAML-validated; go-live = one `v0.1.0` tag push |
+| 2 — HF Spaces deploy | ✅ **live** at https://gammaviolet-quicknotes.hf.space, `app_port: 8080`, warm p50 0.565 s, cold 9–26 s |
+| Bonus — Cloudflare Tunnel | approach + comparison documented; measurements not run |
 | Design questions a–i | ✅ complete |
