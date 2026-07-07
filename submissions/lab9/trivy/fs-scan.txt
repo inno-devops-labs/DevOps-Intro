@@ -1,0 +1,32 @@
+2026-07-07T20:30:14Z	INFO	[vuln] Vulnerability scanning is enabled
+2026-07-07T20:30:14Z	INFO	[misconfig] Misconfiguration scanning is enabled
+2026-07-07T20:30:14Z	INFO	[misconfig] Need to update the built-in checks
+2026-07-07T20:30:14Z	INFO	[misconfig] Downloading the built-in checks...
+165.46 KiB / 165.46 KiB [------------------------------------------------------] 100.00% ? p/s 100ms2026-07-07T20:30:15Z	INFO	[secret] Secret scanning is enabled
+2026-07-07T20:30:15Z	INFO	[secret] If your scanning is slow, please try '--scanners vuln' to disable secret scanning
+2026-07-07T20:30:15Z	INFO	[secret] Please see also https://aquasecurity.github.io/trivy/v0.59/docs/scanner/secret#recommendation for faster secret detection
+2026-07-07T20:30:17Z	ERROR	[rego] Error occurred while parsing. Trying to fallback to embedded check	file_path="root/.cache/trivy/policy/content/policies/cloud/policies/aws/ec2/specify_ami_owners.rego" err="root/.cache/trivy/policy/content/policies/cloud/policies/aws/ec2/specify_ami_owners.rego:30: rego_type_error: undefined ref: input.aws.ec2.requestedamis[__local622__]\n\tinput.aws.ec2.requestedamis[__local622__]\n\t              ^\n\t              have: \"requestedamis\"\n\t              want (one of): [\"instances\" \"launchconfigurations\" \"launchtemplates\" \"networkacls\" \"securitygroups\" \"subnets\" \"volumes\" \"vpcs\"]"
+2026-07-07T20:30:17Z	ERROR	[rego] Failed to find embedded check, skipping	file_path="root/.cache/trivy/policy/content/policies/cloud/policies/aws/ec2/specify_ami_owners.rego"
+2026-07-07T20:30:17Z	ERROR	[rego] Error occurred while parsing	file_path="root/.cache/trivy/policy/content/policies/cloud/policies/aws/ec2/specify_ami_owners.rego" err="root/.cache/trivy/policy/content/policies/cloud/policies/aws/ec2/specify_ami_owners.rego:30: rego_type_error: undefined ref: input.aws.ec2.requestedamis[__local622__]\n\tinput.aws.ec2.requestedamis[__local622__]\n\t              ^\n\t              have: \"requestedamis\"\n\t              want (one of): [\"instances\" \"launchconfigurations\" \"launchtemplates\" \"networkacls\" \"securitygroups\" \"subnets\" \"volumes\" \"vpcs\"]"
+2026-07-07T20:30:17Z	ERROR	[rego] Error occurred while parsing. Trying to fallback to embedded check	file_path="root/.cache/trivy/policy/content/policies/cloud/policies/aws/ec2/specify_ami_owners.rego" err="root/.cache/trivy/policy/content/policies/cloud/policies/aws/ec2/specify_ami_owners.rego:30: rego_type_error: undefined ref: input.aws.ec2.requestedamis[__local622__]\n\tinput.aws.ec2.requestedamis[__local622__]\n\t              ^\n\t              have: \"requestedamis\"\n\t              want (one of): [\"instances\" \"launchconfigurations\" \"launchtemplates\" \"networkacls\" \"securitygroups\" \"subnets\" \"volumes\" \"vpcs\"]"
+2026-07-07T20:30:17Z	ERROR	[rego] Failed to find embedded check, skipping	file_path="root/.cache/trivy/policy/content/policies/cloud/policies/aws/ec2/specify_ami_owners.rego"
+2026-07-07T20:30:17Z	ERROR	[rego] Error occurred while parsing	file_path="root/.cache/trivy/policy/content/policies/cloud/policies/aws/ec2/specify_ami_owners.rego" err="root/.cache/trivy/policy/content/policies/cloud/policies/aws/ec2/specify_ami_owners.rego:30: rego_type_error: undefined ref: input.aws.ec2.requestedamis[__local622__]\n\tinput.aws.ec2.requestedamis[__local622__]\n\t              ^\n\t              have: \"requestedamis\"\n\t              want (one of): [\"instances\" \"launchconfigurations\" \"launchtemplates\" \"networkacls\" \"securitygroups\" \"subnets\" \"volumes\" \"vpcs\"]"
+2026-07-07T20:30:17Z	INFO	Number of language-specific files	num=1
+2026-07-07T20:30:17Z	INFO	[gomod] Detecting vulnerabilities...
+2026-07-07T20:30:17Z	INFO	Detected config files	num=1
+
+.vagrant/machines/default/libvirt/private_key (secrets)
+=======================================================
+Total: 1 (HIGH: 1, CRITICAL: 0)
+
+HIGH: AsymmetricPrivateKey (private-key)
+════════════════════════════════════════
+Asymmetric Private Key
+────────────────────────────────────────
+ .vagrant/machines/default/libvirt/private_key:1
+────────────────────────────────────────
+   1 [ BEGIN OPENSSH PRIVATE KEY-----*******************************************************************************************************************************************************************************************************************************************************************************************************************************************-----END OPENSSH PRI
+   2   
+────────────────────────────────────────
+
+
