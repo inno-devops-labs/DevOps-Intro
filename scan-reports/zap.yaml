@@ -1,0 +1,37 @@
+env:
+  contexts:
+  - excludePaths: []
+    name: baseline
+    urls:
+    - http://172.17.0.1:8080
+  parameters:
+    failOnError: true
+    progressToStdout: false
+jobs:
+- parameters:
+    enableTags: false
+    maxAlertsPerRule: 10
+  type: passiveScan-config
+- parameters:
+    maxDuration: 1
+    url: http://172.17.0.1:8080
+  type: spider
+- parameters:
+    maxDuration: 1
+    url: http://172.17.0.1:8080
+  type: spiderAjax
+- parameters:
+    maxDuration: 0
+  type: passiveScan-wait
+- parameters:
+    format: Long
+    summaryFile: /home/zap/zap_out.json
+  rules: []
+  type: outputSummary
+- parameters:
+    reportDescription: ''
+    reportDir: /zap/wrk/
+    reportFile: /zap/wrk/zap-report-after.html
+    reportTitle: ZAP Scanning Report
+    template: traditional-html
+  type: report
