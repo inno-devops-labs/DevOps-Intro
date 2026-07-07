@@ -1,8 +1,8 @@
 # Lab 10 — Cloud: Ship QuickNotes to a Real Cloud
 
-> **Status.** Task 1 is **live** — a signed `v0.1.0` tag fired the release workflow
-> (green) and pushed the image to ghcr.io (one manual flip-to-public remains). Task
-> 2 (Hugging Face Space) is **live** — public URL + warm/cold latency measured
+> **Status.** Task 1 is **done** — a signed `v0.1.0` tag fired the release workflow
+> (green), pushed to ghcr.io, and the public image is verified anonymously pullable.
+> Task 2 (Hugging Face Space) is **live** — public URL + warm/cold latency measured
 > below. The Bonus (Cloudflare Tunnel) is documented but not run.
 
 Artifacts: [`.github/workflows/release.yml`](../.github/workflows/release.yml),
@@ -26,15 +26,19 @@ to `contents: read` + `packages: write`; all three `docker/*` actions are pinned
 **`ghcr.io/roukayazaki/devops-intro/quicknotes`** with tags **`0.1.0`** and
 **`latest`**.
 
-One manual step remains for the "publicly pullable" bit: GitHub creates the
-package **private** on first push, and there's no API to change container-package
-visibility — flip it once in the UI (**your fork → Packages → `quicknotes` →
-Package settings → Change visibility → Public**). After that:
+The package was flipped to **public** in the GH UI (no API for
+container-package visibility). **Verified anonymous clean pull** (logged out,
+image removed first):
 ```
-docker pull ghcr.io/roukayazaki/devops-intro/quicknotes:0.1.0   # no auth, clean machine
+$ docker pull ghcr.io/roukayazaki/devops-intro/quicknotes:0.1.0
+Status: Downloaded newer image ... Digest: sha256:3d5c6213...   (21.9 MB)
+$ docker run ... && curl /health  ->  {"notes":4,"status":"ok"}
 ```
-(Verified the push itself via the green run + an authenticated login; the
-anonymous pull 404s only because the package is still private.)
+
+> Bug caught + fixed along the way: the first `release.yml` had inline `#` comments
+> on the `metadata-action` `tags:` lines, which got baked into the tag names
+> (`0.1.0-e.g.-v0.1.0-...`). Removed the inline comments and re-tagged — the second
+> run produced the clean `0.1.0` + `latest`.
 
 ### Design questions
 
@@ -156,7 +160,7 @@ a datacenter, and a quick-tunnel URL isn't stable.
 
 | Task | Status |
 |------|--------|
-| 1 — Tag → CI → ghcr.io | ✅ `v0.1.0` tag → **green release run** → image pushed to `ghcr.io/.../quicknotes:0.1.0,latest` (flip package public = 1 UI click) |
+| 1 — Tag → CI → ghcr.io | ✅ `v0.1.0` → **green release run** → `ghcr.io/.../quicknotes:0.1.0,latest`, **public + anonymous pull verified** |
 | 2 — HF Spaces deploy | ✅ **live** at https://gammaviolet-quicknotes.hf.space, `app_port: 8080`, warm p50 0.565 s, cold 9–26 s |
 | Bonus — Cloudflare Tunnel | approach + comparison documented; measurements not run |
 | Design questions a–i | ✅ complete |
