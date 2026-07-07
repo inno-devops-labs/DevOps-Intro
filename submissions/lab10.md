@@ -20,12 +20,16 @@ Publish the QuickNotes container image to GitHub Container Registry from a tag-t
 
 The repository-side implementation is complete: the release workflow, Hugging Face Space artifacts, Cloudflare tunnel notes, measurement helper, and this submission are included in the branch.
 
-Manual account-side evidence still needs to be collected after pushing the branch/tag:
+Repository and registry evidence already collected:
 
-1. GitHub Actions release run URL after pushing signed tag `v0.1.0`.
-2. GHCR package visibility check and anonymous `docker pull` from the public package.
-3. Hugging Face Space creation under the course account, plus warm/cold latency evidence.
-4. Optional screenshot evidence: green release workflow, public package, HF Space logs, and phone/cellular Cloudflare verification.
+1. GitHub Actions release run succeeded: `https://github.com/Hidancloud/DevOps-Intro/actions/runs/28892339659`.
+2. GHCR package is public and anonymously pullable.
+3. The published `v0.1.0` image was pulled and smoke-tested locally from GHCR.
+
+Manual account-side evidence still needs to be collected for Hugging Face and final visual proof:
+
+1. Hugging Face Space creation under the course account, plus warm/cold latency evidence.
+2. Optional screenshot evidence: green release workflow, public package, HF Space logs, and phone/cellular Cloudflare verification.
 
 No secrets, private keys, tokens, or production data are stored in this repository.
 
@@ -212,6 +216,43 @@ curl -s http://localhost:8080/health
 ```text
 ghcr.io/hidancloud/devops-intro/quicknotes:v0.1.0
 ghcr.io/hidancloud/devops-intro/quicknotes:latest
+```
+
+### Green release run
+
+```text
+https://github.com/Hidancloud/DevOps-Intro/actions/runs/28892339659
+```
+
+GitHub API confirmation:
+
+```text
+$ curl -s 'https://api.github.com/repos/Hidancloud/DevOps-Intro/actions/workflows/release.yml/runs?per_page=3' | jq -r '.workflow_runs[] | [.id, .status, .conclusion, .html_url, .head_branch, .head_sha, .display_title, .run_started_at] | @tsv'
+28892339659  completed  success  https://github.com/Hidancloud/DevOps-Intro/actions/runs/28892339659  v0.1.0  9c9bd0b102caee06c05da898953597650ae2a29f  Release image  2026-07-07T19:19:23Z
+```
+
+The GitHub UI also shows `Release image #1` as successful with a total duration of 50 seconds. The only annotation is a non-failing GitHub runner warning that Node.js 20 actions are being forced to run on Node.js 24.
+
+### Public pull evidence
+
+This was tested after logging out from `ghcr.io`. Because this host is Apple Silicon and the release workflow intentionally published `linux/amd64` for GitHub/Hugging Face compatibility, the local verification uses `--platform linux/amd64`. On a normal `linux/amd64` clean machine, the same pull works without the platform override.
+
+```text
+$ docker logout ghcr.io || true
+$ docker pull --platform linux/amd64 ghcr.io/hidancloud/devops-intro/quicknotes:v0.1.0
+v0.1.0: Pulling from hidancloud/devops-intro/quicknotes
+Digest: sha256:889abfe27fdffdfbe0fd8a513c5ea1eb33e305ead4e3371908139264f6105b88
+Status: Downloaded newer image for ghcr.io/hidancloud/devops-intro/quicknotes:v0.1.0
+ghcr.io/hidancloud/devops-intro/quicknotes:v0.1.0
+
+$ docker image inspect ghcr.io/hidancloud/devops-intro/quicknotes:v0.1.0 --format 'ID={{.Id}} Size={{.Size}} Architecture={{.Architecture}} OS={{.Os}}'
+ID=sha256:889abfe27fdffdfbe0fd8a513c5ea1eb33e305ead4e3371908139264f6105b88 Size=5704983 Architecture=amd64 OS=linux
+
+$ docker run --platform linux/amd64 -d --name quicknotes-ghcr-smoke -p 18080:8080 ghcr.io/hidancloud/devops-intro/quicknotes:v0.1.0
+acfce2c4ef2bf85106a14dd6a811e37e00f51c0e4c88c3342d09dbb547e22d2f
+
+$ curl -s http://localhost:18080/health
+{"notes":4,"status":"ok"}
 ```
 
 ### Design questions
