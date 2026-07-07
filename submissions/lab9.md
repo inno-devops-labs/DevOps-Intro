@@ -406,6 +406,8 @@ govulncheck:
 
 I used a temporary local copy of `app/` to avoid committing a vulnerable dependency to the final lab branch. The temporary copy added a reachable call to vulnerable `golang.org/x/text/language.ParseAcceptLanguage` with `golang.org/x/text@v0.3.7`. This is the same command that the CI job runs.
 
+![Red govulncheck workflow run](workflow_red.png)
+
 ```text
 === Symbol Results ===
 
