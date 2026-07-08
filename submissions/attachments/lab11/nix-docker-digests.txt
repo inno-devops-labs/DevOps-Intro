@@ -1,0 +1,6 @@
+# nix build .#docker (University VM, two independent checkouts)
+
+env A: 28db2a32677bb3eb3c133ec33072ff4ad4350ea67d4445b30c422a349bd24874
+env B: 28db2a32677bb3eb3c133ec33072ff4ad4350ea67d4445b30c422a349bd24874
+
+image size: 2.9M (docker-image-quicknotes.tar.gz)

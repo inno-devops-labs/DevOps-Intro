@@ -1,0 +1,13 @@
+building '/nix/store/c2084xfai8pv8zylc209398qg136ly09-quicknotes-0.1.0.drv'...
+quicknotes> Running phase: buildPhase
+quicknotes> Building subPackage .
+quicknotes> Running phase: checkPhase
+quicknotes> ok          quicknotes      0.009s
+quicknotes> Running phase: installPhase
+quicknotes> Running phase: fixupPhase
+
+# store hash (env A & B identical):
+sha256:1xh9z7n1ax8hbissdcr7ivj2zcx56fhb1aj4i1l7hs5axq29xrym
+
+# health:
+curl http://127.0.0.1:18080/health -> {"notes":4,"status":"ok"}

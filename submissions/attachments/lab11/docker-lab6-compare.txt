@@ -1,0 +1,7 @@
+$ docker build --no-cache -t qn-lab6:run1 ./app
+$ docker build --no-cache -t qn-lab6:run2 ./app
+$ docker images --no-trunc qn-lab6
+
+REPOSITORY   TAG    IMAGE ID                                                                  SIZE
+qn-lab6      run2   sha256:fbcdbd2e78cedf9b7e904f11b561c388b28abd5f75e396baa851a102aca0df12   16MB
+qn-lab6      run1   sha256:01073da0688e9b8a22df65b857da54bf64d4b7fda60234cc7d821485e8da3ce8   16MB
