@@ -122,8 +122,8 @@ Nix buys reproducibility and pinned toolchains at the cost of learning curve, la
 
 ### CI runs
 
-- **Green:** <!-- Actions URL — digests match -->
-- **Red (intentional `SOURCE_DATE_EPOCH` break in job A):** <!-- Actions URL -->
+- **Green:** [nix-repro #1 — digests match](https://github.com/markovav-official/DevOps-Intro/actions/runs/28961060062)
+- **Red (intentional `SOURCE_DATE_EPOCH: "0"` in job A only):** <!-- paste run URL after push #2 -->
 
 ### Design questions (h–j)
 

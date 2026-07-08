@@ -13,6 +13,9 @@ jobs:
   build-a:
     name: nix-build-a
     runs-on: ubuntu-24.04
+    env:
+      # Intentional red-demo break: job B uses default epoch → digest mismatch.
+      SOURCE_DATE_EPOCH: "0"
     outputs:
       digest: ${{ steps.hash.outputs.digest }}
     steps:
