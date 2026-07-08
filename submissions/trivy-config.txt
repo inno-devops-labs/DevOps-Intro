@@ -1,0 +1,53 @@
+﻿docker : 2026-07-08T17:39:46Z	INFO	[misconfig] Misconfiguration scanning is enabled
+строка:1 знак:1
++ docker run --rm -v //var/run/docker.sock:/var/run/docker.sock -v "${P ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (2026-07-08T17:3...ning is enabled:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+2026-07-08T17:39:46Z	INFO	[misconfig] Need to update the built-in checks
+2026-07-08T17:39:46Z	INFO	[misconfig] Downloading the built-in checks...
+165.46 KiB / 165.46 KiB [------------------------------------------------------] 100.00% ? p/s 100ms2026-07-08T17:39:49
+Z	ERROR	[rego] Error occurred while parsing. Trying to fallback to embedded check	file_path="root/.cache/trivy/policy/c
+ontent/policies/cloud/policies/aws/ec2/specify_ami_owners.rego" err="root/.cache/trivy/policy/content/policies/cloud/po
+licies/aws/ec2/specify_ami_owners.rego:30: rego_type_error: undefined ref: input.aws.ec2.requestedamis[__local622__]\n\
+tinput.aws.ec2.requestedamis[__local622__]\n\t              ^\n\t              have: \"requestedamis\"\n\t             
+ want (one of): [\"instances\" \"launchconfigurations\" \"launchtemplates\" \"networkacls\" \"securitygroups\" \"subnet
+s\" \"volumes\" \"vpcs\"]"
+2026-07-08T17:39:49Z	ERROR	[rego] Failed to find embedded check, skipping	file_path="root/.cache/trivy/policy/content/p
+olicies/cloud/policies/aws/ec2/specify_ami_owners.rego"
+2026-07-08T17:39:49Z	ERROR	[rego] Error occurred while parsing	file_path="root/.cache/trivy/policy/content/policies/clo
+ud/policies/aws/ec2/specify_ami_owners.rego" err="root/.cache/trivy/policy/content/policies/cloud/policies/aws/ec2/spec
+ify_ami_owners.rego:30: rego_type_error: undefined ref: input.aws.ec2.requestedamis[__local622__]\n\tinput.aws.ec2.requ
+estedamis[__local622__]\n\t              ^\n\t              have: \"requestedamis\"\n\t              want (one of): [\"
+instances\" \"launchconfigurations\" \"launchtemplates\" \"networkacls\" \"securitygroups\" \"subnets\" \"volumes\" \"v
+pcs\"]"
+2026-07-08T17:39:50Z	ERROR	[rego] Error occurred while parsing. Trying to fallback to embedded check	file_path="root/.c
+ache/trivy/policy/content/policies/cloud/policies/aws/ec2/specify_ami_owners.rego" err="root/.cache/trivy/policy/conten
+t/policies/cloud/policies/aws/ec2/specify_ami_owners.rego:30: rego_type_error: undefined ref: input.aws.ec2.requestedam
+is[__local622__]\n\tinput.aws.ec2.requestedamis[__local622__]\n\t              ^\n\t              have: \"requestedamis
+\"\n\t              want (one of): [\"instances\" \"launchconfigurations\" \"launchtemplates\" \"networkacls\" \"securi
+tygroups\" \"subnets\" \"volumes\" \"vpcs\"]"
+2026-07-08T17:39:50Z	ERROR	[rego] Failed to find embedded check, skipping	file_path="root/.cache/trivy/policy/content/p
+olicies/cloud/policies/aws/ec2/specify_ami_owners.rego"
+2026-07-08T17:39:50Z	ERROR	[rego] Error occurred while parsing	file_path="root/.cache/trivy/policy/content/policies/clo
+ud/policies/aws/ec2/specify_ami_owners.rego" err="root/.cache/trivy/policy/content/policies/cloud/policies/aws/ec2/spec
+ify_ami_owners.rego:30: rego_type_error: undefined ref: input.aws.ec2.requestedamis[__local622__]\n\tinput.aws.ec2.requ
+estedamis[__local622__]\n\t              ^\n\t              have: \"requestedamis\"\n\t              want (one of): [\"
+instances\" \"launchconfigurations\" \"launchtemplates\" \"networkacls\" \"securitygroups\" \"subnets\" \"volumes\" \"v
+pcs\"]"
+2026-07-08T17:39:50Z	INFO	Detected config files	num=1
+
+Dockerfile (dockerfile)
+=======================
+Tests: 21 (SUCCESSES: 20, FAILURES: 1)
+Failures: 1 (HIGH: 1, CRITICAL: 0)
+
+AVD-DS-0002 (HIGH): Specify at least 1 USER command in Dockerfile with non-root user as argument
+тХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХРтХР
+Running containers with 'root' user can lead to a container escape situation. It is a best practice to run containers as non-root users, which can be done by adding a 'USER' statement to the Dockerfile.
+
+See https://avd.aquasec.com/misconfig/ds002
+тФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФАтФА
+
+

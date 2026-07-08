@@ -31,7 +31,8 @@ func do(t *testing.T, srv *Server, method, target string, body any) *httptest.Re
 	}
 	req := httptest.NewRequest(method, target, &buf)
 	rec := httptest.NewRecorder()
-	srv.Routes().ServeHTTP(rec, req)
+	handler := securityHeaders(srv.Routes())
+	handler.ServeHTTP(rec, req)
 	return rec
 }
 
@@ -131,3 +132,20 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	}
 }
 
+func TestSecurityHeaders(t *testing.T) {
+    srv := newTestServer(t)
+    rec := do(t, srv, http.MethodGet, "/health", nil)
+
+    if rec.Header().Get("X-Content-Type-Options") != "nosniff" {
+        t.Errorf("X-Content-Type-Options header missing or wrong: %q", rec.Header().Get("X-Content-Type-Options"))
+    }
+    if rec.Header().Get("X-Frame-Options") != "DENY" {
+        t.Errorf("X-Frame-Options header missing or wrong: %q", rec.Header().Get("X-Frame-Options"))
+    }
+    if rec.Header().Get("Content-Security-Policy") != "default-src 'none'" {
+        t.Errorf("Content-Security-Policy header missing or wrong: %q", rec.Header().Get("Content-Security-Policy"))
+    }
+    if rec.Header().Get("Referrer-Policy") != "no-referrer" {
+        t.Errorf("Referrer-Policy header missing or wrong: %q", rec.Header().Get("Referrer-Policy"))
+    }
+}

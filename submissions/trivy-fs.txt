@@ -1,0 +1,9 @@
+2026-07-08T17:38:19Z	INFO	[vulndb] Need to update DB
+2026-07-08T17:38:19Z	INFO	[vulndb] Downloading vulnerability DB...
+2026-07-08T17:38:19Z	INFO	[vulndb] Downloading artifact...	repo="mirror.gcr.io/aquasec/trivy-db:2"
+2026-07-08T17:38:28Z	INFO	[vulndb] Artifact successfully downloaded	repo="mirror.gcr.io/aquasec/trivy-db:2"
+2026-07-08T17:38:28Z	INFO	[vuln] Vulnerability scanning is enabled
+2026-07-08T17:38:28Z	INFO	[secret] Secret scanning is enabled
+2026-07-08T17:38:28Z	INFO	[secret] If your scanning is slow, please try '--scanners vuln' to disable secret scanning
+2026-07-08T17:38:28Z	INFO	[secret] Please see also https://aquasecurity.github.io/trivy/v0.59/docs/scanner/secret#recommendation for faster secret detection
+2026-07-08T17:38:28Z	FATAL	Fatal error	fs scan error: scan error: scan failed: failed analysis: walk filesystem: walk dir error: unknown error with C:/Program Files/Git/src: lstat C:/Program Files/Git/src: no such file or directory

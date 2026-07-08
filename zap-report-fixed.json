@@ -1,0 +1,18 @@
+{
+	"@programName": "ZAP",
+	"@version": "2.16.0",
+	"@generated": "Wed, 8 Jul 2026 18:53:01",
+	"site":[ 
+		{
+			"@name": "http://host.docker.internal:8080",
+			"@host": "host.docker.internal",
+			"@port": "8080",
+			"@ssl": "false",
+			"alerts": [ 
+			]
+		}
+	],
+	"sequences":[
+	]
+
+}
