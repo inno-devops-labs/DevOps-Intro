@@ -1,0 +1,3 @@
+Content-Type: application/json
+
+{"unix":1783548307,"iso":"2026-07-08T22:05:07Z","hour_minute":"22:05","moscow":"2026-07-08 22:05:07","tz":"UTC+3"}

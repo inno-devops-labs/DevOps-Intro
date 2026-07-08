@@ -1,0 +1,2 @@
+-rw-r--r-- 1 root root 362115 Jul  8 21:55 main.wasm
+-rw-r--r-- 1 root root 196781 Jul  8 22:04 main.wasm

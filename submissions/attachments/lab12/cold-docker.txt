@@ -1,0 +1,10 @@
+=== Docker cold start (5 samples) ===
+sample1: 1429 ms
+qn-lab6
+sample2: 1411 ms
+qn-lab6
+sample3: 1246 ms
+qn-lab6
+sample4: 1443 ms
+qn-lab6
+sample5: 1564 ms

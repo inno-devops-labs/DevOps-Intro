@@ -1,0 +1,6 @@
+=== wasmtime run cold (5 samples) ===
+sample1: 16 ms
+sample2: 12 ms
+sample3: 12 ms
+sample4: 11 ms
+sample5: 12 ms

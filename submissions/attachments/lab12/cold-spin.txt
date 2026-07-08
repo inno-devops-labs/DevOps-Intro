@@ -1,0 +1,6 @@
+=== Spin cold start (5 samples) ===
+sample1: 12936 ms
+sample2: 12975 ms
+sample3: 12779 ms
+sample4: 13008 ms
+sample5: 12954 ms

@@ -1,0 +1,4 @@
+=== Artifact sizes ===
+main.wasm (spin): 362115
+main.wasm (wasm-cli): 196781
+docker image: 3979676

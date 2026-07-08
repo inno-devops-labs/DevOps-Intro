@@ -1,0 +1,6 @@
+Benchmark 1: curl -fsS http://127.0.0.1:3000/time >/dev/null
+  Time (mean ± σ):       9.5 ms ±   1.3 ms    [User: 3.3 ms, System: 4.1 ms]
+  Range (min … max):     7.9 ms …  16.5 ms    50 runs
+ 
+  Warning: Statistical outliers were detected. Consider re-running this benchmark on a quiet system without any interferences from other programs. It might help to use the '--warmup' or '--prepare' options.
+ 

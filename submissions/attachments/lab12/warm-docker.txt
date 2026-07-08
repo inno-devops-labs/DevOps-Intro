@@ -1,0 +1,4 @@
+Benchmark 1: curl -fsS http://127.0.0.1:18080/health >/dev/null
+  Time (mean ± σ):       7.1 ms ±   0.4 ms    [User: 3.3 ms, System: 3.3 ms]
+  Range (min … max):     6.6 ms …   8.1 ms    50 runs
+ 
