@@ -18,4 +18,4 @@ Public API endpoints:
 - `GET /notes`
 - `POST /notes`
 
-Image source: `ghcr.io/ilyapechersky/devops-intro/quicknotes:v0.1.0`
+Image source: `ghcr.io/ilyapechersky/devops-intro/quicknotes:v0.1.1`

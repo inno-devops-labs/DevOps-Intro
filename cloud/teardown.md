@@ -20,6 +20,6 @@ The `quicknotes` package can stay public for course review. To remove it later:
 ## Git tag
 
 ```bash
-git push --delete origin v0.1.0
-git tag -d v0.1.0
+git push --delete origin v0.1.1
+git tag -d v0.1.1
 ```
