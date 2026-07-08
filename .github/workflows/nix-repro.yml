@@ -13,9 +13,6 @@ jobs:
   build-a:
     name: nix-build-a
     runs-on: ubuntu-24.04
-    env:
-      # Intentional red-demo break: job B uses default epoch → digest mismatch.
-      SOURCE_DATE_EPOCH: "0"
     outputs:
       digest: ${{ steps.hash.outputs.digest }}
     steps:
@@ -24,7 +21,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@90bb610b90bf290cad97484ba341453bd1cbefea # v19
 
       - id: build
-        run: nix build .#docker --impure --print-build-logs --print-out-paths > out-path.txt
+        run: nix build .#docker --print-build-logs --print-out-paths > out-path.txt
 
       - id: hash
         run: echo "digest=$(sha256sum "$(cat out-path.txt)" | awk '{print $1}')" >> "$GITHUB_OUTPUT"
