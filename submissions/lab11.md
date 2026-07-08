@@ -124,7 +124,7 @@ Nix buys reproducibility and pinned toolchains at the cost of learning curve, la
 
 - **Green:** [nix-repro #1 — digests match](https://github.com/markovav-official/DevOps-Intro/actions/runs/28961060062)
 - **Red (intentional `SOURCE_DATE_EPOCH: "0"` + `--impure` in job A only):** [nix-repro #3 — digest mismatch](https://github.com/markovav-official/DevOps-Intro/actions/runs/28964290755)
-- **Green (restored parity):** <!-- Actions URL after push -->
+- **Green (restored parity):** [nix-repro #4 — digests match](https://github.com/markovav-official/DevOps-Intro/actions/runs/28964914367)
 
 ### Design questions (h–j)
 
