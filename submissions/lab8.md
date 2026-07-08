@@ -1,4 +1,3 @@
-
 # Lab 8 Submission - SRE & Monitoring: Golden Signals Dashboard + One Good Alert
 
 ---
@@ -108,7 +107,7 @@ $ curl -s http://127.0.0.1:9090/api/v1/targets | jq '.data.activeTargets[].healt
 
 Grafana dashboard after ~200 mixed requests (screenshot):
 
-![Golden Signals dashboard](../screenshots/lab8-golden-signals.png)
+![Golden Signals dashboard](screenshots/lab8-golden-signals.png)
 
 - Traffic peaks ~9.5 req/s · Errors ~6–7% (injected 400/404) · Latency-proxy mirrors traffic · Saturation = 4 notes.
 
@@ -117,11 +116,11 @@ Grafana dashboard after ~200 mixed requests (screenshot):
 **a) Pull vs push — which side must be reachable, and the failure mode?**
 Prometheus **pulls**: it initiates `GET /metrics` to each target. So the **target (QuickNotes) must be reachable *by* Prometheus** on the scrape port; QuickNotes never needs to reach Prometheus. If Prometheus can't reach QuickNotes, the target shows **`up == 0`** in `/targets`, scrapes fail, and dependent panels/alerts go stale or "no data" — but the app itself keeps serving users; you've only lost *visibility*. A bonus of pull: a target that vanishes is explicitly detectable (`up == 0`), whereas with push a silent client is indistinguishable from a healthy-but-quiet one.
 
-**b) `scrape_interval: 15s` → `5s` or `5m`?**
+**b) `scrape_interval: 15s` -> `5s` or `5m`?**
 `5s`: 3× the scrape/storage load and pressure on the target's `/metrics`; more TSDB samples (disk/memory); little added signal — and very short `rate()` windows get noisier. `5m`: metrics become coarse — short spikes vanish (a 90-second error burst between scrapes is invisible), `rate()`/alerts over `[1m]` break because there's fewer than two samples in the window ("no data"), and alerting is sluggish (up to 5 min blind). 15s balances resolution against cost.
 
 **c) `rate()` vs `irate()` vs `delta()` for Traffic?**
-**`rate()`** — correct here. It's the per-second average over the whole window using all samples, handles counter resets, and is smooth enough for a dashboard/alert on a **counter** like `quicknotes_http_requests_total`. `irate()` uses only the last two samples → very spiky/aliased, good for close-up debugging but jittery on a graph. `delta()` is for **gauges** (difference over a window, can be negative) and misbehaves on a counter. Traffic is a counter on a dashboard → `rate()`.
+**`rate()`** — correct here. It's the per-second average over the whole window using all samples, handles counter resets, and is smooth enough for a dashboard/alert on a **counter** like `quicknotes_http_requests_total`. `irate()` uses only the last two samples -> very spiky/aliased, good for close-up debugging but jittery on a graph. `delta()` is for **gauges** (difference over a window, can be negative) and misbehaves on a counter. Traffic is a counter on a dashboard -> `rate()`.
 
 **d) Why provision Grafana from files?**
 Reproducibility and GitOps: a fresh stack comes up fully wired (datasource + dashboards) on `docker compose up`, with zero manual clicking. The config is version-controlled, diffable, and code-reviewed, and it's identical across dev/CI/prod. Click-through setup is unrepeatable, undocumented, lost whenever the container/volume is recreated, and drifts between environments. Provisioning is infrastructure-as-code for dashboards.
@@ -154,7 +153,7 @@ The `for: 5m` gate (plus the `[5m]` rate window) means a single 4xx burst never 
 
 ### 2.2 Runbook
 
-Full runbook: `docs/runbook/high-error-rate.md` — sections: **What it means**, **Triage** (confirm real → split 4xx/5xx → correlate with recent change), **Mitigations** (roll back, restart, shed bad traffic, check storage), **Post-incident** (blameless postmortem + action items).
+Full runbook: `docs/runbook/high-error-rate.md` — sections: **What it means**, **Triage** (confirm real -> split 4xx/5xx -> correlate with recent change), **Mitigations** (roll back, restart, shed bad traffic, check storage), **Post-incident** (blameless postmortem + action items).
 
 ### 2.3 Alert firing
 
@@ -172,17 +171,26 @@ does **not** page instantly, which is the sustained-breach gate working as desig
 
 ```text
 Alert:        HighErrorRate
-State:        PENDING  (Active Since 45s → flips to FIRING at 5m)
+State:        PENDING  (Active Since 1m4s -> flips to FIRING at 5m)
 severity:     page
-Value:        0.1814  (18.15% error ratio, threshold 5%)
-description:  Error ratio is 18.15% (threshold 5%) over the last 5m.
+Value:        0.1852  (18.52% error ratio, threshold 5%)
+description:  Error ratio is 18.52% (threshold 5%) over the last 5m.
 runbook_url:  https://github.com/blacktree-lab/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md
 ```
 
 After the breach holds for a full 5 minutes the state transitions
-`inactive → pending → firing`:
+`inactive -> pending -> firing` and the alert pages:
 
 ![HighErrorRate firing](screenshots/lab8-alert-firing.png)
+
+```text
+Alert:        HighErrorRate
+State:        FIRING  (Active Since 7m15s)
+severity:     page
+Value:        0.1981  (19.81% error ratio, threshold 5%)
+description:  Error ratio is 19.81% (threshold 5%) over the last 5m.
+runbook_url:  https://github.com/blacktree-lab/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md
+```
 
 ### 2.4 Design Questions
 
@@ -190,7 +198,60 @@ After the breach holds for a full 5 minutes the state transitions
 A single failed request, or a brief blip, usually isn't user-meaningful and is often self-correcting (a transient network hiccup, one misbehaving client). Paging on it creates alert fatigue and wakes someone for noise. Requiring 5 sustained minutes proves the problem is real and ongoing before paging, trading a few minutes of detection latency for far fewer false pages.
 
 **f) Symptom vs cause alert — a cause alert for QuickNotes, and why it's worse.**
-Ours is a **symptom** alert (users are seeing errors). A **cause** alert would be e.g. `CPU > 80%` or `container memory > 90%`. It's worse because it produces both false positives (high CPU during a backup/batch that no user notices → needless page) and false negatives (users failing while CPU looks fine → missed incident). Cause metrics are many and noisy — you'd need dozens of cause alerts to cover every failure mode, whereas one symptom alert ("users are getting errors") catches them all regardless of root cause. Symptom alerts map to user impact; cause alerts only guess at it.
+Ours is a **symptom** alert (users are seeing errors). A **cause** alert would be e.g. `CPU > 80%` or `container memory > 90%`. It's worse because it produces both false positives (high CPU during a backup/batch that no user notices -> needless page) and false negatives (users failing while CPU looks fine -> missed incident). Cause metrics are many and noisy — you'd need dozens of cause alerts to cover every failure mode, whereas one symptom alert ("users are getting errors") catches them all regardless of root cause. Symptom alerts map to user impact; cause alerts only guess at it.
 
 **g) Alert fatigue — a quantitative "too noisy" threshold.**
 A practical rule: if **more than ~20% of the times this alert pages, the user wasn't actually impacted** (precision < ~80%), it's too noisy and must be tuned, raise the threshold, lengthen `for:`, or make the expression more symptom-specific. Once on-call learns that roughly one in five pages is nonsense, they start ignoring all of them, which is worse than having no alert. (Google SRE's guidance: alerts must be actionable; aim for high precision *and* recall.)
+
+---
+
+## Bonus Task - Synthetic Monitoring from the Outside (Checkly)
+
+### B.1 Setup
+
+QuickNotes was exposed to the public internet via a **Cloudflare Tunnel** quick tunnel (no account, no card, no domain):
+
+```text
+$ /tmp/cloudflared tunnel --url http://localhost:8080
+...  Your quick Tunnel has been created! Visit it at:
+     https://running-controlling-buyers-ear.trycloudflare.com
+
+$ curl -s https://running-controlling-buyers-ear.trycloudflare.com/health
+{"notes":4,"status":"ok"}
+```
+
+A **Checkly API check** then probed that public URL from **2 regions**:
+- **URL:** `https://running-controlling-buyers-ear.trycloudflare.com/health` (GET, IPv4)
+- **Assertions:** status code `== 200`; response time degraded after `2000 ms`, failed after `20000 ms`
+- **Frequency:** every 1 minute
+- **Regions:** Frankfurt (`eu-central-1`) + Singapore (`ap-southeast-1`)
+- Ran continuously for ~30 minutes.
+
+![Checkly check — 2 regions](screenshots/lab8-checkly.png)
+
+### B.2 Internal (Prometheus) vs external (Checkly)
+
+Measured over the same ~30-minute window:
+
+| Metric | Prometheus (inside the Compose net) | Checkly (Frankfurt + Singapore) |
+|--------|-------------------------------------|---------------------------------|
+| Avg / p50 latency | **N/A** — QuickNotes exposes no latency histogram (only counters + a gauge), so Prometheus cannot report request latency at all | **781 ms** overall — Frankfurt 752 ms · Singapore 974 ms |
+| p95 latency | **N/A** (same reason) | **1.29 s** overall — Frankfurt 1.31 s · Singapore 1.29 s |
+| Errors observed | **0%** error ratio (`responses_by_code_total` all 2xx on `/health`) | **0 failures**, 100% availability, 0 alerts (~32 min, 1-min freq) |
+
+Per-run timing is dominated by **Time-to-First-Byte** (~0.7–1.5 s) — the full round-trip *client region -> Cloudflare edge -> tunnel -> Melbourne -> back* - versus DNS ~5 ms and TCP ~2 ms. Individual runs swing **0.5 s–1.5 s**: a free ephemeral quick tunnel is a best-effort path, and that variance is itself something only an external prober sees.
+
+> The latency row captures the whole point: the **inside** view literally cannot
+> see latency here, while the **outside** view measures the full real path
+> (client region -> Cloudflare edge -> tunnel -> laptop in Melbourne). That path
+> costs **~0.78 s p50 and ~1.3 s p95** - enormous next to the sub-millisecond
+> localhost scrape Prometheus does, and completely **invisible** to Prometheus.
+> The two regions land in the same ballpark and are noticeably **jittery**
+> (per-run 0.5–1.5 s), because a free ephemeral quick tunnel is best-effort - a
+> path-quality signal an external prober surfaces that internal metrics never would.
+
+### B.3 Failure-mode analysis
+
+**What Checkly catches that Prometheus cannot:** anything on the path *between the user and the app*. If DNS fails, the TLS cert expires, the Cloudflare edge or the tunnel drops, or the service is healthy internally but unreachable from the public internet, Checkly's probes go red — while Prometheus still reports the target `up == 1`, because it scrapes the container from *inside* the Compose network and never traverses that path. Checkly also measures **real user-perceived latency** (network distance, edge, TLS handshake) and reports it **per region**, none of which internal metrics can see.
+
+**What Prometheus catches that Checkly cannot:** everything *inside* the app. Prometheus sees per-endpoint error rates across **all** routes (by status code), request throughput, and saturation (`quicknotes_notes_total`), including low-frequency errors on endpoints Checkly never touches, since the probe only hits `/health`. Checkly is **black-box** (one endpoint, from outside); Prometheus is **white-box** (every metric, from inside). They're complementary: Checkly answers "can users reach it, and how fast?", Prometheus answers "what is it doing, and why?".

@@ -1,6 +1,6 @@
 # Runbook — HighErrorRate (QuickNotes)
 
-**Alert:** `HighErrorRate` · **Severity:** `page` · **Dashboard:** QuickNotes — Golden Signals (Errors panel)
+**Alert:** `HighErrorRate` · **Severity:** `page` · **Dashboard:** QuickNotes - Golden Signals (Errors panel)
 
 ---
 
@@ -13,8 +13,8 @@ More than **5% of QuickNotes HTTP responses have been 4xx/5xx for 5 sustained mi
 1. **Confirm it's real, not a probe artifact.** Open the Errors panel at http://localhost:3000 and Prometheus at http://localhost:9090. Check whether the ratio is still above 5% *now* or already recovering.
 2. **Split 4xx vs 5xx.** Run in Prometheus:
    `sum by (code) (rate(quicknotes_http_responses_by_code_total[5m]))`.
-   - Mostly **5xx** → the app or its storage is failing (server-side). Highest urgency.
-   - Mostly **4xx** → likely a bad client/deploy sending malformed requests, or someone scanning endpoints.
+   - Mostly **5xx** -> the app or its storage is failing (server-side). Highest urgency.
+   - Mostly **4xx** -> likely a bad client/deploy sending malformed requests, or someone scanning endpoints.
 3. **Correlate with a recent change.** Did a deploy, config push, or `listen_addr`/env change land just before the spike? Check `docker compose ps` (is `quicknotes` still `healthy`?) and `docker compose logs --tail=100 quicknotes` for panics or write errors (e.g. read-only FS / volume full).
 
 ## Mitigations (stop the bleeding first)
