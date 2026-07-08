@@ -38,6 +38,13 @@
         packages.docker = pkgs.dockerTools.buildImage {
           name = "quicknotes";
           tag = "nix";
+          # CI red demo: job A sets SOURCE_DATE_EPOCH=0 and runs `nix build --impure`.
+          # Pure builds (green) ignore host env and keep the nixpkgs default second.
+          created =
+            if builtins.getEnv "SOURCE_DATE_EPOCH" == "0" then
+              "1970-01-01T00:00:00Z"
+            else
+              "1970-01-01T00:00:01Z";
           copyToRoot = imageRoot;
           config = {
             Entrypoint = [ "/quicknotes" ];

@@ -137,7 +137,7 @@ A single job running twice shares runner state, store paths, and timing — coul
 
 **j) `SOURCE_DATE_EPOCH`**
 
-Timestamps leak into archive metadata and build IDs. `dockerTools.buildImage` respects `SOURCE_DATE_EPOCH` for deterministic layer times; mismatched epoch between jobs → digest mismatch (used for the red CI demo).
+Timestamps leak into OCI metadata (`created` in `dockerTools.buildImage`) and layer tar mtime. Nix builds are **pure** by default: host env vars (including `SOURCE_DATE_EPOCH` in GHA) do not enter the sandbox, so both jobs still produced the same store path. The red demo wires `created` via `builtins.getEnv` in `flake.nix` and runs job A with `nix build --impure` + `SOURCE_DATE_EPOCH=0`, shifting image metadata by one second vs job B's default `1970-01-01T00:00:01Z`.
 
 ---
 
