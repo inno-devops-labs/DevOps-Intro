@@ -130,8 +130,10 @@ Free-tier Spaces sleep after ~30 min idle; the wake-up is the cold start.
 |-------------|-----------:|
 | Warm p50 (50 consecutive requests) | 2.65 s |
 | Cold start #1 (confirmed "Sleeping" first) | 4.54 s |
-| Cold start #2 | `<FILL>` s |
-| Cold start #3 | `<FILL>` s |
+| Cold start #2 | 8.69 s |
+| Cold start #3 | 9.59 s |
+
+**Cold vs warm:** cold starts (4.54 / 8.69 / 9.59 s, avg ~7.6 s) run **~2–3.6× the warm p50 (2.65 s)**. The spread reflects how much the wake must do — a still-cached image is just a container restart (~4.5 s), while a fuller re-schedule/reload costs ~9–10 s.
 
 Command: `curl -w '%{time_total}\n' -o /dev/null -s https://barberryml-quicknotes.hf.space/health`
 
@@ -157,7 +159,7 @@ Local QuickNotes exposed via a Cloudflare **quick tunnel**:
 |--------|-------------------:|-----------------------------------:|
 | Warm p50 | **2.65 s** | **1.67 s** |
 | Warm p95 | **3.01 s** | **3.10 s** |
-| Cold start | `<FILL — 3 samples>` | N/A (continuously local) |
+| Cold start | ~4.5–9.6 s (avg ~7.6 s) | N/A (continuously local) |
 | Public URL stability | stable | ephemeral on restart |
 | Cost | free | free |
 
