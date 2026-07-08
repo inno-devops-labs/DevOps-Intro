@@ -51,6 +51,8 @@ Thumbs.db
 
 # Local agent config (not part of the course)
 .claude/
+.bin
+app/.bin/
 
 # NOTE: deliberately NOT ignored, because students commit them as lab evidence:
 #   submissions/labN.md        (lab reports)
