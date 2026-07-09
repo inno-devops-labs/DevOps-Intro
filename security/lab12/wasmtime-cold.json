@@ -1,0 +1,27 @@
+﻿[
+    {
+        "run":  1,
+        "ms":  1185.4,
+        "body":  "{\"unix\":1783593711,\"iso\":\"2026-07-09T13:41:51+03:00\",\"hour_minute\":\"13:41\",\"timezone\":\"Europe/Moscow (UTC+3)\"}"
+    },
+    {
+        "run":  2,
+        "ms":  23.4,
+        "body":  "{\"unix\":1783593711,\"iso\":\"2026-07-09T13:41:51+03:00\",\"hour_minute\":\"13:41\",\"timezone\":\"Europe/Moscow (UTC+3)\"}"
+    },
+    {
+        "run":  3,
+        "ms":  24.3,
+        "body":  "{\"unix\":1783593711,\"iso\":\"2026-07-09T13:41:51+03:00\",\"hour_minute\":\"13:41\",\"timezone\":\"Europe/Moscow (UTC+3)\"}"
+    },
+    {
+        "run":  4,
+        "ms":  27.2,
+        "body":  "{\"unix\":1783593711,\"iso\":\"2026-07-09T13:41:51+03:00\",\"hour_minute\":\"13:41\",\"timezone\":\"Europe/Moscow (UTC+3)\"}"
+    },
+    {
+        "run":  5,
+        "ms":  25.6,
+        "body":  "{\"unix\":1783593711,\"iso\":\"2026-07-09T13:41:51+03:00\",\"hour_minute\":\"13:41\",\"timezone\":\"Europe/Moscow (UTC+3)\"}"
+    }
+]

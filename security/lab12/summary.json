@@ -1,0 +1,79 @@
+{
+  "versions": {
+    "spin": "3.4.0",
+    "tinygo": "0.41.0 container digest sha256:0376cd2d957e7304a1a653e2f7ef44cc27e1caa3a445073dfb09731ad4c19fec",
+    "wasmtime": "46.0.1",
+    "hyperfine": "1.20.0",
+    "docker": "29.2.0",
+    "host_go": "1.26.4 windows/amd64"
+  },
+  "sizes_bytes": {
+    "spin_main_wasm": 369708,
+    "wasmtime_cli_main_wasm": 196189,
+    "docker_image_inspect_size": 2506341
+  },
+  "warm": {
+    "spin": {
+      "runs": 50,
+      "mean_ms": 24.24,
+      "min_ms": 21.08,
+      "max_ms": 32.65,
+      "p50_ms": 23.14,
+      "p95_ms": 32.08
+    },
+    "docker": {
+      "runs": 50,
+      "mean_ms": 23.98,
+      "min_ms": 20.93,
+      "max_ms": 31.46,
+      "p50_ms": 23.24,
+      "p95_ms": 29.01
+    },
+    "wasmtime_cli": {
+      "runs": 50,
+      "mean_ms": 30.95,
+      "min_ms": 24.06,
+      "max_ms": 212.35,
+      "p50_ms": 25.37,
+      "p95_ms": 40.45
+    }
+  },
+  "cold": {
+    "spin": {
+      "runs": 5,
+      "values_ms": [
+        646.4,
+        522.8,
+        520.5,
+        522.5,
+        521.9
+      ],
+      "p50_ms": 522.5,
+      "p95_ms": 646.4
+    },
+    "docker": {
+      "runs": 5,
+      "values_ms": [
+        520.7,
+        507.0,
+        550.1,
+        479.1,
+        515.4
+      ],
+      "p50_ms": 515.4,
+      "p95_ms": 550.1
+    },
+    "wasmtime_cli": {
+      "runs": 5,
+      "values_ms": [
+        1185.4,
+        23.4,
+        24.3,
+        27.2,
+        25.6
+      ],
+      "p50_ms": 25.6,
+      "p95_ms": 1185.4
+    }
+  }
+}

@@ -1,0 +1,66 @@
+﻿{
+    "spin":  [
+                 {
+                     "run":  1,
+                     "ms":  646.4,
+                     "attempts":  1,
+                     "body":  "{\"unix\":1783593682,\"iso\":\"2026-07-09T13:41:22+03:00\",\"hour_minute\":\"13:41\",\"timezone\":\"Europe/Moscow (UTC+3)\"}"
+                 },
+                 {
+                     "run":  2,
+                     "ms":  522.8,
+                     "attempts":  1,
+                     "body":  "{\"unix\":1783593683,\"iso\":\"2026-07-09T13:41:23+03:00\",\"hour_minute\":\"13:41\",\"timezone\":\"Europe/Moscow (UTC+3)\"}"
+                 },
+                 {
+                     "run":  3,
+                     "ms":  520.5,
+                     "attempts":  1,
+                     "body":  "{\"unix\":1783593684,\"iso\":\"2026-07-09T13:41:24+03:00\",\"hour_minute\":\"13:41\",\"timezone\":\"Europe/Moscow (UTC+3)\"}"
+                 },
+                 {
+                     "run":  4,
+                     "ms":  522.5,
+                     "attempts":  1,
+                     "body":  "{\"unix\":1783593685,\"iso\":\"2026-07-09T13:41:25+03:00\",\"hour_minute\":\"13:41\",\"timezone\":\"Europe/Moscow (UTC+3)\"}"
+                 },
+                 {
+                     "run":  5,
+                     "ms":  521.9,
+                     "attempts":  1,
+                     "body":  "{\"unix\":1783593686,\"iso\":\"2026-07-09T13:41:26+03:00\",\"hour_minute\":\"13:41\",\"timezone\":\"Europe/Moscow (UTC+3)\"}"
+                 }
+             ],
+    "docker":  [
+                   {
+                       "run":  1,
+                       "ms":  520.7,
+                       "attempts":  1,
+                       "body":  "{\"notes\":4,\"status\":\"ok\"}"
+                   },
+                   {
+                       "run":  2,
+                       "ms":  507,
+                       "attempts":  1,
+                       "body":  "{\"notes\":4,\"status\":\"ok\"}"
+                   },
+                   {
+                       "run":  3,
+                       "ms":  550.1,
+                       "attempts":  1,
+                       "body":  "{\"notes\":4,\"status\":\"ok\"}"
+                   },
+                   {
+                       "run":  4,
+                       "ms":  479.1,
+                       "attempts":  1,
+                       "body":  "{\"notes\":4,\"status\":\"ok\"}"
+                   },
+                   {
+                       "run":  5,
+                       "ms":  515.4,
+                       "attempts":  1,
+                       "body":  "{\"notes\":4,\"status\":\"ok\"}"
+                   }
+               ]
+}
