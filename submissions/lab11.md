@@ -312,3 +312,153 @@ The honest summary: `docker build` is the default because it optimizes for the c
 actually have (get a container shipped, with people who already know bash), while Nix optimizes for
 a constraint most teams do not have (prove to a hostile third party that these bytes came from this
 source). Nix wins decisively where that second constraint is real, and loses on every other axis.
+
+---
+
+## Bonus Task — CI-Verified Reproducibility
+
+### Workflow
+
+`.github/workflows/nix-repro.yml` (committed in this PR). Structure:
+
+- a `build` job with a two-cell matrix (`replica: [a, b]`), each cell landing on its own fresh
+  `ubuntu-24.04` runner;
+- each cell installs Nix via `cachix/install-nix-action` pinned by 40-char SHA
+  (`a49548c11d9846ad46ecc0115273879b045f001c`, v31), forces `sandbox = true` through
+  `extra_nix_config`, builds `.#docker`, and exports `sha256sum result` as a job output;
+- a third `compare` job (`needs: build`) reads both outputs and exits non-zero if they differ, or if
+  either is empty.
+
+Two details are load-bearing and worth calling out.
+
+`fail-fast: false` on the matrix: with the default (`true`), a divergence that also caused one
+replica to fail would cancel the sibling, and the failure would surface as "job cancelled" rather
+than as the compare job's explicit mismatch. The gate should fail for the *stated* reason.
+
+The explicit empty-string check in `compare`: matrix jobs share one `outputs` map, so replica A
+evaluates `digest_b` to the empty string and vice versa. Two empty strings compare equal. Without
+the guard, a workflow in which *both* replicas silently failed to export a digest would pass. The
+red run below happens to prove the mechanism works — both keys arrived populated and distinct — but
+the guard makes the gate correct rather than merely lucky.
+
+`actions/checkout` is pinned to `11bd71901bbe5b1630ceea73d27597364c9af683` (v4.2.2), reusing the SHA
+already vetted in Lab 3's `ci.yml`.
+
+### Green run
+
+<https://github.com/ivanalpatov2003-design/DevOps-Intro/actions/runs/29046867955>
+
+```
+replica a: f5fd0e5466fd99fdc2415a5203319b21ab21a6d2fef472bc67cf9fe9d84af3cb
+replica b: f5fd0e5466fd99fdc2415a5203319b21ab21a6d2fef472bc67cf9fe9d84af3cb
+Reproducible: both replicas produced f5fd0e5466fd99fdc2415a5203319b21ab21a6d2fef472bc67cf9fe9d84af3cb
+```
+
+Note that this digest is identical to the one produced locally on WSL2 and inside the `nixos/nix`
+container in Task 2 — three environments, one artifact.
+
+### Red run (deliberate break)
+
+<https://github.com/ivanalpatov2003-design/DevOps-Intro/actions/runs/29047097804>
+
+Replica A only was patched to inject `created = "now"` into the `buildLayeredImage` call before
+building — the canonical source of Docker-image non-determinism, stamping the image config with the
+wall clock. Replica B was left untouched.
+
+```
+replica a: c2be295be336154c101a9711b1c942c28cf7fa0d6884b73e5e4d4a2aaeba04f8
+replica b: f5fd0e5466fd99fdc2415a5203319b21ab21a6d2fef472bc67cf9fe9d84af3cb
+Error: Reproducibility broken: replica digests differ.
+Error: Process completed with exit code 1.
+```
+
+Both `build` jobs went **green**; only `compare` went red. Each replica built successfully and had
+no way of knowing anything was wrong — the defect exists only in the relation between them. That is
+the entire argument for the gate's shape, and it is also the answer to (i) below, demonstrated
+rather than asserted.
+
+The break was reverted in `18cb6f8`, and the subsequent run is green again.
+
+### Design questions
+
+**h) What's the difference between "reproducible on my laptop" and "reproducible in CI" that makes the CI proof load-bearing for a security auditor?**
+
+A laptop proof establishes that one machine, configured one way, produced the same bytes twice. What
+it silently holds fixed is everything about that machine: the Nix version, `nix.conf`, the contents
+of `/nix/store`, the kernel, the filesystem, the locale, whatever happened to be cached. An auditor
+cannot inspect any of it, and the developer generally cannot enumerate it either — the confounders
+are invisible precisely because they never varied.
+
+This lab produced a clean instance of exactly that failure. Task 2's first cross-environment check
+came back with **different** digests, from the same `flake.lock`, the same nixpkgs revision, and the
+same source tree. The cause was that the WSL2 host ran with `sandbox = true` while the `nixos/nix`
+container shipped `sandbox = false`; the flake pinned its inputs perfectly and said nothing about
+the builder's own configuration. Two builds, one flake, two artifacts. On the laptop alone, that
+discrepancy is unobservable.
+
+CI makes the proof load-bearing in three ways. It moves the build onto machines the developer does
+not own and cannot have pre-seeded, so a compromised or idiosyncratic workstation cannot launder a
+bad artifact into a good-looking hash. It forces the environment to be *declared* — the runner
+image, the installer SHA, the `extra_nix_config` are all in a file under review, so "reproducible"
+acquires a stated scope instead of an implicit one. And it converts a claim made once into an
+invariant checked on every push, so the drift that inevitably arrives (a nixpkgs bump, a new Nix
+release changing a default) surfaces as a red build rather than as a quiet divergence discovered
+months later by whoever first tries to verify a release.
+
+For the auditor the distinction is between "the vendor says it reproduces" and "here is a public,
+tamper-evident log showing it reproduced on infrastructure the vendor does not control, under a
+configuration I can read." Only the second is evidence.
+
+**i) Why two parallel jobs instead of one job that runs `nix build` twice? What could a single-job two-build comparison miss?**
+
+Because a single job builds twice into the *same* Nix store on the *same* runner, and the second
+build is therefore not a build at all. Nix computes the derivation hash from the inputs, finds the
+output path already present, and returns it. `sha256sum result` reads the identical file twice. The
+check passes unconditionally — it would pass for a flake that is wildly non-reproducible, because it
+never actually rebuilds. `--rebuild` forces recomputation and closes that specific hole, but not the
+ones below.
+
+Even with `--rebuild`, one job holds constant everything that a second machine would vary: the
+runner's kernel, the state of `/nix/store` (which paths are warm), `/tmp` contents, hostname,
+process IDs, the wall clock to within seconds, the CPU model, the number of cores available to
+parallel builds. Non-determinism that depends on any of these is invisible. Two of the most common
+real-world classes — a build that embeds `$(hostname)` or a timestamp with second granularity, and a
+build whose output depends on filesystem iteration order or on how many cores drove a parallel
+compile — can both survive a same-runner double build and die immediately on two runners.
+
+The sandbox finding from Task 2 is the sharpest illustration: it is a property of the *builder's
+configuration*, identical across two builds on one machine by construction, and only detectable by
+building somewhere else. A single-job comparison is structurally incapable of catching it.
+
+The red run makes the point concretely: both `build` jobs succeeded. The defect was not visible from
+inside either build. It existed only in the comparison across independent executions, which is the
+only place reproducibility, as a property, lives.
+
+**j) `SOURCE_DATE_EPOCH` is the canonical env var for forcing build timestamps. Where in your Nix flake would the timestamp normally leak in, and how does `dockerTools.buildImage` handle it?**
+
+There are two distinct places a timestamp could enter, and they are handled by different mechanisms.
+
+*Inside the Go build.* `buildGoModule` compiles in the Nix sandbox, where `SOURCE_DATE_EPOCH` is set
+to `1` (one second past the Unix epoch) by stdenv, and where the `-trimpath` and `-ldflags "-s -w"`
+we pass strip paths and debug info. Go does not embed a build date by default, so this channel is
+largely closed already; `SOURCE_DATE_EPOCH` mainly matters here for any tooling that would otherwise
+consult the clock, and for the `mtime`s stdenv normalizes on the installed files.
+
+*Inside the image packaging.* This is where the timestamp genuinely wants to leak, and it is the
+same place `docker build` leaks it: the tar entries for each layer carry `mtime`, and the image
+config carries a `created` field. `dockerTools` does not read `SOURCE_DATE_EPOCH` for these — it
+hardcodes them. `created` and `mtime` both default to the literal string `"1970-01-01T00:00:01Z"`,
+and every file in the generated layers is normalized to that same instant. That constant is the
+whole of Task 2's determinism, and it is why the Nix image reproduces while the Dockerfile image
+does not.
+
+The escape hatch proves the rule. Setting `created = "now"` makes `docker images` show a sensible
+date instead of "56 years ago", at the cost of a fresh digest on every build. That is precisely the
+one-line change used to break replica A in the red run above: it does nothing but restore the
+timestamp that Docker never removes, and it is sufficient, on its own, to destroy reproducibility.
+
+(Nix's normalization is stricter than `SOURCE_DATE_EPOCH` alone would be. `SOURCE_DATE_EPOCH` is a
+convention a build tool may choose to honour; the sandbox is an enforcement mechanism that also
+fixes UID, hostname, `/tmp`, network access, and directory iteration order. Docker's BuildKit has
+since adopted `SOURCE_DATE_EPOCH` plus `--output type=oci,rewrite-timestamp=true`, which addresses
+the timestamp channel specifically while leaving the others to the Dockerfile author's discipline.)
