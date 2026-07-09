@@ -1,0 +1,77 @@
+name: nix-repro
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build (replica ${{ matrix.replica }})
+    runs-on: ubuntu-24.04
+    strategy:
+      # Both replicas must run even if one fails, otherwise a genuine
+      # divergence would surface as "one job cancelled" instead of the
+      # compare job's explicit mismatch error.
+      fail-fast: false
+      matrix:
+        replica: [a, b]
+    outputs:
+      digest_a: ${{ steps.export.outputs.digest_a }}
+      digest_b: ${{ steps.export.outputs.digest_b }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: cachix/install-nix-action@a49548c11d9846ad46ecc0115273879b045f001c # v31
+        with:
+          extra_nix_config: |
+            sandbox = true
+            experimental-features = nix-command flakes
+
+      - name: Record Nix config relevant to reproducibility
+        run: nix config show | grep -E '^(sandbox|system|substituters) '
+
+      - name: Build the OCI image
+        run: nix build .#docker --print-build-logs
+
+      - name: Compute digest
+        id: digest
+        run: |
+          set -euo pipefail
+          DIGEST="$(sha256sum result | awk '{print $1}')"
+          echo "Replica ${{ matrix.replica }} digest: $DIGEST"
+          echo "value=$DIGEST" >> "$GITHUB_OUTPUT"
+
+      - name: Export digest under a replica-specific key
+        id: export
+        run: |
+          set -euo pipefail
+          echo "digest_${{ matrix.replica }}=${{ steps.digest.outputs.value }}" >> "$GITHUB_OUTPUT"
+
+  compare:
+    name: compare digests
+    runs-on: ubuntu-24.04
+    needs: build
+    steps:
+      - name: Assert both replicas produced the same digest
+        run: |
+          set -euo pipefail
+          A="${{ needs.build.outputs.digest_a }}"
+          B="${{ needs.build.outputs.digest_b }}"
+
+          echo "replica a: ${A:-<empty>}"
+          echo "replica b: ${B:-<empty>}"
+
+          if [ -z "$A" ] || [ -z "$B" ]; then
+            echo "::error::A replica did not report a digest — treating as failure."
+            exit 1
+          fi
+
+          if [ "$A" != "$B" ]; then
+            echo "::error::Reproducibility broken: replica digests differ."
+            exit 1
+          fi
+
+          echo "Reproducible: both replicas produced $A"
