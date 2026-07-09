@@ -125,12 +125,20 @@ dockerImage = pkgs.dockerTools.buildLayeredImage {
 $ nix build .#docker
 $ docker load < result
 Loaded image: quicknotes:nix
-$ docker run -d --name qn-test3 -p 8083:8080 quicknotes:nix
-$ curl -s http://localhost:8083/health
-{"notes":0,"status":"ok"}
-$ docker logs qn-test3
-2026/07/09 19:33:49 quicknotes listening on :8080 (notes loaded: 0)
+$ docker run -d --name qn-seed -p 8084:8080 quicknotes:nix
+$ curl -s http://localhost:8084/health
+{"notes":4,"status":"ok"}
+$ docker logs qn-seed
+2026/07/09 20:00:02 quicknotes listening on :8080 (notes loaded: 4)
 ```
+
+### Functional parity with the Lab 6 image
+
+`main.go` resolves `SEED_PATH` (default `seed.json`) relative to `WorkingDir`, and silently falls
+back to an empty note list when the file is absent. An image without `/seed.json` therefore starts
+cleanly but is *not* functionally equivalent to the Lab 6 one. The flake copies it in via
+`extraCommands`, and the container reports `notes loaded: 4` rather than `0` — matching the
+Dockerfile-built image's behaviour.
 
 ### Proof: identical Nix digests across two independent environments
 
@@ -138,7 +146,7 @@ $ docker logs qn-test3
 ```
 $ nix build .#docker
 $ sha256sum result
-b4e3d164b372627d72eeb44a3963476a50581becd6bd65c3e35f4c13c83d2245  result
+f5fd0e5466fd99fdc2415a5203319b21ab21a6d2fef472bc67cf9fe9d84af3cb  result
 ```
 
 **Environment B — fresh `nixos/nix` container, isolated store:**
@@ -146,7 +154,7 @@ b4e3d164b372627d72eeb44a3963476a50581becd6bd65c3e35f4c13c83d2245  result
 $ docker run --rm -it --privileged -v "$PWD:/repo" -w /repo nixos/nix bash
 $ nix --extra-experimental-features "nix-command flakes" --option sandbox true build .#docker
 $ sha256sum result
-b4e3d164b372627d72eeb44a3963476a50581becd6bd65c3e35f4c13c83d2245  result
+f5fd0e5466fd99fdc2415a5203319b21ab21a6d2fef472bc67cf9fe9d84af3cb  result
 ```
 
 **Identical.**
@@ -191,7 +199,7 @@ wall-clock time, so the tar entries and the resulting content hashes differ betw
 | Image | Build method | Size |
 |-------|--------------|-----:|
 | `qn-lab6:run1` / `run2` | `docker build` (multi-stage → distroless/static:nonroot) | 15.1 MB |
-| `quicknotes:nix` | `nix build .#docker` (`dockerTools.buildLayeredImage`) | 21.6 MB |
+| `quicknotes:nix` | `nix build .#docker` (`dockerTools.buildLayeredImage`) | 21.7 MB |
 
 The Nix image is ~43% larger. This is expected and is a direct consequence of how the two tools
 model a "closure." The Dockerfile's second stage starts from `distroless/static` and copies in

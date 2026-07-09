@@ -36,6 +36,15 @@
           tag = "nix";
           contents = [ quicknotes ];
 
+          # Carry Lab 6's /seed.json into the image. main.go resolves
+          # SEED_PATH (default "seed.json") relative to WorkingDir, and
+          # falls back to an empty note list when the file is absent —
+          # so without this the Nix image would start successfully but
+          # be functionally different from the Dockerfile-built one.
+          extraCommands = ''
+            cp ${./app/seed.json} ./seed.json
+          '';
+
           fakeRootCommands = ''
             mkdir -p /data
             chown 65532:65532 /data
