@@ -20,13 +20,14 @@
 
           src = ./app;
 
-          vendorHash = "";
-
+          vendorHash = null;
           subPackages = [ "." ];
 
           ldflags = [ "-s" "-w" ];
 
-          CGO_ENABLED = 0;
+          env = {
+    		CGO_ENABLED = "0";
+  	  };
 
           meta = {
             description = "QuickNotes - a small Go notes API";
