@@ -33,15 +33,6 @@ jobs:
       - name: Record Nix config relevant to reproducibility
         run: nix config show | grep -E '^(sandbox|system|substituters) '
 
-      # TEMPORARY (bonus task B.3): deliberately break reproducibility in
-      # replica A only, by stamping the image config with the wall clock.
-      # This is the canonical source of Docker-image non-determinism.
-      - name: DELIBERATE BREAK — replica A stamps a live timestamp
-        if: matrix.replica == 'a'
-        run: |
-          sed -i 's|tag = "nix";|tag = "nix";\n          created = "now";|' flake.nix
-          grep -n 'created' flake.nix
-
       - name: Build the OCI image
         run: nix build .#docker --print-build-logs
 
