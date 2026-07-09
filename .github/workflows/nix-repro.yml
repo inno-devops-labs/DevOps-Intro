@@ -1,0 +1,52 @@
+name: nix-repro
+
+# Bonus: prove reproducibility in CI. Two independent runners each build the
+# Nix OCI image; a third job fails the workflow unless the two SHA-256 digests
+# match. Reproducibility you can't prove in CI is folklore.
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-a:
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.d.outputs.digest }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.2.2
+      - uses: DeterminateSystems/nix-installer-action@cd46bde16ab981b0a7b2dce0574509104543276e  # v9
+      - id: d
+        run: |
+          nix build .#docker
+          echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  build-b:
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.d.outputs.digest }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.2.2
+      - uses: DeterminateSystems/nix-installer-action@cd46bde16ab981b0a7b2dce0574509104543276e  # v9
+      - id: d
+        run: |
+          nix build .#docker
+          echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  compare:
+    needs: [build-a, build-b]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Assert the two digests match
+        run: |
+          A='${{ needs.build-a.outputs.digest }}'
+          B='${{ needs.build-b.outputs.digest }}'
+          echo "build-a: $A"
+          echo "build-b: $B"
+          if [ "$A" = "$B" ]; then
+            echo "✅ reproducible: identical digests on two independent runners"
+          else
+            echo "❌ NON-reproducible: digests differ"; exit 1
+          fi
