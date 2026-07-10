@@ -15,10 +15,7 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
-      - name: Build with modified version
-        run: |
-          sed -i 's/version = "0.1.0"/version = "0.1.1"/' flake.nix
-          nix build .#docker
+      - run: nix build .#docker
       - run: sha256sum result > digest1.txt
       - uses: actions/upload-artifact@v4
         with:
