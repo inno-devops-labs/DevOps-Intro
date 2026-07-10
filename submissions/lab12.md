@@ -549,8 +549,11 @@ The three models line up on a single axis:
 The `.wasm` binaries are not committed (the Spin scaffold gitignores its own, and both rebuild from
 source with one command). SHA-256 of the exact artifacts every number in this document was measured
 against:
+
+```
 acc8807abdec487b85da1f926c1f3767de29d11d2355719e46d479dca369e0bf  wasm-cli/main.wasm
 0c979665497ce05629640cfedc55d3a5a40fa52a19889d4eec84b4e1b99f7c04  wasm/moscow-time/main.wasm
+```
 
 These pin *which bytes were benchmarked*; they are not a reproducibility claim. TinyGo makes no
 bit-reproducibility guarantee, so a rebuild — even from this commit, with these pinned tool versions
