@@ -16,12 +16,13 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
       - name: Build with SOURCE_DATE_EPOCH=1
-      - run: nix-build .#docker
+      - run: nix build .#docker
       - run: sha256sum result > digest1.txt
       - uses: actions/upload-artifact@v4
         with:
           name: digest1
           path: digest1.txt
+      - run: exit 1
 
   build2:
     runs-on: ubuntu-24.04

@@ -227,6 +227,85 @@ Nix даёт детерминизм, но это так же означает с
 
 ## Bonus
 
+### 
+
+Файл `.github/workflows/nix-repro.yml`:
+
+```bash
+name: Nix Reproducibility
+
+on:
+  push:
+    branches: [ feature/lab11 ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build1:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - run: nix build .#docker
+      - run: sha256sum result > digest1.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: digest1
+          path: digest1.txt
+
+  build2:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - run: nix build .#docker
+      - run: sha256sum result > digest2.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: digest2
+          path: digest2.txt
+
+  check:
+    runs-on: ubuntu-24.04
+    needs: [build1, build2]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: digest1
+      - uses: actions/download-artifact@v4
+        with:
+          name: digest2
+      - run: |
+          if [ "$(cat digest1.txt)" != "$(cat digest2.txt)" ]; then
+            echo "Digests differ!"
+            exit 1
+          fi
+          echo "Digests match!"
+```
+
+### Успешный CI
+
+Успешный CI!
+
+https://github.com/kicchhi/DevOps-Intro/actions/runs/29059752334
+
+![alt text](image-9.png)
+
+### Демонстрируем расхождения
+
+В biuld1 добавляю SOURCE_DATE_EPOCH (изначально было просто `- run: nix build .#docker`)
+
+```bash
+- run: |
+    echo "Building with SOURCE_DATE_EPOCH=1"
+    SOURCE_DATE_EPOCH=1 nix build .#docker
+```
 
 ### Ответы на вопросы
 
