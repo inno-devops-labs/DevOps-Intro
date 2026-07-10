@@ -4,6 +4,8 @@ Frolova AI - M25RO-01
 
 a.frolova@innopolis.university
 
+Ссылка на PR:
+
 ## Task1
 
 ### 1.1 flake.nix
@@ -291,7 +293,7 @@ jobs:
 
 ### Успешный CI
 
-Успешный CI!
+Первый успешный CI!
 
 https://github.com/kicchhi/DevOps-Intro/actions/runs/29059752334
 
@@ -299,25 +301,37 @@ https://github.com/kicchhi/DevOps-Intro/actions/runs/29059752334
 
 ### Демонстрируем расхождения
 
-В biuld1 добавляю SOURCE_DATE_EPOCH (изначально было просто `- run: nix build .#docker`)
+build1 соберётся с версией 0.1.1 - дайджест изменился
+
+build2 соберётся с версией 0.1.0 - дайджест стандартный
+
+check падает, потому что дайджесты отличаются.
+
+Сломанный CI: https://github.com/kicchhi/DevOps-Intro/actions/runs/29061679888
 
 ```bash
-- run: |
-    echo "Building with SOURCE_DATE_EPOCH=1"
-    SOURCE_DATE_EPOCH=1 nix build .#docker
+- name: Build with modified version
+        run: |
+          sed -i 's/version = "0.1.0"/version = "0.1.1"/' flake.nix
+          nix build .#docker
 ```
+
+![alt text](image-10.png)
 
 ### Ответы на вопросы
 
 h) What's the difference between "reproducible on my laptop" and "reproducible in CI" that makes the CI proof load-bearing for a security auditor?
 
-Репродуцируемо на моем ноутбуке, означает что сборка дает одинаковый результат на одной машине. 
+Репродуцируемо на моем ноутбуке, означает, что сборка дает одинаковый результат на одной машине. Но CI-доказательство, это воспроизводимый эксперимент в изолированном окружении, который показывает, что сборка запустится и на нее не повлияет файловая система, кэш, и тд.
 
 ---
 
 i) Why two parallel jobs instead of one job that runs nix build twice? What could a single-job two-build comparison miss?
 
+Одна джоба с двумя сборками может использовать общий кэш Nix, вторая сборка просто возьмёт готовый результат из /nix/store. Две параллельные джобы на разных раннерах исключают влияние кэша и доказывают, что сборка действительно детерминирована.
 
 ---
 
 j) SOURCE_DATE_EPOCH is the canonical env var for forcing build timestamps. Where in your Nix flake would the timestamp normally leak in, and how does dockerTools.buildImage handle it?
+
+Временная метка может просочиться в Go-бинарник через встроенный time пакет, если не задан SOURCE_DATE_EPOCH. dockerTools.buildImage по умолчанию использует created = "1970-01-01T00:00:00Z", что гарантирует фиксированную временную метку для OCI-образа.
