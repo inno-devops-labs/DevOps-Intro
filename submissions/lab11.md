@@ -216,14 +216,16 @@ DeterminateSystems/nix-installer-action@21a544727d0c62386e78b4befe52d19ad12692e3
 Green CI run:
 
 ```text
-Pending push. Local branch is intentionally not pushed until approval.
+https://github.com/Mysteri0K1ng/DevOps-Intro/actions/runs/29115844585
 ```
 
 Red CI run from deliberate divergence:
 
 ```text
-Pending push. This requires pushing a deliberately broken commit/run and then a fix, so it is not done before approval.
+https://github.com/Mysteri0K1ng/DevOps-Intro/actions/runs/29115745715
 ```
+
+The red run was produced by temporarily appending `-broken` to one job's computed digest output. The compare job saw different digest strings and failed. The next commit reverted that change, and the workflow returned to green.
 
 ### Design Questions
 
