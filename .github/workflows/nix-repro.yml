@@ -15,9 +15,10 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
-      - run: |
-    	echo "Building with SOURCE_DATE_EPOCH=1"
-    	SOURCE_DATE_EPOCH=1 nix build .#docker
+      - name: Build with SOURCE_DATE_EPOCH=1
+        run: |
+          export SOURCE_DATE_EPOCH=1
+          nix build .#docker
       - run: sha256sum result > digest1.txt
       - uses: actions/upload-artifact@v4
         with:
