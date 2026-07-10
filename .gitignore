@@ -62,3 +62,4 @@ Thumbs.db
 #   flake.nix, flake.lock      (Lab 11)
 #   wasm/main.go, spin.toml, go.sum   (Lab 12)
 .env
+/data/
