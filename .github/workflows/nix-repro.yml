@@ -15,9 +15,9 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
-      - name: Build with nixpkgs 24.11
+      - name: Build with custom version
         run: |
-          nix build .#docker --override-input nixpkgs github:NixOS/nixpkgs/nixos-24.11
+          nix build .#docker --argstr version "0.1.1"
       - run: sha256sum result > digest1.txt
       - uses: actions/upload-artifact@v4
         with:
@@ -32,7 +32,7 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
-      - name: Build with default nixpkgs
+      - name: Build with default version
         run: nix build .#docker
       - run: sha256sum result > digest2.txt
       - uses: actions/upload-artifact@v4
