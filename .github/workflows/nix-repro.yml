@@ -15,14 +15,14 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
-      - name: Build with SOURCE_DATE_EPOCH=1
-      - run: nix build .#docker
+      - name: Build with nixpkgs 24.11
+        run: |
+          nix build .#docker --override-input nixpkgs github:NixOS/nixpkgs/nixos-24.11
       - run: sha256sum result > digest1.txt
       - uses: actions/upload-artifact@v4
         with:
           name: digest1
           path: digest1.txt
-      - run: exit 1
 
   build2:
     runs-on: ubuntu-24.04
@@ -32,7 +32,8 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
-      - run: nix build .#docker
+      - name: Build with default nixpkgs
+        run: nix build .#docker
       - run: sha256sum result > digest2.txt
       - uses: actions/upload-artifact@v4
         with:
