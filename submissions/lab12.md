@@ -437,3 +437,237 @@ miscompilation bugs have been found (GHSA-ff4p-7xrq-q5r8 among others). The TCB 
 absent. And a host that carelessly imports a broad capability — a `run_command` function, say —
 hands back exactly the authority the model was supposed to withhold. The security property belongs
 to the *host's import list*, not to WebAssembly as a format.
+
+---
+
+## Bonus Task — Two WASM Execution Models
+
+### The standalone WASI CLI module
+
+`wasm-cli/main.go` reimplements the same Moscow-time logic with no Spin SDK. It reads the request
+from the environment (the CGI convention) and writes the response to stdout.
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+	"time"
+)
+
+var moscow = time.FixedZone("MSK", 3*60*60)
+
+// This is a WASI *command* module, not a reactor: wasmtime calls _start,
+// main() runs once, the process exits. The request arrives through the
+// environment rather than through a wasi-http host, and the response goes
+// to stdout rather than to an http.ResponseWriter.
+func main() {
+	method := os.Getenv("REQUEST_METHOD")
+	path := os.Getenv("PATH_INFO")
+
+	if method != "" && method != "GET" {
+		fmt.Println("Status: 405 Method Not Allowed")
+		fmt.Println("Content-Type: text/plain")
+		fmt.Println()
+		fmt.Println("method not allowed")
+		os.Exit(0)
+	}
+
+	if path != "" && path != "/time" {
+		fmt.Println("Status: 404 Not Found")
+		fmt.Println("Content-Type: text/plain")
+		fmt.Println()
+		fmt.Println("not found")
+		os.Exit(0)
+	}
+
+	now := time.Now().In(moscow)
+	body := fmt.Sprintf(
+		`{"unix":%d,"iso":%q,"hour_minute":%q,"timezone":%q,"utc_offset_hours":%d}`,
+		now.Unix(), now.Format(time.RFC3339), now.Format("15:04"), "Europe/Moscow", 3,
+	)
+
+	fmt.Println("Status: 200 OK")
+	fmt.Println("Content-Type: application/json")
+	fmt.Println()
+	fmt.Println(body)
+}
+```
+
+### Build and run
+
+```
+$ tinygo build -o main.wasm -target=wasi -no-debug ./main.go
+$ ls -la main.wasm
+-rw-r--r-- 1 alpatovia alpatovia 198173 Jul 10 18:16 main.wasm
+
+$ wasmtime run --env REQUEST_METHOD=GET --env PATH_INFO=/time main.wasm
+Status: 200 OK
+Content-Type: application/json
+
+{"unix":1783696627,"iso":"2026-07-10T18:17:07+03:00","hour_minute":"18:17","timezone":"Europe/Moscow","utc_offset_hours":3}
+
+$ wasmtime run --env REQUEST_METHOD=POST --env PATH_INFO=/time main.wasm
+Status: 405 Method Not Allowed
+...
+
+$ wasmtime run --env REQUEST_METHOD=GET --env PATH_INFO=/nope main.wasm
+Status: 404 Not Found
+...
+```
+
+### Comparison
+
+| | Spin component | wasmtime CLI module |
+|---|---:|---:|
+| Artifact size | 353,507 B (345 KB) | 198,173 B (194 KB) |
+| Execution model | persistent wasi-http server | one process per invocation |
+| Startup | 44.9 ms, paid once | — (indistinguishable from the request) |
+| Per request | 1.499 ms (p50) | 7.5 ms ± 0.9 (mean, n=50, hyperfine) |
+| Entrypoint export | `_initialize` (reactor) | `_start` (command) |
+
+The CLI module is 44% smaller: no SDK, no `httprouter`, no wasi-http glue — just the TinyGo runtime
+and five fields of `fmt.Sprintf`.
+
+Note that `hyperfine` is the *right* tool here, where it was the wrong one in Task 2. In the CGI
+model the process **is** the unit of work, so measuring the whole `wasmtime run` invocation —
+process spawn, module load, Cranelift JIT, execute, exit — measures exactly what a request costs.
+In Task 2's persistent-server model, the equivalent `curl` process spawn was pure harness overhead
+and had to be excluded.
+
+The three models line up on a single axis:
+
+| | Artifact | Start (once) | Per request |
+|---|---:|---:|---:|
+| Docker | 15.1 MB | 332.5 ms | 0.833 ms |
+| Spin (persistent) | 345 KB | 44.9 ms | 1.499 ms |
+| `wasmtime run` (per-invocation) | 194 KB | — | 7.5 ms |
+
+### Artifact provenance
+
+The `.wasm` binaries are not committed (the Spin scaffold gitignores its own, and both rebuild from
+source with one command). SHA-256 of the exact artifacts every number in this document was measured
+against:
+acc8807abdec487b85da1f926c1f3767de29d11d2355719e46d479dca369e0bf  wasm-cli/main.wasm
+0c979665497ce05629640cfedc55d3a5a40fa52a19889d4eec84b4e1b99f7c04  wasm/moscow-time/main.wasm
+
+These pin *which bytes were benchmarked*; they are not a reproducibility claim. TinyGo makes no
+bit-reproducibility guarantee, so a rebuild — even from this commit, with these pinned tool versions
+— will likely differ. Getting that property requires the machinery from Lab 11 (a sandboxed,
+path-normalized, timestamp-fixed build), which is out of scope here.
+
+### Design questions
+
+**h) Why can't the Task 1 Spin component run under bare `wasmtime run`? (What does it export — a `_start` entrypoint, or a wasi-http handler?)**
+
+It exports `_initialize`, not `_start` — the WebAssembly export section says so directly:
+
+```
+$ python3 wasm_exports.py wasm/moscow-time/main.wasm | grep -E '_start|_initialize'
+   [func] _initialize
+```
+
+versus the CLI module, which exports `_start`. Those two symbols are how a WASI module declares its
+lifecycle. A **command** exports `_start`: the host calls it, `main()` runs to completion, the
+instance is done. A **reactor** exports `_initialize`: the host calls it to run initialization, and
+the instance then persists so the host can invoke its other exports on demand. The Spin component is
+a reactor whose real entrypoint is `spin_http_handle_http_request`, invoked by the host once per HTTP
+request.
+
+What actually happens is more interesting than a crash, and worth reporting precisely, because it is
+not what the lab predicts. `wasmtime run` on the Spin module **succeeds**:
+
+```
+$ wasmtime run main.wasm > /tmp/out.txt 2> /tmp/err.txt; echo "exit: $?"
+exit: 0
+stdout: 0 bytes
+stderr: 0 bytes
+```
+
+Exit 0, no output, no error. wasmtime finds no `_start`, calls `_initialize` instead, which runs our
+`init()` — registering the handler with the SDK — and then returns. Nothing calls
+`spin_http_handle_http_request`, because `wasmtime run` is a CLI launcher, not an HTTP host: there
+is no request to hand it. The instance initialized correctly and exited correctly, having done
+nothing observable. The module doesn't *fail* to run; it runs, and there is nobody to talk to.
+
+The natural next question is whether `wasmtime serve`, which *is* an HTTP host, can drive it. It
+cannot, for an orthogonal reason:
+
+```
+$ wasmtime serve main.wasm
+Error: The serve command currently requires a component
+```
+
+`wasmtime serve` speaks the standard `wasi:http/incoming-handler` interface from the WebAssembly
+Component Model (WASI preview 2). TinyGo's `-target=wasip1` emits a **core module** (WASI preview 1),
+and Spin hosts it through its own legacy ABI — which is exactly what the export name
+`spin_http_handle_http_request` reveals: a Spin-specific convention, not a standardized wasi-http
+contract. So the module is doubly unrunnable under bare wasmtime: wrong lifecycle for `run`, wrong
+module format *and* wrong interface for `serve`.
+
+Two independent incompatibilities, one conclusion — but "prints nothing and exits 0" is a materially
+different failure mode from "errors out", and it is the one a person will actually encounter.
+
+**i) Spin uses wasmtime internally. So what does Spin add on top of bare wasmtime?**
+
+Everything between "a runtime that can execute a `.wasm` file" and "a platform that serves HTTP."
+
+*The server loop and the wasi-http boundary.* wasmtime executes a module; it does not listen on a
+socket, parse HTTP, route, or marshal a request into guest linear memory. Spin binds the socket,
+accepts the connection, serializes method/path/headers/body across the ABI boundary into the
+instance, calls the handler export, and copies the response back out. The `malloc` /
+`canonical_abi_realloc` exports in our module exist to serve that copying.
+
+*Instance lifecycle and pooling.* A fresh `wasmtime run` pays Cranelift JIT compilation on every
+invocation — the 7.5 ms measured above. Spin compiles once at startup and thereafter instantiates
+from a pre-compiled module, which is most of why its per-request cost is 1.5 ms rather than 7.5 ms.
+Production Spin goes further with pooling allocators and AOT compilation (`spin build --aot`,
+`wasmtime compile`), pushing instantiation toward the microsecond range.
+
+*The manifest, routing, and multi-component apps.* `spin.toml` maps routes to components. One
+application can contain several components in different languages, each with its own file, and Spin
+dispatches to the right one. Bare wasmtime has no concept of an application at all.
+
+*Capability policy.* `allowed_outbound_hosts = []` is enforced by Spin, not by WebAssembly: Spin
+decides which host functions to import into the instance and what its outbound-HTTP implementation
+will permit. wasmtime provides the mechanism (imports are explicit); Spin provides the policy and its
+declarative surface.
+
+*Everything else a platform needs.* Component-scoped stdio logging to `.spin/logs/`, key-value and
+SQLite host interfaces, variables and secrets, triggers other than HTTP (Redis, cron), templates and
+`spin new`, plugins, and a deployment story. wasmtime is the engine. Spin is the car.
+
+**j) Two execution models — when does each fit?**
+
+The numbers state the trade-off exactly. `wasmtime run` pays 7.5 ms per invocation and nothing
+otherwise. Spin pays 44.9 ms once and 1.499 ms per request thereafter. Setting those equal:
+
+```
+44.9 + 1.499·n  =  7.5·n     →     n ≈ 7.5 requests
+```
+
+Below roughly seven requests per instance lifetime, the per-invocation model wins outright. Above it,
+the persistent server wins, and its margin grows without bound: at a thousand requests it is 6× more
+efficient in aggregate.
+
+*Per-invocation (`wasmtime run`) fits* work that is genuinely one-shot and where isolation between
+invocations must be total. A batch job or scheduled task — invoked once, a fresh instance is free and
+a persistent server is pure overhead. Untrusted user-submitted code in a CI or grading system, where
+every submission must get a virgin heap and there is no state worth preserving. A `git` hook, a
+build step, an image-transformation stage in a pipeline. Anything a person would have written as a
+CGI script or a Unix filter: read env and stdin, write stdout, exit. The model's virtue is that
+"process exited" is a complete and cheap cleanup story — no leaked memory, no poisoned globals, no
+warm-instance state bleeding between tenants.
+
+*Persistent (Spin) fits* anything HTTP-shaped and sustained. A public API endpoint handling a
+continuous request stream — amortizing the 45 ms start over thousands of requests reduces it to
+noise, while a 6 ms per-request saving compounds. A serverless function on a platform that keeps
+instances warm between invocations (Fermyon Cloud, Fastly Compute), which is precisely the pooling
+optimization that makes the model pay. Anything needing in-memory state across requests — a cache,
+a connection pool, a compiled regex — which the per-invocation model must rebuild every time.
+
+The dividing line is not "WASM vs WASM" but the same ratio that separated Docker from Spin in Task 2:
+how many requests amortize one start. Docker's start costs 332 ms and breaks even against Spin at
+~430 requests; wasmtime's per-invocation model has no start to amortize and loses to Spin after ~7.
+The three sit on one continuum, and the workload's request-to-start ratio picks the point on it.
