@@ -1,0 +1,55 @@
+name: Nix Reproducibility
+
+on:
+  push:
+    branches: [ feature/lab11 ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build1:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - uses: cachix/install-nix-action@a47a6c2a625b9f91c644b6f702d26905f7e1cc0d
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - run: nix build .#docker
+      - run: sha256sum result > digest1.txt
+      - uses: actions/upload-artifact@a29f1712511c50f65bcdcfc1c9ed43938cf2a6ff
+        with:
+          name: digest1
+          path: digest1.txt
+
+  build2:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - uses: cachix/install-nix-action@a47a6c2a625b9f91c644b6f702d26905f7e1cc0d
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - run: nix build .#docker
+      - run: sha256sum result > digest2.txt
+      - uses: actions/upload-artifact@a29f1712511c50f65bcdcfc1c9ed43938cf2a6ff
+        with:
+          name: digest2
+          path: digest2.txt
+
+  check:
+    runs-on: ubuntu-24.04
+    needs: [build1, build2]
+    steps:
+      - uses: actions/download-artifact@04450d864f39c67011f73a6fc3b7847a2ca52572
+        with:
+          name: digest1
+      - uses: actions/download-artifact@04450d864f39c67011f73a6fc3b7847a2ca52572
+        with:
+          name: digest2
+      - run: |
+          if [ "$(cat digest1.txt)" != "$(cat digest2.txt)" ]; then
+            echo "Digests differ!"
+            exit 1
+          fi
+          echo "Digests match!"

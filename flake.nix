@@ -37,6 +37,26 @@
 
         packages.quicknotes = self.packages.${system}.default;
 
+	packages.docker = pkgs.dockerTools.buildImage {
+  		name = "quicknotes";
+  		tag = "latest";
+
+  		contents = [
+    			pkgs.cacert
+    			pkgs.busybox
+  		];
+
+  		config = {
+    			Cmd = [ "${self.packages.${system}.quicknotes}/bin/quicknotes" ];
+    			Env = [
+      				"SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"
+    			];
+    			ExposedPorts = {
+      			"8080/tcp" = {};
+    			};
+  		};
+	};
+
         devShell = pkgs.mkShell {
           buildInputs = [
             go
