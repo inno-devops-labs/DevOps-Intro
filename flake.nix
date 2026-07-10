@@ -17,8 +17,8 @@
             version = "0.1.0";
             src = ./app;
             vendorHash = null;
-            env.CGO_ENABLED = "0"; # static binary (carried from lab 6)
-            ldflags = [ "-s" "-w" ]; # size + reproducibility (carried from lab 6)
+            env.CGO_ENABLED = "0"; 
+            ldflags = [ "-s" "-w" ]; 
           };
         in
         {
@@ -40,9 +40,9 @@
               cp ${./app/seed.json} seed.json
             '';
             config = {
-              Entrypoint = [ "/bin/quicknotes" ]; # exec form
+              Entrypoint = [ "/bin/quicknotes" ]; 
               ExposedPorts."8080/tcp" = { };
-              User = "65532:65532"; # nonroot, lab 6 discipline
+              User = "65532:65532"; 
               Env = [
                 "ADDR=:8080"
                 "DATA_PATH=/data/notes.json"
