@@ -1,0 +1,63 @@
+name: Nix Reproducibility
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-a:
+    name: Build image A
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@21a544727d0c62386e78b4befe52d19ad12692e3
+
+      - name: Build deterministic image
+        run: nix build .#docker
+
+      - name: Capture digest
+        id: digest
+        run: echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  build-b:
+    name: Build image B
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@21a544727d0c62386e78b4befe52d19ad12692e3
+
+      - name: Build deterministic image
+        run: nix build .#docker
+
+      - name: Capture digest
+        id: digest
+        run: echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  compare:
+    name: Compare image digests
+    runs-on: ubuntu-latest
+    needs:
+      - build-a
+      - build-b
+
+    steps:
+      - name: Assert digests match
+        run: |
+          echo "build-a: ${{ needs.build-a.outputs.digest }}"
+          echo "build-b: ${{ needs.build-b.outputs.digest }}"
+          test "${{ needs.build-a.outputs.digest }}" = "${{ needs.build-b.outputs.digest }}"
