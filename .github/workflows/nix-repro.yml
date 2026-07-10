@@ -10,14 +10,14 @@ jobs:
   build1:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-      - uses: cachix/install-nix-action@08dc4f7a0e2fbafee4e05dfaa4d0075a66f21fe6  # v31
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
       - run: nix build .#docker
       - run: sha256sum result > digest1.txt
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607ce02  # v4.6.2
+      - uses: actions/upload-artifact@v4
         with:
           name: digest1
           path: digest1.txt
@@ -25,14 +25,14 @@ jobs:
   build2:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
-      - uses: cachix/install-nix-action@08dc4f7a0e2fbafee4e05dfaa4d0075a66f21fe6  # v31
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
       - run: nix build .#docker
       - run: sha256sum result > digest2.txt
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607ce02  # v4.6.2
+      - uses: actions/upload-artifact@v4
         with:
           name: digest2
           path: digest2.txt
@@ -41,10 +41,10 @@ jobs:
     runs-on: ubuntu-24.04
     needs: [build1, build2]
     steps:
-      - uses: actions/download-artifact@b14cf4c92644772bc40dc5bc1f9dc001e2c06f6d  # v4.1.8
+      - uses: actions/download-artifact@v4
         with:
           name: digest1
-      - uses: actions/download-artifact@b14cf4c92644772bc40dc5bc1f9dc001e2c06f6d  # v4.1.8
+      - uses: actions/download-artifact@v4
         with:
           name: digest2
       - run: |
