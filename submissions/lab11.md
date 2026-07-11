@@ -281,9 +281,7 @@ itself (`--extra-experimental-features "nix-command flakes"`) rather than throug
 > patch. (I first suspected the Node 20 → Node 24 runner switch and tried
 > `ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION`, but the error survived, so it wasn't
 > that.) I switched to `cachix/install-nix-action`, the other installer the lab
-> explicitly sanctions, pinned by 40-char SHA per the Lab 3 rule. Same
-> reproducibility contract, a working installer — a reminder of why the lab lists two
-> acceptable actions: supply-chain churn is real.
+> explicitly sanctions, pinned by 40-char SHA.
 
 ### Green — digests match across two runners
 
