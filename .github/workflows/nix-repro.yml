@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: cachix/install-nix-action@7e1d5bdb99afadeb0885b07e3913a4240e12ede5 # v31
-      # - run: echo "// diverge" >> app/main.go
+      - run: echo "// diverge" >> app/main.go
       - run: nix build --extra-experimental-features "nix-command flakes" .#docker
       - id: digest
         run: echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
