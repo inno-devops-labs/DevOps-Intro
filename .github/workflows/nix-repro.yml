@@ -1,0 +1,47 @@
+name: nix-repro
+
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-a:
+    name: nix build (runner A)
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: DeterminateSystems/nix-installer-action@cd46bde16ab981b0a7b2dce0574509104543276e # v9
+      # - run: echo "// diverge" >> app/main.go
+      - run: nix build .#docker
+      - id: digest
+        run: echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  build-b:
+    name: nix build (runner B)
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: DeterminateSystems/nix-installer-action@cd46bde16ab981b0a7b2dce0574509104543276e # v9
+      - run: nix build .#docker
+      - id: digest
+        run: echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  compare:
+    name: digests must match
+    runs-on: ubuntu-24.04
+    needs: [build-a, build-b]
+    steps:
+      - name: Compare
+        run: |
+          echo "A: ${{ needs.build-a.outputs.digest }}"
+          echo "B: ${{ needs.build-b.outputs.digest }}"
+          test -n "${{ needs.build-a.outputs.digest }}"
+          test "${{ needs.build-a.outputs.digest }}" = "${{ needs.build-b.outputs.digest }}"
