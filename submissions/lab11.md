@@ -243,8 +243,8 @@ jobs:
       digest: ${{ steps.digest.outputs.digest }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: DeterminateSystems/nix-installer-action@cd46bde16ab981b0a7b2dce0574509104543276e # v9
-      - run: nix build .#docker
+      - uses: cachix/install-nix-action@7e1d5bdb99afadeb0885b07e3913a4240e12ede5 # v31
+      - run: nix build --extra-experimental-features "nix-command flakes" .#docker
       - id: digest
         run: echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
   build-b:
@@ -254,8 +254,8 @@ jobs:
       digest: ${{ steps.digest.outputs.digest }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: DeterminateSystems/nix-installer-action@cd46bde16ab981b0a7b2dce0574509104543276e # v9
-      - run: nix build .#docker
+      - uses: cachix/install-nix-action@7e1d5bdb99afadeb0885b07e3913a4240e12ede5 # v31
+      - run: nix build --extra-experimental-features "nix-command flakes" .#docker
       - id: digest
         run: echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
   compare:
@@ -270,9 +270,8 @@ jobs:
 ```
 
 Installer action pinned to `7e1d5bd…` (cachix/install-nix-action **v31**, the current
-release), resolved via `git ls-remote`. Flakes are enabled on the `nix build` command
-itself (`--extra-experimental-features "nix-command flakes"`) rather than through a
-`with:` input — that keeps the step working regardless of the action's input schema.
+release),  got it  via `git ls-remote`. Flakes are enabled on the `nix build` command
+itself (`--extra-experimental-features "nix-command flakes"`)
 
 > **Something that I found during work.** My first pick,
 > `DeterminateSystems/nix-installer-action@v9` (its latest tag), died on every run
@@ -291,7 +290,7 @@ itself (`--extra-experimental-features "nix-command flakes"`) rather than throug
 
 I changed the input in job A only (`echo "// diverge" >> app/main.go` before the
 build) -> different source -> different digest -> `compare` goes red:
-ы
+
 !["nix-repro red run"](red_runs.png)
 
 Then reverted -> green again.
