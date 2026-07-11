@@ -285,14 +285,14 @@ itself (`--extra-experimental-features "nix-command flakes"`) rather than throug
 
 ### Green — digests match across two runners
 
-!["nix-repro green run"](nix_repro_green.png)
+!["nix-repro green run"](green_runs.png)
 
 ### Red — deliberately broken divergence
 
 I changed the input in job A only (`echo "// diverge" >> app/main.go` before the
 build) -> different source -> different digest -> `compare` goes red:
 ы
-!["nix-repro red run"](nix_repro_red.png)
+!["nix-repro red run"](red_runs.png)
 
 Then reverted -> green again.
 
