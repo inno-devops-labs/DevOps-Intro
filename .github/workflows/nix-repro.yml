@@ -13,7 +13,7 @@ jobs:
       digest: ${{ steps.digest.outputs.value }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      - uses: DeterminateSystems/nix-installer-action@da3b0e5d21e67c4dc08954fdbdc28f8ed1596cd5
+      - uses: cachix/install-nix-action@v31
       - name: Build docker image
         run: nix build .#docker
       - name: Compute digest
@@ -26,7 +26,7 @@ jobs:
       digest: ${{ steps.digest.outputs.value }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      - uses: DeterminateSystems/nix-installer-action@da3b0e5d21e67c4dc08954fdbdc28f8ed1596cd5
+      - uses: cachix/install-nix-action@v31
       - name: Build docker image
         run: nix build .#docker
       - name: Compute digest
