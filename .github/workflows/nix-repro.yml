@@ -1,0 +1,48 @@
+name: Nix Reproducibility
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-a:
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.digest.outputs.value }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: DeterminateSystems/nix-installer-action@da3b0e5d21e67c4dc08954fdbdc28f8ed1596cd5
+      - name: Build docker image
+        run: nix build .#docker
+      - name: Compute digest
+        id: digest
+        run: echo "value=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  build-b:
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.digest.outputs.value }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: DeterminateSystems/nix-installer-action@da3b0e5d21e67c4dc08954fdbdc28f8ed1596cd5
+      - name: Build docker image
+        run: nix build .#docker
+      - name: Compute digest
+        id: digest
+        run: echo "value=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  verify:
+    runs-on: ubuntu-latest
+    needs: [build-a, build-b]
+    steps:
+      - name: Compare digests
+        run: |
+          echo "build-a: ${{ needs.build-a.outputs.digest }}"
+          echo "build-b: ${{ needs.build-b.outputs.digest }}"
+          if [ "${{ needs.build-a.outputs.digest }}" != "${{ needs.build-b.outputs.digest }}" ]; then
+            echo "FAIL: digests differ — build is not reproducible"
+            exit 1
+          fi
+          echo "OK: both builds produced identical digests"
