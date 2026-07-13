@@ -1,0 +1,71 @@
+---
+- name: Configure ansible-pull GitOps loop on the VM
+  hosts: quicknotes_vm
+  become: true
+  gather_facts: false
+
+  vars:
+    ansible_pull_repo: https://github.com/IlyaPechersky/DevOps-Intro.git
+    ansible_pull_branch: feature/lab7
+    ansible_pull_inventory: /etc/ansible/inventory-local.ini
+    ansible_pull_playbook: ansible/playbook.yaml
+
+  tasks:
+    - name: Install ansible and git packages
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        state: present
+        update_cache: true
+
+    - name: Ensure ansible config directory exists
+      ansible.builtin.file:
+        path: /etc/ansible
+        state: directory
+        mode: "0755"
+
+    - name: Install local ansible-pull inventory
+      ansible.builtin.copy:
+        dest: "{{ ansible_pull_inventory }}"
+        mode: "0644"
+        content: |
+          [local]
+          localhost ansible_connection=local
+
+    - name: Install ansible-pull systemd service
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/ansible-pull.service
+        mode: "0644"
+        content: |
+          [Unit]
+          Description=Ansible pull from Git repository
+          Wants=network-online.target
+          After=network-online.target
+
+          [Service]
+          Type=oneshot
+          ExecStart=/usr/bin/ansible-pull -U {{ ansible_pull_repo }} -C {{ ansible_pull_branch }} -i {{ ansible_pull_inventory }} {{ ansible_pull_playbook }}
+
+    - name: Install ansible-pull systemd timer
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/ansible-pull.timer
+        mode: "0644"
+        content: |
+          [Unit]
+          Description=Run ansible-pull every 5 minutes
+
+          [Timer]
+          OnBootSec=1min
+          OnUnitActiveSec=5min
+          Unit=ansible-pull.service
+
+          [Install]
+          WantedBy=timers.target
+
+    - name: Enable and start ansible-pull timer
+      ansible.builtin.systemd:
+        name: ansible-pull.timer
+        enabled: true
+        state: started
+        daemon_reload: true
