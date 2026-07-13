@@ -160,6 +160,23 @@ Tips:
 - GitLab: `parallel:matrix:`
 - Set `fail-fast: false` (GH) or equivalent so a single bad cell doesn't cancel the others — you want to *see* which combo broke
 
+> ⚠️ **The matrix renames your checks — update branch protection (1.6) or your PR blocks forever.** A matrixed `test` job reports as `test (1.23)` and `test (1.24)`; the old required check named `test` will sit at *"Expected — Waiting for status to be reported"* indefinitely, even though every real check is green. Two fixes:
+>
+> 1. **Quick:** in the branch-protection rule, replace `vet`/`test` with the matrixed names (`vet (1.23)`, `vet (1.24)`, `test (1.23)`, `test (1.24)`).
+> 2. **Robust (recommended):** add one aggregation job and require *only* it — then the matrix can change freely without touching protection settings:
+>
+> ```yaml
+> ci-ok:
+>   if: always()
+>   needs: [vet, test, lint]
+>   runs-on: ubuntu-24.04
+>   steps:
+>     - run: |
+>         test "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}" = "false"
+> ```
+>
+> The `if: always()` matters — without it, a failed `needs` job *skips* `ci-ok`, and a skipped required check lets the PR through on some configurations.
+
 ### 2.3: Skip docs-only changes
 
 Edit your trigger so the pipeline runs **only** when something in `app/` or your CI config itself changes. README edits should not burn 4 minutes of CI time.
@@ -178,6 +195,8 @@ Capture wall-clock times from the CI UI for three scenarios:
 | With cache + matrix | XX s |
 
 > 💡 To get a clean baseline, temporarily disable each optimization with a commit, take a screenshot of the run time, then restore.
+
+> 🧪 **Expect the cache rows to be boring — that's the finding, not a failure.** QuickNotes has **zero third-party dependencies** (look at `app/go.mod` — no `require` block, no `go.sum`), so the module cache has nothing to store and total wall-clock barely moves with `cache: true` vs `cache: false`. Most of your 60–80 s is runner provisioning, checkout, and the Go toolchain download — none of which `setup-go`'s cache touches. Report what you measured and *explain why* (that's design question **f** in disguise). To see where caching *would* pay, compare the **per-step** durations (`setup-go`, `go test`) instead of job totals, and note which step a real dependency-heavy project would save on.
 
 ### 2.5: Document
 
@@ -284,6 +303,8 @@ Answer in 4-6 sentences:
 - 🪤 **Forgot `working-directory` (or `cd app`) for Go commands** — Go modules live in `app/`, not the repo root; commands run from the root will fail with "no Go files"
 - 🪤 **`fail-fast: true` (the GH Actions default) in a matrix** — one fail cancels the others; you can't see *which* combo broke
 - 🪤 **Branch protection set on someone else's fork's `main`** — you can only protect *your* fork's `main`. The upstream course repo has its own protection
+- 🪤 **PR stuck on "Expected — Waiting for status to be reported" after adding the matrix** — the matrix renamed `test` → `test (1.23)`/`test (1.24)`, but branch protection still requires the old `test` context, which will never report again. Update the required-check names or switch to the `ci-ok` aggregation job (see §2.2)
+- 🪤 **"Caching didn't speed anything up"** — on a zero-dependency module that's the *correct* result, not a mistake (see §2.4); don't pad the timing table with numbers you didn't observe
 - 🪤 **`golangci-lint` version not pinned** — "latest" pulls a new release tomorrow that may flag your code with new rules. Pin `v2.5.0` exactly
 - 🪤 **GitLab CI: incorrect anchor syntax** (`<<: *name`) — GitLab is strict; use the in-platform CI Lint tool (`Project → CI/CD → Editor → Validate`)
 - 🪤 **Cache hits expire after 7 days of inactivity on GH** — that's expected; the cache key is what protects you against poisoning
