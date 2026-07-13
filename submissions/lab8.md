@@ -24,6 +24,8 @@ QuickNotes Golden Signals
 
 Dashboard URL (after `docker compose up -d`): http://localhost:3000/d/quicknotes-golden-signals
 
+![Grafana dashboard with traffic and error spike](lab8/grafana-golden-signals.png)
+
 **Dashboard evidence (API queries after ~300 mixed requests):**
 
 Traffic (`rate(quicknotes_http_requests_total[5m])`):
@@ -41,8 +43,6 @@ Errors (% 4xx/5xx before injection):
 "value": [1783952198.718, "0"]
 ```
 (before deliberate error injection)
-
-> Headless server run: Grafana UI screenshot replaced by provisioned-dashboard API + PromQL samples above (same data the panels render).
 
 ### Design questions (a–d)
 
@@ -79,6 +79,12 @@ Git-reviewed, reproducible dashboards on every `docker compose up` — no manual
     runbook_url: docs/runbook/high-error-rate.md
 ```
 
+### Alert rule in Prometheus UI
+
+![HighErrorRate rule loaded in Prometheus Alerts page](lab8/prometheus-alerts.png)
+
+Rule group `quicknotes`, expression and `for: 5m` match `monitoring/prometheus/alerts.yml`.
+
 ### Alert observed: `pending` → `firing`
 Deliberate traffic: alternating `POST /notes` with malformed JSON (`400`) + healthy `GET /health` (~50% errors) for **6+ minutes**.
 
@@ -103,6 +109,8 @@ Firing state (Prometheus `/api/v1/alerts`):
   "value": "0.46"
 }
 ```
+
+Grafana Errors panel (same injection window) peaked at ~45% — see dashboard screenshot above. Prometheus UI screenshot was taken after recovery (`INACTIVE`); firing state is from `/api/v1/alerts` during the 6+ min injection run.
 
 ### Runbook
 Full document: `docs/runbook/high-error-rate.md`
