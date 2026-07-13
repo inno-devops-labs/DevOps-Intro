@@ -1,0 +1,66 @@
+name: nix-repro
+
+# Reproducibility gate: two independent fresh runners build the OCI image
+# with Nix; a third job fails the workflow if the SHA-256 digests differ.
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-a:
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+
+      - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25  # v22
+
+      - run: nix build .#docker
+
+      - id: digest
+        run: |
+          digest="$(sha256sum result | awk '{print $1}')"
+          echo "digest=${digest}" >> "$GITHUB_OUTPUT"
+          echo "image tarball sha256: ${digest}"
+
+  build-b:
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+
+      - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25  # v22
+
+      - run: nix build .#docker
+
+      - id: digest
+        run: |
+          digest="$(sha256sum result | awk '{print $1}')"
+          echo "digest=${digest}" >> "$GITHUB_OUTPUT"
+          echo "image tarball sha256: ${digest}"
+
+  compare:
+    needs: [build-a, build-b]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: assert identical digests
+        env:
+          A: ${{ needs.build-a.outputs.digest }}
+          B: ${{ needs.build-b.outputs.digest }}
+        run: |
+          echo "build-a: ${A}"
+          echo "build-b: ${B}"
+          if [ -z "${A}" ] || [ -z "${B}" ]; then
+            echo "::error::missing digest output from a build job"
+            exit 1
+          fi
+          if [ "${A}" != "${B}" ]; then
+            echo "::error::build is NOT reproducible — digests differ"
+            exit 1
+          fi
+          echo "reproducible: both runners produced ${A}"
