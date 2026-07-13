@@ -10,36 +10,44 @@ jobs:
   build-a:
     runs-on: ubuntu-latest
     outputs:
-      digest: ${{ steps.digest.outputs.value }}
+      bin: ${{ steps.hash.outputs.bin }}
+      image: ${{ steps.hash.outputs.image }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - uses: cachix/install-nix-action@v31
         with:
-          nix_path: nixpkgs=channel:nixos-25.05
-      - name: Resolve lock file
-        run: nix flake update
-      - name: Build docker image
-        run: nix build .#docker
-      - name: Compute digest
-        id: digest
-        run: echo "value=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - name: Build binary and image
+        run: |
+          nix build .#quicknotes -o result-bin
+          nix build .#docker -o result-docker
+      - name: Compute hashes
+        id: hash
+        run: |
+          echo "bin=$(nix-store --query --hash "$(readlink result-bin)")" >> "$GITHUB_OUTPUT"
+          echo "image=$(sha256sum result-docker | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
   build-b:
     runs-on: ubuntu-latest
     outputs:
-      digest: ${{ steps.digest.outputs.value }}
+      bin: ${{ steps.hash.outputs.bin }}
+      image: ${{ steps.hash.outputs.image }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - uses: cachix/install-nix-action@v31
         with:
-          nix_path: nixpkgs=channel:nixos-25.05
-      - name: Resolve lock file
-        run: nix flake update
-      - name: Build docker image
-        run: nix build .#docker
-      - name: Compute digest
-        id: digest
-        run: echo "value=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+      - name: Build binary and image
+        run: |
+          nix build .#quicknotes -o result-bin
+          nix build .#docker -o result-docker
+      - name: Compute hashes
+        id: hash
+        run: |
+          echo "bin=$(nix-store --query --hash "$(readlink result-bin)")" >> "$GITHUB_OUTPUT"
+          echo "image=$(sha256sum result-docker | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
   verify:
     runs-on: ubuntu-latest
@@ -47,10 +55,16 @@ jobs:
     steps:
       - name: Compare digests
         run: |
-          echo "build-a: ${{ needs.build-a.outputs.digest }}"
-          echo "build-b: ${{ needs.build-b.outputs.digest }}"
-          if [ "${{ needs.build-a.outputs.digest }}" != "${{ needs.build-b.outputs.digest }}" ]; then
-            echo "FAIL: digests differ — build is not reproducible"
+          echo "binary  A: ${{ needs.build-a.outputs.bin }}"
+          echo "binary  B: ${{ needs.build-b.outputs.bin }}"
+          echo "image   A: ${{ needs.build-a.outputs.image }}"
+          echo "image   B: ${{ needs.build-b.outputs.image }}"
+          if [ "${{ needs.build-a.outputs.bin }}" != "${{ needs.build-b.outputs.bin }}" ]; then
+            echo "FAIL: binary store hashes differ — build is not reproducible"
             exit 1
           fi
-          echo "OK: both builds produced identical digests"
+          if [ "${{ needs.build-a.outputs.image }}" != "${{ needs.build-b.outputs.image }}" ]; then
+            echo "FAIL: image digests differ — build is not reproducible"
+            exit 1
+          fi
+          echo "OK: both independent runners produced identical binary and image digests"
