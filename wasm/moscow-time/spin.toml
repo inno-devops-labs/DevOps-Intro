@@ -1,0 +1,29 @@
+#:schema https://schemas.spinframework.dev/spin/manifest-v2/latest.json
+
+spin_manifest_version = 2
+
+[application]
+name = "moscow-time"
+version = "0.1.0"
+authors = ["DJ Bubu <djbubu28@yahoo.com>"]
+description = "Moscow time as JSON, served as a WebAssembly component (Lab 12)"
+
+[[trigger.http]]
+route = "/time"
+component = "moscow-time"
+
+[component.moscow-time]
+source = "main.wasm"
+# Least privilege: the component is granted NO outbound network capability.
+# It cannot make an HTTP call even if the code tried.
+allowed_outbound_hosts = []
+[component.moscow-time.build]
+# Spin 4.0.2's scaffold defaults to `go tool componentize-go build`, but that
+# toolchain requires a patched Go (async wasi-http world) that could not be
+# fetched from GitHub releases here. We fall back to the SDK v2 + TinyGo
+# wasip1 path, which Spin still supports and which the lab documents.
+#
+# -buildmode=c-shared is REQUIRED: it makes TinyGo export the handler symbols
+# the Spin host calls. Omit it and `spin up` returns HTTP 500.
+command = "tinygo build -target=wasip1 -buildmode=c-shared -no-debug -o main.wasm ."
+watch = ["**/*.go", "go.mod"]
