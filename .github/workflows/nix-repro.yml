@@ -40,6 +40,7 @@ jobs:
         run: |
           echo "bin=$(nix-store --query --hash "$(readlink result-bin)")" >> "$GITHUB_OUTPUT"
           echo "image=$(sha256sum result-docker | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          echo "SIZE image=$(du -Lh result-docker | cut -f1) bin=$(du -Lsh result-bin | cut -f1)"
 
   build-b:
     runs-on: ubuntu-latest
@@ -74,6 +75,7 @@ jobs:
         run: |
           echo "bin=$(nix-store --query --hash "$(readlink result-bin)")" >> "$GITHUB_OUTPUT"
           echo "image=$(sha256sum result-docker | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          echo "SIZE image=$(du -Lh result-docker | cut -f1) bin=$(du -Lsh result-bin | cut -f1)"
 
   verify:
     runs-on: ubuntu-latest
