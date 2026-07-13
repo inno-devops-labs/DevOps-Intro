@@ -14,7 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - uses: cachix/install-nix-action@v31
-      - name: Update lock file
+        with:
+          nix_path: nixpkgs=channel:nixos-24.11
+      - name: Resolve lock file
         run: nix flake update
       - name: Build docker image
         run: nix build .#docker
@@ -29,7 +31,9 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - uses: cachix/install-nix-action@v31
-      - name: Update lock file
+        with:
+          nix_path: nixpkgs=channel:nixos-24.11
+      - name: Resolve lock file
         run: nix flake update
       - name: Build docker image
         run: nix build .#docker

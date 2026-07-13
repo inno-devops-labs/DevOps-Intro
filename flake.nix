@@ -1,9 +1,7 @@
 {
   description = "QuickNotes — reproducible build with Nix";
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
-  };
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
 
   outputs = { self, nixpkgs }:
     let
@@ -15,9 +13,8 @@
         version = "0.1.0";
         src = ./app;
         vendorHash = null;
-        CGO_ENABLED = 0;
+        CGO_ENABLED = "0";
         ldflags = [ "-s" "-w" "-trimpath" ];
-        meta.mainProgram = "quicknotes";
       };
     in {
       packages.${system} = {
@@ -27,20 +24,14 @@
           name = "quicknotes";
           tag = "nix";
           created = "1970-01-01T00:00:00Z";
-          copyToRoot = pkgs.buildEnv {
-            name = "image-root";
-            paths = [ quicknotes pkgs.cacert ];
-            pathsToLink = [ "/bin" "/etc" ];
-          };
+          contents = [ quicknotes ];
           config = {
-            Entrypoint = [ "/bin/quicknotes" ];
+            Cmd = [ "/bin/quicknotes" ];
             ExposedPorts = { "8080/tcp" = {}; };
-            User = "65532:65532";
             Env = [
               "ADDR=:8080"
               "DATA_PATH=/data/notes.json"
               "SEED_PATH=/seed.json"
-              "SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt"
             ];
           };
         };
@@ -49,11 +40,7 @@
       };
 
       devShells.${system}.default = pkgs.mkShell {
-        buildInputs = with pkgs; [
-          go
-          gopls
-          golangci-lint
-        ];
+        buildInputs = with pkgs; [ go gopls golangci-lint ];
       };
     };
 }
