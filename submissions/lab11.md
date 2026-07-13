@@ -258,8 +258,128 @@ The **xz-utils backdoor (2024)** is the canonical case: the malicious code lived
 - **Slow cold builds + a large store.** You realistically need a binary cache (Cachix/Attic) to make CI fast.
 - **Small talent pool.** Every engineer can read a Dockerfile; few can debug a flake.
 
-`docker build` remains the default because it is **good enough and universally understood**: a Dockerfile is imperative shell that anyone can read, it works with each ecosystem's native tooling, and the cache model is simple. For most teams the occasional cost of non-determinism ("works on my machine") is lower than the cost of adopting Nix. Reproducibility is a **goal**, not a feature — teams pay for it when supply-chain risk or audit/regulatory pressure makes it worth the price.
+`docker build` remains the default because it is **good enough and universally understood**: a Dockerfile is imperative shell that anyone can read, it works with each ecosystem's native tooling, and the cache model is simple. For most teams the occasional cost of non-determinism ("works on my machine") is lower than the cost of adopting Nix. Reproducibility is a **goal**, not a feature, teams pay for it when supply-chain risk or audit/regulatory pressure makes it worth the price.
 
 ---
 
 ## Bonus Task - CI-Verified Reproducibility
+
+### B.1 Workflow (`.github/workflows/nix-repro.yml`)
+
+```yaml
+name: nix-repro
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  # Two separate jobs, NOT a matrix: matrix cells overwrite each other's job
+  # outputs, so distinct jobs are what actually let the compare step read both.
+  build-a:
+    name: build A (fresh runner)
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+      - id: build
+        run: |
+          nix build .#docker
+          DIGEST=$(sha256sum result | awk '{print $1}')
+          echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
+          echo "Build A digest: $DIGEST"
+
+  build-b:
+    # ... identical, on its own fresh runner ...
+
+  compare:
+    name: assert digests match
+    needs: [build-a, build-b]
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          A="${{ needs.build-a.outputs.digest }}"
+          B="${{ needs.build-b.outputs.digest }}"
+          echo "runner A: $A"
+          echo "runner B: $B"
+          if [ "$A" != "$B" ]; then
+            echo "::error::REPRODUCIBILITY FAILURE - the two runners produced different images"
+            exit 1
+          fi
+          echo "Reproducible: both independent runners produced $A"
+```
+
+Both third-party actions are pinned by 40-char commit SHA (`actions/checkout` v4,
+`DeterminateSystems/nix-installer-action` v22), per the Lab 3 rule.
+
+### B.2 / B.3 Green -> Red -> Green
+
+| Run | Commit | Change | Result |
+|-----|--------|--------|--------|
+| `nix-repro #1` | `e4c96ef` | baseline - both runners build the unmodified flake | **green** |
+| `nix-repro #2` | `f76788c` | `created` timestamp mutated in **job A only** | **RED** - compare job failed |
+| `nix-repro #3` | `7c80c2f` | revert of the sabotage | **green** |
+
+![nix-repro green / red / green](screenshots/lab11-nix-repro-runs.png)
+
+**B.2 - Green run (`nix-repro #3`), `assert digests match` job:**
+
+```text
+runner A: 95377af65af7db70b39e030814c86c8d7123a43a8fa0f4df11b9ab2ac4c880ee
+runner B: 95377af65af7db70b39e030814c86c8d7123a43a8fa0f4df11b9ab2ac4c880ee
+Reproducible: both independent runners produced
+              95377af65af7db70b39e030814c86c8d7123a43a8fa0f4df11b9ab2ac4c880ee
+```
+
+This is the same digest produced by the Fedora host and by the `nixos/nix` container in
+Task 2 - so **four independent environments** (laptop, container, and two GitHub runners
+that never touched this code before) all produced byte-identical images.
+
+**B.3 - Red run (`nix-repro #2`), same job:**
+
+```text
+runner A: 65f96476160c87584709dba754e11f857d636e306fd2ccb458edd181e0e0ea1f
+runner B: 95377af65af7db70b39e030814c86c8d7123a43a8fa0f4df11b9ab2ac4c880ee
+Error: REPRODUCIBILITY FAILURE - the two runners produced different images
+Error: Process completed with exit code 1.
+```
+
+The deliberate break (job A only, before its build):
+
+```yaml
+      - name: BREAK reproducibility (job A only)
+        run: |
+          sed -i 's|created = "1970-01-01T00:00:00Z"|created = "2026-01-01T00:00:00Z"|' flake.nix
+```
+
+One changed character of metadata, a timestamp nobody would notice in a diff, produced a
+**completely different digest** (`65f96476…` vs `95377af6…`). The gate caught it.
+
+Note **both build jobs still succeeded** in the red run, each compiled fine. It is the
+**compare** job that went red. That is the whole point: the *gate*, not the build, is what
+catches non-determinism. A build that "works" tells you nothing about reproducibility.
+
+
+### B.4 Design Questions
+
+**h) What's the difference between "reproducible on my laptop" and "reproducible in CI" - why is the CI proof load-bearing for an auditor?**
+On one laptop, both builds share **everything**: the same Nix store (so the second "build" is very likely just a cache hit returning the existing store path, you'd be comparing an artifact to itself), the same kernel, environment, filesystem, paths, and the same person. It proves nothing to a third party: the auditor has only your word, and a compromised laptop would happily emit two *identically backdoored* outputs.
+
+In CI, each run is a **fresh, ephemeral, independently provisioned runner** with an empty store, and the runs are **executed and logged by a neutral third party**. Two parallel runners landing on the same digest is evidence that the output depends only on the **committed inputs**, not on anything local to one machine or one person. That independent verifiability, rather than self-attestation, is exactly what an auditor needs.
+
+**i) Why two parallel jobs instead of one job that runs `nix build` twice?**
+A single job runs on **one machine with one Nix store**. The second `nix build` would almost certainly be a **no-op cache hit**, Nix sees the derivation is already realised and just hands back the existing store path, so you'd "compare" the artifact against itself and always pass. Even forcing `--rebuild`, you'd still share the same kernel, CPU, hostname, locale, timezone, filesystem, and machine-local state.
+
+That means a single-job comparison **misses precisely the class of non-determinism that varies between machines**: host-dependent leakage (hostname, CPU features, locale, timezone), runner-image differences, parallelism/ordering effects, and anything escaping the sandbox. Two parallel jobs each build **from an empty store on a different machine**, so a matching digest is real evidence of machine-independence.
+
+**j) `SOURCE_DATE_EPOCH` — where would a timestamp normally leak into the flake, and how does `dockerTools.buildImage` handle it?**
+In container images, timestamps leak in two places: (1) the image **config's `created` field**, Docker sets it to *now*; and (2) the **mtimes of files inside the layer tarballs**. Either one makes two otherwise-identical builds produce different bytes, hence a different digest.
+
+`dockerTools.buildImage` neutralises both: it defaults `created` to **`"1970-01-01T00:00:00Z"`** (the Unix epoch) instead of the current time, we set it **explicitly in the flake** to make the intent visible — and it normalises mtimes/ownership and emits tar entries in a deterministic order. More broadly, Nix builds run in a sandbox with `SOURCE_DATE_EPOCH` fixed, so any build tool honouring it produces stable output; our Go build doesn't embed a timestamp at all (no `-X` stamping, and `-s -w` strips the rest). So the flake never has to set `SOURCE_DATE_EPOCH` by hand `dockerTools` already pins the container's clock to the epoch.
+
+Conversely, setting `created = "now"` is the one-line way to *deliberately* break reproducibility, which is the lever pulled in the red CI run below.
