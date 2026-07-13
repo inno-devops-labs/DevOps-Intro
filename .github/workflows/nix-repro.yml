@@ -41,6 +41,11 @@ jobs:
           echo "bin=$(nix-store --query --hash "$(readlink result-bin)")" >> "$GITHUB_OUTPUT"
           echo "image=$(sha256sum result-docker | awk '{print $1}')" >> "$GITHUB_OUTPUT"
           echo "SIZE image=$(du -Lh result-docker | cut -f1) bin=$(du -Lsh result-bin | cut -f1)"
+      - name: Load image into Docker
+        run: |
+          docker load -i result-docker
+          docker image inspect quicknotes:nix \
+            --format 'LOADED Entrypoint={{.Config.Entrypoint}} User={{.Config.User}} Ports={{json .Config.ExposedPorts}}'
 
   build-b:
     runs-on: ubuntu-latest
