@@ -1,0 +1,27 @@
+Lab 12 cold-start samples, measured on Windows 11 + WSL2 Ubuntu 24.04.
+
+Spin command:
+  spin up --listen 127.0.0.1:3000
+Probe:
+  GET http://127.0.0.1:3000/time
+Samples, ms:
+  373.10
+  367.56
+  429.78
+  388.02
+  462.21
+p50:
+  388.02 ms
+
+Docker command:
+  docker run -d --rm --name quicknotes-lab12-cold -p 18080:8080 quicknotes:lab6
+Probe:
+  GET http://127.0.0.1:18080/health
+Samples, ms:
+  583.95
+  694.66
+  731.21
+  733.12
+  675.01
+p50:
+  694.66 ms
