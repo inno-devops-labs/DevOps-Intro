@@ -327,7 +327,9 @@ Both third-party actions are pinned by 40-char commit SHA (`actions/checkout` v4
 
 ![nix-repro green / red / green](screenshots/lab11-nix-repro-runs.png)
 
-**B.2 - Green run (`nix-repro #3`), `assert digests match` job:**
+**B.2 - Green run** (`nix-repro #3`) -
+<https://github.com/blacktree-lab/DevOps-Intro/actions/runs/29216162671>
+`assert digests match` job:
 
 ```text
 runner A: 95377af65af7db70b39e030814c86c8d7123a43a8fa0f4df11b9ab2ac4c880ee
@@ -340,7 +342,9 @@ This is the same digest produced by the Fedora host and by the `nixos/nix` conta
 Task 2 - so **four independent environments** (laptop, container, and two GitHub runners
 that never touched this code before) all produced byte-identical images.
 
-**B.3 - Red run (`nix-repro #2`), same job:**
+**B.3 - Red run** (`nix-repro #2`) -
+<https://github.com/blacktree-lab/DevOps-Intro/actions/runs/29216030652>
+same job:
 
 ```text
 runner A: 65f96476160c87584709dba754e11f857d636e306fd2ccb458edd181e0e0ea1f
