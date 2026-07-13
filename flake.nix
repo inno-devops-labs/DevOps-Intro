@@ -18,11 +18,23 @@
         env.CGO_ENABLED = 0;
         ldflags = [ "-s" "-w" ];
       };
+
+      dockerImage = pkgs.dockerTools.buildImage {
+        name = "quicknotes";
+
+        config = {
+          Entrypoint = [ "${quicknotes}/bin/quicknotes" ];
+          ExposedPorts = { "8080/tcp" = {}; };
+          User = "65532:65532";
+        };
+      };
+
     in
     {
       packages.${system} = {
         quicknotes = quicknotes;
         default = quicknotes;
+        docker = dockerImage;
       };
 
       devShells.${system}.default = pkgs.mkShell {
