@@ -20,15 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
-
-      # --- TEMPORARY: deliberately break reproducibility in job A only, to prove
-      # the gate actually catches a divergence. Reverted immediately after. ---
-      - name: BREAK reproducibility (job A only)
-        run: |
-          sed -i 's|created = "1970-01-01T00:00:00Z"|created = "2026-01-01T00:00:00Z"|' flake.nix
-          echo "Job A now builds with a different 'created' timestamp -> different digest"
-          grep -n 'created =' flake.nix
-
       - id: build
         name: nix build .#docker
         run: |
