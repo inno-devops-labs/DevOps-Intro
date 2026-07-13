@@ -1,0 +1,3 @@
+REPOSITORY   TAG       IMAGE ID                                                                  CREATED          SIZE
+qn-lab6      run2      sha256:be943c5a753b05eb63fc42be5ba9f855ca652434edb7e8cd1b815dd66fadf45f   2 seconds ago    15.1MB
+qn-lab6      run1      sha256:ad1ec1c6b00e9086792d1132b51410b22e18cbe90b5a11c379b1c4cbdd4c4428   28 seconds ago   15.1MB

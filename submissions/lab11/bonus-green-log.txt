@@ -1,0 +1,7 @@
+build-a	Run digest="$(sha256sum result | awk '{print $1}')"	2026-07-13T13:36:41.1397743Z [36;1mecho "image tarball sha256: ${digest}"[0m
+build-a	Run digest="$(sha256sum result | awk '{print $1}')"	2026-07-13T13:36:41.1531196Z image tarball sha256: 5978db8817d53902c87863a6fb550549cd0822f3e1d5bd66fe160e29cf7652bd
+build-b	Run digest="$(sha256sum result | awk '{print $1}')"	2026-07-13T13:36:43.0140533Z [36;1mecho "image tarball sha256: ${digest}"[0m
+build-b	Run digest="$(sha256sum result | awk '{print $1}')"	2026-07-13T13:36:43.0301806Z image tarball sha256: 5978db8817d53902c87863a6fb550549cd0822f3e1d5bd66fe160e29cf7652bd
+compare	assert identical digests	2026-07-13T13:38:01.2594738Z [36;1m  echo "::error::build is NOT reproducible — digests differ"[0m
+compare	assert identical digests	2026-07-13T13:38:01.2596781Z [36;1mecho "reproducible: both runners produced ${A}"[0m
+compare	assert identical digests	2026-07-13T13:38:01.6412270Z reproducible: both runners produced 5978db8817d53902c87863a6fb550549cd0822f3e1d5bd66fe160e29cf7652bd
