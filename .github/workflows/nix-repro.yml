@@ -1,0 +1,69 @@
+name: nix-repro
+
+# Reproducibility you cannot prove in CI is folklore. Two INDEPENDENT runners
+# build the same flake; a third job fails the workflow if their digests differ.
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  # Two separate jobs (not a matrix): matrix cells overwrite each other's job
+  # outputs, so distinct jobs are what actually lets the compare step read both.
+  build-a:
+    name: build A (fresh runner)
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+      - id: build
+        name: nix build .#docker
+        run: |
+          nix build .#docker
+          DIGEST=$(sha256sum result | awk '{print $1}')
+          echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
+          echo "Build A digest: $DIGEST"
+
+  build-b:
+    name: build B (fresh runner)
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+      - id: build
+        name: nix build .#docker
+        run: |
+          nix build .#docker
+          DIGEST=$(sha256sum result | awk '{print $1}')
+          echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
+          echo "Build B digest: $DIGEST"
+
+  compare:
+    name: assert digests match
+    needs: [build-a, build-b]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compare digests from the two runners
+        run: |
+          A="${{ needs.build-a.outputs.digest }}"
+          B="${{ needs.build-b.outputs.digest }}"
+          echo "runner A: $A"
+          echo "runner B: $B"
+
+          if [ -z "$A" ] || [ -z "$B" ]; then
+            echo "::error::a digest is empty - a build job did not produce output"
+            exit 1
+          fi
+
+          if [ "$A" != "$B" ]; then
+            echo "::error::REPRODUCIBILITY FAILURE - the two runners produced different images"
+            exit 1
+          fi
+
+          echo "Reproducible: both independent runners produced $A"
