@@ -22,6 +22,19 @@ jobs:
         run: |
           nix build .#quicknotes -o result-bin
           nix build .#docker -o result-docker
+      - name: Smoke test the built binary
+        run: |
+          SEED_PATH=app/seed.json DATA_PATH="$RUNNER_TEMP/notes.json" ./result-bin/bin/quicknotes &
+          pid=$!
+          health=""
+          for _ in $(seq 1 20); do
+            health="$(curl -s http://localhost:8080/health || true)"
+            [ -n "$health" ] && break
+            sleep 0.5
+          done
+          echo "HEALTH: $health"
+          kill "$pid" 2>/dev/null || true
+          case "$health" in *'"status":"ok"'*) echo "smoke OK" ;; *) echo "smoke FAILED"; exit 1 ;; esac
       - name: Compute hashes
         id: hash
         run: |
@@ -43,6 +56,19 @@ jobs:
         run: |
           nix build .#quicknotes -o result-bin
           nix build .#docker -o result-docker
+      - name: Smoke test the built binary
+        run: |
+          SEED_PATH=app/seed.json DATA_PATH="$RUNNER_TEMP/notes.json" ./result-bin/bin/quicknotes &
+          pid=$!
+          health=""
+          for _ in $(seq 1 20); do
+            health="$(curl -s http://localhost:8080/health || true)"
+            [ -n "$health" ] && break
+            sleep 0.5
+          done
+          echo "HEALTH: $health"
+          kill "$pid" 2>/dev/null || true
+          case "$health" in *'"status":"ok"'*) echo "smoke OK" ;; *) echo "smoke FAILED"; exit 1 ;; esac
       - name: Compute hashes
         id: hash
         run: |
