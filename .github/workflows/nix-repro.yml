@@ -1,0 +1,43 @@
+name: Nix Reproducibility
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-a:
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.digest.outputs.value }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25
+      - run: nix build .#docker
+      - id: digest
+        run: echo "value=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  build-b:
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.digest.outputs.value }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25
+      - run: nix build .#docker
+      - id: digest
+        run: echo "value=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  compare:
+    needs: [build-a, build-b]
+    runs-on: ubuntu-24.04
+    steps:
+      - run: |
+          A="${{ needs.build-a.outputs.digest }}"
+          B="${{ needs.build-b.outputs.digest }}"
+          echo "build-a: $A"
+          echo "build-b: $B"
+          if [ "$A" != "$B" ]; then
+            echo "::error::Digests differ, build is not reproducible"
+            exit 1
+          fi
+          echo "Reproducible"
