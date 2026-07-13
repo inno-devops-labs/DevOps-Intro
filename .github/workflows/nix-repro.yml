@@ -21,7 +21,7 @@ jobs:
       - name: Build binary and image
         run: |
           nix build .#quicknotes -o result-bin
-          nix build .#docker -o result-docker
+          nix build -o result-docker --impure --expr 'let s = builtins.getFlake (toString ./.); pkgs = s.inputs.nixpkgs.legacyPackages.x86_64-linux; in pkgs.dockerTools.buildImage { name = "quicknotes"; tag = "nix"; created = "2001-01-01T00:00:00Z"; copyToRoot = s.packages.x86_64-linux.quicknotes; config.Entrypoint = [ "/bin/quicknotes" ]; }'
       - name: Smoke test the built binary
         run: |
           SEED_PATH=app/seed.json DATA_PATH="$RUNNER_TEMP/notes.json" ./result-bin/bin/quicknotes &
