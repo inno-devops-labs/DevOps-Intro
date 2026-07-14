@@ -15,18 +15,18 @@ func init() {
 			return
 		}
 
-		now := time.Now().UTC().Add(3 * time.Hour)
-		
-		iso := now.Format("2006-01-02T15:04:05") + "+03:00"
+		utcNow := time.Now().UTC()
+		moscowNow := utcNow.Add(3 * time.Hour)
+		iso := moscowNow.Format("2006-01-02T15:04:05") + "+03:00"
 
 		w.Header().Set("Content-Type", "application/json")
 
 		fmt.Fprintf(
 			w,
 			`{"unix":%d,"iso":"%s","hour_minute":"%s"}`,
-			now.Unix(),
+			utcNow.Unix(),
 			iso,
-			now.Format("15:04"),
+			moscowNow.Format("15:04"),
 		)
 	})
 }
