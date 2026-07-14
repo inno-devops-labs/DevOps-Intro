@@ -33,6 +33,9 @@ flake.nix
 flake.lock
 .github/workflows/nix-repro.yml
 submissions/lab11.md
+submissions/lab11_workflow_green.png
+submissions/lab11_workflow_red.png
+submissions/lab11_green_restored.png
 ```
 
 ---
@@ -216,8 +219,8 @@ derived from the same fixed build inputs, not from local machine state.
 Command:
 
 ```bash
-./result/bin/quicknotes &
-curl -s http://localhost:8080/health | python3 -m json.tool
+ADDR=:18080 DATA_PATH=/tmp/qn-lab11/notes.json SEED_PATH=/repo/app/seed.json ./result/bin/quicknotes &
+curl -s http://127.0.0.1:18080/health | python3 -m json.tool
 ```
 
 Output:
@@ -283,6 +286,10 @@ docker = pkgs.dockerTools.buildImage {
   tag = "nix-lab11";
 
   copyToRoot = quicknotesRoot;
+  extraCommands = ''
+    mkdir -p data
+    chmod 1777 data
+  '';
 
   config = {
     Entrypoint = [ "/bin/quicknotes" ];
@@ -484,6 +491,12 @@ Screenshot evidence:
 Final restored green run after the red-demo commit was reverted:
 
 ![Restored green Nix reproducibility workflow run](lab11_green_restored.png)
+
+Final restored green run URL:
+
+```text
+https://github.com/Hidancloud/DevOps-Intro/actions/runs/29349096377
+```
 
 GitHub API evidence:
 
