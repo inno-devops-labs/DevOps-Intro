@@ -1,0 +1,85 @@
+name: nix-repro
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-a:
+    name: build-a
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+
+      - name: Optionally break reproducibility (demo red runs only)
+        if: vars.NIX_REPRO_BREAK == 'true'
+        env:
+          SOURCE_DATE_EPOCH: "0"
+        run: |
+          # Lab 11 B.3: diverge job A. Pure Nix ignores SOURCE_DATE_EPOCH alone,
+          # so also rewrite the image tag (and set SOURCE_DATE_EPOCH for the log).
+          echo "SOURCE_DATE_EPOCH=$SOURCE_DATE_EPOCH"
+          sed -i 's/tag = "lab11"/tag = "lab11-break"/' flake.nix
+
+      - name: Build OCI image
+        run: nix build .#docker --print-build-logs
+
+      - name: Compute digest
+        id: digest
+        run: |
+          DIGEST=$(sha256sum result | awk '{print $1}')
+          echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
+          echo "build-a digest=$DIGEST"
+
+  build-b:
+    name: build-b
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+
+      - name: Build OCI image
+        run: nix build .#docker --print-build-logs
+
+      - name: Compute digest
+        id: digest
+        run: |
+          DIGEST=$(sha256sum result | awk '{print $1}')
+          echo "digest=$DIGEST" >> "$GITHUB_OUTPUT"
+          echo "build-b digest=$DIGEST"
+
+  compare:
+    name: assert-equal-digests
+    needs: [build-a, build-b]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Compare digests from both runners
+        env:
+          DIGEST_A: ${{ needs.build-a.outputs.digest }}
+          DIGEST_B: ${{ needs.build-b.outputs.digest }}
+        run: |
+          echo "digest-a=$DIGEST_A"
+          echo "digest-b=$DIGEST_B"
+          if [ -z "$DIGEST_A" ] || [ -z "$DIGEST_B" ]; then
+            echo "missing digest output(s)"
+            exit 1
+          fi
+          if [ "$DIGEST_A" != "$DIGEST_B" ]; then
+            echo "DIGEST MISMATCH — builds are not reproducible across runners"
+            exit 1
+          fi
+          echo "digests match"
