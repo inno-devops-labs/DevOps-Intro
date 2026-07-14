@@ -34,6 +34,7 @@
         docker = pkgs.dockerTools.buildImage {
           name = "quicknotes";
           tag = "0.1.0";
+          created = "1970-01-01T00:00:01Z";
 
           copyToRoot = pkgs.buildEnv {
             name = "image-root";
