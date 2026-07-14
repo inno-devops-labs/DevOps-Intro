@@ -289,10 +289,11 @@ The tarball digest matched exactly in two independent environments. This is stro
 
 ### 2.3 Load and run proof
 
-Command:
+Commands:
 
 ```text
-docker load -i artifacts/lab11/quicknotes-nix-image.tar.gz
+nix build .#docker
+docker load < result
 cid=$(docker run -d -p 18081:8080 quicknotes:lab11)
 sleep 2
 curl -s http://127.0.0.1:18081/health
@@ -318,6 +319,10 @@ env=["DATA_PATH=/tmp/data/notes.json","SEED_PATH=/seed.json"]
 Analysis:
 
 The image loads into Docker and runs correctly as a nonroot user. The health output proves the seed file is present and the service starts with the expected initial note count.
+
+Note:
+
+During local verification I also copied the generated tarball into `artifacts/lab11/`, but I did not keep that large binary artifact in the final branch. The reproducible proof does not depend on committing the tarball itself; it depends on rebuilding it from `nix build .#docker` and getting the same digest.
 
 ### 2.4 Comparison with the Lab 6 Docker build
 
@@ -402,14 +407,37 @@ https://github.com/lime413/DevOps-Intro/actions/runs/29329021257
 Red run URL:
 
 ```text
-https://github.com/lime413/DevOps-Intro/actions/runs/29329656880
+https://github.com/lime413/DevOps-Intro/actions/runs/29329313854
 ```
 
 Final restored green run URL:
 
 ```text
-https://github.com/lime413/DevOps-Intro/actions/runs/29329792776
+https://github.com/lime413/DevOps-Intro/actions/runs/29329439493
 ```
+
+Green run log excerpt:
+
+```text
+Run echo "build-a=56112d940e1341d9cc9b2c6a36569ab2da4a891ae448aeee26865cc622be1b24"
+compare job conclusion: success
+```
+
+Analysis:
+
+The public GitHub Jobs API exposed the compare-step digest line for `build-a`. The compare job succeeded, so `build-b` had the same digest and the equality check passed.
+
+Red run log excerpt:
+
+```text
+Run echo "build-a=620805aaca42e5cdd5f9c33547ffe7f5a09fac79b7ffbb03bd917a947d20057c"
+compare job conclusion: failure
+Digest mismatch
+```
+
+Analysis:
+
+For the red run, `build-a` used the intentionally modified flake and produced a different digest. The compare job failed, which is the expected proof that the CI gate catches divergence between the two fresh runners.
 
 Green run screenshot:
 
