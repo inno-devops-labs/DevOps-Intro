@@ -19,7 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
       - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25
-      - run: sed -i 's/1970-01-01T00:00:01Z/1970-01-01T00:00:02Z/' flake.nix
       - run: nix build .#docker
       - id: digest
         run: echo "sha=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
