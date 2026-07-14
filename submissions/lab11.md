@@ -481,6 +481,10 @@ Screenshot evidence:
 
 ![Green Nix reproducibility workflow run](lab11_workflow_green.png)
 
+Final restored green run after the red-demo commit was reverted:
+
+![Restored green Nix reproducibility workflow run](lab11_green_restored.png)
+
 GitHub API evidence:
 
 ```text
@@ -519,6 +523,10 @@ Temporary commit 03930c2b3766309104bb1a4c6eccd608caf55505 changed only build-a's
 reported digest by appending "-red-demo". The image build still succeeded in
 both workers, but the compare job detected the mismatch and failed.
 ```
+
+Screenshot evidence:
+
+![Red Nix reproducibility workflow run](lab11_workflow_red.png)
 
 GitHub API evidence:
 
