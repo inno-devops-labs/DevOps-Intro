@@ -30,6 +30,25 @@
         };
 
         default = self.packages.${system}.quicknotes;
+
+        docker = pkgs.dockerTools.buildImage {
+          name = "quicknotes";
+          tag = "0.1.0";
+
+          copyToRoot = pkgs.buildEnv {
+            name = "image-root";
+            paths = [ self.packages.${system}.quicknotes ];
+            pathsToLink = [ "/bin" ];
+          };
+
+          config = {
+            Entrypoint = [ "/bin/quicknotes" ];
+            ExposedPorts = {
+              "8080/tcp" = { };
+            };
+            User = "65532:65532";
+          };
+        };
       };
 
       devShells.${system}.default = pkgs.mkShell {
