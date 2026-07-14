@@ -29,14 +29,18 @@
     {
       packages = forAllSystems (
         { pkgs }:
-        {
-          default = pkgs.buildGoModule {
+        let
+          quicknotes = pkgs.buildGoModule {
             name = "quicknotes";
             src = ./app;
             vendorHash = null;
             env.CGO_ENABLED = 0;
             ldflags = [ "-s" "-w" ];
           };
+        in
+        {
+          inherit quicknotes;
+          default = quicknotes;
         }
       );
 
