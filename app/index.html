@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DevOps Introduction</title>
+  <meta name="description" content="Comprehensive DevOps Introduction course covering Git, CI/CD, Containers, Kubernetes, Cloud, SRE, and modern WASM deployment." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Icons from Unicode -->
+  <style>
+    :root {
+      --primary: #0a0e27;
+      --secondary: #667eea;
+      --accent: #1a1f3a;
+      --highlight: #764ba2;
+      --success: #00d1b2;
+      --text: #e0e6ed;
+      --text-muted: #9ca3af;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--primary);
+      color: var(--text);
+      line-height: 1.75;
+    }
+
+    header {
+      background: linear-gradient(90deg, var(--accent) 0%, var(--primary) 100%);
+      padding: 1.2rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    nav ul {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: bold;
+      padding: 0.5rem 1rem;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: var(--secondary);
+      border-bottom: 2px solid var(--secondary);
+    }
+
+    .badge {
+      background: var(--highlight);
+      color: white;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      margin-left: 0.5rem;
+      font-weight: normal;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: auto;
+      padding: 2rem 0;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--highlight) 100%);
+      padding: 6rem 2rem;
+      text-align: center;
+      border-radius: 0 0 50px 50px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+      opacity: 0.3;
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      color: white;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .hero h1::after {
+      content: '🚀';
+      margin-left: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.3rem;
+      margin-bottom: 2rem;
+      color: rgba(255, 255, 255, 0.95);
+      position: relative;
+    }
+
+    .hero .stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-top: 2rem;
+      position: relative;
+    }
+
+    .hero .stat-item {
+      text-align: center;
+    }
+
+    .hero .stat-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: white;
+      display: block;
+    }
+
+    .hero .stat-label {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .hero-button {
+      background: var(--highlight);
+      color: white;
+      padding: 0.9rem 2.2rem;
+      border-radius: 40px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      font-size: 1.1rem;
+      display: inline-block;
+    }
+
+    .hero-button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    section h2 {
+      font-size: 2.4rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+      color: var(--secondary);
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+
+    section h2::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--secondary), var(--highlight));
+      margin: 1rem auto;
+      border-radius: 2px;
+    }
+
+    section > p {
+      text-align: center;
+      color: var(--text-muted);
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      line-height: 1.8;
+    }
+
+    .why-us-grid, .topic-grid, .pricing-table {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+    }
+
+    .why-us-grid div, .topic-card, .pricing-card {
+      background: var(--accent);
+      padding: 2rem;
+      border-radius: 20px;
+      text-align: left;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(102, 126, 234, 0.1);
+      position: relative;
+    }
+
+    .why-us-grid div:hover, .topic-card:hover, .pricing-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(102, 126, 234, 0.3);
+      border-color: var(--secondary);
+    }
+
+    .why-us-grid .icon, .topic-card .icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: var(--secondary);
+      display: block;
+    }
+
+    .topic-card h3 {
+      color: var(--secondary);
+      margin-bottom: 0.8rem;
+      font-size: 1.4rem;
+    }
+
+    .topic-card p {
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .topic-card .lab-count {
+      background: rgba(102, 126, 234, 0.2);
+      padding: 0.4rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--secondary);
+      display: inline-block;
+      margin-top: 0.5rem;
+    }
+
+    .syllabus ol {
+      padding-left: 2rem;
+      max-width: 900px;
+      margin: 2rem auto;
+      counter-reset: lab-counter;
+      list-style: none;
+    }
+
+    .syllabus li {
+      margin: 1rem 0;
+      padding: 1rem;
+      background: var(--accent);
+      border-radius: 12px;
+      border-left: 4px solid var(--secondary);
+      counter-increment: lab-counter;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      transition: all 0.2s ease;
+    }
+
+    .syllabus li:hover {
+      background: rgba(102, 126, 234, 0.1);
+      transform: translateX(8px);
+    }
+
+    .syllabus li::before {
+      content: "Lab " counter(lab-counter);
+      background: var(--secondary);
+      color: white;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .roadmap-step {
+      background: var(--accent);
+      padding: 1.5rem;
+      border-radius: 15px;
+      margin: 1rem 0;
+      border-left: 4px solid var(--highlight);
+    }
+
+    .github-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      padding: 1rem 2rem;
+      border-radius: 30px;
+      text-decoration: none;
+      color: var(--secondary);
+      font-weight: bold;
+      transition: all 0.3s ease;
+      margin: 2rem auto;
+      border: 2px solid var(--secondary);
+    }
+
+    .github-link:hover {
+      background: var(--secondary);
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
+    }
+
+    .cta-section {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+      border-radius: 30px;
+      margin: 3rem 0;
+    }
+
+    .footer {
+      background: linear-gradient(90deg, var(--accent) 0%, var(--primary) 100%);
+      text-align: center;
+      padding: 3rem 1rem;
+      margin-top: 4rem;
+      border-top: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .footer p {
+      margin: 0.5rem 0;
+    }
+
+    a {
+      color: var(--secondary);
+      transition: all 0.2s ease;
+    }
+
+    a:hover {
+      color: var(--highlight);
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero .stats {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      
+      nav ul {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#topics">Topics</a></li>
+        <li><a href="#labs">Labs</a></li>
+        <li><a href="#resources">Resources</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>DevOps Introduction</h1>
+    <p>Master modern DevOps practices through hands-on labs covering Git, CI/CD, Containers, Kubernetes, Cloud & WASM</p>
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-number">12</span>
+        <span class="stat-label">Hands-on Labs</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">10</span>
+        <span class="stat-label">Core Topics</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">15</span>
+        <span class="stat-label">Weeks</span>
+      </div>
+    </div>
+    <br>
+    <a href="https://github.com/F25-DevOps-Intro" class="hero-button">View Course Repository →</a>
+  </section>
+
+  <section id="overview" class="container">
+    <h2>Course Overview</h2>
+    <p>This comprehensive course provides a solid foundation in modern DevOps practices through practical, hands-on experience. You'll learn industry-standard tools and workflows used by leading tech companies.</p>
+    
+    <div class="topic-grid">
+      <div class="topic-card">
+        <span class="icon">📝</span>
+        <h3>Hands-On Learning</h3>
+        <p>Every concept is reinforced through practical labs. Build real projects and submit them via GitHub Pull Requests for review.</p>
+        <span class="lab-count">12 Comprehensive Labs</span>
+      </div>
+      <div class="topic-card">
+        <span class="icon">🔧</span>
+        <h3>Industry Tools</h3>
+        <p>Work with production-grade tools: Docker, Kubernetes, GitHub Actions, Terraform, Ansible, Prometheus, and more.</p>
+        <span class="lab-count">15+ Technologies</span>
+      </div>
+      <div class="topic-card">
+        <span class="icon">🚀</span>
+        <h3>Modern Practices</h3>
+        <p>Learn GitOps, Progressive Delivery, SRE principles, Infrastructure as Code, and emerging technologies like WebAssembly.</p>
+        <span class="lab-count">Cutting-Edge Topics</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="topics" class="container">
+    <h2>What You'll Learn</h2>
+    <p>Master DevOps through 12 progressive hands-on labs, each building real-world skills with production-grade tools.</p>
+    
+    <div class="topic-grid">
+      <div class="topic-card">
+        <span class="icon">🔀</span>
+        <h3>Lab 1: Git Workflows</h3>
+        <p>Master Git branching strategies, collaborative workflows, pull requests, and version control best practices.</p>
+      </div>
+      <div class="topic-card">
+        <span class="icon">⚙️</span>
+        <h3>Lab 2: GitHub Actions</h3>
+        <p>Build automated CI/CD pipelines with GitHub Actions for testing, building, and deploying applications.</p>
+      </div>
+      <div class="topic-card">
+        <span class="icon">🐳</span>
+        <h3>Lab 3: Docker Basics</h3>
+        <p>Learn Docker containerization, write Dockerfiles, and implement multi-stage builds for optimized images.</p>
+      </div>
+      <div class="topic-card">
+        <span class="icon">🔗</span>
+        <h3>Lab 4: Docker Compose</h3>
+        <p>Orchestrate multi-container applications with Docker Compose, manage networks and volumes.</p>
+      </div>
+      <div class="topic-card">
+        <span class="icon">☸️</span>
+        <h3>Lab 5: Kubernetes Basics</h3>
+        <p>Deploy applications to Kubernetes, work with pods, services, and ingress controllers.</p>
+      </div>
+      <div class="topic-card">
+        <span class="icon">🎛️</span>
+        <h3>Lab 6: K8s Advanced</h3>
+        <p>Master ConfigMaps, Secrets, Helm charts, and advanced Kubernetes resource management.</p>
+      </div>
+      <div class="topic-card">
+        <span class="icon">🏗️</span>
+        <h3>Lab 7: Terraform IaC</h3>
+        <p>Implement Infrastructure as Code with Terraform, manage cloud resources declaratively.</p>
+      </div>
+      <div class="topic-card">
+        <span class="icon">🤖</span>
+        <h3>Lab 8: Ansible Automation</h3>
+        <p>Automate configuration management with Ansible playbooks, roles, and inventory management.</p>
+      </div>
+      <div class="topic-card">
+        <span class="icon">📊</span>
+        <h3>Lab 9: Monitoring Stack</h3>
+        <p>Set up observability with Prometheus for metrics collection and Grafana for visualization.</p>
+      </div>
+      <div class="topic-card">
+        <span class="icon">🔄</span>
+        <h3>Lab 10: GitOps with ArgoCD</h3>
+        <p>Implement GitOps workflows using ArgoCD for declarative, Git-based application delivery.</p>
+      </div>
+      <div class="topic-card">
+        <span class="icon">🔒</span>
+        <h3>Lab 11: DevSecOps</h3>
+        <p>Integrate security scanning, vulnerability detection, and automated security testing into CI/CD.</p>
+      </div>
+      <div class="topic-card">
+        <span class="icon">🚀</span>
+        <h3>Lab 12: WASM vs Docker</h3>
+        <p>Compare WebAssembly containers with traditional Docker, deploy to Spin Cloud for serverless WASM.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="labs" class="container syllabus">
+    <h2>Lab Assignments</h2>
+    <p>Each lab is designed to build practical skills through real-world scenarios. Submit your work via Pull Requests for instructor review and feedback.</p>
+    <ol>
+      <li>Git Workflow & Branching Strategies</li>
+      <li>GitHub Actions CI/CD Pipeline</li>
+      <li>Docker Containerization & Multi-Stage Builds</li>
+      <li>Docker Compose & Container Orchestration</li>
+      <li>Kubernetes Deployment & Services</li>
+      <li>Kubernetes ConfigMaps, Secrets & Helm</li>
+      <li>Infrastructure as Code with Terraform</li>
+      <li>Configuration Management with Ansible</li>
+      <li>Monitoring with Prometheus & Grafana</li>
+      <li>GitOps with ArgoCD</li>
+      <li>Security Scanning & DevSecOps</li>
+      <li>WebAssembly Containers vs Traditional (Spin Cloud)</li>
+    </ol>
+  </section>
+
+  <section id="resources" class="container">
+    <h2>Course Resources</h2>
+    <p>All course materials, lab instructions, and submission guidelines are available on GitHub.</p>
+    
+    <div class="cta-section">
+      <h3 style="color: var(--secondary); font-size: 1.8rem; margin-bottom: 1rem;">Ready to Start Your DevOps Journey?</h3>
+      <p style="color: var(--text-muted); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+        Fork the repository, follow the lab instructions, and submit your work via Pull Requests. Get hands-on experience with industry-standard DevOps practices.
+      </p>
+      <a href="https://github.com/F25-DevOps-Intro" class="github-link">
+        <span>📚</span>
+        <span>Access Course Repository</span>
+      </a>
+    </div>
+    
+    <div class="topic-grid" style="margin-top: 3rem;">
+      <div class="topic-card">
+        <span class="icon">📖</span>
+        <h3>Lab Instructions</h3>
+        <p>Detailed step-by-step guides for each lab with acceptance criteria and submission guidelines.</p>
+      </div>
+      <div class="topic-card">
+        <span class="icon">💬</span>
+        <h3>Course Communication</h3>
+        <p>Use GitHub Issues for questions and Discussions for course-related conversations.</p>
+      </div>
+      <div class="topic-card">
+        <span class="icon">🎯</span>
+        <h3>Grading & Feedback</h3>
+        <p>Receive detailed feedback on your Pull Requests and track your progress through the course.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p><strong>DevOps Introduction Course (F25)</strong></p>
+    <p style="color: var(--text-muted); margin-top: 1rem;">Innopolis University - Fall 2025</p>
+    <p style="margin-top: 1.5rem;">Questions? <a href="https://github.com/F25-DevOps-Intro/discussions">GitHub Discussions</a> | <a href="https://github.com/F25-DevOps-Intro">Course Repository</a></p>
+  </footer>
+</body>
+</html>
