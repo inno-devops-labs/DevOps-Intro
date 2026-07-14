@@ -1,0 +1,91 @@
+name: Nix Reproducibility
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: nix-repro-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-a:
+    name: build-a
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      digest: ${{ steps.digest.outputs.sha256 }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.2.2
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@a49548c11d9846ad46ecc0115273879b045f001c # v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Build deterministic image
+        run: nix build .#docker
+
+      - name: Compute image tarball digest
+        id: digest
+        run: |
+          sha256="$(sha256sum result | awk '{print $1}')"
+          echo "sha256=${sha256}" >> "$GITHUB_OUTPUT"
+          echo "${sha256}"
+
+  build-b:
+    name: build-b
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    outputs:
+      digest: ${{ steps.digest.outputs.sha256 }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.2.2
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@a49548c11d9846ad46ecc0115273879b045f001c # v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Build deterministic image
+        run: nix build .#docker
+
+      - name: Compute image tarball digest
+        id: digest
+        run: |
+          sha256="$(sha256sum result | awk '{print $1}')"
+          echo "sha256=${sha256}" >> "$GITHUB_OUTPUT"
+          echo "${sha256}"
+
+  compare:
+    name: compare
+    runs-on: ubuntu-24.04
+    needs:
+      - build-a
+      - build-b
+    timeout-minutes: 5
+
+    steps:
+      - name: Compare independent digests
+        run: |
+          digest_a="${{ needs.build-a.outputs.digest }}"
+          digest_b="${{ needs.build-b.outputs.digest }}"
+
+          echo "build-a: ${digest_a}"
+          echo "build-b: ${digest_b}"
+
+          if [ "${digest_a}" != "${digest_b}" ]; then
+            echo "Digest mismatch: Nix image build is not reproducible" >&2
+            exit 1
+          fi
+
+          echo "Digests match."
