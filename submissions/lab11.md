@@ -474,15 +474,34 @@ jobs:
 Green run URL:
 
 ```text
-Manual follow-up after pushing feature/lab11: capture the green GitHub Actions URL.
+https://github.com/Hidancloud/DevOps-Intro/actions/runs/29345585858
 ```
 
-Log excerpt:
+Screenshot evidence:
+
+![Green Nix reproducibility workflow run](lab11_workflow_green.png)
+
+GitHub API evidence:
 
 ```text
-Local equivalent digest proof:
-build-a/result: 94f79bdee08d81a0da90994708d4f3ce336e1cd064bc6e1498cfe614dbd8b899
-build-b/result: 94f79bdee08d81a0da90994708d4f3ce336e1cd064bc6e1498cfe614dbd8b899
+Run: Nix Reproducibility #1
+Head SHA: 09a84a4eed5aab6051448a9fd6d61be0a0060fab
+Status: completed
+Conclusion: success
+Created: 2026-07-14T15:29:56Z
+Updated: 2026-07-14T15:30:52Z
+
+Jobs:
+- build-a: success, 2026-07-14T15:30:00Z -> 2026-07-14T15:30:46Z
+- build-b: success, 2026-07-14T15:30:00Z -> 2026-07-14T15:30:43Z
+- compare: success, 2026-07-14T15:30:49Z -> 2026-07-14T15:30:51Z
+```
+
+Local digest proof used before pushing:
+
+```text
+Environment A result: 94f79bdee08d81a0da90994708d4f3ce336e1cd064bc6e1498cfe614dbd8b899
+Environment B result: 94f79bdee08d81a0da90994708d4f3ce336e1cd064bc6e1498cfe614dbd8b899
 ```
 
 ### Red CI evidence
