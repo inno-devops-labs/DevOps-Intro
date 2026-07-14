@@ -20,6 +20,10 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
+      - name: Compute lowercase repo name
+        id: repo
+        run: echo "REPO=${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
+
       - name: Log in to ghcr.io
         uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
@@ -36,5 +40,5 @@ jobs:
           context: ./app
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}/quicknotes:${{ steps.version.outputs.VERSION }}
-            ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}/quicknotes:latest
+            ghcr.io/${{ steps.repo.outputs.REPO }}/quicknotes:${{ steps.version.outputs.VERSION }}
+            ghcr.io/${{ steps.repo.outputs.REPO }}/quicknotes:latest
