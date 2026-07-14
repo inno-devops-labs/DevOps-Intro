@@ -1,0 +1,5 @@
+# Use this world by default if none is specified:
+worlds = [ "spin:up/http-trigger@4.0.0" ]
+# Here's where to find the WIT files used by this SDK:
+wit_paths = [ "wit" ]
+

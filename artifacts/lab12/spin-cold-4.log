@@ -1,0 +1,5 @@
+Logging component stdio to ".spin/logs/"
+
+Serving http://127.0.0.1:3001
+Available Routes:
+  moscow-time: http://127.0.0.1:3001/time
