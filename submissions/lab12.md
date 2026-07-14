@@ -370,7 +370,7 @@ Comparison:
 
 | Runtime model | Artifact | Size | Startup / invocation p50 |
 |---|---|---:|---:|
-| Spin persistent server | `wasm/moscow-time/main.wasm` | 4,828,182 bytes | 74.757 ms cold server start |
+| Spin persistent server | `wasm/moscow-time/main.wasm` | 4,828,182 bytes | 71.624 ms cold server start |
 | Wasmtime CLI per invocation | `wasm-cli/main.wasm` | 195,075 bytes | 7.072 ms per run |
 
 Analysis:
