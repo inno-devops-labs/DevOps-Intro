@@ -139,7 +139,19 @@ Deliberate break (B.3): repository variable `NIX_REPRO_BREAK=true` makes job A r
 
 ### CI evidence
 
-*(filled after push — green run URL + red run with BREAK=true)*
+| Run | Result | URL |
+|-----|--------|-----|
+| Green (equal digests) | **success** — `assert-equal-digests` passed | https://github.com/IlyaPechersky/DevOps-Intro/actions/runs/29335118114 |
+| Red (`NIX_REPRO_BREAK=true` diverges job A) | **failure** — digest mismatch | https://github.com/IlyaPechersky/DevOps-Intro/actions/runs/29335384822 |
+
+Red compare log excerpt:
+```text
+digest-a=05039121bb65454ee5b4de5a7e2ec86815f51219a8934c3db978966351eb2fea
+digest-b=6c796a77aeceec80f72d3a5b4a3b566306b7739c2f698d30af75e3403d90ed25
+DIGEST MISMATCH — builds are not reproducible across runners
+```
+
+Green compare log: both cells reported the same digest as the local Nix tarball (`6c796a77aeceec80f72d3a5b4a3b566306b7739c2f698d30af75e3403d90ed25`).
 
 ### Design questions (h–j)
 
