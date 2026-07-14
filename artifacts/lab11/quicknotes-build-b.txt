@@ -1,2 +1,0 @@
-result path: /nix/store/fiy1bxs08bn8gl8s4rr4wjwghd6wa0qw-quicknotes-0.1.0
-store hash: sha256:0wm9jl829h5vhd6jd1is4p5sqw4ms7xxax5hjx2v204njsj6pzrs

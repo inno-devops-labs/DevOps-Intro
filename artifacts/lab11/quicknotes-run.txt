@@ -1,4 +1,0 @@
-health: {"notes":4,"status":"ok"}
-
-log: 2026/07/14 11:12:46 quicknotes listening on :8080 (notes loaded: 4)
-2026/07/14 11:12:48 shutting down

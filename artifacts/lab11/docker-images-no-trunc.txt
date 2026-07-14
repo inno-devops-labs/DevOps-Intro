@@ -1,3 +1,0 @@
-REPOSITORY         TAG       IMAGE ID                                                                  CREATED                  SIZE
-qn-lab11-compare   run2      sha256:8b37c5cfedcde3e67a46c3ab65fc065acf9cbc5e8ebec8cca75da448e24c3370   Less than a second ago   21.6MB
-qn-lab11-compare   run1      sha256:1ed7077c684d5b3e366d4646eba7910219b57f451f11a13e624873a91f1f1a83   10 seconds ago           21.6MB
