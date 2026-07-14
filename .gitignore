@@ -52,6 +52,10 @@ Thumbs.db
 # Local agent config (not part of the course)
 .claude/
 
+# Lab 12 — WebAssembly build artifacts (reproduced by `spin build` / `tinygo build`)
+*.wasm
+.spin/
+
 # NOTE: deliberately NOT ignored, because students commit them as lab evidence:
 #   submissions/labN.md        (lab reports)
 #   .github/workflows/*.yml    (Lab 3 CI)
