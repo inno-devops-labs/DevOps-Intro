@@ -35,7 +35,7 @@ jobs:
       - name: Compute image tarball digest
         id: digest
         run: |
-          sha256="$(sha256sum result | awk '{print $1}')-red-demo"
+          sha256="$(sha256sum result | awk '{print $1}')"
           echo "sha256=${sha256}" >> "$GITHUB_OUTPUT"
           echo "${sha256}"
 

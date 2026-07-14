@@ -509,13 +509,29 @@ Environment B result: 94f79bdee08d81a0da90994708d4f3ce336e1cd064bc6e1498cfe614db
 Red run URL:
 
 ```text
-Manual follow-up after pushing feature/lab11: temporarily break one workflow job, capture the red URL, then restore this committed workflow.
+https://github.com/Hidancloud/DevOps-Intro/actions/runs/29348288079
 ```
 
-Log excerpt:
+Red-demo method:
 
 ```text
-Not captured locally because this requires a pushed GitHub Actions run.
+Temporary commit 03930c2b3766309104bb1a4c6eccd608caf55505 changed only build-a's
+reported digest by appending "-red-demo". The image build still succeeded in
+both workers, but the compare job detected the mismatch and failed.
+```
+
+GitHub API evidence:
+
+```text
+Run: Nix Reproducibility
+Head SHA: 03930c2b3766309104bb1a4c6eccd608caf55505
+Status: completed
+Conclusion: failure
+
+Jobs:
+- build-a: success, 2026-07-14T16:07:01Z -> 2026-07-14T16:07:40Z
+- build-b: success, 2026-07-14T16:07:01Z -> 2026-07-14T16:07:42Z
+- compare: failure, 2026-07-14T16:07:46Z -> 2026-07-14T16:07:50Z
 ```
 
 ### Design questions
