@@ -1,0 +1,5 @@
+spin 4.0.2 (bfc7543 2026-06-23)
+tinygo version 0.41.1 darwin/arm64 (using go version go1.26.1 and LLVM version 20.1.1)
+go version go1.26.1 darwin/arm64
+wasmtime 46.0.1 (823d1b8f2 2026-06-24)
+hyperfine 1.20.0

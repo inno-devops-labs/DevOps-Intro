@@ -1,0 +1,3 @@
+REPOSITORY   TAG       IMAGE ID       CREATED        SIZE
+quicknotes   lab6      cc0b7903ebd3   19 hours ago   15.1MB
+-rw-r--r--@ 1 dmitrijnaumov  staff  4827172 Jul 14 10:53 wasm/main.wasm

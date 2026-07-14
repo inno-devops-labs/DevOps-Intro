@@ -1,0 +1,4 @@
+Benchmark 1: wasmtime run --env REQUEST_METHOD=GET --env PATH_INFO=/time main.wasm
+  Time (mean ± σ):      24.4 ms ±   0.9 ms    [User: 17.1 ms, System: 7.2 ms]
+  Range (min … max):    23.2 ms …  26.5 ms    20 runs
+ 

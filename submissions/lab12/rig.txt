@@ -1,0 +1,6 @@
+ProductName:		macOS
+ProductVersion:		26.5.2
+BuildVersion:		25F84
+Apple M4 Pro
+25769803776
+Docker version 28.3.0, build 38b7060a21

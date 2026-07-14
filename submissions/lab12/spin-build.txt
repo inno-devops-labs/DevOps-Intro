@@ -1,0 +1,9 @@
+Building component moscow-time with `go tool componentize-go build`
+Note: /opt/homebrew/Cellar/go/1.26.1/libexec/bin/go does not support async operation; will use downloaded version.
+See https://github.com/golang/go/pull/76775 for details.
+Downloading patched Go from https://github.com/dicej/go/releases/download/go1.25.5-wasi-on-idle-v2/go-darwin-arm64-bootstrap.tbz.
+Extracting patched Go to /Users/dmitrijnaumov/Library/Caches/componentize-go/v2.
+Using /Users/dmitrijnaumov/Library/Caches/componentize-go/v2/go-darwin-arm64-bootstrap/bin/go.
+Finished building all Spin components
+-rw-r--r--@ 1 dmitrijnaumov  staff  4827172 Jul 14 10:53 main.wasm
+-rw-r--r--@ 1 dmitrijnaumov  staff  4827172 Jul 14 10:53 wasm/main.wasm

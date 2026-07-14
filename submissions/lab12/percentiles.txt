@@ -1,0 +1,2 @@
+spin    p50     5.1 ms   p95     6.8 ms
+docker  p50     6.1 ms   p95     7.0 ms

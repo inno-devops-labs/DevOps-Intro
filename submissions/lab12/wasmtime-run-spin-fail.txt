@@ -1,0 +1,5 @@
+Error: failed to run main module `wasm/main.wasm`
+
+Caused by:
+    0: component imports instance `wasi:http/types@0.3.0-rc-2026-03-15`, but a matching implementation was not found in the linker
+    1: instance export `fields` has the wrong type

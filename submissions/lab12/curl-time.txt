@@ -1,0 +1,6 @@
+HTTP/1.1 200 OK
+content-type: application/json
+transfer-encoding: chunked
+date: Tue, 14 Jul 2026 07:54:41 GMT
+
+{"unix":1784015681,"iso":"2026-07-14T10:54:41+03:00","hour_minute":"10:54","timezone":"Europe/Moscow (UTC+3)"}
