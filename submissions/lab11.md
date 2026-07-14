@@ -321,3 +321,317 @@ manifest.
 `buildGoModule` was selected for QuickNotes because the application is a simple
 Go module, uses only the standard library, and does not benefit from the extra
 gomod2nix workflow.
+
+## Task 2 — Deterministic OCI Image
+
+### Implementation
+
+The flake exposes `packages.x86_64-linux.docker` using
+`pkgs.dockerTools.buildImage`. The image copies the `quicknotes` package built
+in Task 1 and does not invoke Docker during the build. It uses a fixed creation
+timestamp, `/bin/quicknotes` as its exec-form entrypoint, and declares
+`8080/tcp` as an exposed port.
+
+The image defines a `nonroot` user and group with UID and GID 65532. QuickNotes
+runs as `nonroot:nonroot`, reads the packaged seed file from `/app/seed.json`,
+and stores its runtime data below the writable `/tmp` directory.
+
+The Task 2 extension to `flake.nix` is:
+
+```nix
+      docker = pkgs.dockerTools.buildImage {
+        name = "quicknotes";
+        tag = "lab11";
+
+        copyToRoot = quicknotes;
+
+        extraCommands = ''
+          mkdir -p etc app tmp
+
+          printf '%s\n' \
+            'root:x:0:0:root:/root:/sbin/nologin' \
+            'nonroot:x:65532:65532:nonroot:/nonexistent:/sbin/nologin' \
+            > etc/passwd
+
+          printf '%s\n' \
+            'root:x:0:' \
+            'nonroot:x:65532:' \
+            > etc/group
+
+          cp ${./app/seed.json} app/seed.json
+          chmod 1777 tmp
+        '';
+
+        created = "1970-01-01T00:00:01Z";
+
+        config = {
+          Entrypoint = [ "/bin/quicknotes" ];
+          ExposedPorts = {
+            "8080/tcp" = { };
+          };
+          User = "nonroot:nonroot";
+          WorkingDir = "/app";
+          Env = [
+            "ADDR=:8080"
+            "DATA_PATH=/tmp/quicknotes/notes.json"
+            "SEED_PATH=/app/seed.json"
+          ];
+        };
+      };
+```
+
+It is exposed alongside the Task 1 package as follows:
+
+```nix
+      packages.${system} = {
+        inherit quicknotes docker;
+        default = quicknotes;
+      };
+```
+
+### Flake output and successful build
+
+Command:
+
+```bash
+nix flake show
+```
+
+Relevant output:
+
+```text
+└───packages
+    └───x86_64-linux
+        ├───default: package 'quicknotes-0.1.0'
+        ├───docker: package 'docker-image-quicknotes.tar.gz'
+        └───quicknotes: package 'quicknotes-0.1.0'
+```
+
+The image was built using Nix alone:
+
+```bash
+nix build -L .#docker
+```
+
+Build excerpt:
+
+```text
+docker-layer-quicknotes> Adding contents...
+docker-layer-quicknotes> Adding /nix/store/8v9s78icgfc48qzhm5542a0s7v5fc8ar-quicknotes-0.1.0
+docker-layer-quicknotes> Packing layer...
+docker-layer-quicknotes> Finished building layer 'quicknotes'
+docker-image-quicknotes.tar.gz> Adding layer...
+docker-image-quicknotes.tar.gz> Adding meta...
+docker-image-quicknotes.tar.gz> Cooking the image...
+docker-image-quicknotes.tar.gz> Finished.
+```
+
+Docker was used only after the Nix build to load and validate the completed
+archive:
+
+```bash
+docker load < result
+```
+
+Output:
+
+```text
+b53d959c4121: Loading layer [==================================================>]  9.554MB/9.554MB
+Loaded image: quicknotes:lab11
+```
+
+### Image configuration and runtime verification
+
+Command:
+
+```bash
+docker image inspect quicknotes:lab11 \
+  --format 'Entrypoint={{json .Config.Entrypoint}} User={{json .Config.User}} Ports={{json .Config.ExposedPorts}}'
+```
+
+Output:
+
+```text
+Entrypoint=["/bin/quicknotes"] User="nonroot:nonroot" Ports={"8080/tcp":{}}
+```
+
+The loaded image was started and its health endpoint was queried:
+
+```bash
+docker run --rm -d \
+  --name quicknotes-nix \
+  -p 18080:8080 \
+  quicknotes:lab11
+
+sleep 1
+curl -fsS http://localhost:18080/health
+docker logs quicknotes-nix
+docker stop quicknotes-nix
+```
+
+Health response:
+
+```json
+{"notes":4,"status":"ok"}
+```
+
+Application log:
+
+```text
+2026/07/14 15:46:43 quicknotes listening on :8080 (notes loaded: 4)
+```
+
+### Reproducibility proof
+
+Both independent environments built Git commit
+`dfbfc659a94f2209fe4e6dee7feb3ee224192d5f` with the committed `flake.lock`.
+
+#### Environment A
+
+- Machine: `aorus-AORUS-15-BSF`
+- Flake system: `x86_64-linux`
+
+Commands:
+
+```bash
+git rev-parse HEAD
+nix build .#docker
+sha256sum result
+```
+
+Output:
+
+```text
+dfbfc659a94f2209fe4e6dee7feb3ee224192d5f
+7f1a3db3e3c8615d3a7d081df1aa70b5e59ccdc79ce37184bb570f105b877dcf  result
+```
+
+#### Environment B
+
+- Machine: `pc`
+- Flake system: `x86_64-linux`
+
+Commands:
+
+```bash
+git rev-parse HEAD
+nix build .#docker
+sha256sum result
+```
+
+Output:
+
+```text
+dfbfc659a94f2209fe4e6dee7feb3ee224192d5f
+7f1a3db3e3c8615d3a7d081df1aa70b5e59ccdc79ce37184bb570f105b877dcf  result
+```
+
+The two machines produced byte-identical Nix image archives.
+
+### Comparison with the Lab 6 Docker build
+
+The current `app/Dockerfile` references `./cmd/healthcheck`, which is not
+present in the repository. The comparison therefore used the working Lab 6
+Dockerfile and application state from commit
+`06050b5fd1f1611962d9ec3ccd799b28a1bb60c6` in a temporary detached worktree.
+
+Commands:
+
+```bash
+temp_dir=$(mktemp -d)
+lab6_dir="$temp_dir/worktree"
+git worktree add --detach "$lab6_dir" 06050b5
+
+docker build --no-cache -t qn-lab6:run1 "$lab6_dir/app"
+docker build --no-cache -t qn-lab6:run2 "$lab6_dir/app"
+docker images --no-trunc qn-lab6
+
+git worktree remove "$lab6_dir"
+rmdir "$temp_dir"
+```
+
+The two no-cache builds produced different image IDs:
+
+```text
+REPOSITORY   TAG    IMAGE ID                                                                  SIZE
+qn-lab6      run2   sha256:4eb8a55ac436c7c095dcdfa6bc4f4ae1127251d90a84dcc802c1bfa21ee308c6   8.08MB
+qn-lab6      run1   sha256:cd89a9a4db72b457c533dd22da155ee0ef2bb91ec80457ea667867de06f8ac5c   8.08MB
+```
+
+Full IDs were also checked directly:
+
+```text
+qn-lab6:run1: sha256:cd89a9a4db72b457c533dd22da155ee0ef2bb91ec80457ea667867de06f8ac5c
+qn-lab6:run2: sha256:4eb8a55ac436c7c095dcdfa6bc4f4ae1127251d90a84dcc802c1bfa21ee308c6
+```
+
+This differs from the Nix result, whose independently generated archive digest
+was identical on both machines.
+
+### Image-size comparison
+
+The sizes were read from Docker after loading the Nix image and building the
+Lab 6 images:
+
+```bash
+docker image inspect quicknotes:lab11 \
+  --format 'Nix image: {{.Size}} bytes'
+docker image inspect qn-lab6:run1 \
+  --format 'Lab 6 image: {{.Size}} bytes'
+```
+
+| Image | Size in bytes | Docker display |
+| ----- | ------------: | -------------- |
+| Nix `quicknotes:lab11` | 8,506,942 | approximately 8.51 MB |
+| Lab 6 `qn-lab6:run1` | 8,078,365 | 8.08 MB |
+
+The Nix-built image is 428,577 bytes, approximately 0.43 MB, larger than the
+Lab 6 image in this comparison. The exact contribution of individual build and
+packaging differences was not isolated.
+
+### Design questions
+
+#### e. What introduces non-determinism in `docker build`?
+
+A Dockerfile does not normally pin every input that affects its output. Mutable
+base-image tags can resolve to different images, package repositories and
+network downloads can change, and `RUN` commands can produce timestamps or
+other environment-dependent metadata. Builder and toolchain versions,
+filesystem metadata, architecture, and environment variables may also affect
+the resulting layers and image configuration.
+
+The `--no-cache` flag forces Dockerfile instructions to execute again, but it
+does not pin or normalize all of those inputs. In this comparison, two
+immediately repeated no-cache builds from the same source produced different
+image IDs. In contrast, the locked Nix derivation and `dockerTools.buildImage`
+used fixed inputs and normalized image metadata, producing identical archives
+on two machines.
+
+#### f. What can a security auditor prove with a reproducible image?
+
+A valid signature establishes that a particular artifact was approved by the
+holder of the signing key and has not changed since it was signed. A signature
+alone does not independently establish that the artifact corresponds to the
+published source and declared build inputs.
+
+With a reproducible image, an auditor can independently rebuild the declared
+source using the locked inputs and compare the resulting digest with the
+published artifact. A match provides evidence of the source-to-artifact
+relationship that a signed but non-reproducible image cannot provide by itself.
+Reproducibility does not prove that the source or toolchain is free of malicious
+behavior, so reproducible builds and artifact signing address complementary
+parts of the supply-chain problem.
+
+#### g. What is the trade-off of Nix reproducibility?
+
+Nix introduces its own expression language, immutable-store model, dependency
+pinning workflow, cache management, and debugging conventions. It can require
+additional packaging work for software that assumes a conventional filesystem
+or performs impure build steps, and its store and build artifacts can use
+significant disk space.
+
+Docker remains the default for many teams because Dockerfiles are broadly
+understood and integrate directly with existing developer workflows, CI
+systems, registries, deployment platforms, and operational tooling. This makes
+Docker easier to adopt, while achieving the same degree of reproducibility
+requires teams to pin and normalize their build inputs explicitly.
