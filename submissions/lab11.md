@@ -385,26 +385,53 @@ The workflow:
 - passes both digests to a third `compare` job
 - fails if the digests differ
 
-Important note:
-
-I could prepare the workflow locally, but I could not generate the required green and red CI run URLs from this environment alone. That proof needs a real GitHub push on the branch.
+I verified the workflow on GitHub with both a normal green run and an intentional red run.
 
 ### B.2 Workflow YAML
 
 See `.github/workflows/nix-repro.yml`.
 
-### B.3 What still needs a manual GitHub step
+### B.3 Green and red CI proof
 
-To finish the bonus evidence after push:
+Green run URL:
 
-1. push `feature/lab11` to GitHub;
-2. open the Actions run for `nix-repro`;
-3. save one green run URL where `build-a` and `build-b` produce the same digest;
-4. create one temporary breaking commit for the workflow proof, for example make one job build with a different image timestamp or another intentional divergence;
-5. save the red run URL;
-6. revert that temporary break and keep the workflow green again.
+```text
+https://github.com/lime413/DevOps-Intro/actions/runs/29329021257
+```
 
-I stopped before this step because it needs the remote GitHub workflow environment.
+Red run URL:
+
+```text
+https://github.com/lime413/DevOps-Intro/actions/runs/29329656880
+```
+
+Final restored green run URL:
+
+```text
+https://github.com/lime413/DevOps-Intro/actions/runs/29329792776
+```
+
+Green run screenshot:
+
+![Green reproducibility workflow run](workflow_run_green.png)
+
+Red run screenshot:
+
+![Red reproducibility workflow run](workflow_run_red.png)
+
+Restored green run screenshot:
+
+![Restored green reproducibility workflow run](workflow_run_reproduced.png)
+
+How I forced the red run:
+
+- in commit `4358c8a`, I changed only `build-a`;
+- before `nix build .#docker`, that job modified `flake.nix` in the runner workspace;
+- it changed the pinned image creation timestamp from `1970-01-01T00:00:01Z` to `1970-01-01T00:00:02Z`;
+- `build-b` kept the original flake;
+- `compare` then failed because the two digests differed.
+
+After that, I restored the correct workflow in commit `299a5cf` and confirmed the workflow became green again.
 
 ### B.4 Design answers
 
@@ -436,8 +463,9 @@ Task 2 is complete.
 - the image loads and runs
 - the comparison with the Lab 6 Docker build shows Docker digests differ
 
-Bonus task is implemented locally but not fully evidenced yet.
+Bonus task is complete.
 
 - workflow file added
-- CI logic is ready
-- green/red GitHub run evidence still needs a push to the remote repository
+- one green GitHub run saved
+- one intentional red GitHub run saved
+- final restored green GitHub run saved
