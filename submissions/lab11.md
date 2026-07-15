@@ -50,7 +50,9 @@
 }
 ```
 
-### Build log (clean run)
+`flake.lock` committed alongside (pins `nixpkgs` to `ac62194`, `nixos-25.05`).
+
+### Build log
 
 ```
 $ nix build .#quicknotes 2>&1 | tail -20
@@ -114,10 +116,70 @@ Go embeds build IDs and metadata derived from local file paths and toolchain sta
 
 ## Task 2 — Deterministic OCI Image
 
-*(Not yet completed — to be added.)*
+### Extended `flake.nix` (docker output)
+
+```nix
+        docker = pkgs.dockerTools.buildImage {
+          name = "quicknotes";
+          tag = "0.1.0";
+          created = "1970-01-01T00:00:01Z";
+
+          copyToRoot = pkgs.buildEnv {
+            name = "image-root";
+            paths = [ self.packages.${system}.quicknotes ];
+            pathsToLink = [ "/bin" ];
+          };
+
+          config = {
+            Entrypoint = [ "/bin/quicknotes" ];
+            ExposedPorts = {
+              "8080/tcp" = { };
+            };
+            User = "65532:65532";
+          };
+        };
+```
+
+### Image size comparison
+
+```
+ghcr.io/darknesod1-netizen/devops-outro/quicknotes:0.1.0   14.8MB   3.34MB
+quicknotes:0.1.0 (Nix-built)                                21.4MB   9.49MB
+quicknotes:lab6 (Docker-built)                              14.8MB   3.32MB
+```
+
+Nix-built image is larger — `dockerTools.buildImage`'s closure pulls in more of the Nix store dependency graph than the hand-tuned distroless Dockerfile from Lab 6.
+
+### Reproducibility proof — two independent Nix builds
+
+```
+Environment A (fresh nixos/nix container, built from GitHub):
+80ccdad1b00695e9ae3609c70452a2bb4835346dd8d0f1a7b3e37df5569d0118
+
+Environment B (separate fresh nixos/nix container, built from GitHub):
+80ccdad1b00695e9ae3609c70452a2bb4835346dd8d0f1a7b3e37df5569d0118
+```
+
+Identical.
+
+### Lab 6 Docker build — non-determinism proof
+
+```
+$ docker build --no-cache -t qn-lab6:run1 ./app
+$ docker build --no-cache -t qn-lab6:run2 ./app
+$ docker images --no-trunc | grep qn-lab6
+qn-lab6   run2   sha256:4d1595733d095e2f595f86d594cc5f66490216e5a0c0476d4e6a3dce4242b39c
+qn-lab6   run1   sha256:ad17d82a0b3b3f7a646a4081a78be625f435ac202f3fcf5e70fd3b538445f1f9
+```
+
+Different digests from identical Dockerfile + source — confirms Docker build is not reproducible.
+
+### Design questions
+
+**e) What makes `docker build` non-deterministic:** each layer embeds a creation timestamp stamped with the actual wall-clock build time; package installs can also pull different transitive versions if upstream repos moved since the last build, even with a pinned base image.
+
+**f) What reproducibility proves that signing alone can't:** a signature proves who produced an artifact and that it wasn't tampered with in transit, but says nothing about what's inside. A reproducible build lets a third party rebuild from source independently and verify the published artifact matches exactly — proving the build pipeline itself wasn't compromised. Signing requires trusting the builder; reproducibility lets you verify them.
+
+**g) Trade-off of Nix reproducibility, and why `docker build` stays the default:** steeper learning curve, unfamiliar mental model (functional, content-addressed store), and larger images by default (see size comparison above). `docker build` remains the default because it's what teams already know and it integrates with existing CI/CD without new tooling — pinned base images + lockfiles are "good enough" reproducibility for most teams' threat models. Full bit-for-bit reproducibility matters most for high-assurance software supply chains, not typical app deployments.
 
 ---
-
-## Bonus Task — CI-Verified Reproducibility
-
-*(Not yet completed — to be added.)*
