@@ -1,0 +1,62 @@
+2026/07/15 02:54:24 http2: server: error reading preface from client //./pipe/dockerDesktopLinuxEngine: file has already been closed
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 672B done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for gcr.io/distroless/static:nonroot
+#2 DONE 0.3s
+
+#3 [internal] load metadata for docker.io/library/golang:1.24-alpine
+#3 DONE 0.3s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [builder 1/6] FROM docker.io/library/golang:1.24-alpine@sha256:8bee1901f1e530bfb4a7850aa7a479d17ae3a18beb6e09064ed54cfd245b7191
+#5 DONE 0.0s
+
+#6 [builder 2/6] WORKDIR /build
+#6 CACHED
+
+#7 [stage-1 1/5] FROM gcr.io/distroless/static:nonroot@sha256:f7f8f729987ad0fdf6b05eeeae94b26e6a0f613bdf46feea7fc40f7bd72953e6
+#7 CACHED
+
+#8 [internal] load build context
+#8 transferring context: 528B done
+#8 DONE 0.0s
+
+#9 [builder 3/6] COPY go.mod ./
+#9 DONE 0.0s
+
+#10 [builder 4/6] RUN go mod download
+#10 0.241 go: no module dependencies to download
+#10 DONE 0.3s
+
+#11 [builder 5/6] COPY . .
+#11 DONE 0.1s
+
+#12 [builder 6/6] RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags='-s -w' -o /out/quicknotes . &&     CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags='-s -w' -o /out/healthcheck ./healthcheck/ &&     mkdir -p /out/data
+#12 DONE 8.2s
+
+#13 [stage-1 2/5] COPY --from=builder /out/quicknotes /quicknotes
+#13 DONE 0.0s
+
+#14 [stage-1 3/5] COPY --from=builder /out/healthcheck /healthcheck
+#14 DONE 0.0s
+
+#15 [stage-1 4/5] COPY --from=builder /build/seed.json /seed.json
+#15 DONE 0.0s
+
+#16 [stage-1 5/5] COPY --chown=65532:65532 --from=builder /out/data /data
+#16 DONE 0.0s
+
+#17 exporting to image
+#17 exporting layers 0.1s done
+#17 writing image sha256:91dbb521b156f1a1adcb6c15f6dfa31e8aa772b57b762ec505d5d39c4e113f4c done
+#17 naming to docker.io/library/qn-lab6:run2 done
+#17 DONE 0.1s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/jkg27h3xkmnhwqau4o8vrl2sc

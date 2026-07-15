@@ -1,0 +1,81 @@
+name: nix-repro
+
+# Reproducibility gate for the Nix-built OCI image (Lab 11 bonus).
+# Two independent, freshly-provisioned runners each build .#docker and must
+# produce the byte-identical image tarball digest. A third job compares the
+# two digests and fails the workflow if they differ.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      break_repro:
+        description: "Force a digest mismatch in build-a (red-run demo)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build-a:
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.digest.outputs.sha256 }}
+    steps:
+      # Pinned by 40-char commit SHA (Lab 3 rule). Comment = human-readable tag.
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+      # Optional divergence for the red-run demo. A pure Nix build ignores a
+      # runner-set SOURCE_DATE_EPOCH (it is sandboxed out), so to actually
+      # force a mismatch we patch the flake's fixed `created` timestamp in
+      # build-a only. Runs only on a manual dispatch with break_repro=true.
+      - name: Break reproducibility (demo only)
+        if: ${{ inputs.break_repro }}
+        run: |
+          sed -i 's/created = "1970-01-01T00:00:01Z";/created = "2020-02-02T02:02:02Z";/' flake.nix
+          echo "::warning::break_repro enabled: build-a flake.created changed to force a digest mismatch"
+      - name: Build OCI image
+        run: nix build .#docker
+      - name: Compute image digest
+        id: digest
+        run: echo "sha256=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+      - name: Show digest
+        run: echo "build-a digest = ${{ steps.digest.outputs.sha256 }}"
+
+  build-b:
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.digest.outputs.sha256 }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+      - name: Build OCI image
+        run: nix build .#docker
+      - name: Compute image digest
+        id: digest
+        run: echo "sha256=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+      - name: Show digest
+        run: echo "build-b digest = ${{ steps.digest.outputs.sha256 }}"
+
+  compare:
+    needs: [build-a, build-b]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compare digests
+        run: |
+          a='${{ needs.build-a.outputs.digest }}'
+          b='${{ needs.build-b.outputs.digest }}'
+          echo "build-a: $a"
+          echo "build-b: $b"
+          if [ -z "$a" ] || [ -z "$b" ]; then
+            echo "::error::a digest is empty (a build job failed)"
+            exit 1
+          fi
+          if [ "$a" != "$b" ]; then
+            echo "::error::Reproducibility FAILED: the two runners produced different digests"
+            exit 1
+          fi
+          echo "Reproducibility OK: identical digest on two independent runners"

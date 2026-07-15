@@ -1,0 +1,118 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 672B 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for gcr.io/distroless/static:nonroot
+#2 ...
+
+#3 [internal] load metadata for docker.io/library/golang:1.24-alpine
+#3 DONE 1.6s
+
+#2 [internal] load metadata for gcr.io/distroless/static:nonroot
+#2 DONE 2.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [builder 1/6] FROM docker.io/library/golang:1.24-alpine@sha256:8bee1901f1e530bfb4a7850aa7a479d17ae3a18beb6e09064ed54cfd245b7191
+#5 DONE 0.0s
+
+#6 [builder 2/6] WORKDIR /build
+#6 CACHED
+
+#7 [internal] load build context
+#7 transferring context: 3.25kB done
+#7 DONE 0.0s
+
+#8 [builder 3/6] COPY go.mod ./
+#8 DONE 0.0s
+
+#9 [stage-1 1/5] FROM gcr.io/distroless/static:nonroot@sha256:f7f8f729987ad0fdf6b05eeeae94b26e6a0f613bdf46feea7fc40f7bd72953e6
+#9 resolve gcr.io/distroless/static:nonroot@sha256:f7f8f729987ad0fdf6b05eeeae94b26e6a0f613bdf46feea7fc40f7bd72953e6 0.0s done
+#9 sha256:1eed391ea893e6015bf4ce4ed366909975d2acdbe907670919236a8d18ea6b07 0B / 85.86kB 0.1s
+#9 sha256:f7f8f729987ad0fdf6b05eeeae94b26e6a0f613bdf46feea7fc40f7bd72953e6 1.79kB / 1.79kB done
+#9 sha256:23795be0fe67b7d47d1ee62b19c7db750152db627d5bbfa31307e892a7575bec 2.86kB / 2.86kB done
+#9 sha256:b940eaddbba01346352fa402e89d94af7c6d283c1de0bc97abafbf12cdde9866 2.93kB / 2.93kB done
+#9 sha256:c172f21841dff4c8cf45cde46589c1c2616cefe7e819965e92e6d3475c428aa0 0B / 12.68kB 0.1s
+#9 sha256:99515e7b4d35e0652d3b0fde571b6ec269222ecacc506f026e1758d6261e9109 0B / 288.54kB 0.1s
+#9 ...
+
+#10 [builder 4/6] RUN go mod download
+#10 0.365 go: no module dependencies to download
+#10 DONE 0.4s
+
+#9 [stage-1 1/5] FROM gcr.io/distroless/static:nonroot@sha256:f7f8f729987ad0fdf6b05eeeae94b26e6a0f613bdf46feea7fc40f7bd72953e6
+#9 ...
+
+#11 [builder 5/6] COPY . .
+#11 DONE 0.1s
+
+#9 [stage-1 1/5] FROM gcr.io/distroless/static:nonroot@sha256:f7f8f729987ad0fdf6b05eeeae94b26e6a0f613bdf46feea7fc40f7bd72953e6
+#9 sha256:1eed391ea893e6015bf4ce4ed366909975d2acdbe907670919236a8d18ea6b07 85.86kB / 85.86kB 0.9s done
+#9 sha256:c172f21841dff4c8cf45cde46589c1c2616cefe7e819965e92e6d3475c428aa0 12.68kB / 12.68kB 1.0s
+#9 extracting sha256:1eed391ea893e6015bf4ce4ed366909975d2acdbe907670919236a8d18ea6b07 done
+#9 sha256:99ba982a9142213c751a1709dcf088e63d8601f03b3f211bae037be698fef270 0B / 254.45kB 1.0s
+#9 sha256:c172f21841dff4c8cf45cde46589c1c2616cefe7e819965e92e6d3475c428aa0 12.68kB / 12.68kB 1.0s done
+#9 extracting sha256:c172f21841dff4c8cf45cde46589c1c2616cefe7e819965e92e6d3475c428aa0 done
+#9 sha256:d6b1b89eccacc15c2420b2776d72c1dae334a00805ed9af54bf2f71e4d536f28 0B / 32.09kB 1.1s
+#9 extracting sha256:99515e7b4d35e0652d3b0fde571b6ec269222ecacc506f026e1758d6261e9109
+#9 sha256:99515e7b4d35e0652d3b0fde571b6ec269222ecacc506f026e1758d6261e9109 288.54kB / 288.54kB 1.1s done
+#9 extracting sha256:99515e7b4d35e0652d3b0fde571b6ec269222ecacc506f026e1758d6261e9109 0.1s done
+#9 sha256:2780920e5dbfbe103d03a583ed75345306e572ec5a48cb10361f046767d9f29a 0B / 67B 1.3s
+#9 sha256:2780920e5dbfbe103d03a583ed75345306e572ec5a48cb10361f046767d9f29a 67B / 67B 1.4s done
+#9 sha256:7c12895b777bcaa8ccae0605b4de635b68fc32d60fa08f421dc3818bf55ee212 0B / 188B 1.5s
+#9 sha256:d6b1b89eccacc15c2420b2776d72c1dae334a00805ed9af54bf2f71e4d536f28 32.09kB / 32.09kB 1.7s done
+#9 sha256:3214acf345c0cc6bbdb56b698a41ccdefc624a09d6beb0d38b5de0b2303ecaf4 0B / 123B 1.7s
+#9 sha256:7c12895b777bcaa8ccae0605b4de635b68fc32d60fa08f421dc3818bf55ee212 188B / 188B 1.7s done
+#9 sha256:52630fc75a18675c530ed9eba5f55eca09b03e91bd5bc15307918bbc1a7e7296 0B / 162B 1.8s
+#9 extracting sha256:99ba982a9142213c751a1709dcf088e63d8601f03b3f211bae037be698fef270
+#9 sha256:99ba982a9142213c751a1709dcf088e63d8601f03b3f211bae037be698fef270 254.45kB / 254.45kB 1.8s done
+#9 sha256:3214acf345c0cc6bbdb56b698a41ccdefc624a09d6beb0d38b5de0b2303ecaf4 123B / 123B 2.0s done
+#9 extracting sha256:99ba982a9142213c751a1709dcf088e63d8601f03b3f211bae037be698fef270 0.0s done
+#9 sha256:dd64bf2dd177757451a98fcdc999a339c35dee5d9872d8f4dc69c8f3c4dd0112 0B / 80B 2.0s
+#9 sha256:b839dfae01f66e15c6a8b63520557ed315bdfe036342fa7a0c537259f10d7a9a 0B / 351B 2.0s
+#9 sha256:52630fc75a18675c530ed9eba5f55eca09b03e91bd5bc15307918bbc1a7e7296 162B / 162B 2.0s done
+#9 extracting sha256:d6b1b89eccacc15c2420b2776d72c1dae334a00805ed9af54bf2f71e4d536f28 done
+#9 sha256:ebddc55facdc6b1f7e0f30816a5fc7cc62f38abdf76c0a8b0a0ce52085754795 0B / 311B 2.1s
+#9 sha256:dd64bf2dd177757451a98fcdc999a339c35dee5d9872d8f4dc69c8f3c4dd0112 80B / 80B 2.2s done
+#9 extracting sha256:2780920e5dbfbe103d03a583ed75345306e572ec5a48cb10361f046767d9f29a done
+#9 extracting sha256:7c12895b777bcaa8ccae0605b4de635b68fc32d60fa08f421dc3818bf55ee212 done
+#9 extracting sha256:3214acf345c0cc6bbdb56b698a41ccdefc624a09d6beb0d38b5de0b2303ecaf4 done
+#9 extracting sha256:52630fc75a18675c530ed9eba5f55eca09b03e91bd5bc15307918bbc1a7e7296 done
+#9 extracting sha256:dd64bf2dd177757451a98fcdc999a339c35dee5d9872d8f4dc69c8f3c4dd0112 done
+#9 sha256:bdfd7f7e5bf6fc27e70b59101db21c3d8284d283884419dd5fe7020583bb79ca 0B / 136.99kB 2.2s
+#9 extracting sha256:b839dfae01f66e15c6a8b63520557ed315bdfe036342fa7a0c537259f10d7a9a
+#9 sha256:b839dfae01f66e15c6a8b63520557ed315bdfe036342fa7a0c537259f10d7a9a 351B / 351B 2.3s done
+#9 extracting sha256:b839dfae01f66e15c6a8b63520557ed315bdfe036342fa7a0c537259f10d7a9a done
+#9 extracting sha256:ebddc55facdc6b1f7e0f30816a5fc7cc62f38abdf76c0a8b0a0ce52085754795
+#9 sha256:ebddc55facdc6b1f7e0f30816a5fc7cc62f38abdf76c0a8b0a0ce52085754795 311B / 311B 2.4s done
+#9 extracting sha256:ebddc55facdc6b1f7e0f30816a5fc7cc62f38abdf76c0a8b0a0ce52085754795 done
+#9 sha256:bdfd7f7e5bf6fc27e70b59101db21c3d8284d283884419dd5fe7020583bb79ca 136.99kB / 136.99kB 2.9s done
+#9 extracting sha256:bdfd7f7e5bf6fc27e70b59101db21c3d8284d283884419dd5fe7020583bb79ca done
+#9 DONE 3.1s
+
+#12 [builder 6/6] RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags='-s -w' -o /out/quicknotes . &&     CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags='-s -w' -o /out/healthcheck ./healthcheck/ &&     mkdir -p /out/data
+#12 DONE 8.6s
+
+#13 [stage-1 2/5] COPY --from=builder /out/quicknotes /quicknotes
+#13 DONE 0.0s
+
+#14 [stage-1 3/5] COPY --from=builder /out/healthcheck /healthcheck
+#14 DONE 0.0s
+
+#15 [stage-1 4/5] COPY --from=builder /build/seed.json /seed.json
+#15 DONE 0.0s
+
+#16 [stage-1 5/5] COPY --chown=65532:65532 --from=builder /out/data /data
+#16 DONE 0.0s
+
+#17 exporting to image
+#17 exporting layers 0.0s done
+#17 writing image sha256:3a198f4d86eee0df75faf1e687789dc9e766f8c67ae768d40c973e8511bbf39c done
+#17 naming to docker.io/library/qn-lab6:run1 done
+#17 DONE 0.1s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/96yoi6vditfbk6aaqjyphta39
