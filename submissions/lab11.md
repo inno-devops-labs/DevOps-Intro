@@ -227,3 +227,15 @@ Log:
 2026-07-15T19:28:55.6415323Z ##[error]Process completed with exit code 1.
 2026-07-15T19:28:55.6538210Z Cleaning up orphan processes
 ```
+
+### Design questions
+a) By default, `go build` embeds absolute host file paths, compiler-generated build IDs, and local timestamps into the resulting binary. These factors differ across machines, leading to divergent binary hashes even for identical source code.\
+b) `vendorHash` is a SHA-256 hash computed over the exact directory structure and file contents of all downloaded Go module dependencies. Setting `vendorHash = null` tells Nix that the project has no external dependencies or that they are already fully vendored in the local source directory.\
+c) `flake.lock` guarantees reproducibility by pinning dependencies like `nixpkgs` to a precise Git commit hash. Deleting it forces Nix to pull the latest commit from the specified branch, which can introduce updated compilers or libraries that alter build outputs.\
+d) `buildGoModule` is a standard helper that hashes dependencies as a single flat directory, whereas `buildGoApplication` packages every individual Go module dependency as its own separate Nix derivation. `buildGoModule` was chosen for QuickNotes because the application has minimal dependencies, making a granular multi-derivation build unnecessary.\
+e) `docker build` dynamically stamps each layer with the current build time (`Created` metadata) and often runs commands like `apt-get install` that pull changing packages from the internet. This ensures that rebuilding the same Dockerfile later yields a completely different image hash.\
+f) A reproducible image proves that the compiled binary matches the audited source code exactly, eliminating the risk of a compromised build server injecting a backdoor. A signature only guarantees that a specific trusted entity built the binary, even if that build environment was secretly compromised.\
+g) Nix has a very steep learning curve, sparse documentation, and demands strict adherence to sandboxing, which complicates quick patching. `docker build` remains the industry default because it is highly accessible, easier to write, and has massive ecosystem support.\
+h) A local laptop contains hidden states, cached assets, and environment variables that can accidentally make a build work. Proving reproducibility on clean, ephemeral CI runners demonstrates that the build is truly independent of any developer's local environment.\
+i) Two parallel jobs run on physically isolated machines with completely separate disk states. Running them sequentially in a single job could mask non-determinism by allowing the second run to silently reuse dirty caches or files left behind by the first run.\
+Timestamps normally leak into the creation metadata of the OCI layers and the modified times (`mtime`) of the packed files. `dockerTools.buildImage` handles this by stripping the real timestamps and forcibly setting them to Unix Epoch (`1970-01-01T00:00:00Z`) unless configured otherwise.
