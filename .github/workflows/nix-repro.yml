@@ -1,0 +1,55 @@
+name: nix-repro
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      break_repro:
+        description: Tamper build-a to prove the gate catches divergence
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build-a:
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.digest.outputs.value }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - if: ${{ github.event.inputs.break_repro == 'true' }}
+        run: echo "divergence" >> app/seed.json
+      - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25
+      - run: nix build .#docker
+      - id: digest
+        run: echo "value=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  build-b:
+    runs-on: ubuntu-24.04
+    outputs:
+      digest: ${{ steps.digest.outputs.value }}
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25
+      - run: nix build .#docker
+      - id: digest
+        run: echo "value=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  compare:
+    needs: [build-a, build-b]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Assert identical digests
+        run: |
+          a='${{ needs.build-a.outputs.digest }}'
+          b='${{ needs.build-b.outputs.digest }}'
+          echo "build-a: $a"
+          echo "build-b: $b"
+          if [ -z "$a" ] || [ "$a" != "$b" ]; then
+            echo "::error::Nix image digests differ — reproducibility broken"
+            exit 1
+          fi
+          echo "reproducible: both runners produced $a"
