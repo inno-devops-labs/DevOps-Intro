@@ -249,3 +249,207 @@ output rather than reflection over `map[string]any`. The earlier
 `internal/stringslite` build failure was a separate Go/TinyGo version mismatch,
 not one of these standard-library limitations; using Go 1.24.13 with TinyGo
 0.41.1 resolved it.
+
+## Task 2 - Performance Comparison with the Lab 6 Container
+
+### Test rig
+
+The measurements were collected on the following system:
+
+```text
+Date: 2026-07-15T13:54:32+03:00
+OS: Ubuntu 24.04.2 LTS
+Kernel: Linux 6.17.0-1011-oem x86_64
+Architecture: x86_64
+CPU: 13th Gen Intel(R) Core(TM) i7-13700H
+Logical CPUs: 20
+Memory: 15 GiB
+Docker: 29.3.0, build 5927d80
+Spin: 3.4.1 (3ab5404 2025-08-28)
+TinyGo: 0.41.1, using Go 1.24.13 and LLVM 20.1.1
+Hyperfine: 1.18.0
+```
+
+### Measurement method
+
+Both artifacts were built before measurements began, so compilation, image
+building, and image pulling were excluded. Both services were tested over the
+IPv4 loopback interface on the same machine. The endpoints were the ones
+required by the lab: `/time` for Spin and `/health` for Docker.
+
+Warm latency was measured with five warmup runs followed by 50 measured runs.
+Each Hyperfine sample launched `curl`, so the reported duration includes curl
+process startup as well as HTTP request processing. This overhead is present in
+both measurements.
+
+Cold start was measured ten times per platform. Each timer started immediately
+before starting the runtime and stopped after the first successful HTTP
+response. The Docker daemon and local image remained available, but every
+sample created a fresh container. Every Spin sample started a fresh `spin up`
+process after confirming that port 3000 was free. Percentiles were calculated
+from the individual samples using linear interpolation.
+
+### Artifact size
+
+Commands:
+
+```bash
+stat -c '%n: %s bytes' wasm/moscow-time/main.wasm
+docker image inspect quicknotes:lab6 --format '{{.Size}}'
+docker image ls quicknotes:lab6
+```
+
+Relevant output:
+
+```text
+wasm/moscow-time/main.wasm: 361854 bytes
+13661397
+
+IMAGE             ID             DISK USAGE
+quicknotes:lab6   91a4553e2041       13.7MB
+```
+
+The raw WASM artifact is 361,854 bytes, or approximately 354 KiB. Docker reports
+an exact image size of 13,661,397 bytes, or approximately 13.03 MiB. By these
+reported sizes, the Docker image is approximately 37.75 times larger than the
+WASM artifact.
+
+### Warm latency
+
+Spin command:
+
+```bash
+hyperfine \
+    --warmup 5 \
+    --runs 50 \
+    --export-json /tmp/lab12-bench/spin-warm.json \
+    'curl --fail --silent --show-error --output /dev/null http://127.0.0.1:3000/time'
+```
+
+Output:
+
+```text
+Benchmark 1: curl --fail --silent --show-error --output /dev/null http://127.0.0.1:3000/time
+  Time (mean ± σ):      14.1 ms ±   3.0 ms    [User: 4.9 ms, System: 6.4 ms]
+  Range (min … max):    10.4 ms …  23.7 ms    50 runs
+```
+
+Docker command:
+
+```bash
+hyperfine \
+    --warmup 5 \
+    --runs 50 \
+    --export-json /tmp/lab12-bench/docker-warm.json \
+    'curl --fail --silent --show-error --output /dev/null http://127.0.0.1:8080/health'
+```
+
+Output:
+
+```text
+Benchmark 1: curl --fail --silent --show-error --output /dev/null http://127.0.0.1:8080/health
+  Time (mean ± σ):      11.8 ms ±   1.9 ms    [User: 4.4 ms, System: 6.4 ms]
+  Range (min … max):     8.7 ms …  16.0 ms    50 runs
+```
+
+Calculated warm percentiles:
+
+```text
+spin-warm: p50=13.445 ms, p95=19.965 ms
+docker-warm: p50=11.545 ms, p95=15.472 ms
+```
+
+Docker was slightly faster in this warm test. This result includes the cost of
+launching curl for every sample and compares two different endpoint
+implementations, as specified by the lab, rather than isolating only runtime
+overhead.
+
+### Cold start
+
+The ten valid cold-start samples were:
+
+| Sample | Spin | Docker |
+| ---: | ---: | ---: |
+| 1 | 90.965 ms | 328.881 ms |
+| 2 | 183.817 ms | 328.589 ms |
+| 3 | 83.279 ms | 333.406 ms |
+| 4 | 90.316 ms | 352.305 ms |
+| 5 | 100.501 ms | 335.688 ms |
+| 6 | 100.380 ms | 320.642 ms |
+| 7 | 102.018 ms | 366.090 ms |
+| 8 | 107.735 ms | 367.177 ms |
+| 9 | 115.000 ms | 399.880 ms |
+| 10 | 96.188 ms | 374.382 ms |
+
+Calculated cold-start percentiles:
+
+```text
+spin-cold-ms: samples=10, p50=100.441 ms, p95=152.849 ms
+docker-cold-ms: samples=10, p50=343.996 ms, p95=388.406 ms
+```
+
+Spin's measured median cold start was approximately 3.42 times faster than the
+Docker container's median cold start. All samples were retained, including the
+183.817 ms Spin sample, because no measurement failure was observed.
+
+### Performance results
+
+| Dimension | Lab 6 Docker | Lab 12 WASM/Spin |
+| --- | ---: | ---: |
+| Artifact size | 13,661,397 bytes / 13.03 MiB | 361,854 bytes / 354 KiB |
+| Cold start (p50) | 343.996 ms | 100.441 ms |
+| Warm latency p50 | 11.545 ms | 13.445 ms |
+| Warm latency p95 | 15.472 ms | 19.965 ms |
+
+### Design question e: What dominates each platform's cold start?
+
+For Docker, the local image was already built and available, so pulling and
+building did not contribute to the measured time. The measured startup includes
+creating the container, preparing its overlay filesystem, configuring
+namespaces and cgroups, launching the process, initializing the Go runtime,
+seeding the QuickNotes data file, and reaching the first successful health
+response. Image download and layer decompression would add further delay on a
+host where the image was not already present.
+
+For Spin, the measurement includes launching the Spin process, reading the
+manifest and route configuration, binding the HTTP listener, initializing the
+Wasmtime engine, loading or finding compiled code for the WASM module,
+instantiating the component, and handling the first wasi-http request. It does
+not include compiling the Go source into `main.wasm`, because `spin build` was
+completed before benchmarking.
+
+In these measurements, Spin's smaller module and lighter instance model produced
+a 100.441 ms median cold start, compared with 343.996 ms for Docker. The result
+measures the complete local `spin up` path, not only raw Wasmtime instantiation.
+
+### Design question f: Where is WASM better, and where is Docker still right?
+
+WASM is a strong fit for short, stateless request handlers, edge functions,
+untrusted plugins, multi-tenant request execution, IoT workloads, and bursty
+services where cold-start latency and artifact size matter. Its portable bytecode
+and capability-oriented host interface also make it useful when the same small
+component must run safely across different CPU architectures.
+
+Docker remains the better fit for long-running or stateful applications,
+services that require arbitrary Linux system calls, Cgo or native libraries,
+heavy database clients, multiple cooperating processes, OS packages, or mature
+container debugging and operational tooling. Containers can package almost any
+Linux application, while WASI and TinyGo still have library, syscall, reflection,
+and debugging limitations.
+
+### Design question g: Multi-tenant safety
+
+Consider a malicious tenant attempting to inspect another process with
+`ptrace`, mount a filesystem, issue a dangerous `ioctl`, or open a host resource
+such as `/etc/shadow` or the Docker socket. A WASM component cannot directly
+make arbitrary Linux system calls. It can only invoke interfaces explicitly
+provided by its host. If filesystem, process, or network access was not granted,
+the corresponding operation is unavailable to the component.
+
+A container can restrict the same behavior through namespaces, capability
+drops, mount rules, and seccomp, but the containerized process still interacts
+with the shared host kernel. A kernel or container-runtime vulnerability can
+therefore expose a broader attack surface. WASM makes this class of attack
+harder by placing the tenant behind a smaller capability-based host interface,
+although vulnerabilities in the WASM runtime or explicitly granted host
+functions remain possible.
