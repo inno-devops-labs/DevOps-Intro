@@ -1,0 +1,12 @@
+=== curl -w %{time_total} (n=300 after 20 warmup) — sorted, real percentiles ===
+
+Spin/WASM /time:
+  n=300  p50=1.6 ms  p95=1.9 ms  p99=2.3 ms  mean=1.6 ms
+
+Lab 6 Docker /health:
+  n=300  p50=0.3 ms  p95=0.5 ms  p99=0.8 ms  mean=0.3 ms
+
+Note: hyperfine numbers above include curl+shell startup on every iteration
+(dominant cost). The curl -w numbers exclude curl-process fork + connect
+overhead by measuring the HTTP request itself, so they are the fair
+apples-to-apples number for server-side latency.

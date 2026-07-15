@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+content-type: application/json
+cache-control: no-store
+content-length: 109
+date: Wed, 15 Jul 2026 16:28:44 GMT
+
+{"unix":1784132924,"iso":"2026-07-15T19:28:44+03:00","hour_minute":"19:28","tz":"MSK","offset_seconds":10800}

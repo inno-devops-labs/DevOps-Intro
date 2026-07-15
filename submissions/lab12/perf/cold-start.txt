@@ -1,0 +1,19 @@
+=== Cold start (5 samples each) — start server, poll /endpoint until 200 ===
+
+Spin (spin up ... --listen 127.0.0.1:3000):
+  #1: 51.5 ms  (first run — pages files in)
+  #2: 14.9 ms
+  #3: 13.9 ms
+  #4: 13.3 ms
+  #5: 15.2 ms
+  → median 14.9 ms; steady-state 13-15 ms
+
+Docker (docker run -d localhost/quicknotes:lab6):
+  #1: 121.9 ms
+  #2: 120.9 ms
+  #3: 126.5 ms
+  #4: 125.9 ms
+  #5: 134.2 ms
+  → median 125.9 ms
+
+Ratio: Docker cold-start is ~8× slower than Spin.

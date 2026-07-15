@@ -1,0 +1,47 @@
+=== wasmtime run — three test cases ===
+
+$ wasmtime run --env REQUEST_METHOD=GET --env PATH_INFO=/time main.wasm
+Status: 200
+Content-Type: application/json
+Cache-Control: no-store
+
+{"unix":1784133047,"iso":"2026-07-15T19:30:47+03:00","hour_minute":"19:30","tz":"MSK","offset_seconds":10800}
+
+$ wasmtime run --env REQUEST_METHOD=POST --env PATH_INFO=/time main.wasm
+Status: 405
+Content-Type: text/plain
+Allow: GET
+
+method not allowed
+
+$ wasmtime run --env REQUEST_METHOD=GET --env PATH_INFO=/other main.wasm
+Status: 404
+Content-Type: text/plain
+
+not found
+
+
+=== Per-invocation cold-start (5 samples) ===
+#1: 10.4 ms
+#2:  9.5 ms
+#3: 10.3 ms
+#4:  9.6 ms
+#5:  8.9 ms
+→ median ~9.6 ms per invocation
+
+The wasm-cli module DOES NOT export a wasi-http handler; it's a plain
+_start entrypoint (WASI Preview 1). wasmtime instantiates the module,
+runs main(), captures stdout, exits — the "CGI-over-WASM" model.
+Cannot be served by `spin up` (Spin expects wasi-http). Conversely,
+the Spin component from Task 1 cannot be run by `wasmtime run` (it
+exports the wasi-http handler, not _start).
+
+=== Two-model comparison ===
+
+| Dimension              | Spin (Task 1)          | wasmtime run (Bonus)   |
+|------------------------|------------------------|------------------------|
+| Module size            | 361 KB (main.wasm)     | 193 KB (main.wasm)     |
+| Cold start             | ~14 ms once            | ~10 ms every invocation|
+| Warm latency p50       | 1.6 ms                 | n/a (no warm)          |
+| Model                  | Persistent wasi-http   | Per-invocation CLI     |
+| Best for               | Serving many requests  | Cron/CGI/one-off       |
