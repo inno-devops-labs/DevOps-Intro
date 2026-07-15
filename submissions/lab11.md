@@ -405,7 +405,18 @@ cell b: 1385a7a20efc20718fcbe130767e48bc90157421161c64d697c905c2374fd36c
 
 Both `build-a` and `build-b` succeeded individually — the divergence surfaced only at the `compare-digests` gate, which is exactly the role that job plays. Cell `a`'s digest (`92cdae57…`) is a valid Nix output for the *poisoned* source; the gate's job is to detect that it does not equal cell `b`'s canonical digest.
 
-**Green run again after revert:** _<TO BE FILLED — the revert commit that removed the poison step; workflow returns to two matching `1385a7a2…4d36c` digests>_
+**Green run again after revert:** https://github.com/GrandAdmiralBee/DevOps-Intro/actions/runs/29428777715
+
+![nix-repro green run after revert: compare-digests passed](lab11/fixed.png)
+
+Compare-job log (excerpt):
+```
+cell a: 1385a7a20efc20718fcbe130767e48bc90157421161c64d697c905c2374fd36c
+cell b: 1385a7a20efc20718fcbe130767e48bc90157421161c64d697c905c2374fd36c
+OK: both cells produced sha256:1385a7a20efc20718fcbe130767e48bc90157421161c64d697c905c2374fd36c
+```
+
+Same canonical digest as the first green run and the three local Nix builds — the revert restores full reproducibility across all five independent environments.
 
 ### B.3 How the divergence was injected
 
@@ -480,3 +491,4 @@ Timestamps can leak in three places in a Nix Go/Docker build:
 - `submissions/lab11/hash-orig.txt` and `hash-fresh.txt` — the two `nix-store --query --hash` outputs
 - `submissions/lab11/lab6-docker-inspect.txt` — layer-by-layer diff of two `docker build --no-cache` Lab 6 runs
 - `submissions/lab11/failed.png` — screenshot of the red CI run's job summary (compare-digests failed)
+- `submissions/lab11/fixed.png` — screenshot of the post-revert green CI run's job summary (compare-digests passed)
