@@ -7,7 +7,7 @@
 
 - **Task 1 (4 pts) — Reproducible Go build.** `flake.nix` at repo root pins nixpkgs to `nixos-25.11` Go 1.25. `nix build .#quicknotes` produces a 5.7 MB static Linux ELF that serves `/health`. Two independent builds (working tree + fresh clone in `/tmp/qn-fresh` after `git init`) give the same store hash `sha256:1hv80kblj0zqcz82z0wihvxz63kylgwkqqgv5naykf0ar4f26w8k`. `nix build --rebuild` confirms bit-identical output under a real second build.
 - **Task 2 (4 pts) — Deterministic OCI image.** Extended flake with `dockerTools.buildImage` (no Docker required at build time). Two independent Nix builds → identical tarball SHA-256 `1385a7a20efc20718fcbe130767e48bc90157421161c64d697c905c2374fd36c` (3.3 MB gzipped). Two Lab 6 `docker build --no-cache` runs → different manifest digests (`79bee6fa…d3c7c` vs `dce0bf5b…62`) despite identical inputs; layer inspection shows the Go build is different.
-- **Bonus (2 pts) — CI-verified reproducibility.** `.github/workflows/nix-repro.yml` runs a 2-cell matrix (`cell: [a, b]`) of `nix build .#docker`, uploads each `result` tarball, and a third `compare` job downloads both and fails the workflow if the SHA-256s differ. Green run: see [CI URLs section](#ci-evidence). Deliberately-broken red run: injected `SOURCE_DATE_EPOCH` divergence in cell `a` only; workflow went red as expected; reverted and green.
+- **Bonus (2 pts) — CI-verified reproducibility.** `.github/workflows/nix-repro.yml` runs a 2-cell matrix (`cell: [a, b]`) of `nix build .#docker`, uploads each `result` tarball, and a third `compare` job downloads both and fails the workflow if the SHA-256s differ. Green run and deliberately-broken red run are linked below (§ B.2). The break appended a single line to `app/main.go` in cell `a` only — an externally-set `SOURCE_DATE_EPOCH` does not propagate into the Nix build sandbox (verified on a first attempt that stayed green), so the source-poison approach is the reliable way to force a Nix build divergence in CI.
 
 **Nixpkgs pin:** `github:NixOS/nixpkgs/nixos-25.11` → `b6018f87da91d19d0ab4cf979885689b469cdd41` (2026-06-30).
 **System:** `x86_64-linux NixOS`
@@ -378,24 +378,61 @@ All actions are pinned to their v4/v22 commit SHAs (per the Lab 3 rule):
 
 ### B.2 CI evidence
 
-**Green run (both cells match):** _<TO BE FILLED after push>_
+**Green run (first push, both cells match):** https://github.com/GrandAdmiralBee/DevOps-Intro/actions/runs/29427762887
 
-**Red run (deliberate `SOURCE_DATE_EPOCH` divergence in cell `a`):** _<TO BE FILLED after push>_
+Compare-job log (excerpt):
+```
+cell a: 1385a7a20efc20718fcbe130767e48bc90157421161c64d697c905c2374fd36c
+cell b: 1385a7a20efc20718fcbe130767e48bc90157421161c64d697c905c2374fd36c
+OK: both cells produced sha256:1385a7a20efc20718fcbe130767e48bc90157421161c64d697c905c2374fd36c
+```
 
-**Green run again after revert:** _<TO BE FILLED after push>_
+That same digest matches the three independent local Nix builds from § 2.2 — four independent environments (two CI runners + working tree + fresh clone), one digest.
+
+**Failed first-attempt red run (SOURCE_DATE_EPOCH env var):** https://github.com/GrandAdmiralBee/DevOps-Intro/actions/runs/29428142538 — green despite the "poison." Injecting `SOURCE_DATE_EPOCH` via the workflow's `env:` does not affect the Nix build because the Nix sandbox strips external env vars (this is exactly the hermetic property Nix advertises; see § B.4-j).
+
+**Actual red run (source poison in cell `a`):** https://github.com/GrandAdmiralBee/DevOps-Intro/actions/runs/29428329071
+
+![nix-repro red run: compare-digests failed](lab11/failed.png)
+
+Compare-job log (excerpt):
+```
+cell a: 92cdae574587b4c7743924c979cd5062735d91ed00d7e18c0958520f2e36119a
+cell b: 1385a7a20efc20718fcbe130767e48bc90157421161c64d697c905c2374fd36c
+##[error]Digests differ — nix build is NOT reproducible across the two matrix cells.
+##[error]Process completed with exit code 1.
+```
+
+Both `build-a` and `build-b` succeeded individually — the divergence surfaced only at the `compare-digests` gate, which is exactly the role that job plays. Cell `a`'s digest (`92cdae57…`) is a valid Nix output for the *poisoned* source; the gate's job is to detect that it does not equal cell `b`'s canonical digest.
+
+**Green run again after revert:** _<TO BE FILLED — the revert commit that removed the poison step; workflow returns to two matching `1385a7a2…4d36c` digests>_
 
 ### B.3 How the divergence was injected
 
-The break was a one-line edit in the workflow — inject an env var only in cell `a`:
+**First attempt (which didn't work):** inject `SOURCE_DATE_EPOCH` via the workflow's `env:` only in cell `a`.
 
 ```yaml
       - name: nix build .#docker
         env:
-          SOURCE_DATE_EPOCH: ${{ matrix.cell == 'a' && '1234' || '' }}
+          SOURCE_DATE_EPOCH: ${{ matrix.cell == 'a' && '1234567890' || '' }}
         run: nix build .#docker --print-build-logs
 ```
 
-`SOURCE_DATE_EPOCH` is the canonical env var most reproducible-build tools respect for the "current time." `dockerTools.buildImage` picks it up too — so cell `a` gets a tarball whose config blob claims a different `created:` timestamp than cell `b`, and the `compare` job fails on the digest diff.
+This stayed green. Nix's build sandbox strips external environment variables — that is precisely the hermetic property that makes reproducibility possible. `SOURCE_DATE_EPOCH` set by the CI runner never reaches `dockerTools.buildImage`. (See § B.4-j for how you would actually pipe a per-build timestamp into a Nix flake if you needed one.)
+
+**Second attempt (which worked):** poison a git-tracked source file in cell `a`. Flakes hash the working-tree copy of tracked files, so any edit changes the source hash and, transitively, the image tarball digest.
+
+```yaml
+      - name: Poison source (cell a only)
+        if: matrix.cell == 'a'
+        run: |
+          echo "// lab11 B.3 poison $(date -u +%s)" >> app/main.go
+
+      - name: nix build .#docker
+        run: nix build .#docker --print-build-logs
+```
+
+This produced the red run captured above. The revert commit deletes both steps and restores the workflow to the pristine two-cell build shown in § B.1.
 
 ### B.4 Design questions
 
@@ -442,3 +479,4 @@ Timestamps can leak in three places in a Nix Go/Docker build:
 - `submissions/lab11/build-docker.txt` — full `nix build .#docker` log
 - `submissions/lab11/hash-orig.txt` and `hash-fresh.txt` — the two `nix-store --query --hash` outputs
 - `submissions/lab11/lab6-docker-inspect.txt` — layer-by-layer diff of two `docker build --no-cache` Lab 6 runs
+- `submissions/lab11/failed.png` — screenshot of the red CI run's job summary (compare-digests failed)
