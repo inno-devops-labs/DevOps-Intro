@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	spinhttp "github.com/spinframework/spin-go-sdk/v3/http"
+	spinhttp "github.com/spinframework/spin-go-sdk/v2/http"
 )
 
 func init() {
@@ -16,14 +16,12 @@ func init() {
 		}
 
 		now := time.Now().UTC().Add(3 * time.Hour)
-		unix := now.Unix()
-		iso := now.Format(time.RFC3339)
-		hourMinute := now.Format("15:04")
-
-		json := fmt.Sprintf(`{"unix":%d,"iso":"%s","hour_minute":"%s"}`, unix, iso, hourMinute)
+		json := fmt.Sprintf(`{"unix":%d,"iso":"%s","hour_minute":"%s"}`,
+			now.Unix(),
+			now.Format(time.RFC3339),
+			now.Format("15:04"))
 
 		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, json)
 	})
 }
