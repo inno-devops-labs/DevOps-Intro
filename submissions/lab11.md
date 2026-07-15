@@ -50,20 +50,12 @@
 }
 ```
 
-`flake.lock` is committed alongside, pinning `nixpkgs` to revision `ac62194` (2026-01-02, `nixos-25.05` channel).
-
-**Note on `nixpkgs` channel choice:** initially pinned to `nixos-24.11`, but that channel ships Go 1.23.8, while `app/go.mod` requires `go >= 1.24`. Bumped to `nixos-25.05`, which ships Go 1.24.x, resolving the mismatch.
-
-**Note on `vendorHash = null`:** valid here because `app/go.mod` has zero `require` entries (QuickNotes uses only the Go standard library) — there is nothing to vendor, so no fetch step or hash pin is needed.
-
 ### Build log (clean run)
 
 ```
 $ nix build .#quicknotes 2>&1 | tail -20
 warning: Git tree '/mnt/d/Study/DevOps-Outro' has uncommitted changes
 ```
-
-(No errors, no evaluation warnings — build succeeded silently other than the expected "uncommitted changes" notice from local working-tree edits at build time.)
 
 ### Reproducibility proof — two independent environments
 
