@@ -27,7 +27,11 @@
           name = "quicknotes-oci";
           tag = "latest";
           
-          created = "1970-01-01T00:00:01Z"; 
+          created = 
+            let
+              envEpoch = builtins.getEnv "SOURCE_DATE_EPOCH";
+            in 
+              if envEpoch != "" then envEpoch else "1970-01-01T00:00:01Z"; 
 
           copyToRoot = pkgs.buildEnv {
             name = "image-root";

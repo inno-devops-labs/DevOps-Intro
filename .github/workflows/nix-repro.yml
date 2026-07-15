@@ -11,7 +11,12 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        environment: [ env-a, env-b ]
+        # environment: [ env-a, env-b ]
+        include: 
+          - environment: env-a
+            timestamp: 12345
+          - environment: env-b
+            timestamp: 54321
     outputs:
       sha-env-a: ${{ steps.calc-hash.outputs.sha-env-a }}
       sha-env-b: ${{ steps.calc-hash.outputs.sha-env-b }}
@@ -23,7 +28,9 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
 
       - name: Build OCI Image with Nix
-        run: nix build .#docker
+        env:
+          SOURCE_DATE_EPOCH: ${{ matrix.timestamp }}
+        run: nix build .#docker --impure
 
       - name: Calculate Image Hash and Output
         id: calc-hash

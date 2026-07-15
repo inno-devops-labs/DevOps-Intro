@@ -113,3 +113,59 @@ $ docker images --no-trunc quicknotes-oci:latest
 REPOSITORY       TAG       IMAGE ID                                                                  CREATED        SIZE
 quicknotes-oci   latest    sha256:7fb52a5017714ca582063cf76145c39408e7b77e477487742c97ffc06eb75a99   56 years ago   8.71MB
 ```
+
+### Bonus: CI
+[Link](../.github/workflows/nix-repro.yml)
+
+### Bonus: Successful run
+[Workflow run](https://github.com/arsenez2006/DevOps-Intro/actions/runs/29443235411)\
+Log:
+```log
+2026-07-15T19:07:34.6907937Z Current runner version: '2.335.1'
+2026-07-15T19:07:34.6935015Z ##[group]Runner Image Provisioner
+2026-07-15T19:07:34.6935981Z Hosted Compute Agent
+2026-07-15T19:07:34.6936596Z Version: 20260624.560
+2026-07-15T19:07:34.6937221Z Commit: 925d229a51159bc391ae97e54a2dd1fe20af789d
+2026-07-15T19:07:34.6938022Z Build Date: 2026-06-24T18:26:47Z
+2026-07-15T19:07:34.6938699Z Worker ID: {501a14b5-75e7-4d76-aa9f-547d048b9b14}
+2026-07-15T19:07:34.6939385Z Azure Region: westus
+2026-07-15T19:07:34.6940019Z ##[endgroup]
+2026-07-15T19:07:34.6941866Z ##[group]Operating System
+2026-07-15T19:07:34.6942624Z Ubuntu
+2026-07-15T19:07:34.6943517Z 24.04.4
+2026-07-15T19:07:34.6944242Z LTS
+2026-07-15T19:07:34.6944851Z ##[endgroup]
+2026-07-15T19:07:34.6945414Z ##[group]Runner Image
+2026-07-15T19:07:34.6946004Z Image: ubuntu-24.04
+2026-07-15T19:07:34.6946726Z Version: 20260705.232.1
+2026-07-15T19:07:34.6947992Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260705.232/images/ubuntu/Ubuntu2404-Readme.md
+2026-07-15T19:07:34.6949586Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260705.232
+2026-07-15T19:07:34.6950512Z ##[endgroup]
+2026-07-15T19:07:34.6951784Z ##[group]GITHUB_TOKEN Permissions
+2026-07-15T19:07:34.6954596Z Contents: read
+2026-07-15T19:07:34.6955330Z Metadata: read
+2026-07-15T19:07:34.6955894Z Packages: read
+2026-07-15T19:07:34.6956549Z ##[endgroup]
+2026-07-15T19:07:34.6959053Z Secret source: Actions
+2026-07-15T19:07:34.6960062Z Prepare workflow directory
+2026-07-15T19:07:34.7321652Z Prepare all required actions
+2026-07-15T19:07:34.7422768Z Complete job name: verify-reproducibility
+2026-07-15T19:07:34.8247605Z ##[group]Run HASH_A="0f09ae87be61dcb999ad1eba1f882210e0ee6c8b1e04c03116e8065c93b89720"
+2026-07-15T19:07:34.8249129Z [36;1mHASH_A="0f09ae87be61dcb999ad1eba1f882210e0ee6c8b1e04c03116e8065c93b89720"[0m
+2026-07-15T19:07:34.8250271Z [36;1mHASH_B="0f09ae87be61dcb999ad1eba1f882210e0ee6c8b1e04c03116e8065c93b89720"[0m
+2026-07-15T19:07:34.8251259Z [36;1m[0m
+2026-07-15T19:07:34.8251999Z [36;1mecho "Digest from Environment A: $HASH_A"[0m
+2026-07-15T19:07:34.8252833Z [36;1mecho "Digest from Environment B: $HASH_B"[0m
+2026-07-15T19:07:34.8253776Z [36;1m[0m
+2026-07-15T19:07:34.8254310Z [36;1mif [ "$HASH_A" != "$HASH_B" ]; then[0m
+2026-07-15T19:07:34.8255199Z [36;1m  echo "::error::Reproducibility failed! Digests do not match."[0m
+2026-07-15T19:07:34.8256019Z [36;1m  exit 1[0m
+2026-07-15T19:07:34.8256563Z [36;1mfi[0m
+2026-07-15T19:07:34.8257093Z [36;1mecho "Success."[0m
+2026-07-15T19:07:34.8931535Z shell: /usr/bin/bash -e {0}
+2026-07-15T19:07:34.8933483Z ##[endgroup]
+2026-07-15T19:07:34.9202133Z Digest from Environment A: 0f09ae87be61dcb999ad1eba1f882210e0ee6c8b1e04c03116e8065c93b89720
+2026-07-15T19:07:34.9205062Z Digest from Environment B: 0f09ae87be61dcb999ad1eba1f882210e0ee6c8b1e04c03116e8065c93b89720
+2026-07-15T19:07:34.9206877Z Success.
+2026-07-15T19:07:34.9366404Z Cleaning up orphan processes
+```
