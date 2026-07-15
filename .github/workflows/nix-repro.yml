@@ -16,7 +16,7 @@ jobs:
           - environment: env-a
             timestamp: 12345
           - environment: env-b
-            timestamp: 54321
+            timestamp: 12345
     outputs:
       sha-env-a: ${{ steps.calc-hash.outputs.sha-env-a }}
       sha-env-b: ${{ steps.calc-hash.outputs.sha-env-b }}

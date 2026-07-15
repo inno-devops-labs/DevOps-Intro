@@ -32,7 +32,11 @@
           name = "quicknotes-oci";
           tag = "latest";
           
-          created = "1970-01-01T00:00:01Z"; 
+          created = 
+            let
+              envEpoch = builtins.getEnv "SOURCE_DATE_EPOCH";
+            in 
+              if envEpoch != "" then envEpoch else "1970-01-01T00:00:01Z"; 
 
           copyToRoot = pkgs.buildEnv {
             name = "image-root";
@@ -168,4 +172,58 @@ Log:
 2026-07-15T19:07:34.9205062Z Digest from Environment B: 0f09ae87be61dcb999ad1eba1f882210e0ee6c8b1e04c03116e8065c93b89720
 2026-07-15T19:07:34.9206877Z Success.
 2026-07-15T19:07:34.9366404Z Cleaning up orphan processes
+```
+
+### Bonus: Failed run
+[Link](https://github.com/arsenez2006/DevOps-Intro/actions/runs/29444597150)\
+Log:
+```log
+2026-07-15T19:28:55.3530430Z Current runner version: '2.335.1'
+2026-07-15T19:28:55.3554079Z ##[group]Runner Image Provisioner
+2026-07-15T19:28:55.3554858Z Hosted Compute Agent
+2026-07-15T19:28:55.3555370Z Version: 20260707.563
+2026-07-15T19:28:55.3555911Z Commit: 02667638d2b423fbc733a8e32a88b44996a3ba6e
+2026-07-15T19:28:55.3556514Z Build Date: 2026-07-07T19:33:50Z
+2026-07-15T19:28:55.3557058Z Worker ID: {c54696be-faa5-427b-8739-7260a72d8432}
+2026-07-15T19:28:55.3557677Z Azure Region: westus3
+2026-07-15T19:28:55.3558173Z ##[endgroup]
+2026-07-15T19:28:55.3559529Z ##[group]Operating System
+2026-07-15T19:28:55.3560046Z Ubuntu
+2026-07-15T19:28:55.3560473Z 24.04.4
+2026-07-15T19:28:55.3560918Z LTS
+2026-07-15T19:28:55.3561374Z ##[endgroup]
+2026-07-15T19:28:55.3561824Z ##[group]Runner Image
+2026-07-15T19:28:55.3562356Z Image: ubuntu-24.04
+2026-07-15T19:28:55.3562878Z Version: 20260714.240.1
+2026-07-15T19:28:55.3564165Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20260714.240/images/ubuntu/Ubuntu2404-Readme.md
+2026-07-15T19:28:55.3565529Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20260714.240
+2026-07-15T19:28:55.3566412Z ##[endgroup]
+2026-07-15T19:28:55.3567461Z ##[group]GITHUB_TOKEN Permissions
+2026-07-15T19:28:55.3569891Z Contents: read
+2026-07-15T19:28:55.3570450Z Metadata: read
+2026-07-15T19:28:55.3570983Z Packages: read
+2026-07-15T19:28:55.3571499Z ##[endgroup]
+2026-07-15T19:28:55.3573887Z Secret source: Actions
+2026-07-15T19:28:55.3574877Z Prepare workflow directory
+2026-07-15T19:28:55.3860231Z Prepare all required actions
+2026-07-15T19:28:55.3950767Z Complete job name: verify-reproducibility
+2026-07-15T19:28:55.4560940Z ##[group]Run HASH_A="0a747220abfd0fa6eeb3b121642321325a270748164914a4eb837cdfd64271d5"
+2026-07-15T19:28:55.4562083Z [36;1mHASH_A="0a747220abfd0fa6eeb3b121642321325a270748164914a4eb837cdfd64271d5"[0m
+2026-07-15T19:28:55.4563452Z [36;1mHASH_B="5843432148e863440b9e0a3fc3efc042692e57fc5f82100cd2d4557e0d3a65bb"[0m
+2026-07-15T19:28:55.4564261Z [36;1m[0m
+2026-07-15T19:28:55.4564942Z [36;1mecho "Digest from Environment A: $HASH_A"[0m
+2026-07-15T19:28:55.4565838Z [36;1mecho "Digest from Environment B: $HASH_B"[0m
+2026-07-15T19:28:55.4566452Z [36;1m[0m
+2026-07-15T19:28:55.4566956Z [36;1mif [ "$HASH_A" != "$HASH_B" ]; then[0m
+2026-07-15T19:28:55.4567680Z [36;1m  echo "::error::Reproducibility failed! Digests do not match."[0m
+2026-07-15T19:28:55.4568370Z [36;1m  exit 1[0m
+2026-07-15T19:28:55.4568891Z [36;1mfi[0m
+2026-07-15T19:28:55.4569347Z [36;1mecho "Success."[0m
+2026-07-15T19:28:55.6074276Z shell: /usr/bin/bash -e {0}
+2026-07-15T19:28:55.6075099Z ##[endgroup]
+2026-07-15T19:28:55.6361677Z Digest from Environment A: 0a747220abfd0fa6eeb3b121642321325a270748164914a4eb837cdfd64271d5
+2026-07-15T19:28:55.6363495Z Digest from Environment B: 5843432148e863440b9e0a3fc3efc042692e57fc5f82100cd2d4557e0d3a65bb
+2026-07-15T19:28:55.6399709Z ##[error]Reproducibility failed! Digests do not match.
+2026-07-15T19:28:55.6415323Z ##[error]Process completed with exit code 1.
+2026-07-15T19:28:55.6538210Z Cleaning up orphan processes
 ```
