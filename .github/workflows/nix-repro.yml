@@ -23,6 +23,19 @@ jobs:
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25  # v22
 
+      # LAB 11 B.3: deliberate reproducibility break — poison the flake
+      # source in cell a only. Nix flakes hash the git working tree, so a
+      # single-byte change to a tracked file changes the derivation hash
+      # for cell a's build → different image tarball → compare job fails.
+      # (Externally-set SOURCE_DATE_EPOCH does NOT propagate into the
+      # Nix build sandbox — that's the whole point of hermetic builds —
+      # so we can't demonstrate the break with an env var alone.)
+      # Revert this block once the red run is captured.
+      - name: Poison source (cell a only)
+        if: matrix.cell == 'a'
+        run: |
+          echo "// lab11 B.3 poison $(date -u +%s)" >> app/main.go
+
       - name: nix build .#docker
         run: nix build .#docker --print-build-logs
 
