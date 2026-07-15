@@ -551,12 +551,16 @@ A normal push runs both build jobs identically, so `compare` passes.
 
 Run URL: <https://github.com/G-Akleh/DevOps-Intro/actions/runs/29439184731>
 
-Evidence screenshot: [`artifactsLab11/bonus-green-run.png`](artifactsLab11/bonus-green-run.png)
-(the Actions run graph, all three jobs green) and
-[`artifactsLab11/bonus-green-compare.png`](artifactsLab11/bonus-green-compare.png)
-(the `compare` step log showing the two equal digests and "Reproducibility OK").
+Evidence: [`artifactsLab11/bonus-green-run.png`](artifactsLab11/bonus-green-run.png)
+!['green-run'](artifactsLab11/bonus-green-run.png)
+The Actions run graph, all three jobs green
 
-`compare` log excerpt:
+
+[`artifactsLab11/bonus-green-compare.png`](artifactsLab11/bonus-green-compare.png)
+![`green-compare`](artifactsLab11/bonus-green-compare.png)
+The `compare` step log showing the two equal digests and "Reproducibility OK".
+
+The `compare` log excerpt:
 
 ```
 build-a: af01698521b3a17e7dd169db1eb6107c6481d8e5f4d55155fd7c4700100f3834
@@ -566,3 +570,54 @@ Reproducibility OK: identical digest on two independent runners
 
 ### Red run (deliberate divergence)
 
+I temporarily commit a break, push, observe red, then commit the
+fix. Concretely, `build-a`'s break step had its `if: ${{ inputs.break_repro }}`
+guard removed for one commit, making it run unconditionally on every push. That
+commit was pushed, producing the red run below.
+
+Run URL: <https://github.com/G-Akleh/DevOps-Intro/actions/runs/29441158240>
+
+Evidence: [`artifactsLab11/bonus-red-run.png`](artifactsLab11/bonus-red-run.png)
+![`red-run`](artifactsLab11/bonus-red-run.png)
+Run graph, `build-a`/`build-b` green but `compare` red.
+
+[`artifactsLab11/bonus-red-compare.png`](artifactsLab11/bonus-red-compare.png)
+![`red-compare`](artifactsLab11/bonus-red-compare.png)
+The `compare` step log showing the two differing digests and "Reproducibility FAILED".
+
+The `compare` log excerpt:
+
+```
+build-a: 6c7d22cf031d4747083a1b0e00edef6ee80b0d102564ab3538ee31b51c872e29
+build-b: af01698521b3a17e7dd169db1eb6107c6481d8e5f4d55155fd7c4700100f3834
+Error: Reproducibility FAILED: the two runners produced different digests
+Error: Process completed with exit code 1.
+```
+
+The guard shown in the final workflow is the reverted, final state: the break step only runs on an
+explicit `workflow_dispatch` with `break_repro = true`, once this PR is on `main` and the dropdown becomes available.
+
+### Design Questions
+
+**h) What makes the CI proof load-bearing versus "reproducible on my laptop"?**
+
+A laptop match is self-attested and may lean on unrecorded local state (your
+`nix.conf`, extra substituters, a warm `/nix/store`). CI builds from a clean
+checkout on a fresh ephemeral runner using a committed recipe, so an auditor
+can read exactly how the artifact was made and re-run it, turning "trust me"
+into an independent proof.
+
+**i) Why two parallel jobs instead of one job that builds twice?**
+
+Two jobs land on two separately provisioned runners, so a digest match proves
+the build is independent of host and runtime state. One job building twice
+shares a runner and a warm `/nix/store`, so the second build just replays the
+cached path and proves almost nothing.
+
+**j) Where would a timestamp leak in, and how does `dockerTools.buildImage` handle it?**
+
+The timestamp normally leaks through the image config's `created` field and the
+file mtimes baked into the layer tarballs. `dockerTools.buildImage` defaults
+`created` to the Unix epoch and normalizes store mtimes, hardcoding determinism
+rather than reading `SOURCE_DATE_EPOCH`, which is why the red-run demo must
+patch `created` instead.

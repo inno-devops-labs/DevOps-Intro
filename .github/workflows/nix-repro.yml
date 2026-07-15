@@ -27,11 +27,15 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
-      # TEMPORARY: unconditional break for the red-run screenshot (B.3).
+      # Optional divergence for the red-run demo. A pure Nix build ignores a
+      # runner-set SOURCE_DATE_EPOCH (it is sandboxed out), so to actually
+      # force a mismatch we patch the flake's fixed `created` timestamp in
+      # build-a only. Runs only on a manual dispatch with break_repro=true.
       - name: Break reproducibility (demo only)
+        if: ${{ inputs.break_repro }}
         run: |
           sed -i 's/created = "1970-01-01T00:00:01Z";/created = "2020-02-02T02:02:02Z";/' flake.nix
-          echo "::warning::break_repro forced: build-a flake.created changed to force a digest mismatch"
+          echo "::warning::break_repro enabled: build-a flake.created changed to force a digest mismatch"
       - name: Build OCI image
         run: nix build .#docker
       - name: Compute image digest
