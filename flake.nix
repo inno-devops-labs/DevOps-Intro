@@ -26,6 +26,21 @@
           env.CGO_ENABLED = "0";
         };
 
+        packages.docker = pkgs.dockerTools.buildImage {
+          name = "quicknotes";
+          tag = "latest";
+          copyToRoot = pkgs.buildEnv {
+            name = "image-root";
+            paths = [ self.packages.${system}.quicknotes ];
+            pathsToLink = [ "/bin" ];
+          };
+          config = {
+            Cmd = [ "/bin/quicknotes" ];
+            ExposedPorts = { "8080/tcp" = {}; };
+            User = "1000:1000";   # nonroot
+          };
+        };
+
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
             go_1_24
