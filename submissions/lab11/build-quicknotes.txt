@@ -1,0 +1,19 @@
+warning: Git tree '/home/karim/Dev/DevOps-Intro' is dirty
+checking outputs of '/nix/store/m37vqr7jvj5jjpyifdhmkmz9zr3fhr23-quicknotes-0.1.0.drv'...
+quicknotes> Running phase: unpackPhase
+quicknotes> unpacking source archive /nix/store/apz8fpz9xx3rh927h3jwdnfp1wa9wvf1-app
+quicknotes> source root is app
+quicknotes> Running phase: patchPhase
+quicknotes> Running phase: updateAutotoolsGnuConfigScriptsPhase
+quicknotes> Running phase: configurePhase
+quicknotes> Running phase: buildPhase
+quicknotes> Building subPackage ./.
+quicknotes> Running phase: installPhase
+quicknotes> Running phase: fixupPhase
+quicknotes> shrinking RPATHs of ELF executables and libraries in /nix/store/lxfyxwr9g5f9ig0j941xa2cfxidp3iwp-quicknotes-0.1.0
+quicknotes> shrinking /nix/store/lxfyxwr9g5f9ig0j941xa2cfxidp3iwp-quicknotes-0.1.0/bin/quicknotes
+quicknotes> patchelf: cannot find section '.dynamic'. The input file is most likely statically linked
+quicknotes> checking for references to /build/ in /nix/store/lxfyxwr9g5f9ig0j941xa2cfxidp3iwp-quicknotes-0.1.0...
+quicknotes> patchelf: cannot find section '.dynamic'. The input file is most likely statically linked
+quicknotes> patching script interpreter paths in /nix/store/lxfyxwr9g5f9ig0j941xa2cfxidp3iwp-quicknotes-0.1.0
+quicknotes> stripping (with command strip and flags -S -p) in  /nix/store/lxfyxwr9g5f9ig0j941xa2cfxidp3iwp-quicknotes-0.1.0/bin

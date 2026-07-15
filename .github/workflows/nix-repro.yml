@@ -1,0 +1,64 @@
+name: nix-repro
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build-${{ matrix.cell }}
+    runs-on: ubuntu-latest
+    strategy:
+      # Never cancel: we need BOTH cells' outputs to compare.
+      fail-fast: false
+      matrix:
+        cell: [a, b]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25  # v22
+
+      - name: nix build .#docker
+        run: nix build .#docker --print-build-logs
+
+      - name: Compute digest
+        run: |
+          DIGEST=$(sha256sum result | awk '{print $1}')
+          echo "cell ${{ matrix.cell }} digest: $DIGEST"
+
+      - name: Upload image tarball
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4
+        with:
+          name: image-${{ matrix.cell }}
+          # `result` is a symlink into the Nix store; follow it so the actual
+          # tarball ends up in the artifact.
+          path: result
+          if-no-files-found: error
+
+  compare:
+    name: compare-digests
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download both image tarballs
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4
+        with:
+          path: artifacts
+
+      - name: Compare digests
+        run: |
+          set -eu
+          DIGEST_A=$(sha256sum artifacts/image-a/result | awk '{print $1}')
+          DIGEST_B=$(sha256sum artifacts/image-b/result | awk '{print $1}')
+          echo "cell a: $DIGEST_A"
+          echo "cell b: $DIGEST_B"
+          if [ "$DIGEST_A" != "$DIGEST_B" ]; then
+            echo "::error::Digests differ — nix build is NOT reproducible across the two matrix cells."
+            exit 1
+          fi
+          echo "OK: both cells produced sha256:$DIGEST_A"

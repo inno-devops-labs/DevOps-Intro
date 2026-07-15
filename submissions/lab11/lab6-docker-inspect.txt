@@ -1,0 +1,330 @@
+[
+     {
+          "Id": "79bee6fac3965c9c1dc6fa07b4bbdc1d5cd6c4f534b64a64da230e99680d3c7c",
+          "Digest": "sha256:0293f7b2417f9e43aa17a39ea6a8d2a5bf442e8d10f56b7995b59380b0015531",
+          "RepoTags": [
+               "localhost/qn-lab6:run1"
+          ],
+          "RepoDigests": [
+               "localhost/qn-lab6@sha256:0293f7b2417f9e43aa17a39ea6a8d2a5bf442e8d10f56b7995b59380b0015531"
+          ],
+          "Parent": "572eaaffe5597d1cbfbc5205c595e1a2918338c014e73401fd0d0523890876b1",
+          "Comment": "",
+          "Created": "1980-01-01T00:00:00Z",
+          "Config": {
+               "User": "nonroot:nonroot",
+               "ExposedPorts": {
+                    "8080/tcp": {}
+               },
+               "Env": [
+                    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                    "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt",
+                    "ADDR=:8080",
+                    "DATA_PATH=/data/notes.json",
+                    "SEED_PATH=/seed.json"
+               ],
+               "Entrypoint": [
+                    "/quicknotes"
+               ],
+               "WorkingDir": "/home/nonroot"
+          },
+          "Version": "",
+          "Author": "",
+          "Architecture": "amd64",
+          "Os": "linux",
+          "Size": 14611633,
+          "VirtualSize": 14611633,
+          "GraphDriver": {
+               "Name": "overlay",
+               "Data": {
+                    "LowerDir": "/home/karim/.local/share/containers/storage/overlay/b83a16bb8f15ce2a2d41c23a1e7eabeacb8f7843efa1cdf4356171672303abae/diff:/home/karim/.local/share/containers/storage/overlay/1cec565faa4649f2f064503b6e5afec6c2c716826a22e36e244e2f0c549d5144/diff:/home/karim/.local/share/containers/storage/overlay/f16f5cb991c09937c0de094d71b55bb0795b979e341e10e953bd5186e53b5a32/diff:/home/karim/.local/share/containers/storage/overlay/258c0458a77f616dc543ec1c1c831e53a6c316edfa16ba0be2574ce417ad228b/diff:/home/karim/.local/share/containers/storage/overlay/ec0e6e6b4098f89cb85949799e06edd5cd0dbbba1f70210de23ba7d6fbbf72d2/diff:/home/karim/.local/share/containers/storage/overlay/654341d1a882e1953e6445068f039838d4523c6e6bb54cdbf916d78e20b07f3b/diff:/home/karim/.local/share/containers/storage/overlay/98e0e5bebb4d98a910ecf8f805b600dd2616b78874e3c589e952dbc61ddeb27f/diff:/home/karim/.local/share/containers/storage/overlay/8b4738c930ed2cde863e140f304a69ed1d573a0219730f0fc590fae2030a785c/diff:/home/karim/.local/share/containers/storage/overlay/82ba46b426c179e89309ae358417d01d6e91ede644b69b51bf34ef210c13e7a5/diff:/home/karim/.local/share/containers/storage/overlay/60fd54f4f93b5f38b683f2426b8b0d17a3a3a4c3ce156ec16945ed60fef2cf9f/diff:/home/karim/.local/share/containers/storage/overlay/9c355c246ca81265fa029c648874cab399b8bc001661adc6f91b66765b7548d5/diff:/home/karim/.local/share/containers/storage/overlay/5b082c2cea56bfef384c3d5728ac88c1a96ff0c9a706a15282b646d86f494be3/diff:/home/karim/.local/share/containers/storage/overlay/1583360c2f8840eaec48097e6f162d88b4e97c042803f6b510ca7faf98e14310/diff:/home/karim/.local/share/containers/storage/overlay/ae87d091978dde67881a8b0bb5ee2c877e3a367a7ca796bd5ddd21bf87eccaed/diff:/home/karim/.local/share/containers/storage/overlay/7223ea1323e8c1159ec17f07d35acc27bdd1cc2bc3ed425b44ef21dac9915db0/diff",
+                    "UpperDir": "/home/karim/.local/share/containers/storage/overlay/cbf81bc827d4c6b3448856f2900ac2acebff084c0ce7461c99bb5bcaa1c8f586/diff",
+                    "WorkDir": "/home/karim/.local/share/containers/storage/overlay/cbf81bc827d4c6b3448856f2900ac2acebff084c0ce7461c99bb5bcaa1c8f586/work"
+               }
+          },
+          "RootFS": {
+               "Type": "layers",
+               "Layers": [
+                    "sha256:7223ea1323e8c1159ec17f07d35acc27bdd1cc2bc3ed425b44ef21dac9915db0",
+                    "sha256:8fa10c0194df9b7c054c90dbe482585f768a54428fc90a5b78a0066a123b1bba",
+                    "sha256:35b5ba6e08cdd034b8d1920f9c7203e5d66f258e1915f164a01de0af14f34710",
+                    "sha256:114dde0fefebbca13165d0da9c500a66190e497a82a53dcaabc3172d630be1e9",
+                    "sha256:4d049f83d9cf21d1f5cc0e11deaf36df02790d0e60c1a3829538fb4b61685368",
+                    "sha256:af5aa97ebe6ce1604747ec1e21af7136ded391bcabe4acef882e718a87c86bcc",
+                    "sha256:6f1cdceb6a3146f0ccb986521156bef8a422cdbb0863396f7f751f575ba308f4",
+                    "sha256:bd3cdfae1d3fdd83a2231d608969b38b82349777c2fff9a7c12d54f8ac5c9b38",
+                    "sha256:4cde6b0bb6f50a5f255eef7b2a42162c661cf776b803225dcac9a659e396bb6b",
+                    "sha256:ad51d0769d16ba578106a177987dfe3d2e02c1668c852b795b2f6b024068242a",
+                    "sha256:6e7fbcf090d09b73a4aa85f9dce690d0ace73877c150b7c56955487b6e7a822a",
+                    "sha256:33b37ab0b0901175c2699d81c10b0c887f0dff944de74763cca00c155904d6fb",
+                    "sha256:64c6de0cb1f4cc57242f163a3b5db95b7bbeba4687e304a7f0d565e9c08e4c81",
+                    "sha256:b53377ccb656a26cf4cd6ce9286a4807d2e635fa38017955683f21d167d488d8",
+                    "sha256:0394064ba4f0e158620900870ed87401ef71cd4c416c61c93745fed3b300f8fc",
+                    "sha256:7cc9fc9fc11f65ff1599cd62a995779bfd5c3fd76af642ff966626d06a234458"
+               ]
+          },
+          "Labels": null,
+          "Annotations": {
+               "org.opencontainers.image.base.digest": "sha256:7a2bd171a18bdd39a4729600d0dca5f16e779d41156a6908b4f8a9a289e76d92",
+               "org.opencontainers.image.base.name": "gcr.io/distroless/static-debian12:nonroot",
+               "org.opencontainers.image.created": "1980-01-01T00:00:00Z",
+               "org.opencontainers.image.source": "https://github.com/GoogleContainerTools/distroless"
+          },
+          "ManifestType": "application/vnd.oci.image.manifest.v1+json",
+          "User": "nonroot:nonroot",
+          "History": [
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build @bookworm//base-files/amd64:data_statusd"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build @bookworm//netbase/amd64:data_statusd"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build @bookworm//tzdata/amd64:data_statusd"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build @bookworm//media-types/amd64:data_statusd"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //common:rootfs"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //common:passwd"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //common:home"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //common:group"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //common:tmp"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //static:nsswitch"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //common:os_release_debian12"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //common:cacerts_debian12_amd64"
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) COPY file:c90c2e489d529a71f787940d0c4ae763aab121b92837b13da08e2658c794ef93 in /quicknotes      ",
+                    "comment": "FROM gcr.io/distroless/static-debian12:nonroot"
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) COPY file:13011fba2f1c34bac062de609e7ee3d7eb8e27cb4b8fa6b17809f1d449251e10 in /healthcheck      "
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) COPY file:d29b751bd9ffa710d5c9e80f7ddc8b0d85f7ca2a2593f5dadb35d9d8123ac19a in /seed.json      "
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) COPY dir:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef in /data      "
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) ENV ADDR=:8080     DATA_PATH=/data/notes.json     SEED_PATH=/seed.json",
+                    "empty_layer": true
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) EXPOSE 8080",
+                    "empty_layer": true
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) USER nonroot:nonroot",
+                    "empty_layer": true
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) ENTRYPOINT [\"/quicknotes\"]",
+                    "empty_layer": true
+               }
+          ],
+          "NamesHistory": [
+               "localhost/qn-lab6:run1"
+          ]
+     },
+     {
+          "Id": "dce0bf5b26bd11bacaedddfc37739db3ac0c00580de3ac1b257da77256e62a62",
+          "Digest": "sha256:5b25ffd85fdc7d2b56f70406b86b9f39e09a3991885660589d435361040ed7fe",
+          "RepoTags": [
+               "localhost/qn-lab6:run2"
+          ],
+          "RepoDigests": [
+               "localhost/qn-lab6@sha256:5b25ffd85fdc7d2b56f70406b86b9f39e09a3991885660589d435361040ed7fe"
+          ],
+          "Parent": "8764723047a4e429141e244a0df3347f76ca93b3d2568949b9786eb9f4830be8",
+          "Comment": "",
+          "Created": "1980-01-01T00:00:00Z",
+          "Config": {
+               "User": "nonroot:nonroot",
+               "ExposedPorts": {
+                    "8080/tcp": {}
+               },
+               "Env": [
+                    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                    "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt",
+                    "ADDR=:8080",
+                    "DATA_PATH=/data/notes.json",
+                    "SEED_PATH=/seed.json"
+               ],
+               "Entrypoint": [
+                    "/quicknotes"
+               ],
+               "WorkingDir": "/home/nonroot"
+          },
+          "Version": "",
+          "Author": "",
+          "Architecture": "amd64",
+          "Os": "linux",
+          "Size": 14611633,
+          "VirtualSize": 14611633,
+          "GraphDriver": {
+               "Name": "overlay",
+               "Data": {
+                    "LowerDir": "/home/karim/.local/share/containers/storage/overlay/d2f368188c3f2f0f0aeae52b830c0fdc2afc9334f7722e3ec172c35c573a921e/diff:/home/karim/.local/share/containers/storage/overlay/8c3e5527dc0c684d81179e29ed71221dd8bc2d3b70344c48e89b5688dc22157e/diff:/home/karim/.local/share/containers/storage/overlay/f97dcab5560c777269a31a6f0a94d5150dda049e19770578878a0f980f6fa3ef/diff:/home/karim/.local/share/containers/storage/overlay/258c0458a77f616dc543ec1c1c831e53a6c316edfa16ba0be2574ce417ad228b/diff:/home/karim/.local/share/containers/storage/overlay/ec0e6e6b4098f89cb85949799e06edd5cd0dbbba1f70210de23ba7d6fbbf72d2/diff:/home/karim/.local/share/containers/storage/overlay/654341d1a882e1953e6445068f039838d4523c6e6bb54cdbf916d78e20b07f3b/diff:/home/karim/.local/share/containers/storage/overlay/98e0e5bebb4d98a910ecf8f805b600dd2616b78874e3c589e952dbc61ddeb27f/diff:/home/karim/.local/share/containers/storage/overlay/8b4738c930ed2cde863e140f304a69ed1d573a0219730f0fc590fae2030a785c/diff:/home/karim/.local/share/containers/storage/overlay/82ba46b426c179e89309ae358417d01d6e91ede644b69b51bf34ef210c13e7a5/diff:/home/karim/.local/share/containers/storage/overlay/60fd54f4f93b5f38b683f2426b8b0d17a3a3a4c3ce156ec16945ed60fef2cf9f/diff:/home/karim/.local/share/containers/storage/overlay/9c355c246ca81265fa029c648874cab399b8bc001661adc6f91b66765b7548d5/diff:/home/karim/.local/share/containers/storage/overlay/5b082c2cea56bfef384c3d5728ac88c1a96ff0c9a706a15282b646d86f494be3/diff:/home/karim/.local/share/containers/storage/overlay/1583360c2f8840eaec48097e6f162d88b4e97c042803f6b510ca7faf98e14310/diff:/home/karim/.local/share/containers/storage/overlay/ae87d091978dde67881a8b0bb5ee2c877e3a367a7ca796bd5ddd21bf87eccaed/diff:/home/karim/.local/share/containers/storage/overlay/7223ea1323e8c1159ec17f07d35acc27bdd1cc2bc3ed425b44ef21dac9915db0/diff",
+                    "UpperDir": "/home/karim/.local/share/containers/storage/overlay/efd14d07f1ecb5c0e98d430a0120190a04810718ff3396cd62212a6ef7dbb508/diff",
+                    "WorkDir": "/home/karim/.local/share/containers/storage/overlay/efd14d07f1ecb5c0e98d430a0120190a04810718ff3396cd62212a6ef7dbb508/work"
+               }
+          },
+          "RootFS": {
+               "Type": "layers",
+               "Layers": [
+                    "sha256:7223ea1323e8c1159ec17f07d35acc27bdd1cc2bc3ed425b44ef21dac9915db0",
+                    "sha256:8fa10c0194df9b7c054c90dbe482585f768a54428fc90a5b78a0066a123b1bba",
+                    "sha256:35b5ba6e08cdd034b8d1920f9c7203e5d66f258e1915f164a01de0af14f34710",
+                    "sha256:114dde0fefebbca13165d0da9c500a66190e497a82a53dcaabc3172d630be1e9",
+                    "sha256:4d049f83d9cf21d1f5cc0e11deaf36df02790d0e60c1a3829538fb4b61685368",
+                    "sha256:af5aa97ebe6ce1604747ec1e21af7136ded391bcabe4acef882e718a87c86bcc",
+                    "sha256:6f1cdceb6a3146f0ccb986521156bef8a422cdbb0863396f7f751f575ba308f4",
+                    "sha256:bd3cdfae1d3fdd83a2231d608969b38b82349777c2fff9a7c12d54f8ac5c9b38",
+                    "sha256:4cde6b0bb6f50a5f255eef7b2a42162c661cf776b803225dcac9a659e396bb6b",
+                    "sha256:ad51d0769d16ba578106a177987dfe3d2e02c1668c852b795b2f6b024068242a",
+                    "sha256:6e7fbcf090d09b73a4aa85f9dce690d0ace73877c150b7c56955487b6e7a822a",
+                    "sha256:33b37ab0b0901175c2699d81c10b0c887f0dff944de74763cca00c155904d6fb",
+                    "sha256:bd0d831683b45ec01e15779db0e3eff1fb46a0802961103da763e0078f96564e",
+                    "sha256:ada7279ea0c9e386246c88ed4baa5ea45aef6f5049c943876fb6ebbe267b5725",
+                    "sha256:0394064ba4f0e158620900870ed87401ef71cd4c416c61c93745fed3b300f8fc",
+                    "sha256:49ca8ff29fd359bcaff55328ad1db62afc8468d64f0bf14253b26caa2855f363"
+               ]
+          },
+          "Labels": null,
+          "Annotations": {
+               "org.opencontainers.image.base.digest": "sha256:7a2bd171a18bdd39a4729600d0dca5f16e779d41156a6908b4f8a9a289e76d92",
+               "org.opencontainers.image.base.name": "gcr.io/distroless/static-debian12:nonroot",
+               "org.opencontainers.image.created": "1980-01-01T00:00:00Z",
+               "org.opencontainers.image.source": "https://github.com/GoogleContainerTools/distroless"
+          },
+          "ManifestType": "application/vnd.oci.image.manifest.v1+json",
+          "User": "nonroot:nonroot",
+          "History": [
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build @bookworm//base-files/amd64:data_statusd"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build @bookworm//netbase/amd64:data_statusd"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build @bookworm//tzdata/amd64:data_statusd"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build @bookworm//media-types/amd64:data_statusd"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //common:rootfs"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //common:passwd"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //common:home"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //common:group"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //common:tmp"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //static:nsswitch"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //common:os_release_debian12"
+               },
+               {
+                    "created": "1970-01-01T00:00:00Z",
+                    "created_by": "bazel build //common:cacerts_debian12_amd64"
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) COPY file:c90c2e489d529a71f787940d0c4ae763aab121b92837b13da08e2658c794ef93 in /quicknotes      ",
+                    "comment": "FROM gcr.io/distroless/static-debian12:nonroot"
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) COPY file:13011fba2f1c34bac062de609e7ee3d7eb8e27cb4b8fa6b17809f1d449251e10 in /healthcheck      "
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) COPY file:d29b751bd9ffa710d5c9e80f7ddc8b0d85f7ca2a2593f5dadb35d9d8123ac19a in /seed.json      "
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) COPY dir:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef in /data      "
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) ENV ADDR=:8080     DATA_PATH=/data/notes.json     SEED_PATH=/seed.json",
+                    "empty_layer": true
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) EXPOSE 8080",
+                    "empty_layer": true
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) USER nonroot:nonroot",
+                    "empty_layer": true
+               },
+               {
+                    "created": "1980-01-01T00:00:00Z",
+                    "created_by": "/bin/sh -c #(nop) ENTRYPOINT [\"/quicknotes\"]",
+                    "empty_layer": true
+               }
+          ],
+          "NamesHistory": [
+               "localhost/qn-lab6:run2"
+          ]
+     }
+]
