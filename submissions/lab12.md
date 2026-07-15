@@ -1,11 +1,5 @@
 # Lab 12 — Bonus: WebAssembly Containers — A QuickNotes Endpoint on Spin
 
-> Every command output, size, JSON body, and latency number below was produced
-> on real tooling — nothing is invented. Because the host is Windows and the
-> WASM toolchain (TinyGo/Spin/wasmtime) targets Linux, all builds and
-> measurements were run inside Linux containers on the same physical machine.
-> The test rig is documented in the Task 2 section.
-
 ## Toolchain (pinned)
 
 | Tool | Version |
