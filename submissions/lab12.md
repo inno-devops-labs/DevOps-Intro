@@ -142,3 +142,75 @@ Docker cold start (5 samples, docker compose down/up):
 **g) Concrete attack WASM's capability sandbox makes harder:** WASM components have zero ambient authority — no filesystem, network, or syscall access unless explicitly granted via imports (like `allowed_outbound_hosts`). This makes container/kernel-escape-style attacks (exploiting a shared-kernel vulnerability to break out of a Linux namespace and reach the host or other tenants) fundamentally harder, since a compromised WASM component isn't relying on OS-level isolation at all — it's sandboxed at the language-runtime/instruction level, with no direct syscall surface to attack.
 
 ---
+
+## Bonus Task — Two WASM Execution Models
+
+### WASI CLI implementation
+
+A second implementation of the same Moscow-time endpoint was created as a standalone WASI CLI module without using the Spin SDK. Instead of exposing a `wasi-http` handler, the program reads the request information from the `REQUEST_METHOD` and `PATH_INFO` environment variables and writes an HTTP-style response to standard output.
+
+### Build and run
+
+#### Build command
+
+```bash
+tinygo build -o main.wasm -target=wasi -no-debug ./main.go
+```
+
+Result:
+
+```bash
+$ ls -la main.wasm
+-rwxrwxrwx 1 darknesod darknesod 196955 Jul 15 21:51 main.wasm
+```
+
+#### Run command
+
+```bash
+wasmtime run \
+  --env REQUEST_METHOD=GET \
+  --env PATH_INFO=/time \
+  main.wasm
+```
+
+Output:
+
+```text
+Status: 200 OK
+Content-Type: application/json
+
+{"unix":1784141564,"iso":"2026-07-15T21:52:44+03:00","hour_minute":"21:52"}
+```
+
+### Size and cold-start comparison
+
+| Execution model | WASM size | Cold start |
+|---|---:|---:|
+| Spin (`wasi-http` component) | 312,636 B | ~89–96 ms after startup (289 ms first launch) |
+| Standalone WASI CLI (`wasmtime run`) | 196,955 B | ~19–20 ms per invocation (36 ms first run) |
+
+The standalone CLI module is approximately 115 KB smaller because it links only the standard WASI runtime and does not include the Spin SDK or the `wasi-http` component interface. Unlike Spin, which keeps a persistent server process running, `wasmtime run` creates a new WebAssembly instance for every invocation.
+
+### Design questions
+
+**h) Why can't the Task 1 Spin component run under bare `wasmtime run`?**
+
+The Spin application is compiled as a `wasi-http` component instead of a standalone WASI program. It exports a `wasi-http` request handler that the Spin runtime calls whenever an HTTP request arrives. In contrast, `wasmtime run` expects a conventional WASI module exposing a `_start` entrypoint. Since the Spin component does not export `_start`, there is no program entrypoint for `wasmtime run` to execute.
+
+**i) Spin uses Wasmtime internally. What does Spin add on top of bare Wasmtime?**
+
+Wasmtime is responsible only for executing WebAssembly modules inside a sandbox. Spin builds a complete application platform on top of it by providing:
+
+- an HTTP server implementing the `wasi-http` interface;
+- routing based on `spin.toml`;
+- component lifecycle and instance management;
+- capability-based security such as `allowed_outbound_hosts`;
+- application packaging, configuration, and build integration.
+
+In other words, Wasmtime is the execution engine, while Spin provides the web application runtime.
+
+**j) Two execution models — when does each fit?**
+
+The standalone `wasmtime run` model is best suited for short-lived command-line programs or CGI-style workloads where each request executes a fresh WebAssembly instance. Typical examples include CLI utilities, batch-processing jobs, and scripts executed on demand.
+
+Spin's persistent `wasi-http` server is better suited for long-running HTTP services such as REST APIs or edge functions. Since the runtime remains active between requests, it avoids the overhead of starting a new Wasmtime process for every invocation while also providing routing, configuration, and capability management.
