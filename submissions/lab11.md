@@ -495,7 +495,7 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
-      - name: Break reproducibility (demo)
+      - name: Break reproducibility (demo only)
         if: ${{ inputs.break_repro }}
         run: |
           sed -i 's/created = "1970-01-01T00:00:01Z";/created = "2020-02-02T02:02:02Z";/' flake.nix
@@ -544,4 +544,25 @@ jobs:
           fi
           echo "Reproducibility OK: identical digest on two independent runners"
 ```
+
+### Green run (digests match)
+
+A normal push runs both build jobs identically, so `compare` passes.
+
+Run URL: <https://github.com/G-Akleh/DevOps-Intro/actions/runs/29439184731>
+
+Evidence screenshot: [`artifactsLab11/bonus-green-run.png`](artifactsLab11/bonus-green-run.png)
+(the Actions run graph, all three jobs green) and
+[`artifactsLab11/bonus-green-compare.png`](artifactsLab11/bonus-green-compare.png)
+(the `compare` step log showing the two equal digests and "Reproducibility OK").
+
+`compare` log excerpt:
+
+```
+build-a: af01698521b3a17e7dd169db1eb6107c6481d8e5f4d55155fd7c4700100f3834
+build-b: af01698521b3a17e7dd169db1eb6107c6481d8e5f4d55155fd7c4700100f3834
+Reproducibility OK: identical digest on two independent runners
+```
+
+### Red run (deliberate divergence)
 
