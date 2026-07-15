@@ -1,0 +1,55 @@
+name: CI-Verified Reproducibility
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  build-image:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        environment: [ env-a, env-b ]
+    outputs:
+      sha-env-a: ${{ steps.calc-hash.outputs.sha-env-a }}
+      sha-env-b: ${{ steps.calc-hash.outputs.sha-env-b }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@ef8a148080ab6020fd15196c2084a2eea5ff2d25 # v22
+
+      - name: Build OCI Image with Nix
+        run: nix build .#docker
+
+      - name: Calculate Image Hash and Output
+        id: calc-hash
+        run: |
+          DIGEST=$(sha256sum result | awk '{print $1}')
+          echo "Calculated digest: $DIGEST"
+          if [ "${{ matrix.environment }}" = "env-a" ]; then
+            echo "sha-env-a=$DIGEST" >> "$GITHUB_OUTPUT"
+          else
+            echo "sha-env-b=$DIGEST" >> "$GITHUB_OUTPUT"
+          fi
+
+  verify-reproducibility:
+    needs: build-image
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Compare Digests
+        run: |
+          HASH_A="${{ needs.build-image.outputs.sha-env-a }}"
+          HASH_B="${{ needs.build-image.outputs.sha-env-b }}"
+          
+          echo "Digest from Environment A: $HASH_A"
+          echo "Digest from Environment B: $HASH_B"
+          
+          if [ "$HASH_A" != "$HASH_B" ]; then
+            echo "::error::Reproducibility failed! Digests do not match."
+            exit 1
+          fi
+          echo "Success."
