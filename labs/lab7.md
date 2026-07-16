@@ -49,7 +49,8 @@ ansible/
 ├── inventory.ini          (or .yaml)
 ├── playbook.yaml
 ├── files/
-│   └── quicknotes         (the static binary)
+│   ├── quicknotes         (the static binary)
+│   └── seed.json          (copy of app/seed.json — shipped to the VM)
 └── templates/
     └── quicknotes.service.j2
 ```
@@ -61,9 +62,10 @@ Your playbook MUST, deploying as `root` (via `become: true`) on the Lab 5 VM:
 1. **Create a system user** `quicknotes` (no login shell, no interactive home)
 2. **Ensure a data directory** at `/var/lib/quicknotes`, owned by `quicknotes:quicknotes`, mode `0750`
 3. **Copy the QuickNotes binary** to `/usr/local/bin/quicknotes`, mode `0755`
-4. **Render a systemd unit** to `/etc/systemd/system/quicknotes.service` from a Jinja2 template — values must be **variables** (so changing them in the play changes the deployed unit)
-5. **Reload systemd**, **enable** the service, **start** it
-6. Use a **handler** to restart the service whenever the binary OR the unit file changes — and *only* then
+4. **Copy `seed.json`** to `/var/lib/quicknotes/seed.json`, owned `quicknotes:quicknotes`, mode `0640` — this is the file your `SEED_PATH` variable must point at
+5. **Render a systemd unit** to `/etc/systemd/system/quicknotes.service` from a Jinja2 template — values must be **variables** (so changing them in the play changes the deployed unit)
+6. **Reload systemd**, **enable** the service, **start** it
+7. Use a **handler** to restart the service whenever the binary OR the unit file changes — and *only* then
 
 ### 1.3: Inventory requirements
 
@@ -103,14 +105,17 @@ ansible-playbook -i ansible/inventory.ini ansible/playbook.yaml            # rea
 
 # from your host:
 curl -s http://localhost:18080/health   # via Vagrant port forward
+curl -s http://localhost:18080/notes    # MUST return the seeded notes, not []
 ```
+
+> ⚠️ If `/notes` returns `[]`, your seed never reached the VM — the app silently falls back to an empty store when the file at `SEED_PATH` doesn't exist. See Common Pitfalls.
 
 ### 1.8: Document
 
 In `submissions/lab7.md`:
 - Your `playbook.yaml`, `inventory.ini`, and template (paste or link)
 - Full PLAY RECAP from the first run (showing tasks `changed`)
-- `curl` output proving the service is reachable
+- `curl` output proving the service is reachable **and** `/notes` output proving the seed data is served
 - Written answers to all 4 design questions in 1.5
 
 ---
@@ -178,9 +183,15 @@ From your host:
 ### B.5: Document
 
 In `submissions/lab7.md`:
+- **The artifacts themselves** — this is the graded core of the bonus:
+  - the `ansible-pull.service` and `ansible-pull.timer` unit files (paste contents), **and** the local inventory
+  - *or*, if you automated the setup (recommended), the Ansible tasks/templates that install them — in that case those files live in `ansible/` in your PR and you link to them
 - `systemctl list-timers | grep ansible-pull` output
+- A `journalctl -u ansible-pull.service` excerpt from one successful pull run
 - Timeline of: git commit timestamp → next timer fire → state reconciled in VM
 - Design questions h, i answered
+
+> ⚠️ **Logs alone earn no bonus points.** Timer output, journal excerpts, and timelines are *evidence* — the graded deliverable is the unit files / inventory / automation that produce them. A submission without those files gets 0 for the bonus regardless of the logs attached.
 
 ---
 
@@ -198,6 +209,7 @@ In `submissions/lab7.md`:
 ### Task 1 (6 pts)
 - ✅ Playbook deploys QuickNotes to the Vagrant VM
 - ✅ Service is `active (running)`; `curl :18080/health` works
+- ✅ `curl :18080/notes` returns the seeded notes (not `[]`) — proves `seed.json` was shipped and `SEED_PATH` is correct
 - ✅ Full PLAY RECAP captured
 - ✅ All 4 design questions answered
 
@@ -208,6 +220,7 @@ In `submissions/lab7.md`:
 - ✅ Design questions e, f, g answered
 
 ### Bonus Task (2 pts)
+- ✅ `ansible-pull` service + timer unit files and local inventory in the submission (pasted, or as Ansible automation in the PR)
 - ✅ Systemd timer installed and active
 - ✅ Push-to-Git → VM reconciled within 5 min observed
 - ✅ Design questions h, i answered
@@ -220,7 +233,7 @@ In `submissions/lab7.md`:
 |------|-------:|----------|
 | **Task 1** — Idempotent Ansible deploy | **6** | Playbook works, service runs, recap + design questions |
 | **Task 2** — Idempotency + handler logic | **4** | `changed=0`, selective change, --diff, design questions |
-| **Bonus** — `ansible-pull` GitOps loop | **2** | Timer active, convergence demoed, design questions |
+| **Bonus** — `ansible-pull` GitOps loop | **2** | Unit files/inventory in PR, timer active, convergence demoed, design questions |
 | **Total** | **10 + 2 bonus** | |
 
 ---
@@ -232,6 +245,7 @@ In `submissions/lab7.md`:
 - 🪤 **`become: true` missing** — most tasks need sudo. Either set on the play or per-task
 - 🪤 **`changed=1` every run for the same template** — file mode / owner mismatch. Run with `--diff` to see what differs
 - 🪤 **Handler not firing** — `notify:` looks up handlers *by name*; typos silently disable them
+- 🪤 **`/health` OK but `/notes` returns `[]`** — you set `SEED_PATH` but never copied `seed.json` to the VM. The app doesn't crash on a missing seed; it silently starts with an empty store. Also note: seeding runs only when the data file doesn't exist yet — after fixing the seed, delete the file at `DATA_PATH` on the VM and restart the service
 - 🪤 **`ansible-pull` URL wrong** — must be an HTTPS clone URL the VM can reach (private repo → needs an access token)
 - 🪤 **VM Python missing** — old boxes ship without Python; use `raw: apt install -y python3` as a bootstrap task
 
