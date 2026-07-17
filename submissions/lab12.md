@@ -4,7 +4,7 @@ Frolova AI - M25RO-01
 
 a.frolova@innopolis.university
 
-Ссылка на PR: https://github.com/inno-devops-labs/DevOps-Intro/pull/XXXX
+Ссылка на PR: https://github.com/inno-devops-labs/DevOps-Intro/pull/1466
 
 ---
 
