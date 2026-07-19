@@ -9,6 +9,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	
+	"quicknotes/middleware"
 )
 
 func main() {
@@ -26,9 +28,12 @@ func main() {
 	}
 
 	server := NewServer(store)
+	
+	handler := middleware.SecurityHeadersMiddleware(server.Routes())
+	
 	srv := &http.Server{
 		Addr:              addr,
-		Handler:           server.Routes(),
+		Handler:           handler,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 
