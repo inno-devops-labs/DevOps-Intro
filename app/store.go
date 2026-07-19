@@ -44,13 +44,14 @@ func (s *Store) load() error {
 	if err != nil {
 		return err
 	}
+	// decode the on-disk JSON array into typed Notes
 	var notes []Note
 	if err := json.Unmarshal(data, &notes); err != nil {
 		return err
 	}
 	for _, n := range notes {
 		s.notes[n.ID] = n
-		if n.ID >= s.nextID {
+		if n.ID > s.nextID {
 			s.nextID = n.ID + 1
 		}
 	}
@@ -123,6 +124,7 @@ func (s *Store) Delete(id int) error {
 	return s.persist()
 }
 
+// Count returns the number of notes currently held.
 func (s *Store) Count() int {
 	s.mu.RLock()
 	defer s.mu.RUnlock()

@@ -40,4 +40,9 @@ curl -X POST http://localhost:8080/notes \
 
 ```bash
 make test
+# or: go test ./...
 ```
+
+## Versioning
+
+Releases are tagged `vMAJOR.MINOR.PATCH`. `v0.0.1` is the first tagged build.
