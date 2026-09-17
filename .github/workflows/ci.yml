@@ -7,12 +7,19 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - 'app/**'
+      - '.github/workflows/ci.yml'
 
 permissions:
   contents: read
 
 jobs:
   vet:
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ['1.23', '1.24']
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -21,10 +28,15 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.2.2
       - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
         with:
-          go-version: '1.24'
+          go-version: ${{ matrix.go-version }}
+          cache: true
       - run: go vet ./...
 
   test:
+    strategy:
+      fail-fast: false
+      matrix:
+        go-version: ['1.23', '1.24']
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -33,7 +45,8 @@ jobs:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.2.2
       - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
         with:
-          go-version: '1.24'
+          go-version: ${{ matrix.go-version }}
+          cache: true
       - run: go test -race -count=1 ./...
 
   lint:
@@ -46,7 +59,21 @@ jobs:
       - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
         with:
           go-version: '1.24'
+          cache: true
       - uses: golangci/golangci-lint-action@1481404843c368bc19ca9406f87d6e0fc97bdcfd # v7.0.0
         with:
           version: v2.5.0
           working-directory: app
+  ci-ok:
+    if: always()
+    needs: [vet, test, lint]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check required jobs
+        run: |
+          if [[ "${{ needs.vet.result }}" != "success" ||
+                "${{ needs.test.result }}" != "success" ||
+                "${{ needs.lint.result }}" != "success" ]]; then
+            echo "One or more required jobs failed or were cancelled."
+            exit 1
+          fi
