@@ -1,0 +1,5 @@
+$ ps -p 290359,291202 -o pid,ppid,stat,args
+    PID    PPID STAT COMMAND
+ 290359  290351 Sl+  /home/arina/Desktop/devops/DevOps-Intro/.goenv/bin/quicknotes-lab4
+
+Exit status: 0

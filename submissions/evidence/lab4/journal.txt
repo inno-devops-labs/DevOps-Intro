@@ -1,0 +1,4 @@
+$ journalctl --user -u quicknotes -n 20 --no-pager
+-- No entries --
+
+Exit status: 0

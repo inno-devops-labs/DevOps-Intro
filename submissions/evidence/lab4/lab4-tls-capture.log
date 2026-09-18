@@ -1,0 +1,7 @@
+Capturing on 'Loopback: lo'
+File: -
+
+Packets: 1
+Packets: 34
+Packets captured: 34
+Packets received/dropped on interface 'Loopback: lo': 34/0 (pcap:0/dumpcap:0/flushed:0/ps_ifdrop:0) (100.0%)

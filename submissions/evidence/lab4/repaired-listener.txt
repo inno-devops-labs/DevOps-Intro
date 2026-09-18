@@ -1,0 +1,5 @@
+$ ss -tlnp 'sport = :8080'
+State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess
+LISTEN 0      4096       127.0.0.1:8080      0.0.0.0:*    users:(("quicknotes-lab4",pid=291223,fd=3))
+
+Exit status: 0

@@ -1,0 +1,12 @@
+$ ip route show
+default via 10.91.48.1 dev wlo1 proto dhcp src 10.91.55.239 metric 20600
+10.91.48.0/20 dev wlo1 proto kernel scope link src 10.91.55.239 metric 600
+25.0.0.0/8 dev ham0 proto kernel scope link src 25.18.146.180
+172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 linkdown
+172.18.0.0/16 dev br-a697de2024cd proto kernel scope link src 172.18.0.1 linkdown
+172.19.0.0/24 dev throne-tun proto kernel scope link src 172.19.0.1
+172.19.0.0/16 dev br-e9a2f818d821 proto kernel scope link src 172.19.0.1 linkdown
+172.20.0.0/16 dev br-3de5e854a2a1 proto kernel scope link src 172.20.0.1 linkdown
+172.21.0.0/16 dev br-bc5d3e0cb1e1 proto kernel scope link src 172.21.0.1
+
+Exit status: 0

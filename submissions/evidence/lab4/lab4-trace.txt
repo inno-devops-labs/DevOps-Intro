@@ -1,0 +1,49 @@
+$ tcpdump -r /home/arina/Desktop/devops/DevOps-Intro/submissions/evidence/lab4/lab4-trace.pcap -nn -tttt -A
+reading from file /home/arina/Desktop/devops/DevOps-Intro/submissions/evidence/lab4/lab4-trace.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+2026-09-17 16:34:36.907102 IP 127.0.0.1.44302 > 127.0.0.1.8080: Flags [S], seq 1205284485, win 65495, options [mss 65495,sackOK,TS val 3267053868 ecr 0,nop,wscale 10], length 0
+E..<.n@.@.LK............G......................
+..I,.......
+
+2026-09-17 16:34:36.907206 IP 127.0.0.1.8080 > 127.0.0.1.44302: Flags [S.], seq 1122597620, ack 1205284486, win 65483, options [mss 65495,sackOK,TS val 607147167 ecr 3267053868,nop,wscale 10], length 0
+E..<..@.@.<.............B.z.G........0.........
+$0T...I,...
+
+2026-09-17 16:34:36.907232 IP 127.0.0.1.44302 > 127.0.0.1.8080: Flags [.], ack 1, win 64, options [nop,nop,TS val 3267053895 ecr 607147167], length 0
+E..4.o@.@.LR............G...B.z....@.(.....
+..IG$0T.
+2026-09-17 16:34:36.907621 IP 127.0.0.1.44302 > 127.0.0.1.8080: Flags [P.], seq 1:176, ack 1, win 64, options [nop,nop,TS val 3267053896 ecr 607147167], length 175: HTTP: POST /notes HTTP/1.1
+E....p@.@.K.............G...B.z....@.......
+..IH$0T.POST /notes HTTP/1.1
+Host: localhost:8080
+User-Agent: curl/8.18.0
+Accept: */*
+Content-Type: application/json
+Content-Length: 39
+
+{"title":"trace me","body":"in flight"}
+2026-09-17 16:34:36.907643 IP 127.0.0.1.8080 > 127.0.0.1.44302: Flags [.], ack 176, win 64, options [nop,nop,TS val 607147168 ecr 3267053896], length 0
+E..4R~@.@..C............B.z.G./5...@.(.....
+$0T...IH
+2026-09-17 16:34:36.909516 IP 127.0.0.1.8080 > 127.0.0.1.44302: Flags [P.], seq 1:207, ack 176, win 64, options [nop,nop,TS val 607147170 ecr 3267053896], length 206: HTTP: HTTP/1.1 201 Created
+E...R.@.@..t............B.z.G./5...@.......
+$0T...IHHTTP/1.1 201 Created
+Content-Type: application/json
+Date: Thu, 17 Sep 2026 13:34:36 GMT
+Content-Length: 93
+
+{"id":6,"title":"trace me","body":"in flight","created_at":"2026-09-17T13:34:36.907988139Z"}
+
+2026-09-17 16:34:36.909543 IP 127.0.0.1.44302 > 127.0.0.1.8080: Flags [.], ack 207, win 64, options [nop,nop,TS val 3267053898 ecr 607147170], length 0
+E..4.q@.@.LP............G./5B.{....@.(.....
+..IJ$0T.
+2026-09-17 16:34:36.910325 IP 127.0.0.1.44302 > 127.0.0.1.8080: Flags [F.], seq 176, ack 207, win 64, options [nop,nop,TS val 3267053899 ecr 607147170], length 0
+E..4.r@.@.LO............G./5B.{....@.(.....
+..IK$0T.
+2026-09-17 16:34:36.910396 IP 127.0.0.1.8080 > 127.0.0.1.44302: Flags [F.], seq 207, ack 177, win 64, options [nop,nop,TS val 607147171 ecr 3267053899], length 0
+E..4R.@.@..A............B.{.G./6...@.(.....
+$0T...IK
+2026-09-17 16:34:36.910485 IP 127.0.0.1.44302 > 127.0.0.1.8080: Flags [.], ack 208, win 64, options [nop,nop,TS val 3267053899 ecr 607147171], length 0
+E..4.s@.@.LN............G./6B.{....@.(.....
+..IK$0T.
+
+Exit status: 0

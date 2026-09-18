@@ -1,0 +1,4 @@
+$ curl --noproxy '*' -4 -fsS --max-time 10 http://localhost:8080/health
+{"notes":4,"status":"ok"}
+
+Exit status: 0

@@ -1,0 +1,90 @@
+$ openssl s_client -connect 127.0.0.1:8443 -servername localhost -showcerts -CAfile /home/arina/Desktop/devops/DevOps-Intro/submissions/evidence/lab4/localhost.crt
+Connecting to 127.0.0.1
+depth=0 CN=localhost
+verify return:1
+CONNECTED(00000003)
+---
+Certificate chain
+ 0 s:CN=localhost
+   i:CN=localhost
+   a:PKEY: RSA, 2048 (bit); sigalg: sha256WithRSAEncryption
+   v:NotBefore: Sep 17 13:34:59 2026 GMT; NotAfter: Sep 24 13:34:59 2026 GMT
+-----BEGIN CERTIFICATE-----
+MIIDHzCCAgegAwIBAgIUAoxDR+JUlGn/GrqhTo3BcafjTc8wDQYJKoZIhvcNAQEL
+BQAwFDESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTI2MDkxNzEzMzQ1OVoXDTI2MDky
+NDEzMzQ1OVowFDESMBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEF
+AAOCAQ8AMIIBCgKCAQEA0z2ed3vanp1DkAdPmNPa0OCisnvqK7IflmGV7dY3wuvp
+GA69BFD2hn/F5zZm5MtMWLZlrj0Yx3DfJ5eOUWAybf3exmaOK2ab979JVho25Bie
+RZWyDDZXBXybrJ6lj89U4NLiEXGXJK2Wt2ORuNz9pmvmtXrFltKLH58VV9SBQU8T
+9c7mqYuncd04J8kvpBLswsLdg0Sl6lO6cG6s5JYdUBG7YVT1AIgHS3j5B5MzMMn2
+7pE4wM+zhNlpTt+B9eTG0Veq/igrkuo4H63+2Tp7Cf4ANkvSwbL0Ubx6gKLk5Qq0
+iZUF4SJjTZTvkqfxj54eOJUqMvB+npjmriv4Vz9duQIDAQABo2kwZzAdBgNVHQ4E
+FgQUxOB1yICFdARjo9hqJvCP5UdqEwowHwYDVR0jBBgwFoAUxOB1yICFdARjo9hq
+JvCP5UdqEwowDwYDVR0TAQH/BAUwAwEB/zAUBgNVHREEDTALgglsb2NhbGhvc3Qw
+DQYJKoZIhvcNAQELBQADggEBAFakdb941np3Qh14hGngs38PadSzxsM/WxyO3W9u
+sZXVBeg7672Mx+Ow3iUMnexRcZFoxLqQWPCKoO7LebtLEmt21zKB/8nP2nitGcQl
+jO3nad0amq/xa76r1vZzvXS0SclnmwIDlA+inAwPfjQQEq92Ty3usvDlxEWlQM82
+0qGJIPW1irQtnccbPYxd3n3np0q4gsqYzBB0aIiVEMPNFcFg2aiYmCjN+F8roYaq
+mQo6zCRP/JKZkPhAODtwwcAdc47Zzi3aHVyP801yCFjyiMJyNmhctDpA+cfV2LSy
+roxAPWk8cXMN2emJYQhzNXmUdxsQmzKix3b9YL/Mnn7fUqk=
+-----END CERTIFICATE-----
+---
+Server certificate
+subject=CN=localhost
+issuer=CN=localhost
+---
+No client certificate CA names sent
+Peer signing digest: SHA256
+Peer signature type: rsa_pss_rsae_sha256
+Negotiated TLS1.3 group: X25519MLKEM768
+---
+SSL handshake has read 2447 bytes and written 1631 bytes
+Verification: OK
+---
+New, TLSv1.3, Cipher is TLS_AES_256_GCM_SHA384
+Protocol: TLSv1.3
+Server public key is 2048 bit
+This TLS version forbids renegotiation.
+Compression: NONE
+Expansion: NONE
+No ALPN negotiated
+Early data was not sent
+Verify return code: 0 (ok)
+---
+DONE
+---
+Post-Handshake New Session Ticket arrived:
+SSL-Session:
+    Protocol  : TLSv1.3
+    Cipher    : TLS_AES_256_GCM_SHA384
+    Session-ID: F10D91834C561F26DB6357A7A7009DE2B56252BE7C332E626A3CF15B22848EE0
+    Session-ID-ctx:
+    Resumption PSK: C6D04CCF7D6B80C22EE26B1D8A8579909E52EC9E717F0B1DF96DA2FE2AD78241A055818A6F893DE4F6781C31C846ED93
+    PSK identity: None
+    PSK identity hint: None
+    SRP username: None
+    TLS session ticket lifetime hint: 7200 (seconds)
+    TLS session ticket:
+    0000 - 20 4c 5f 41 d3 e7 a1 7d-b3 1d 84 77 a4 00 10 4a    L_A...}...w...J
+    0010 - 1d 22 7b a2 e0 44 d2 99-9e 23 2e 35 72 87 bd 6d   ."{..D...#.5r..m
+    0020 - 49 8f 54 1d 51 b6 b3 03-60 cb 80 7a bf a0 dc 0d   I.T.Q...`..z....
+    0030 - 9a 5c 15 2d 41 07 e1 a3-45 15 8e 80 62 c4 bf 87   .\.-A...E...b...
+    0040 - ba ae 6b 1a ca 8a fb 86-45 e6 f5 24 7e 4a 35 4b   ..k.....E..$~J5K
+    0050 - 72 53 39 e9 5f 23 12 c8-36 95 c5 bd da bd c3 cf   rS9._#..6.......
+    0060 - c3 1f 22 02 77 25 0c dc-6f 7c b3 ff 2b 0f b8 61   ..".w%..o|..+..a
+    0070 - 2e 13 7c fc 9c 6d 12 81-3e fa 87 22 e8 59 d6 e4   ..|..m..>..".Y..
+    0080 - 1a 64 07 80 15 86 53 c6-60 50 69 fc 6f 80 de c8   .d....S.`Pi.o...
+    0090 - 6b d1 8c 27 aa 9d 1a 8d-29 af 36 01 15 76 fb 57   k..'....).6..v.W
+    00a0 - 58 5b b6 c6 65 c0 24 2a-59 2f 8e 24 9c c6 35 9e   X[..e.$*Y/.$..5.
+    00b0 - 37 32 54 38 d2 1e e5 62-27 be fa 51 af 78 90 b1   72T8...b'..Q.x..
+    00c0 - c4 bd 96 aa 9c d2 61 9d-0e f3 dc 53 d3 9e 5c 4b   ......a....S..\K
+
+    Start Time: 1789652100
+    Timeout   : 7200 (sec)
+    Verify return code: 0 (ok)
+    Extended master secret: no
+    Max Early Data: 0
+---
+read R BLOCK
+
+Exit status: 0

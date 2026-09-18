@@ -1,0 +1,4 @@
+$ dig +time=3 +tries=1 +short localhost
+127.0.0.1
+
+Exit status: 0

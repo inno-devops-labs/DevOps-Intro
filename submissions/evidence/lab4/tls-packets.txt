@@ -1,0 +1,38 @@
+$ tcpdump -r /home/arina/Desktop/devops/DevOps-Intro/submissions/evidence/lab4/lab4-tls.pcap -nn -tttt
+reading from file /home/arina/Desktop/devops/DevOps-Intro/submissions/evidence/lab4/lab4-tls.pcap, link-type EN10MB (Ethernet), snapshot length 262144
+2026-09-17 16:35:00.309043 IP 127.0.0.1.40686 > 127.0.0.1.8443: Flags [S], seq 3436878500, win 65495, options [mss 65495,sackOK,TS val 2871183076 ecr 0,nop,wscale 10], length 0
+2026-09-17 16:35:00.309247 IP 127.0.0.1.8443 > 127.0.0.1.40686: Flags [S.], seq 433197031, ack 3436878501, win 65483, options [mss 65495,sackOK,TS val 469899003 ecr 2871183076,nop,wscale 10], length 0
+2026-09-17 16:35:00.309293 IP 127.0.0.1.40686 > 127.0.0.1.8443: Flags [.], ack 1, win 64, options [nop,nop,TS val 2871183105 ecr 469899003], length 0
+2026-09-17 16:35:00.313551 IP 127.0.0.1.40686 > 127.0.0.1.8443: Flags [P.], seq 1:1570, ack 1, win 64, options [nop,nop,TS val 2871183109 ecr 469899003], length 1569
+2026-09-17 16:35:00.313583 IP 127.0.0.1.8443 > 127.0.0.1.40686: Flags [.], ack 1570, win 78, options [nop,nop,TS val 469899008 ecr 2871183109], length 0
+2026-09-17 16:35:00.319098 IP 127.0.0.1.8443 > 127.0.0.1.40686: Flags [P.], seq 1:2448, ack 1570, win 78, options [nop,nop,TS val 469899013 ecr 2871183109], length 2447
+2026-09-17 16:35:00.319124 IP 127.0.0.1.40686 > 127.0.0.1.8443: Flags [.], ack 2448, win 90, options [nop,nop,TS val 2871183114 ecr 469899013], length 0
+2026-09-17 16:35:00.320994 IP 127.0.0.1.40686 > 127.0.0.1.8443: Flags [P.], seq 1570:1650, ack 2448, win 90, options [nop,nop,TS val 2871183116 ecr 469899013], length 80
+2026-09-17 16:35:00.321152 IP 127.0.0.1.40686 > 127.0.0.1.8443: Flags [P.], seq 1650:1756, ack 2448, win 90, options [nop,nop,TS val 2871183116 ecr 469899013], length 106
+2026-09-17 16:35:00.321272 IP 127.0.0.1.8443 > 127.0.0.1.40686: Flags [P.], seq 2448:2703, ack 1756, win 78, options [nop,nop,TS val 469899015 ecr 2871183116], length 255
+2026-09-17 16:35:00.362313 IP 127.0.0.1.40686 > 127.0.0.1.8443: Flags [.], ack 2703, win 91, options [nop,nop,TS val 2871183158 ecr 469899015], length 0
+2026-09-17 16:35:00.362354 IP 127.0.0.1.8443 > 127.0.0.1.40686: Flags [P.], seq 2703:2958, ack 1756, win 78, options [nop,nop,TS val 469899057 ecr 2871183158], length 255
+2026-09-17 16:35:00.362389 IP 127.0.0.1.40686 > 127.0.0.1.8443: Flags [.], ack 2958, win 91, options [nop,nop,TS val 2871183158 ecr 469899057], length 0
+2026-09-17 16:35:00.362557 IP 127.0.0.1.8443 > 127.0.0.1.40686: Flags [P.], seq 2958:3124, ack 1756, win 78, options [nop,nop,TS val 469899057 ecr 2871183158], length 166
+2026-09-17 16:35:00.362590 IP 127.0.0.1.40686 > 127.0.0.1.8443: Flags [.], ack 3124, win 91, options [nop,nop,TS val 2871183158 ecr 469899057], length 0
+2026-09-17 16:35:00.362666 IP 127.0.0.1.8443 > 127.0.0.1.40686: Flags [P.], seq 3124:3172, ack 1756, win 78, options [nop,nop,TS val 469899057 ecr 2871183158], length 48
+2026-09-17 16:35:00.362680 IP 127.0.0.1.40686 > 127.0.0.1.8443: Flags [.], ack 3172, win 91, options [nop,nop,TS val 2871183158 ecr 469899057], length 0
+2026-09-17 16:35:00.362910 IP 127.0.0.1.8443 > 127.0.0.1.40686: Flags [F.], seq 3172, ack 1756, win 78, options [nop,nop,TS val 469899057 ecr 2871183158], length 0
+2026-09-17 16:35:00.362916 IP 127.0.0.1.40686 > 127.0.0.1.8443: Flags [P.], seq 1756:1780, ack 3172, win 91, options [nop,nop,TS val 2871183158 ecr 469899057], length 24
+2026-09-17 16:35:00.362980 IP 127.0.0.1.8443 > 127.0.0.1.40686: Flags [R.], seq 3173, ack 1780, win 78, options [nop,nop,TS val 469899057 ecr 2871183158], length 0
+2026-09-17 16:35:00.415890 IP 127.0.0.1.40690 > 127.0.0.1.8443: Flags [S], seq 2212463026, win 65495, options [mss 65495,sackOK,TS val 370898560 ecr 0,nop,wscale 10], length 0
+2026-09-17 16:35:00.416009 IP 127.0.0.1.8443 > 127.0.0.1.40690: Flags [S.], seq 2663854310, ack 2212463027, win 65483, options [mss 65495,sackOK,TS val 3317187525 ecr 370898560,nop,wscale 10], length 0
+2026-09-17 16:35:00.416032 IP 127.0.0.1.40690 > 127.0.0.1.8443: Flags [.], ack 1, win 64, options [nop,nop,TS val 370898597 ecr 3317187525], length 0
+2026-09-17 16:35:00.416989 IP 127.0.0.1.40690 > 127.0.0.1.8443: Flags [P.], seq 1:1552, ack 1, win 64, options [nop,nop,TS val 370898598 ecr 3317187525], length 1551
+2026-09-17 16:35:00.417021 IP 127.0.0.1.8443 > 127.0.0.1.40690: Flags [.], ack 1552, win 78, options [nop,nop,TS val 3317187526 ecr 370898598], length 0
+2026-09-17 16:35:00.421837 IP 127.0.0.1.8443 > 127.0.0.1.40690: Flags [P.], seq 1:2448, ack 1552, win 78, options [nop,nop,TS val 3317187531 ecr 370898598], length 2447
+2026-09-17 16:35:00.421878 IP 127.0.0.1.40690 > 127.0.0.1.8443: Flags [.], ack 2448, win 90, options [nop,nop,TS val 370898603 ecr 3317187531], length 0
+2026-09-17 16:35:00.423716 IP 127.0.0.1.40690 > 127.0.0.1.8443: Flags [P.], seq 1552:1632, ack 2448, win 90, options [nop,nop,TS val 370898605 ecr 3317187531], length 80
+2026-09-17 16:35:00.424128 IP 127.0.0.1.8443 > 127.0.0.1.40690: Flags [P.], seq 2448:2703, ack 1632, win 78, options [nop,nop,TS val 3317187533 ecr 370898605], length 255
+2026-09-17 16:35:00.424813 IP 127.0.0.1.40690 > 127.0.0.1.8443: Flags [P.], seq 1632:1656, ack 2703, win 91, options [nop,nop,TS val 370898606 ecr 3317187533], length 24
+2026-09-17 16:35:00.424849 IP 127.0.0.1.8443 > 127.0.0.1.40690: Flags [P.], seq 2703:2958, ack 1656, win 78, options [nop,nop,TS val 3317187534 ecr 370898606], length 255
+2026-09-17 16:35:00.424877 IP 127.0.0.1.40690 > 127.0.0.1.8443: Flags [F.], seq 1656, ack 2958, win 91, options [nop,nop,TS val 370898606 ecr 3317187534], length 0
+2026-09-17 16:35:00.425275 IP 127.0.0.1.8443 > 127.0.0.1.40690: Flags [F.], seq 2958, ack 1657, win 78, options [nop,nop,TS val 3317187534 ecr 370898606], length 0
+2026-09-17 16:35:00.425327 IP 127.0.0.1.40690 > 127.0.0.1.8443: Flags [.], ack 2959, win 91, options [nop,nop,TS val 370898607 ecr 3317187534], length 0
+
+Exit status: 0

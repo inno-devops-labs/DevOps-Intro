@@ -1,0 +1,5 @@
+$ curl --noproxy '*' -4 -sS --max-time 10 -o /dev/null -w '%{http_code}
+' http://localhost:8080/health
+200
+
+Exit status: 0

@@ -1,0 +1,60 @@
+$ sudo -n iptables -L -n -v
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain FORWARD (policy DROP 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+ 7014  495K DOCKER-USER  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+ 7014  495K DOCKER-FORWARD  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+
+Chain OUTPUT (policy ACCEPT 0 packets, 0 bytes)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain DOCKER (5 references)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 ACCEPT     tcp  --  !br-bc5d3e0cb1e1 br-bc5d3e0cb1e1  0.0.0.0/0            172.21.0.4           tcp dpt:8003
+    0     0 ACCEPT     tcp  --  !br-bc5d3e0cb1e1 br-bc5d3e0cb1e1  0.0.0.0/0            172.21.0.3           tcp dpt:9092
+    0     0 ACCEPT     tcp  --  !br-bc5d3e0cb1e1 br-bc5d3e0cb1e1  0.0.0.0/0            172.21.0.7           tcp dpt:11434
+    0     0 ACCEPT     tcp  --  !br-bc5d3e0cb1e1 br-bc5d3e0cb1e1  0.0.0.0/0            172.21.0.6           tcp dpt:6334
+    0     0 ACCEPT     tcp  --  !br-bc5d3e0cb1e1 br-bc5d3e0cb1e1  0.0.0.0/0            172.21.0.6           tcp dpt:6333
+    0     0 ACCEPT     tcp  --  !br-bc5d3e0cb1e1 br-bc5d3e0cb1e1  0.0.0.0/0            172.21.0.2           tcp dpt:5432
+    0     0 DROP       all  --  !br-3de5e854a2a1 br-3de5e854a2a1  0.0.0.0/0            0.0.0.0/0
+    0     0 DROP       all  --  !br-a697de2024cd br-a697de2024cd  0.0.0.0/0            0.0.0.0/0
+    0     0 DROP       all  --  !br-bc5d3e0cb1e1 br-bc5d3e0cb1e1  0.0.0.0/0            0.0.0.0/0
+    0     0 DROP       all  --  !br-e9a2f818d821 br-e9a2f818d821  0.0.0.0/0            0.0.0.0/0
+    0     0 DROP       all  --  !docker0 docker0  0.0.0.0/0            0.0.0.0/0
+
+Chain DOCKER-BRIDGE (1 references)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 DOCKER     all  --  *      br-3de5e854a2a1  0.0.0.0/0            0.0.0.0/0
+    0     0 DOCKER     all  --  *      br-a697de2024cd  0.0.0.0/0            0.0.0.0/0
+    8   480 DOCKER     all  --  *      br-bc5d3e0cb1e1  0.0.0.0/0            0.0.0.0/0
+    0     0 DOCKER     all  --  *      br-e9a2f818d821  0.0.0.0/0            0.0.0.0/0
+    0     0 DOCKER     all  --  *      docker0  0.0.0.0/0            0.0.0.0/0
+
+Chain DOCKER-CT (1 references)
+ pkts bytes target     prot opt in     out     source               destination
+    0     0 ACCEPT     all  --  *      br-3de5e854a2a1  0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+    0     0 ACCEPT     all  --  *      br-a697de2024cd  0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+ 6899  478K ACCEPT     all  --  *      br-bc5d3e0cb1e1  0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+    0     0 ACCEPT     all  --  *      br-e9a2f818d821  0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+    0     0 ACCEPT     all  --  *      docker0  0.0.0.0/0            0.0.0.0/0            ctstate RELATED,ESTABLISHED
+
+Chain DOCKER-FORWARD (1 references)
+ pkts bytes target     prot opt in     out     source               destination
+ 7014  495K DOCKER-CT  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+  115 17118 DOCKER-INTERNAL  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+  115 17118 DOCKER-BRIDGE  all  --  *      *       0.0.0.0/0            0.0.0.0/0
+    0     0 ACCEPT     all  --  br-3de5e854a2a1 *       0.0.0.0/0            0.0.0.0/0
+    0     0 ACCEPT     all  --  br-a697de2024cd *       0.0.0.0/0            0.0.0.0/0
+  115 17118 ACCEPT     all  --  br-bc5d3e0cb1e1 *       0.0.0.0/0            0.0.0.0/0
+    0     0 ACCEPT     all  --  br-e9a2f818d821 *       0.0.0.0/0            0.0.0.0/0
+    0     0 ACCEPT     all  --  docker0 *       0.0.0.0/0            0.0.0.0/0
+
+Chain DOCKER-INTERNAL (1 references)
+ pkts bytes target     prot opt in     out     source               destination
+
+Chain DOCKER-USER (1 references)
+ pkts bytes target     prot opt in     out     source               destination
+
+Exit status: 0
