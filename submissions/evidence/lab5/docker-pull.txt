@@ -1,0 +1,27 @@
+1.24: Pulling from library/golang
+b5e2021c4c8b: Pulling fs layer
+50a27cd32f89: Pulling fs layer
+f7bdfd728ac2: Pulling fs layer
+ef235bf1a09a: Pulling fs layer
+954d6059ca7b: Pulling fs layer
+b2b04fcbed4b: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+ad690457b116: Download complete
+50a27cd32f89: Download complete
+4f4fb700ef54: Download complete
+5fb69133d741: Download complete
+954d6059ca7b: Download complete
+ef235bf1a09a: Download complete
+f7bdfd728ac2: Download complete
+ef235bf1a09a: Pull complete
+954d6059ca7b: Pull complete
+b5e2021c4c8b: Download complete
+b5e2021c4c8b: Pull complete
+b2b04fcbed4b: Download complete
+b2b04fcbed4b: Pull complete
+50a27cd32f89: Pull complete
+f7bdfd728ac2: Pull complete
+4f4fb700ef54: Pull complete
+Digest: sha256:d2d2bc1c84f7e60d7d2438a3836ae7d0c847f4888464e7ec9ba3a1339a1ee804
+Status: Downloaded newer image for golang:1.24
+docker.io/library/golang:1.24

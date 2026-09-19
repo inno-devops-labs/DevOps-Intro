@@ -1,0 +1,4 @@
+$ vagrant ssh -c free\ -h
+               total        used        free      shared  buff/cache   available
+Mem:           961Mi       302Mi       580Mi       996Ki       219Mi       658Mi
+Swap:          2.9Gi          0B       2.9Gi

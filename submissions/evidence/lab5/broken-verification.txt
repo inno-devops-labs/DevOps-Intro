@@ -1,0 +1,2 @@
+bash: line 1: go: command not found
+Exit status: 127

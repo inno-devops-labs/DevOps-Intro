@@ -1,0 +1,5 @@
+$ vagrant snapshot save quicknotes-clean-lab5
+==> default: Snapshotting the machine as 'quicknotes-clean-lab5'...
+==> default: Snapshot saved! You can restore the snapshot at any time by
+==> default: using `vagrant snapshot restore`. You can delete it using
+==> default: `vagrant snapshot delete`.

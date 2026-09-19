@@ -1,0 +1,2 @@
+$ vagrant ssh -c go\ version
+go version go1.24.5 linux/amd64

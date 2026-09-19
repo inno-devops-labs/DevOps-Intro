@@ -1,0 +1,4 @@
+$ vagrant provision
+==> default: Running provisioner: shell...
+    default: Running: /tmp/vagrant-shell20260918-586512-63ja4s.sh
+    default: ok  	quicknotes	(cached)

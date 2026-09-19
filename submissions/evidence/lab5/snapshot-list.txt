@@ -1,0 +1,3 @@
+$ vagrant snapshot list
+==> default:
+quicknotes-clean-lab5

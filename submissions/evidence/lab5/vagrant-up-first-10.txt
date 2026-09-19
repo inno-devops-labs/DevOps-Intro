@@ -1,0 +1,10 @@
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Box 'bento/ubuntu-24.04' could not be found. Attempting to find and install...
+    default: Box Provider: virtualbox
+    default: Box Version: 202510.26.0
+==> default: Loading metadata for box 'bento/ubuntu-24.04'
+    default: URL: https://vagrantcloud.com/api/v2/vagrant/bento/ubuntu-24.04
+==> default: Adding box 'bento/ubuntu-24.04' (v202510.26.0) for provider: virtualbox (amd64)
+    default: Downloading: https://vagrantcloud.com/bento/boxes/ubuntu-24.04/versions/202510.26.0/providers/virtualbox/amd64/vagrant.box
+default: Successfully added box 'bento/ubuntu-24.04' (v202510.26.0) for 'virtualbox (amd64)'!
+==> default: Importing base box 'bento/ubuntu-24.04'...
