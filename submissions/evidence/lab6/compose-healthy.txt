@@ -1,0 +1,2 @@
+NAME                        IMAGE             COMMAND         SERVICE      CREATED         STATUS                   PORTS
+devops-intro-quicknotes-1   quicknotes:lab6   "/quicknotes"   quicknotes   6 seconds ago   Up 5 seconds (healthy)   127.0.0.1:8080->8080/tcp

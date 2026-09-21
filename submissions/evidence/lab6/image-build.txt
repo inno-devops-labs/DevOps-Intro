@@ -1,0 +1,99 @@
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  30.72kB
+Step 1/15 : FROM golang:1.24-alpine AS builder
+1.24-alpine: Pulling from library/golang
+Digest: sha256:8bee1901f1e530bfb4a7850aa7a479d17ae3a18beb6e09064ed54cfd245b7191
+Status: Image is up to date for golang:1.24-alpine
+ ---> 8bee1901f1e5
+Step 2/15 : WORKDIR /src
+ ---> Using cache
+ ---> f1224986d20c
+Step 3/15 : COPY go.mod ./
+ ---> Using cache
+ ---> 072f39bc9eed
+Step 4/15 : RUN go mod download
+ ---> Running in e8a69300b1bf
+[91mgo: no module dependencies to download
+[0m ---> Removed intermediate container e8a69300b1bf
+ ---> d7ed47bc236f
+Step 5/15 : COPY . .
+ ---> c9b01bc75d47
+Step 6/15 : RUN CGO_ENABLED=0 GOOS=linux go test ./... &&     CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags='-s -w' -o /out/quicknotes . &&     CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags='-s -w' -o /out/healthcheck ./cmd/healthcheck &&     mkdir -p /out/data && cp seed.json /out/data/notes.json
+ ---> Running in 3ef1f175dc96
+ok  	quicknotes	0.007s
+?   	quicknotes/cmd/healthcheck	[no test files]
+ ---> Removed intermediate container 3ef1f175dc96
+ ---> e84af94d555d
+Step 7/15 : FROM gcr.io/distroless/static-debian12:nonroot AS runtime
+nonroot: Pulling from distroless/static-debian12
+990a9c434e5e: Pulling fs layer
+2780920e5dbf: Pulling fs layer
+52630fc75a18: Pulling fs layer
+7c12895b777b: Pulling fs layer
+dcaa5a89b0cc: Pulling fs layer
+bf7a4185f015: Pulling fs layer
+b839dfae01f6: Pulling fs layer
+96ed2737ae31: Pulling fs layer
+3214acf345c0: Pulling fs layer
+a5789fc40e82: Pulling fs layer
+dd64bf2dd177: Pulling fs layer
+39dc083afc39: Pulling fs layer
+2780920e5dbf: Download complete
+b839dfae01f6: Download complete
+7c12895b777b: Download complete
+52630fc75a18: Download complete
+dcaa5a89b0cc: Download complete
+3214acf345c0: Download complete
+dd64bf2dd177: Download complete
+990a9c434e5e: Download complete
+bf7a4185f015: Download complete
+a5789fc40e82: Download complete
+990a9c434e5e: Pull complete
+a5789fc40e82: Pull complete
+96ed2737ae31: Download complete
+39dc083afc39: Download complete
+2780920e5dbf: Pull complete
+7c12895b777b: Pull complete
+52630fc75a18: Pull complete
+3214acf345c0: Pull complete
+dd64bf2dd177: Pull complete
+bf7a4185f015: Pull complete
+39dc083afc39: Pull complete
+b839dfae01f6: Pull complete
+dcaa5a89b0cc: Pull complete
+96ed2737ae31: Pull complete
+Digest: sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+Status: Downloaded newer image for gcr.io/distroless/static-debian12:nonroot
+ ---> afa5c872c891
+Step 8/15 : WORKDIR /app
+ ---> Running in cc0038305418
+ ---> Removed intermediate container cc0038305418
+ ---> 67715fb5bd5b
+Step 9/15 : COPY --from=builder --chown=65532:65532 /out/quicknotes /quicknotes
+ ---> 021813368394
+Step 10/15 : COPY --from=builder --chown=65532:65532 /out/healthcheck /healthcheck
+ ---> d4b9927bf444
+Step 11/15 : COPY --from=builder --chown=65532:65532 /out/data /data
+ ---> c0fdf8b99ca7
+Step 12/15 : COPY --chown=65532:65532 seed.json /app/seed.json
+ ---> 35ff4c50711a
+Step 13/15 : USER nonroot:nonroot
+ ---> Running in bd5f8fd29dee
+ ---> Removed intermediate container bd5f8fd29dee
+ ---> 55efb90afbe3
+Step 14/15 : EXPOSE 8080
+ ---> Running in da37c7a776db
+ ---> Removed intermediate container da37c7a776db
+ ---> f736fff2ab76
+Step 15/15 : ENTRYPOINT ["/quicknotes"]
+ ---> Running in 57a9035c407a
+ ---> Removed intermediate container 57a9035c407a
+ ---> a7427fdde67a
+Successfully built a7427fdde67a
+Successfully tagged quicknotes:lab6
+real 37.25
+user 0.00
+sys 0.00

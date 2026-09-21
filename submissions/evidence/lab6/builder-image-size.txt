@@ -1,0 +1,2 @@
+IMAGE                ID             DISK USAGE   CONTENT SIZE   EXTRA
+golang:1.24-alpine   8bee1901f1e5        395MB         83.5MB

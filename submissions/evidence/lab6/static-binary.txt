@@ -1,0 +1,1 @@
+/tmp/quicknotes-lab6-cache.H3VrCK/quicknotes: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, BuildID[sha1]=8f8656388abfc7a99c8bc0ab4511f609ac651aba, stripped
