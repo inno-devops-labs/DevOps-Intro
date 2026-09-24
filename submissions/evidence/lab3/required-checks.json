@@ -1,0 +1,28 @@
+{
+  "source": "https://api.github.com/repos/SanyaLikeIT/DevOps-Intro/rules/branches/main",
+  "observed_on": "2026-09-18",
+  "required_status_checks_rule": {
+    "type": "required_status_checks",
+    "parameters": {
+      "strict_required_status_checks_policy": true,
+      "do_not_enforce_on_create": false,
+      "required_status_checks": [
+        {
+          "context": "lint",
+          "integration_id": 15368
+        },
+        {
+          "context": "test",
+          "integration_id": 15368
+        },
+        {
+          "context": "vet",
+          "integration_id": 15368
+        }
+      ]
+    },
+    "ruleset_source_type": "Repository",
+    "ruleset_source": "SanyaLikeIT/DevOps-Intro",
+    "ruleset_id": 22882207
+  }
+}
