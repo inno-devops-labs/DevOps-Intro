@@ -18,6 +18,14 @@ services:
       retries: 3
       start_period: 5s
     restart: unless-stopped
+    # --- security hardening ---
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
 
 volumes:
   quicknotes-data:

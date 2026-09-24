@@ -181,3 +181,88 @@ NOT FOUND (expected)
 **f) Why the named volume survives `docker compose down`.** A named volume is a separate Docker object, stored outside the container's filesystem. `down` removes containers and networks only, so the volume and its data stay, and the next `up` mounts the same volume again. It is destroyed by `docker compose down -v`, `docker volume rm`, `docker volume prune`, or `docker system prune --volumes`.
 
 **g) `depends_on` without `condition: service_healthy`.** It only waits until the dependency container has been started, not until the application inside is ready to accept requests. The bug is a race condition: the dependent service can start while the database or API is still booting, then fail to connect and crash or return errors. With a healthcheck and `condition: service_healthy`, Compose waits for the dependency to report healthy first.
+
+
+## Bonus - The 6 Security Defaults
+
+### Hardened compose.yaml (services.quicknotes block)
+
+Task 2 above shows the compose file before hardening. The `compose.yaml` in the repo now contains the hardening lines below.
+
+```yaml
+services:
+  quicknotes:
+    build:
+      context: ./app
+    image: quicknotes:lab6
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: /data/notes.json
+      SEED_PATH: /app/seed.json
+    volumes:
+      - quicknotes-data:/data
+    healthcheck:
+      test: ["CMD", "/app/healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+    # --- security hardening ---
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+```
+
+The hardened container starts and stays healthy, and the app still works (it is healthy, `/health` answers, and a new note can be created), because it only writes to the `/data` volume.
+
+### Verification
+
+```
+--- 1. USER ---
+$ docker inspect quicknotes:lab6 --format '{{ .Config.User }}'
+65532:65532
+
+--- 2. no shell ---
+$ docker compose exec quicknotes sh
+OCI runtime exec failed: exec failed: unable to start container process: exec: "sh": executable file not found in $PATH
+
+--- 3. CapDrop ---
+$ docker inspect devops-intro-quicknotes-1 --format '{{ .HostConfig.CapDrop }}'
+[ALL]
+
+--- 4. read-only root ---
+$ docker inspect devops-intro-quicknotes-1 --format '{{ .HostConfig.ReadonlyRootfs }}'
+true
+$ docker run --rm --read-only --cap-drop ALL --security-opt no-new-privileges --entrypoint /busybox/sh gcr.io/distroless/static:debug-nonroot -c 'touch /etc/test; echo exit=$?'
+touch: /etc/test: Read-only file system
+exit=1
+
+--- 5. no-new-privileges ---
+$ docker inspect devops-intro-quicknotes-1 --format '{{ .HostConfig.SecurityOpt }}'
+[no-new-privileges:true]
+```
+
+How I tested the read-only root: the production image has no shell, so I could not run `touch` inside it. I used the `debug-nonroot` variant of the same distroless base, which includes a shell, with the same flags (`--read-only --cap-drop ALL --security-opt no-new-privileges`), and the write to `/etc` failed. The `ReadonlyRootfs: true` value above confirms that the real container has the setting.
+
+### Trivy
+
+```
+$ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.59.1 image --severity HIGH,CRITICAL --no-progress quicknotes:lab6
+
+quicknotes:lab6 (debian 13.7)      Total: 0 (HIGH: 0, CRITICAL: 0)
+app/healthcheck (gobinary)         Total: 19 (HIGH: 19, CRITICAL: 0)
+app/quicknotes (gobinary)          Total: 19 (HIGH: 19, CRITICAL: 0)
+```
+
+Result: the operating system layer has **0** HIGH/CRITICAL findings, which is the benefit of the distroless base. The findings in the two Go binaries all come from the Go standard library (`stdlib v1.24.13`, for example CVE-2026-25679 in `net/url`, and several denial-of-service issues in `crypto/x509`, `net`, and `net/http`). All are marked `fixed`, but the fixed versions are Go 1.25.x or 1.26.x, and the lab requires the Go 1.24 builder. So I could not remove them without leaving the required Go version. I did not check which of these vulnerabilities QuickNotes can actually reach. The fix for a real deployment would be to move the builder to a fixed Go release, and Lab 9 can wire this scan into CI.
+
+### Which default gives the most security per line?
+
+The distroless base image (default 2) gives the most security for one line of the Dockerfile (`FROM gcr.io/distroless/static:nonroot`). It removes the shell, the package manager and every OS tool an attacker would use, and Trivy found 0 HIGH/CRITICAL vulnerabilities in the OS layer. The two-line `cap_drop: ALL` and the `no-new-privileges` setting are cheap too, but a non-root process already has almost no capabilities, so they add less. `read_only: true` with a `tmpfs` is the next most useful, because it stops an attacker from writing anything outside `/data` and `/tmp`.
