@@ -12,6 +12,13 @@ import (
 )
 
 func main() {
+	if len(os.Args) > 1 && os.Args[1] == "-health" {
+		resp, err := http.Get("http://127.0.0.1:8080/health")
+		if err != nil || resp.StatusCode != http.StatusOK {
+			os.Exit(1)
+		}
+		os.Exit(0)
+	}
 	addr := envOrDefault("ADDR", ":8080")
 	dataPath := envOrDefault("DATA_PATH", "data/notes.json")
 	seedPath := envOrDefault("SEED_PATH", "seed.json")

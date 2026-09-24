@@ -1,0 +1,44 @@
+services:
+  quicknotes-init:
+    image: alpine:3.20
+    user: "0:0"
+    volumes:
+      - quicknotes-data:/data
+    command: ["sh", "-c", "chown -R 65532:65532 /data"]
+    restart: "no"
+
+  quicknotes:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: quicknotes:lab6
+    container_name: quicknotes
+    depends_on:
+      quicknotes-init:
+        condition: service_completed_successfully
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/seed.json"
+    volumes:
+      - quicknotes-data:/data
+    healthcheck:
+      test: ["CMD", "/quicknotes", "-health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+    user: "65532:65532"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  quicknotes-data:
