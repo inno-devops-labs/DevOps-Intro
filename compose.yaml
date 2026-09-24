@@ -1,0 +1,36 @@
+services:
+  quicknotes:
+    build:
+      context: ./app
+    image: quicknotes:lab6
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/app/seed.json"
+    ports:
+      - "8080:8080"
+    volumes:
+      - quicknotes-data:/data
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+
+  healthcheck:
+    image: curlimages/curl:8.12.1
+    depends_on:
+      - quicknotes
+    command:
+      - /bin/sh
+      - -c
+      - |
+        while true; do
+          curl -fsS http://quicknotes:8080/health || exit 1
+          sleep 30
+        done
+    restart: unless-stopped
+
+volumes:
+  quicknotes-data:
