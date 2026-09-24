@@ -1,0 +1,34 @@
+services:
+  quicknotes:
+    build: ./app
+    image: quicknotes:lab6
+    ports:
+      # Defaults to 8080, overridable when that port is already taken.
+      - "${HOST_PORT:-8080}:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/seed.json"
+    volumes:
+      - quicknotes-data:/data
+    healthcheck:
+      test: ["CMD", "/healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+
+    # Hardening. The image already covers two of the six defaults: it runs as
+    # UID 65532 and its base is scratch, so there is no shell and no package
+    # manager to abuse. The rest are enforced by the runtime.
+    cap_drop:
+      - ALL                       # QuickNotes needs no Linux capability at all
+    read_only: true               # the root filesystem is immutable
+    tmpfs:
+      - /tmp                      # the only writable path outside the volume
+    security_opt:
+      - no-new-privileges:true    # no setuid binary can raise privileges
+
+volumes:
+  quicknotes-data:
