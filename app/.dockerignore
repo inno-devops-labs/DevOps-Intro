@@ -1,0 +1,7 @@
+quicknotes
+data
+*_test.go
+.golangci.yml
+Makefile
+README.md
+Dockerfile
