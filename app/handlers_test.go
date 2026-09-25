@@ -112,6 +112,28 @@ func TestDeleteNote_RemovesAndReturns204(t *testing.T) {
 	}
 }
 
+func TestSecurityHeaders_AppliedToAllRoutes(t *testing.T) {
+	srv := newTestServer(t)
+	for _, tc := range []struct {
+		method string
+		target string
+	}{
+		{method: http.MethodGet, target: "/health"},
+		{method: http.MethodGet, target: "/notes/999"},
+	} {
+		rec := do(t, srv, tc.method, tc.target, nil)
+		if got := rec.Header().Get("Content-Security-Policy"); got != "default-src 'none'; frame-ancestors 'none'" {
+			t.Fatalf("%s %s CSP header = %q", tc.method, tc.target, got)
+		}
+		if got := rec.Header().Get("X-Content-Type-Options"); got != "nosniff" {
+			t.Fatalf("%s %s nosniff header = %q", tc.method, tc.target, got)
+		}
+		if got := rec.Header().Get("X-Frame-Options"); got != "DENY" {
+			t.Fatalf("%s %s frame header = %q", tc.method, tc.target, got)
+		}
+	}
+}
+
 func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	srv := newTestServer(t)
 	_ = do(t, srv, http.MethodPost, "/notes", map[string]string{"title": "x"})
@@ -130,4 +152,3 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 		}
 	}
 }
-
