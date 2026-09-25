@@ -1,0 +1,29 @@
+env:
+  contexts:
+    - name: quicknotes-after
+      urls:
+        - "http://127.0.0.1:8080/health"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+
+jobs:
+  - type: spider
+    parameters:
+      context: quicknotes-after
+      url: "http://127.0.0.1:8080/health"
+      maxDuration: 1
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 5
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: /zap/wrk
+      reportFile: zap-after.html
+  - type: report
+    parameters:
+      template: traditional-json
+      reportDir: /zap/wrk
+      reportFile: zap-after.json

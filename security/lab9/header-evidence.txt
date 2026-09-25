@@ -1,0 +1,19 @@
+== before http://127.0.0.1:8081/health ==
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Fri, 25 Sep 2026 14:50:21 GMT
+Content-Length: 26
+
+
+== after http://127.0.0.1:8080/health ==
+HTTP/1.1 200 OK
+Content-Security-Policy: default-src 'none'; frame-ancestors 'none'
+Content-Type: application/json
+Cross-Origin-Resource-Policy: same-origin
+Permissions-Policy: camera=(), geolocation=(), microphone=()
+Referrer-Policy: no-referrer
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+Date: Fri, 25 Sep 2026 14:50:21 GMT
+Content-Length: 26
+

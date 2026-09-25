@@ -1,0 +1,31 @@
+Found Java version 17.0.17
+Available memory: 957 MB
+Using JVM args: -Xmx239m
+818 [main] INFO  org.parosproxy.paros.Constant - Copying default configuration to /home/zap/.ZAP/config.xml
+1013 [main] INFO  org.parosproxy.paros.Constant - Creating directory /home/zap/.ZAP/session
+1014 [main] INFO  org.parosproxy.paros.Constant - Creating directory /home/zap/.ZAP/dirbuster
+1014 [main] INFO  org.parosproxy.paros.Constant - Creating directory /home/zap/.ZAP/fuzzers
+1014 [main] INFO  org.parosproxy.paros.Constant - Creating directory /home/zap/.ZAP/plugin
+Job spider set context = quicknotes-before
+Job spider set url = http://127.0.0.1:8081/health
+Job spider set maxDuration = 1
+Job passiveScan-wait set maxDuration = 5
+Job report set template = traditional-html
+Job report set reportDir = /zap/wrk
+Job report set reportFile = zap-before.html
+Job report set template = traditional-json
+Job report set reportDir = /zap/wrk
+Job report set reportFile = zap-before.json
+Job spider started
+Job spider requesting URL http://127.0.0.1:8081/health
+Job spider found 1 URLs
+Job spider finished, time taken: 00:00:00
+Job passiveScan-wait started
+Job passiveScan-wait finished, time taken: 00:00:00
+Job report started
+Job report generated report /zap/wrk/zap-before.html
+Job report finished, time taken: 00:00:00
+Job report started
+Job report generated report /zap/wrk/zap-before.json
+Job report finished, time taken: 00:00:00
+Automation plan succeeded!

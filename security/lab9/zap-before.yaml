@@ -1,0 +1,29 @@
+env:
+  contexts:
+    - name: quicknotes-before
+      urls:
+        - "http://127.0.0.1:8081/health"
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+
+jobs:
+  - type: spider
+    parameters:
+      context: quicknotes-before
+      url: "http://127.0.0.1:8081/health"
+      maxDuration: 1
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 5
+  - type: report
+    parameters:
+      template: traditional-html
+      reportDir: /zap/wrk
+      reportFile: zap-before.html
+  - type: report
+    parameters:
+      template: traditional-json
+      reportDir: /zap/wrk
+      reportFile: zap-before.json
