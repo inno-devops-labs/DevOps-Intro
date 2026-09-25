@@ -1,0 +1,33 @@
+services:
+  volume-init:
+    image: alpine:3.20
+    user: "0:0"
+    volumes:
+      - quicknotes-data:/data
+    command: >
+      sh -c "[ -s /data/notes.json ] || echo '[]' > /data/notes.json &&
+                   chown 65532:65532 /data/notes.json &&
+                   chmod 600 /data/notes.json &&
+                   chown 65532:65532 /data"
+    restart: "no"
+
+  quicknotes:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: quicknotes:lab6
+    ports:
+      - "8080:8080"
+    volumes:
+      - quicknotes-data:/data
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/data/notes.json"
+    depends_on:
+      volume-init:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+volumes:
+  quicknotes-data:
