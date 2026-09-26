@@ -35,10 +35,10 @@ deployed seed is byte-for-byte identical to `app/seed.json`.
 ## Runtime evidence
 
 I used Ansible 10.7.0 with ansible-core 2.17.14; the complete version output is
-[recorded here](evidence/lab7/ansible-version.txt). The initial
+[recorded here](evidence/lab7/ansible-version.txt). The recorded
 [`--check --diff` preview](evidence/lab7/check-before-deploy.txt) completed with
-`failed=0`, reported the eight resources it would change, and showed the
-rendered unit contents while correctly skipping runtime service operations.
+`failed=0`, reported the three remaining resources it would change, and showed
+their rendered contents while correctly skipping runtime service operations.
 
 I interrupted the first real execution while the guest package manager was
 installing the bonus dependencies. The core service changes had already been
