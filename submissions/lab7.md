@@ -173,9 +173,18 @@ timer with its previous activation and the next activation less than five
 minutes away. I added `quicknotes_description` to the rendered unit as the
 Git-driven state change: before this branch is pulled, the VM has
 `Description=QuickNotes API`; after the pull it must contain
-`Description=QuickNotes API managed by Ansible`. The successful pull journal
-and exact commit-to-reconciliation timeline are recorded after the signed
-branch is available to the VM.
+`Description=QuickNotes API managed by Ansible`.
+
+The signed commit `d3c2041d567773a8d13542dcbe9f43291abc916f` was created at
+`2026-09-26T12:30:39Z`. The timer started `ansible-pull.service` at
+`12:33:59Z` and completed at `12:34:19Z`, so the VM reconciled 3 minutes and
+40 seconds after the commit and remained inside the required five-minute
+window. The pull changed from commit `a23d3a1` to `d3c2041`, changed the
+QuickNotes unit, fired its reload and restart handlers, and finished with
+`changed=3`, `failed=0`. The final state contains the new description. The
+[successful pull journal](evidence/lab7/ansible-pull-journal.txt) and full
+[commit-to-reconciliation timeline](evidence/lab7/convergence-timeline.txt)
+preserve the evidence.
 
 ### h) Pull-mode security benefit
 
@@ -203,5 +212,6 @@ simpler than a Kubernetes controller's reconciliation loop.
 - [x] All nine design questions answered.
 - [x] Bonus artifacts and automated installation included.
 - [x] Runtime recaps, HTTP evidence, idempotency, selective change, and timer evidence.
-- [ ] Successful pull journal and commit-to-reconciliation timeline.
-- [ ] Signed commit, upstream pull request, and Moodle submission.
+- [x] Successful pull journal and 3 minute 40 second convergence timeline.
+- [x] Signed implementation commit published on `feature/lab7`.
+- [ ] Upstream pull request and Moodle submission.
