@@ -1,0 +1,24 @@
+Sep 26 11:58:52 quicknotes-lab5 systemd[1]: Starting ansible-pull.service - Converge QuickNotes configuration from Git...
+Sep 26 11:58:54 quicknotes-lab5 python3[3860]: ansible-git Invoked with name=https://github.com/sonder314/DevOps-Intro.git dest=/root/.ansible/pull/quicknotes-lab5 version=feature/lab7 depth=1 repo=https://github.com/sonder314/DevOps-Intro.git remote=origin force=False clone=True update=True verify_commit=False gpg_whitelist=[] accept_hostkey=False accept_newhostkey=False bare=False recursive=True single_branch=False track_submodules=False refspec=None reference=None key_file=None ssh_opts=None executable=None umask=None archive=None archive_prefix=None separate_git_dir=None
+Sep 26 11:58:56 quicknotes-lab5 python3[3860]: ansible-git [WARNING] Ignoring depth argument. Shallow clones are only available for HEAD, branches, tags or in combination with refspec.
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]: [WARNING]: Could not match supplied host pattern, ignoring: quicknotes-lab5
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]: localhost [WARNING]:| FAILED!  Ignoring => {
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]:     "depth arguchanged": ment. Shalfalse,
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]:    low clones "cmd": "/ are only usr/bin/giavailable t checkoutfor HEAD,
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]:  --force fbranches, eature/labtags or in7",
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]:     "m combinatisg": "Failon with reed to checfspec.
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]: kout feature/lab7",
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]:     "rc": 1,
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]:     "stderr": "error: pathspec 'feature/lab7' did not match any file(s) known to git\n",
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]:     "stderr_lines": [
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]:         "error: pathspec 'feature/lab7' did not match any file(s) known to git"
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]:     ],
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]:     "stdout": "",
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]:     "stdout_lines": []
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]: }
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]: Starting Ansible Pull at 2026-09-26 11:58:53
+Sep 26 11:58:59 quicknotes-lab5 ansible-pull[3743]: /usr/bin/ansible-pull -U https://github.com/sonder314/DevOps-Intro.git -C feature/lab7 -i /etc/quicknotes-ansible-inventory.ini ansible/playbook.yaml
+Sep 26 11:59:00 quicknotes-lab5 systemd[1]: ansible-pull.service: Main process exited, code=exited, status=2/INVALIDARGUMENT
+Sep 26 11:59:00 quicknotes-lab5 systemd[1]: ansible-pull.service: Failed with result 'exit-code'.
+Sep 26 11:59:00 quicknotes-lab5 systemd[1]: Failed to start ansible-pull.service - Converge QuickNotes configuration from Git.
+Sep 26 11:59:00 quicknotes-lab5 systemd[1]: ansible-pull.service: Consumed 2.280s CPU time.

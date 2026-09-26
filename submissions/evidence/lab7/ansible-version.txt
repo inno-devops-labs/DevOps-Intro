@@ -1,0 +1,9 @@
+ansible-playbook [core 2.17.14]
+  config file = None
+  configured module search path = ['/home/arina/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /home/arina/Desktop/devops/DevOps-Intro/.venv/lib/python3.14/site-packages/ansible
+  ansible collection location = /home/arina/.ansible/collections:/usr/share/ansible/collections
+  executable location = .venv/bin/ansible-playbook
+  python version = 3.14.4 (main, Aug 20 2026, 10:41:58) [GCC 15.2.0] (/home/arina/Desktop/devops/DevOps-Intro/.venv/bin/python3)
+  jinja version = 3.1.6
+  libyaml = True

@@ -1,0 +1,137 @@
+---
+- name: Deploy QuickNotes
+  hosts: quicknotes
+  become: true
+  gather_facts: false
+
+  vars:
+    quicknotes_user: quicknotes
+    quicknotes_group: quicknotes
+    quicknotes_binary_path: /usr/local/bin/quicknotes
+    quicknotes_data_dir: /var/lib/quicknotes
+    quicknotes_data_path: /var/lib/quicknotes/notes.json
+    quicknotes_seed_path: /var/lib/quicknotes/seed.json
+    quicknotes_listen_addr: "0.0.0.0:8080"
+    quicknotes_restart_sec: 2s
+    quicknotes_description: QuickNotes API managed by Ansible
+
+    ansible_pull_repo_url: https://github.com/sonder314/DevOps-Intro.git
+    ansible_pull_branch: feature/lab7
+    ansible_pull_inventory_path: /etc/quicknotes-ansible-inventory.ini
+
+  tasks:
+    - name: Create QuickNotes system group
+      ansible.builtin.group:
+        name: "{{ quicknotes_group }}"
+        system: true
+
+    - name: Create QuickNotes system user
+      ansible.builtin.user:
+        name: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        system: true
+        create_home: false
+        shell: /usr/sbin/nologin
+
+    - name: Create QuickNotes data directory
+      ansible.builtin.file:
+        path: "{{ quicknotes_data_dir }}"
+        state: directory
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        mode: "0750"
+
+    - name: Install QuickNotes binary
+      ansible.builtin.copy:
+        src: files/quicknotes
+        dest: "{{ quicknotes_binary_path }}"
+        owner: root
+        group: root
+        mode: "0755"
+      notify: Restart quicknotes
+
+    - name: Install QuickNotes seed data
+      ansible.builtin.copy:
+        src: files/seed.json
+        dest: "{{ quicknotes_seed_path }}"
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        mode: "0640"
+
+    - name: Install QuickNotes systemd unit
+      ansible.builtin.template:
+        src: templates/quicknotes.service.j2
+        dest: /etc/systemd/system/quicknotes.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify:
+        - Reload systemd
+        - Restart quicknotes
+
+    - name: Apply pending service handlers before managing the service
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start QuickNotes
+      ansible.builtin.systemd_service:
+        name: quicknotes.service
+        enabled: true
+        state: started
+      when: not ansible_check_mode
+
+    - name: Install Git and Ansible for pull-based convergence
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install local ansible-pull inventory
+      ansible.builtin.copy:
+        src: local-inventory.ini
+        dest: "{{ ansible_pull_inventory_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Install ansible-pull service
+      ansible.builtin.template:
+        src: templates/ansible-pull.service.j2
+        dest: /etc/systemd/system/ansible-pull.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload systemd
+
+    - name: Install ansible-pull timer
+      ansible.builtin.template:
+        src: templates/ansible-pull.timer.j2
+        dest: /etc/systemd/system/ansible-pull.timer
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload systemd
+
+    - name: Apply pending systemd reload before managing the timer
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start ansible-pull timer
+      ansible.builtin.systemd_service:
+        name: ansible-pull.timer
+        enabled: true
+        state: started
+      when: not ansible_check_mode
+
+  handlers:
+    - name: Reload systemd
+      ansible.builtin.systemd_service:
+        daemon_reload: true
+      when: not ansible_check_mode
+
+    - name: Restart quicknotes
+      ansible.builtin.systemd_service:
+        name: quicknotes.service
+        state: restarted
+      when: not ansible_check_mode

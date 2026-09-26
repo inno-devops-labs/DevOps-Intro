@@ -1,0 +1,4 @@
+NEXT                            LEFT LAST                         PASSED UNIT               ACTIVATES
+Sat 2026-09-26 12:03:52 UTC 4min 13s Sat 2026-09-26 11:58:52 UTC 46s ago ansible-pull.timer ansible-pull.service
+
+1 timers listed.
