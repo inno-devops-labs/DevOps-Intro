@@ -1,0 +1,21 @@
+[Unit]
+Description=QuickNotes note-taking service
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{ quicknotes_user }}
+Group={{ quicknotes_group }}
+WorkingDirectory={{ quicknotes_data_dir }}
+Environment=ADDR={{ quicknotes_listen_addr }}
+Environment=DATA_PATH={{ quicknotes_data_file }}
+Environment=SEED_PATH={{ quicknotes_seed_file }}
+ExecStart={{ quicknotes_binary_path }}
+Restart=on-failure
+RestartSec={{ quicknotes_restart_sec }}s
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

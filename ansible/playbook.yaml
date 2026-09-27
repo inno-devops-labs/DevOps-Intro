@@ -1,0 +1,133 @@
+---
+- name: Deploy QuickNotes
+  hosts: quicknotes
+  become: true
+  gather_facts: false
+
+  vars:
+    quicknotes_repo_url: "https://github.com/Salamer2/DevOps-Intro.git"
+    quicknotes_repo_branch: "feature/lab7"
+    quicknotes_pull_dir: /var/lib/ansible/local
+    quicknotes_pull_inventory: /etc/ansible/inventory-local.ini
+    quicknotes_user: quicknotes
+    quicknotes_group: quicknotes
+    quicknotes_data_dir: /var/lib/quicknotes
+    quicknotes_data_file: /var/lib/quicknotes/notes.json
+    quicknotes_seed_file: /var/lib/quicknotes/seed.json
+    quicknotes_binary_path: /usr/local/bin/quicknotes
+    quicknotes_unit_path: /etc/systemd/system/quicknotes.service
+    quicknotes_listen_addr: ":8080"
+    quicknotes_restart_sec: 3
+
+  tasks:
+    - name: Create the quicknotes system group
+      ansible.builtin.group:
+        name: "{{ quicknotes_group }}"
+        system: true
+        state: present
+
+    - name: Create the quicknotes system user
+      ansible.builtin.user:
+        name: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        system: true
+        shell: /usr/sbin/nologin
+        home: "{{ quicknotes_data_dir }}"
+        create_home: false
+
+    - name: Ensure the data directory exists
+      ansible.builtin.file:
+        path: "{{ quicknotes_data_dir }}"
+        state: directory
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        mode: "0750"
+
+    - name: Install the QuickNotes binary
+      ansible.builtin.copy:
+        src: files/quicknotes
+        dest: "{{ quicknotes_binary_path }}"
+        owner: root
+        group: root
+        mode: "0755"
+      notify: restart quicknotes
+
+    - name: Ship the seed data
+      ansible.builtin.copy:
+        src: files/seed.json
+        dest: "{{ quicknotes_seed_file }}"
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        mode: "0640"
+
+    - name: Render the systemd unit from template
+      ansible.builtin.template:
+        src: templates/quicknotes.service.j2
+        dest: "{{ quicknotes_unit_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+      notify: restart quicknotes
+
+    - name: Reload systemd, enable and start quicknotes
+      ansible.builtin.systemd:
+        name: quicknotes
+        state: started
+        enabled: true
+        daemon_reload: true
+
+    
+    - name: Install ansible and git
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Make /etc/ansible
+      ansible.builtin.file:
+        path: /etc/ansible
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Ship the local inventory for ansible-pull
+      ansible.builtin.copy:
+        src: files/inventory-local.ini
+        dest: "{{ quicknotes_pull_inventory }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Render the ansible-pull service unit
+      ansible.builtin.template:
+        src: templates/ansible-pull.service.j2
+        dest: /etc/systemd/system/ansible-pull.service
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Render the ansible-pull timer unit
+      ansible.builtin.template:
+        src: templates/ansible-pull.timer.j2
+        dest: /etc/systemd/system/ansible-pull.timer
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Enable and start the ansible-pull timer
+      ansible.builtin.systemd:
+        name: ansible-pull.timer
+        state: started
+        enabled: true
+        daemon_reload: true
+
+  handlers:
+    - name: restart quicknotes
+      ansible.builtin.systemd:
+        name: quicknotes
+        state: restarted
+        daemon_reload: true
