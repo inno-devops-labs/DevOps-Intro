@@ -1,0 +1,432 @@
+{
+  "scenario": "baseline: single Go 1.24, no cache, no path filter",
+  "method": "run creation to final job completion; includes queue time; failed runs excluded",
+  "sample_count": 2,
+  "median_seconds": 34.0,
+  "runs": [
+    {
+      "id": 35305034562,
+      "url": "https://github.com/SanyaLikeIT/DevOps-Intro/actions/runs/35305034562",
+      "head_sha": "9e87967794177539666b6d51de5cbd38f8137f6d",
+      "attempt": 1,
+      "created_at": "2026-09-18T03:55:51Z",
+      "run_started_at": "2026-09-18T03:55:51Z",
+      "last_job_completed_at": "2026-09-18T03:56:27+00:00",
+      "wall_clock_seconds": 36.0,
+      "jobs": [
+        {
+          "name": "lint",
+          "conclusion": "success",
+          "started_at": "2026-09-18T03:55:54Z",
+          "completed_at": "2026-09-18T03:56:17Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-09-18T03:55:55Z",
+              "completed_at": "2026-09-18T03:55:56Z"
+            },
+            {
+              "name": "Check out repository",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-09-18T03:55:56Z",
+              "completed_at": "2026-09-18T03:55:57Z"
+            },
+            {
+              "name": "Set up Go",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-09-18T03:55:57Z",
+              "completed_at": "2026-09-18T03:55:58Z"
+            },
+            {
+              "name": "Lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-09-18T03:55:58Z",
+              "completed_at": "2026-09-18T03:56:15Z"
+            },
+            {
+              "name": "Post Lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-09-18T03:56:15Z",
+              "completed_at": "2026-09-18T03:56:15Z"
+            },
+            {
+              "name": "Post Set up Go",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-09-18T03:56:15Z",
+              "completed_at": "2026-09-18T03:56:16Z"
+            },
+            {
+              "name": "Post Check out repository",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-09-18T03:56:16Z",
+              "completed_at": "2026-09-18T03:56:16Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-09-18T03:56:16Z",
+              "completed_at": "2026-09-18T03:56:16Z"
+            }
+          ]
+        },
+        {
+          "name": "test",
+          "conclusion": "success",
+          "started_at": "2026-09-18T03:55:54Z",
+          "completed_at": "2026-09-18T03:56:27Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-09-18T03:55:55Z",
+              "completed_at": "2026-09-18T03:55:56Z"
+            },
+            {
+              "name": "Check out repository",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-09-18T03:55:56Z",
+              "completed_at": "2026-09-18T03:55:57Z"
+            },
+            {
+              "name": "Set up Go",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-09-18T03:55:57Z",
+              "completed_at": "2026-09-18T03:56:00Z"
+            },
+            {
+              "name": "Test with race detector",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-09-18T03:56:00Z",
+              "completed_at": "2026-09-18T03:56:24Z"
+            },
+            {
+              "name": "Post Set up Go",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-09-18T03:56:24Z",
+              "completed_at": "2026-09-18T03:56:25Z"
+            },
+            {
+              "name": "Post Check out repository",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-09-18T03:56:25Z",
+              "completed_at": "2026-09-18T03:56:25Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-09-18T03:56:25Z",
+              "completed_at": "2026-09-18T03:56:25Z"
+            }
+          ]
+        },
+        {
+          "name": "vet",
+          "conclusion": "success",
+          "started_at": "2026-09-18T03:55:56Z",
+          "completed_at": "2026-09-18T03:56:19Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-09-18T03:55:57Z",
+              "completed_at": "2026-09-18T03:55:58Z"
+            },
+            {
+              "name": "Check out repository",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-09-18T03:55:58Z",
+              "completed_at": "2026-09-18T03:55:59Z"
+            },
+            {
+              "name": "Set up Go",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-09-18T03:55:59Z",
+              "completed_at": "2026-09-18T03:56:00Z"
+            },
+            {
+              "name": "Vet",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-09-18T03:56:00Z",
+              "completed_at": "2026-09-18T03:56:16Z"
+            },
+            {
+              "name": "Post Set up Go",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-09-18T03:56:16Z",
+              "completed_at": "2026-09-18T03:56:16Z"
+            },
+            {
+              "name": "Post Check out repository",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-09-18T03:56:16Z",
+              "completed_at": "2026-09-18T03:56:17Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-09-18T03:56:17Z",
+              "completed_at": "2026-09-18T03:56:17Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 35306448411,
+      "url": "https://github.com/SanyaLikeIT/DevOps-Intro/actions/runs/35306448411",
+      "head_sha": "43ac23b6129c065beb2e65f7bcff2980f6f78f60",
+      "attempt": 1,
+      "created_at": "2026-09-18T04:18:16Z",
+      "run_started_at": "2026-09-18T04:18:16Z",
+      "last_job_completed_at": "2026-09-18T04:18:48+00:00",
+      "wall_clock_seconds": 32.0,
+      "jobs": [
+        {
+          "name": "test",
+          "conclusion": "success",
+          "started_at": "2026-09-18T04:18:19Z",
+          "completed_at": "2026-09-18T04:18:44Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-09-18T04:18:20Z",
+              "completed_at": "2026-09-18T04:18:21Z"
+            },
+            {
+              "name": "Check out repository",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-09-18T04:18:21Z",
+              "completed_at": "2026-09-18T04:18:22Z"
+            },
+            {
+              "name": "Set up Go",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-09-18T04:18:22Z",
+              "completed_at": "2026-09-18T04:18:24Z"
+            },
+            {
+              "name": "Test with race detector",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-09-18T04:18:24Z",
+              "completed_at": "2026-09-18T04:18:42Z"
+            },
+            {
+              "name": "Post Set up Go",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-09-18T04:18:42Z",
+              "completed_at": "2026-09-18T04:18:42Z"
+            },
+            {
+              "name": "Post Check out repository",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-09-18T04:18:42Z",
+              "completed_at": "2026-09-18T04:18:42Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-09-18T04:18:42Z",
+              "completed_at": "2026-09-18T04:18:42Z"
+            }
+          ]
+        },
+        {
+          "name": "vet",
+          "conclusion": "success",
+          "started_at": "2026-09-18T04:18:19Z",
+          "completed_at": "2026-09-18T04:18:39Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-09-18T04:18:19Z",
+              "completed_at": "2026-09-18T04:18:20Z"
+            },
+            {
+              "name": "Check out repository",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-09-18T04:18:20Z",
+              "completed_at": "2026-09-18T04:18:21Z"
+            },
+            {
+              "name": "Set up Go",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-09-18T04:18:21Z",
+              "completed_at": "2026-09-18T04:18:22Z"
+            },
+            {
+              "name": "Vet",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-09-18T04:18:22Z",
+              "completed_at": "2026-09-18T04:18:38Z"
+            },
+            {
+              "name": "Post Set up Go",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-09-18T04:18:38Z",
+              "completed_at": "2026-09-18T04:18:38Z"
+            },
+            {
+              "name": "Post Check out repository",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-09-18T04:18:38Z",
+              "completed_at": "2026-09-18T04:18:38Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-09-18T04:18:38Z",
+              "completed_at": "2026-09-18T04:18:38Z"
+            }
+          ]
+        },
+        {
+          "name": "lint",
+          "conclusion": "success",
+          "started_at": "2026-09-18T04:18:19Z",
+          "completed_at": "2026-09-18T04:18:48Z",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-09-18T04:18:20Z",
+              "completed_at": "2026-09-18T04:18:22Z"
+            },
+            {
+              "name": "Check out repository",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-09-18T04:18:22Z",
+              "completed_at": "2026-09-18T04:18:24Z"
+            },
+            {
+              "name": "Set up Go",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-09-18T04:18:24Z",
+              "completed_at": "2026-09-18T04:18:24Z"
+            },
+            {
+              "name": "Lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-09-18T04:18:24Z",
+              "completed_at": "2026-09-18T04:18:46Z"
+            },
+            {
+              "name": "Post Lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-09-18T04:18:46Z",
+              "completed_at": "2026-09-18T04:18:46Z"
+            },
+            {
+              "name": "Post Set up Go",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-09-18T04:18:46Z",
+              "completed_at": "2026-09-18T04:18:46Z"
+            },
+            {
+              "name": "Post Check out repository",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-09-18T04:18:46Z",
+              "completed_at": "2026-09-18T04:18:46Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-09-18T04:18:46Z",
+              "completed_at": "2026-09-18T04:18:46Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
