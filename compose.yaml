@@ -1,0 +1,33 @@
+services:
+  quicknotes:
+    build: ./app
+    image: quicknotes:lab6
+    ports:
+      - "8080:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: /data/notes.json
+      SEED_PATH: /app/seed.json
+    volumes:
+      - quicknotes-data:/data
+    healthcheck:
+      # Exec form, and the probe is the static binary baked into the image --
+      # distroless has no shell, so CMD-SHELL and curl/wget are not options.
+      test: ["CMD", "/app/healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 2s
+    restart: unless-stopped
+
+    # --- Lecture 6 hardening defaults (Bonus) ---
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  quicknotes-data:
