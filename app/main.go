@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,6 +14,13 @@ import (
 
 func main() {
 	addr := envOrDefault("ADDR", ":8080")
+	if len(os.Args) == 2 && os.Args[1] == "healthcheck" {
+		if err := checkHealth(addr); err != nil {
+			log.Print(err)
+			os.Exit(1)
+		}
+		return
+	}
 	dataPath := envOrDefault("DATA_PATH", "data/notes.json")
 	seedPath := envOrDefault("SEED_PATH", "seed.json")
 
@@ -49,6 +57,23 @@ func main() {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Printf("shutdown: %v", err)
 	}
+}
+
+func checkHealth(addr string) error {
+	_, port, err := net.SplitHostPort(addr)
+	if err != nil {
+		return err
+	}
+	client := &http.Client{Timeout: 2 * time.Second}
+	resp, err := client.Get("http://127.0.0.1:" + port + "/health")
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return errors.New("health endpoint returned " + resp.Status)
+	}
+	return nil
 }
 
 func envOrDefault(k, def string) string {
