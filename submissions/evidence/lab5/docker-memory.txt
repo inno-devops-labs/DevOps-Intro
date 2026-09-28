@@ -1,0 +1,2 @@
+CONTAINER ID   NAME              CPU %     MEM USAGE / LIMIT     MEM %     NET I/O     BLOCK I/O   PIDS
+3a320d8d00fc   quicknotes-lab5   0.00%     6.234MiB / 6.877GiB   0.09%     0B / 126B   0B / 0B     8

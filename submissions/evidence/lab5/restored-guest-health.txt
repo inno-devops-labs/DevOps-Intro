@@ -1,0 +1,2 @@
+$ vagrant ssh -c curl\ -fsS\ http://127.0.0.1:8080/health
+{"notes":4,"status":"ok"}

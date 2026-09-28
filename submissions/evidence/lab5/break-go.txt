@@ -1,0 +1,1 @@
+$ vagrant ssh -c sudo\ mv\ /usr/local/go/bin/go\ /usr/local/go/bin/go.lab5-broken
