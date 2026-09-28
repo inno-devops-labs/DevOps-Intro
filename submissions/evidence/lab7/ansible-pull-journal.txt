@@ -1,0 +1,74 @@
+Git commit: d3c2041d567773a8d13542dcbe9f43291abc916f
+Commit timestamp: 2026-09-26T12:30:39Z
+2026-09-26T12:33:59+00:00 quicknotes-lab5 systemd[1]: Starting ansible-pull.service - Converge QuickNotes configuration from Git...
+2026-09-26T12:34:00+00:00 quicknotes-lab5 python3[7252]: ansible-git Invoked with name=https://github.com/sonder314/DevOps-Intro.git dest=/root/.ansible/pull/quicknotes-lab5 version=feature/lab7 depth=1 repo=https://github.com/sonder314/DevOps-Intro.git remote=origin force=False clone=True update=True verify_commit=False gpg_whitelist=[] accept_hostkey=False accept_newhostkey=False bare=False recursive=True single_branch=False track_submodules=False refspec=None reference=None key_file=None ssh_opts=None executable=None umask=None archive=None archive_prefix=None separate_git_dir=None
+2026-09-26T12:34:08+00:00 quicknotes-lab5 python3[7310]: ansible-ansible.builtin.group Invoked with name=quicknotes system=True state=present force=False local=False non_unique=False gid=None
+2026-09-26T12:34:09+00:00 quicknotes-lab5 python3[7335]: ansible-ansible.builtin.user Invoked with name=quicknotes group=quicknotes system=True create_home=False shell=/usr/sbin/nologin state=present non_unique=False force=False remove=False move_home=False append=False ssh_key_bits=0 ssh_key_type=rsa ssh_key_comment=ansible-generated on quicknotes-lab5 update_password=always uid=None groups=None comment=None home=None password=NOT_LOGGING_PARAMETER login_class=None password_expire_max=None password_expire_min=None password_expire_warn=None hidden=None seuser=None skeleton=None generate_ssh_key=None ssh_key_file=None ssh_key_passphrase=NOT_LOGGING_PARAMETER expires=None password_lock=None local=None profile=None authorization=None role=None umask=None
+2026-09-26T12:34:09+00:00 quicknotes-lab5 python3[7362]: ansible-ansible.builtin.file Invoked with path=/var/lib/quicknotes state=directory owner=quicknotes group=quicknotes mode=0750 recurse=False force=False follow=True modification_time_format=%Y%m%d%H%M.%S access_time_format=%Y%m%d%H%M.%S unsafe_writes=False _original_basename=None _diff_peek=None src=None modification_time=None access_time=None seuser=None serole=None selevel=None setype=None attributes=None
+2026-09-26T12:34:09+00:00 quicknotes-lab5 python3[7387]: ansible-ansible.legacy.stat Invoked with path=/usr/local/bin/quicknotes follow=False get_checksum=True checksum_algorithm=sha1 get_mime=True get_attributes=True
+2026-09-26T12:34:10+00:00 quicknotes-lab5 python3[7397]: ansible-ansible.legacy.file Invoked with owner=root group=root mode=0755 dest=/usr/local/bin/quicknotes _original_basename=quicknotes recurse=False state=file path=/usr/local/bin/quicknotes force=False follow=True modification_time_format=%Y%m%d%H%M.%S access_time_format=%Y%m%d%H%M.%S unsafe_writes=False _diff_peek=None src=None modification_time=None access_time=None seuser=None serole=None selevel=None setype=None attributes=None
+2026-09-26T12:34:10+00:00 quicknotes-lab5 python3[7422]: ansible-ansible.legacy.stat Invoked with path=/var/lib/quicknotes/seed.json follow=False get_checksum=True checksum_algorithm=sha1 get_mime=True get_attributes=True
+2026-09-26T12:34:10+00:00 quicknotes-lab5 python3[7432]: ansible-ansible.legacy.file Invoked with owner=quicknotes group=quicknotes mode=0640 dest=/var/lib/quicknotes/seed.json _original_basename=seed.json recurse=False state=file path=/var/lib/quicknotes/seed.json force=False follow=True modification_time_format=%Y%m%d%H%M.%S access_time_format=%Y%m%d%H%M.%S unsafe_writes=False _diff_peek=None src=None modification_time=None access_time=None seuser=None serole=None selevel=None setype=None attributes=None
+2026-09-26T12:34:11+00:00 quicknotes-lab5 python3[7457]: ansible-ansible.legacy.stat Invoked with path=/etc/systemd/system/quicknotes.service follow=False get_checksum=True checksum_algorithm=sha1 get_mime=True get_attributes=True
+2026-09-26T12:34:11+00:00 quicknotes-lab5 python3[7471]: ansible-ansible.legacy.copy Invoked with src=/root/.ansible/tmp/ansible-tmp-1790426050.779454-7438-217985491881582/source dest=/etc/systemd/system/quicknotes.service owner=root group=root mode=0644 follow=False _original_basename=quicknotes.service.j2 checksum=823583427368a316eab0794c763f1232293fbb72 backup=False force=True unsafe_writes=False content=NOT_LOGGING_PARAMETER validate=None directory_mode=None remote_src=None local_follow=None seuser=None serole=None selevel=None setype=None attributes=None
+2026-09-26T12:34:12+00:00 quicknotes-lab5 python3[7496]: ansible-ansible.builtin.systemd_service Invoked with daemon_reload=True daemon_reexec=False scope=system no_block=False name=None state=None enabled=None force=None masked=None
+2026-09-26T12:34:12+00:00 quicknotes-lab5 python3[7560]: ansible-ansible.builtin.systemd_service Invoked with name=quicknotes.service state=restarted daemon_reload=False daemon_reexec=False scope=system no_block=False enabled=None force=None masked=None
+2026-09-26T12:34:13+00:00 quicknotes-lab5 python3[7597]: ansible-ansible.builtin.systemd_service Invoked with name=quicknotes.service enabled=True state=started daemon_reload=False daemon_reexec=False scope=system no_block=False force=None masked=None
+2026-09-26T12:34:14+00:00 quicknotes-lab5 python3[7624]: ansible-ansible.builtin.apt Invoked with name=['ansible', 'git'] state=present update_cache=True cache_valid_time=3600 package=['ansible', 'git'] update_cache_retries=5 update_cache_retry_max_delay=12 purge=False force=False upgrade=no dpkg_options=force-confdef,force-confold autoremove=False autoclean=False fail_on_autoremove=False only_upgrade=False force_apt_get=False clean=False allow_unauthenticated=False allow_downgrade=False allow_change_held_packages=False lock_timeout=60 deb=None default_release=None install_recommends=None policy_rc_d=None
+2026-09-26T12:34:16+00:00 quicknotes-lab5 python3[7900]: ansible-ansible.legacy.stat Invoked with path=/etc/quicknotes-ansible-inventory.ini follow=False get_checksum=True checksum_algorithm=sha1 get_mime=True get_attributes=True
+2026-09-26T12:34:16+00:00 quicknotes-lab5 python3[7910]: ansible-ansible.legacy.file Invoked with owner=root group=root mode=0644 dest=/etc/quicknotes-ansible-inventory.ini _original_basename=local-inventory.ini recurse=False state=file path=/etc/quicknotes-ansible-inventory.ini force=False follow=True modification_time_format=%Y%m%d%H%M.%S access_time_format=%Y%m%d%H%M.%S unsafe_writes=False _diff_peek=None src=None modification_time=None access_time=None seuser=None serole=None selevel=None setype=None attributes=None
+2026-09-26T12:34:17+00:00 quicknotes-lab5 python3[7935]: ansible-ansible.legacy.stat Invoked with path=/etc/systemd/system/ansible-pull.service follow=False get_checksum=True checksum_algorithm=sha1 get_mime=True get_attributes=True
+2026-09-26T12:34:17+00:00 quicknotes-lab5 python3[7949]: ansible-ansible.legacy.copy Invoked with src=/root/.ansible/tmp/ansible-tmp-1790426056.9798346-7916-238051202040565/source dest=/etc/systemd/system/ansible-pull.service owner=root group=root mode=0644 follow=False _original_basename=ansible-pull.service.j2 checksum=aa4119dfed55a1105088b659479f65ba065aa54f backup=False force=True unsafe_writes=False content=NOT_LOGGING_PARAMETER validate=None directory_mode=None remote_src=None local_follow=None seuser=None serole=None selevel=None setype=None attributes=None
+2026-09-26T12:34:17+00:00 quicknotes-lab5 python3[7974]: ansible-ansible.legacy.stat Invoked with path=/etc/systemd/system/ansible-pull.timer follow=False get_checksum=True checksum_algorithm=sha1 get_mime=True get_attributes=True
+2026-09-26T12:34:18+00:00 quicknotes-lab5 python3[7984]: ansible-ansible.legacy.file Invoked with owner=root group=root mode=0644 dest=/etc/systemd/system/ansible-pull.timer _original_basename=ansible-pull.timer.j2 recurse=False state=file path=/etc/systemd/system/ansible-pull.timer force=False follow=True modification_time_format=%Y%m%d%H%M.%S access_time_format=%Y%m%d%H%M.%S unsafe_writes=False _diff_peek=None src=None modification_time=None access_time=None seuser=None serole=None selevel=None setype=None attributes=None
+2026-09-26T12:34:18+00:00 quicknotes-lab5 python3[8009]: ansible-ansible.builtin.systemd_service Invoked with daemon_reload=True daemon_reexec=False scope=system no_block=False name=None state=None enabled=None force=None masked=None
+2026-09-26T12:34:19+00:00 quicknotes-lab5 python3[8074]: ansible-ansible.builtin.systemd_service Invoked with name=ansible-pull.timer enabled=True state=started daemon_reload=False daemon_reexec=False scope=system no_block=False force=None masked=None
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: [WARNING]: Could not match supplied host pattern, ignoring: quicknotes-lab5
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: localhost | CHANGED => {
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]:     "after": "d3c2041d567773a8d13542dcbe9f43291abc916f",
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]:     "before": "a23d3a13b6c9da7b8781da22d0716d6dcba23f21",
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]:     "changed": true,
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]:     "remote_url_changed": false
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: }
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: [WARNING]: Could not match supplied host pattern, ignoring: quicknotes-lab5
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: PLAY [Deploy QuickNotes] *******************************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: TASK [Create QuickNotes system group] ******************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: ok: [localhost]
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: TASK [Create QuickNotes system user] *******************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: ok: [localhost]
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: TASK [Create QuickNotes data directory] ****************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: ok: [localhost]
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: TASK [Install QuickNotes binary] ***********************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: ok: [localhost]
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: TASK [Install QuickNotes seed data] ********************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: ok: [localhost]
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: TASK [Install QuickNotes systemd unit] *****************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: changed: [localhost]
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: TASK [Apply pending service handlers before managing the service] **************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: RUNNING HANDLER [Reload systemd] ***********************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: ok: [localhost]
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: RUNNING HANDLER [Restart quicknotes] *******************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: changed: [localhost]
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: TASK [Enable and start QuickNotes] *********************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: ok: [localhost]
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: TASK [Install Git and Ansible for pull-based convergence] **********************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: ok: [localhost]
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: TASK [Install local ansible-pull inventory] ************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: ok: [localhost]
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: TASK [Install ansible-pull service] ********************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: changed: [localhost]
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: TASK [Install ansible-pull timer] **********************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: ok: [localhost]
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: TASK [Apply pending systemd reload before managing the timer] ******************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: RUNNING HANDLER [Reload systemd] ***********************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: ok: [localhost]
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: TASK [Enable and start ansible-pull timer] *************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: ok: [localhost]
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: PLAY RECAP *********************************************************************
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: localhost                  : ok=15   changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: Starting Ansible Pull at 2026-09-26 12:33:59
+2026-09-26T12:34:19+00:00 quicknotes-lab5 ansible-pull[7226]: /usr/bin/ansible-pull -U https://github.com/sonder314/DevOps-Intro.git -C feature/lab7 -i /etc/quicknotes-ansible-inventory.ini ansible/playbook.yaml
+2026-09-26T12:34:19+00:00 quicknotes-lab5 systemd[1]: ansible-pull.service: Deactivated successfully.
+2026-09-26T12:34:19+00:00 quicknotes-lab5 systemd[1]: Finished ansible-pull.service - Converge QuickNotes configuration from Git.
+Deployed state:
+Description=QuickNotes API managed by Ansible

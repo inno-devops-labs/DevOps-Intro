@@ -1,0 +1,87 @@
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Create QuickNotes system group] ******************************************
+ok: [quicknotes-vm]
+
+TASK [Create QuickNotes system user] *******************************************
+ok: [quicknotes-vm]
+
+TASK [Create QuickNotes data directory] ****************************************
+ok: [quicknotes-vm]
+
+TASK [Install QuickNotes binary] ***********************************************
+ok: [quicknotes-vm]
+
+TASK [Install QuickNotes seed data] ********************************************
+ok: [quicknotes-vm]
+
+TASK [Install QuickNotes systemd unit] *****************************************
+ok: [quicknotes-vm]
+
+TASK [Apply pending service handlers before managing the service] **************
+
+TASK [Enable and start QuickNotes] *********************************************
+skipping: [quicknotes-vm]
+
+TASK [Install Git and Ansible for pull-based convergence] **********************
+ok: [quicknotes-vm]
+
+TASK [Install local ansible-pull inventory] ************************************
+--- before
++++ after: /home/arina/Desktop/devops/DevOps-Intro/ansible/local-inventory.ini
+@@ -0,0 +1,5 @@
++[quicknotes]
++localhost ansible_connection=local
++
++[quicknotes:vars]
++ansible_python_interpreter=/usr/bin/python3
+
+changed: [quicknotes-vm]
+
+TASK [Install ansible-pull service] ********************************************
+--- before
++++ after: /home/arina/.ansible/tmp/ansible-local-301381s7og2hhi/tmpdmfj1nlr/ansible-pull.service.j2
+@@ -0,0 +1,10 @@
++[Unit]
++Description=Converge QuickNotes configuration from Git
++Wants=network-online.target
++After=network-online.target
++
++[Service]
++Type=oneshot
++ExecStart=/usr/bin/ansible-pull -U https://github.com/sonder314/DevOps-Intro.git -C feature/lab7 -i /etc/quicknotes-ansible-inventory.ini ansible/playbook.yaml
++Nice=10
++IOSchedulingClass=idle
+
+changed: [quicknotes-vm]
+
+TASK [Install ansible-pull timer] **********************************************
+--- before
++++ after: /home/arina/.ansible/tmp/ansible-local-301381s7og2hhi/tmpsdy98p3e/ansible-pull.timer.j2
+@@ -0,0 +1,12 @@
++[Unit]
++Description=Run QuickNotes configuration convergence every five minutes
++
++[Timer]
++OnBootSec=1min
++OnUnitActiveSec=5min
++AccuracySec=1s
++Persistent=true
++Unit=ansible-pull.service
++
++[Install]
++WantedBy=timers.target
+
+changed: [quicknotes-vm]
+
+TASK [Apply pending systemd reload before managing the timer] ******************
+
+RUNNING HANDLER [Reload systemd] ***********************************************
+skipping: [quicknotes-vm]
+
+TASK [Enable and start ansible-pull timer] *************************************
+skipping: [quicknotes-vm]
+
+PLAY RECAP *********************************************************************
+quicknotes-vm              : ok=10   changed=3    unreachable=0    failed=0    skipped=3    rescued=0    ignored=0

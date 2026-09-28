@@ -1,0 +1,51 @@
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Create QuickNotes system group] ******************************************
+ok: [quicknotes-vm]
+
+TASK [Create QuickNotes system user] *******************************************
+ok: [quicknotes-vm]
+
+TASK [Create QuickNotes data directory] ****************************************
+ok: [quicknotes-vm]
+
+TASK [Install QuickNotes binary] ***********************************************
+ok: [quicknotes-vm]
+
+TASK [Install QuickNotes seed data] ********************************************
+ok: [quicknotes-vm]
+
+TASK [Install QuickNotes systemd unit] *****************************************
+changed: [quicknotes-vm]
+
+TASK [Apply pending service handlers before managing the service] **************
+
+RUNNING HANDLER [Reload systemd] ***********************************************
+ok: [quicknotes-vm]
+
+RUNNING HANDLER [Restart quicknotes] *******************************************
+changed: [quicknotes-vm]
+
+TASK [Enable and start QuickNotes] *********************************************
+ok: [quicknotes-vm]
+
+TASK [Install Git and Ansible for pull-based convergence] **********************
+ok: [quicknotes-vm]
+
+TASK [Install local ansible-pull inventory] ************************************
+ok: [quicknotes-vm]
+
+TASK [Install ansible-pull service] ********************************************
+ok: [quicknotes-vm]
+
+TASK [Install ansible-pull timer] **********************************************
+ok: [quicknotes-vm]
+
+TASK [Apply pending systemd reload before managing the timer] ******************
+
+TASK [Enable and start ansible-pull timer] *************************************
+ok: [quicknotes-vm]
+
+PLAY RECAP *********************************************************************
+quicknotes-vm              : ok=14   changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0

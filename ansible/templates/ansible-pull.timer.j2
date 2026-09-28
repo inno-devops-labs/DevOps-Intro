@@ -1,0 +1,12 @@
+[Unit]
+Description=Run QuickNotes configuration convergence every five minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+AccuracySec=1s
+Persistent=true
+Unit=ansible-pull.service
+
+[Install]
+WantedBy=timers.target
