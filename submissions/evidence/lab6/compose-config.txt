@@ -1,0 +1,46 @@
+name: devops-intro
+services:
+  quicknotes:
+    build:
+      context: /home/arina/Desktop/devops/DevOps-Intro/app
+      dockerfile: Dockerfile
+    cap_drop:
+      - ALL
+    environment:
+      ADDR: 0.0.0.0:8080
+      DATA_PATH: /data/notes.json
+      SEED_PATH: /app/seed.json
+    healthcheck:
+      test:
+        - CMD
+        - /healthcheck
+      timeout: 2s
+      interval: 5s
+      retries: 10
+      start_period: 2s
+    image: quicknotes:lab6
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 8080
+        published: "8080"
+        protocol: tcp
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=16m,mode=1777
+    volumes:
+      - type: volume
+        source: quicknotes-data
+        target: /data
+        volume: {}
+networks:
+  default:
+    name: devops-intro_default
+volumes:
+  quicknotes-data:
+    name: devops-intro_quicknotes-data

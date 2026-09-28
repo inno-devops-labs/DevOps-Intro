@@ -1,0 +1,26 @@
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  28.84kB
+Step 1/5 : FROM golang:1.24-alpine AS builder
+ ---> 8bee1901f1e5
+Step 2/5 : WORKDIR /src
+ ---> Using cache
+ ---> 19f6905eaded
+Step 3/5 : COPY . .
+ ---> 5b82b15057d9
+Step 4/5 : RUN go mod download
+ ---> Running in 40c32505e55e
+[91mgo: no module dependencies to download
+[0m ---> Removed intermediate container 40c32505e55e
+ ---> 78832e076d96
+Step 5/5 : RUN CGO_ENABLED=0 GOOS=linux go build -trimpath -ldflags='-s -w' -o /out/quicknotes .
+ ---> Running in 9496a32db8fc
+ ---> Removed intermediate container 9496a32db8fc
+ ---> af202c1bf2d4
+Successfully built af202c1bf2d4
+Successfully tagged quicknotes:cache-bad
+real 15.17
+user 0.00
+sys 0.00

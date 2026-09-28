@@ -1,0 +1,6 @@
+ Container devops-intro-quicknotes-1  Stopping
+ Container devops-intro-quicknotes-1  Stopped
+ Container devops-intro-quicknotes-1  Removing
+ Container devops-intro-quicknotes-1  Removed
+ Network devops-intro_default  Removing
+ Network devops-intro_default  Removed

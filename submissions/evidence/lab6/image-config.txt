@@ -1,0 +1,9 @@
+{
+  "User": "nonroot:nonroot",
+  "ExposedPorts": {
+    "8080/tcp": {}
+  },
+  "Entrypoint": [
+    "/quicknotes"
+  ]
+}

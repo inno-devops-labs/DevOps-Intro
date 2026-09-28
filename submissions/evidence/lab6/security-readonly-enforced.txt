@@ -1,0 +1,1 @@
+write blocked as expected: open /etc/lab6-test: read-only file system
