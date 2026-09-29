@@ -13,7 +13,7 @@
     seed_path: /var/lib/quicknotes/seed.json
 
     listen_addr: ":8080"
-    restart_sec: "4s"
+    restart_sec: "5s"
 
   tasks:
     - name: Create QuickNotes system user
