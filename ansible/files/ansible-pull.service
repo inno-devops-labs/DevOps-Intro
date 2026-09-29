@@ -1,0 +1,8 @@
+[Unit]
+Description=Ansible Pull reconciliation for QuickNotes
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ansible-pull -U https://github.com/rslwqr/DevOps-Intro.git -C feature/lab7 -i ansible/local.ini ansible/playbook.yaml
