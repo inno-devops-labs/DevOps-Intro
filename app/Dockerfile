@@ -9,19 +9,12 @@ COPY go.mod ./
 RUN go mod download
 
 COPY *.go ./
-COPY cmd/healthcheck ./cmd/healthcheck
 
-RUN CGO_ENABLED=0 go build \
+RUN CGO_ENABLED=0 GOOS=linux go build \
     -trimpath \
     -ldflags="-s -w" \
     -o /quicknotes \
     .
-
-RUN CGO_ENABLED=0 go build \
-    -trimpath \
-    -ldflags="-s -w" \
-    -o /healthcheck \
-    ./cmd/healthcheck
 
 # Runtime stage
 FROM gcr.io/distroless/static-debian12:nonroot
@@ -29,7 +22,6 @@ FROM gcr.io/distroless/static-debian12:nonroot
 WORKDIR /app
 
 COPY --from=builder /quicknotes /app/quicknotes
-COPY --from=builder /healthcheck /app/healthcheck
 COPY seed.json /app/seed.json
 
 COPY --chown=nonroot:nonroot --from=builder /tmp /data
