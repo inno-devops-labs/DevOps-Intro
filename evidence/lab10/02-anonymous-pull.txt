@@ -1,0 +1,6 @@
+Image: ghcr.io/sanyalikeit/devops-intro/quicknotes:v0.1.1
+Test: DOCKER_CONFIG set to a new empty temporary directory; docker pull succeeded without login.
+Result: Status: Downloaded newer image
+Digest: sha256:0b007f8f4ad619838c7d99f715f9d09c47cc6d5015925492dc8d61d538ca60c4
+Image ID: sha256:664445093f84e40e0df67cc65dca32d963c6fb497447102a2de360eb789bca5b
+Runtime user: nonroot:nonroot

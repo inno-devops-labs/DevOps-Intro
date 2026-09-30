@@ -1,0 +1,8 @@
+POST /notes via public Codespace URL: HTTP 201
+Note ID: 5
+Title: lab10-codespace-persistence-20260927T171407Z
+Created: 2026-09-27T17:14:08.373280658Z
+Before stop: GET /notes contained the note.
+After cycle 3: GET /notes HTTP 200 contained the same ID and title.
+After cycle 3: GET /notes/5 HTTP 200 returned the same note.
+Data path: /workspaces/.quicknotes-lab10-data bind-mounted to /data.

@@ -1,0 +1,55 @@
+---
+- name: Install QuickNotes pull reconciliation
+  hosts: quicknotes
+  become: true
+  gather_facts: false
+  vars:
+    repository_url: https://github.com/SanyaLikeIT/DevOps-Intro.git
+    pull_branch: feature/lab7
+  tasks:
+    - name: Install Git and Ansible core
+      ansible.builtin.apt:
+        name:
+          - git
+          - ansible-core
+        state: present
+        update_cache: true
+
+    - name: Create Ansible configuration directory
+      ansible.builtin.file:
+        path: /etc/ansible
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Install local inventory
+      ansible.builtin.copy:
+        src: files/local-inventory.ini
+        dest: /etc/ansible/quicknotes-local.ini
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Install ansible-pull service
+      ansible.builtin.template:
+        src: templates/ansible-pull.service.j2
+        dest: /etc/systemd/system/ansible-pull.service
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Install ansible-pull timer
+      ansible.builtin.template:
+        src: templates/ansible-pull.timer.j2
+        dest: /etc/systemd/system/ansible-pull.timer
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Enable and start ansible-pull timer
+      ansible.builtin.systemd_service:
+        name: ansible-pull.timer
+        daemon_reload: true
+        enabled: true
+        state: started

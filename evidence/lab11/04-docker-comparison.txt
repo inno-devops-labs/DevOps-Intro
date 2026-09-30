@@ -1,0 +1,9 @@
+Nix command: nix build .#docker; sha256sum result
+Nix OCI tarball SHA-256: 44747a7363fb1ab155ffdcaf368cda6ea93e834d3d90e0fd5e1a821ab5ca0550
+Nix image quicknotes-nix:lab11: ID sha256:674c683afcf31de40f73f208eadb4bd945bb6d26112a198ab604791cf6ef7086; size 14,138,797 bytes.
+Nix compressed tarball: 5,578,791 bytes.
+Lab 6 run 1 command: docker build --no-cache -t qn-lab6:run1 ./app
+Lab 6 run 1 ID: sha256:e02fe2ae07f60827d01ac7cfd136d19fe5500832028eb69158167b09c21dbd1d; size 14,345,326 bytes.
+Lab 6 run 2 command: docker build --no-cache -t qn-lab6:run2 ./app
+Lab 6 run 2 ID: sha256:24719dfb0c86240f7c00f8e589befc6e96a2404cc1ec18c6c690f7e0ff4f64c1; size 14,345,326 bytes.
+The two Lab 6 image IDs differ. The Nix image is 206,529 bytes smaller by Docker image inspect Size (14,138,797 vs 14,345,326 bytes).

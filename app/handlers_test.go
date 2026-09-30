@@ -131,3 +131,20 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	}
 }
 
+func TestSecurityHeadersOnAllRoutes(t *testing.T) {
+	srv := newTestServer(t)
+	for _, path := range []string{"/health", "/notes", "/metrics", "/missing"} {
+		t.Run(path, func(t *testing.T) {
+			rec := do(t, srv, http.MethodGet, path, nil)
+			if got := rec.Header().Get("X-Content-Type-Options"); got != "nosniff" {
+				t.Errorf("X-Content-Type-Options = %q, want nosniff", got)
+			}
+			if got := rec.Header().Get("Cache-Control"); got != "no-store" {
+				t.Errorf("Cache-Control = %q, want no-store", got)
+			}
+			if got := rec.Header().Get("Cross-Origin-Resource-Policy"); got != "same-origin" {
+				t.Errorf("Cross-Origin-Resource-Policy = %q, want same-origin", got)
+			}
+		})
+	}
+}

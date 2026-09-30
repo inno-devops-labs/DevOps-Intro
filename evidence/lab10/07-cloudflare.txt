@@ -1,0 +1,75 @@
+Cloudflare Quick Tunnel, 2026-09-30T15:32:48.493819+00:00
+Exact local image: ghcr.io/sanyalikeit/devops-intro/quicknotes:v0.1.1
+Image digest: sha256:0b007f8f4ad619838c7d99f715f9d09c47cc6d5015925492dc8d61d538ca60c4
+Local mapping: 127.0.0.1:18081 -> container port 8080 (host port 8080 was occupied).
+Local /health: HTTP 200
+Local /notes: HTTP 200
+cloudflared version: 2026.9.3
+VPN required: yes, kept enabled
+Working transport: http2
+Command: cloudflared tunnel --protocol http2 --loglevel info --url http://127.0.0.1:18081
+Registered tunnel connection: yes, Cloudflare location waw05
+Current temporary URL: https://bee-viewers-learning-cover.trycloudflare.com
+Plain public GET /health: HTTP 200, {"notes":4,"status":"ok"}
+Plain public GET /notes: HTTP 200, four seed notes
+Phone cellular verification: user confirmed "готово — /health открылся" with Wi-Fi off and mobile data on.
+Benchmark: 50 consecutive successful plain curl /health requests from laptop.
+Sample count: 50
+Percentile method: nearest rank on ascending values, index ceil(p*n) (one-based).
+min: 0.230481 s
+p50: 0.302855 s
+p95: 1.301399 s
+max: 15.260199 s
+Raw curl time_total values in request order (seconds):
+0.323702
+0.238701
+0.342804
+1.301399
+0.248757
+0.247862
+0.653119
+0.249032
+0.416592
+0.445051
+0.405070
+15.260199
+0.260566
+0.339532
+0.280391
+0.235729
+0.293863
+0.276476
+0.277301
+0.525095
+1.609430
+1.290191
+0.626094
+0.311398
+0.496055
+0.306068
+0.265400
+0.315052
+0.253321
+0.258209
+0.302855
+1.202720
+0.240526
+0.367600
+0.251344
+0.230570
+0.303687
+0.231218
+0.371399
+0.430987
+0.289661
+0.236335
+0.413484
+0.241931
+0.230481
+0.231069
+0.286876
+0.371585
+0.244851
+0.686338
+
+Earlier VPN endpoints failed Cloudflare edge registration. The working endpoint registered over HTTP/2; no old temporary URL is used as evidence.

@@ -1,0 +1,8 @@
+Host command: nix-store --query --hash "$(readlink -f result)"
+Host output path: /nix/store/9nn6n320azpj7qx6xhi7c2b67dgw17fv-quicknotes-0.1.0
+Host store hash: sha256:06iryacssvq4m3kdrg2w0nzjy65j8qmd1akj29zrqdrwk9p6vg43
+Independent environment: fresh official nixos/nix:latest Docker container, separate /nix store, repository mounted read-only.
+Container command: nix --extra-experimental-features "nix-command flakes" build path:/repo#quicknotes --no-link --print-out-paths
+Container output path: /nix/store/s9jshjc4apixbv0w62l7hs1xji252lqj-quicknotes-0.1.0
+Container store hash: sha256:06iryacssvq4m3kdrg2w0nzjy65j8qmd1akj29zrqdrwk9p6vg43
+MATCH = yes
