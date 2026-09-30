@@ -1,0 +1,31 @@
+{
+  "pre_bonus_matrix_median_seconds": 40,
+  "bonus_1": {
+    "optimization": "Enable golangci-lint analysis cache",
+    "total_duration_seconds": 41,
+    "lint_job_duration_seconds": 20,
+    "evidence": "bonus1-lint-cache-run.png"
+  },
+  "bonus_2": {
+    "optimization": "Set GOFLAGS=-buildvcs=false",
+    "total_duration_seconds": 37,
+    "comparison_to_bonus_1_seconds": -4,
+    "comparison_to_pre_bonus_median_seconds": -3,
+    "status": "measured on hosted GitHub runner"
+  },
+  "bonus_3": {
+    "optimization": "Skip golangci-lint when a newly pushed update contains no lint-relevant app changes",
+    "total_duration_seconds": 39,
+    "lint_job_duration_seconds": 5,
+    "comparison_to_bonus_2_seconds": 2,
+    "lint_job_comparison_to_bonus_1_seconds": -15,
+    "status": "measured on hosted GitHub runner",
+    "evidence": "bonus3-docs-only-run.png"
+  },
+  "summary": {
+    "pre_bonus_matrix_median_seconds": 40,
+    "final_measured_total_seconds": 39,
+    "net_observed_saving_seconds": 1,
+    "note": "Hosted-runner variation dominates small wall-clock differences; job-level timings are more diagnostic."
+  }
+}

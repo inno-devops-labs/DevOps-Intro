@@ -1,0 +1,13 @@
+Codespace: quicknotes-lab10-verified-xj5jj5797p4c9qr7
+Repository: SanyaLikeIT/DevOps-Intro
+Branch: feature/lab10
+Devcontainer: .devcontainer/devcontainer.json
+Machine: basicLinux32gb (2 cores, 8 GB RAM, 32 GB storage)
+State: Available
+Container image: ghcr.io/sanyalikeit/devops-intro/quicknotes:v0.1.1
+Container running: true
+Persistent mount: /workspaces/.quicknotes-lab10-data -> /data (read/write)
+Forwarded port: 8080, visibility: public
+Browse URL: https://quicknotes-lab10-verified-xj5jj5797p4c9qr7-8080.app.github.dev
+Unauthenticated GET /health: HTTP 200, {"notes":4,"status":"ok"}
+Unauthenticated GET /notes: HTTP 200, four seeded notes

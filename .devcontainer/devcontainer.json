@@ -1,0 +1,16 @@
+{
+  "name": "Lab 10 QuickNotes",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:4": {},
+    "ghcr.io/devcontainers/features/sshd:1": {}
+  },
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "QuickNotes",
+      "protocol": "http"
+    }
+  },
+  "postStartCommand": "bash /workspaces/DevOps-Intro/.devcontainer/start-quicknotes.sh"
+}
