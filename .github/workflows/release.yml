@@ -41,3 +41,9 @@ jobs:
           tags: |
             ghcr.io/rslwqr/devops-intro/quicknotes:${{ steps.version.outputs.version }}
             ghcr.io/rslwqr/devops-intro/quicknotes:latest
+      - name: Deploy to Render
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          curl --fail --show-error --silent \
+            "${RENDER_DEPLOY_HOOK}&imgURL=ghcr.io/rslwqr/devops-intro/quicknotes:${GITHUB_REF_NAME}"
