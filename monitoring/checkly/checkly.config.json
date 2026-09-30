@@ -1,0 +1,13 @@
+{
+  "name": "devops-intro-lab8",
+  "logicalId": "devops-intro-lab8",
+  "repoInfo": {
+    "repoUrl": "https://github.com/Telman3000/DevOps-Intro",
+    "branchName": "feature/lab8"
+  },
+  "checksDir": "__checks__",
+  "checkMatch": "**/__checks__/**/*.check.js",
+  "cli": {
+    "verbose": false
+  }
+}

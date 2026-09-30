@@ -1,0 +1,3 @@
+OS packages (debian 12.15): Total: 0 (HIGH: 0, CRITICAL: 0)
+healthcheck (gobinary): Total: 19 (HIGH: 19, CRITICAL: 0) — Go stdlib CVEs in binary built with go1.24.x
+quicknotes (gobinary): Total: 19 (HIGH: 19, CRITICAL: 0) — same stdlib CVEs

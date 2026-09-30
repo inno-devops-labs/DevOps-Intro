@@ -1,0 +1,34 @@
+{
+  "public_url": "https://turtle-associated-roller-suddenly.trycloudflare.com/health",
+  "tool": "check-host.net (multi-region HTTP checks)",
+  "regions_nodes": [
+    "de2.node.check-host.net",
+    "sg1.node.check-host.net"
+  ],
+  "rounds": 30,
+  "samples_total": 58,
+  "errors": 0,
+  "error_rate": 0.0,
+  "latency_s": {
+    "p50": 0.340852975845337,
+    "p95": 1.40851593017578,
+    "avg": 0.594562477078931,
+    "max": 1.48447203636169
+  },
+  "by_node": {
+    "de2.node.check-host.net": {
+      "ok": 29,
+      "err": 0,
+      "p50_s": 0.311482191085815,
+      "p95_s": 0.342210054397583
+    },
+    "sg1.node.check-host.net": {
+      "ok": 29,
+      "err": 0,
+      "p50_s": 0.820986032485962,
+      "p95_s": 1.4408278465271
+    }
+  },
+  "alert_rule": "status!=200 OR latency>2s counted as error/degraded",
+  "finished_at": "2026-09-30T19:36:00.395384+00:00"
+}

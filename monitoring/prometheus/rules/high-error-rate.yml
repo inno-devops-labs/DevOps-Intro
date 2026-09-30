@@ -1,0 +1,19 @@
+groups:
+  - name: quicknotes-slo
+    rules:
+      # Symptom alert: HTTP error ratio (4xx+5xx) > 5% for 5 minutes
+      - alert: QuickNotesHighErrorRate
+        expr: |
+          (
+            sum(rate(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+            /
+            clamp_min(sum(rate(quicknotes_http_requests_total[5m])), 1e-9)
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: page
+          service: quicknotes
+        annotations:
+          summary: "QuickNotes error ratio > 5% for 5 minutes"
+          description: "Error ratio is {{ $value | humanizePercentage }} over the last 5m."
+          runbook_url: "https://github.com/Telman3000/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md"

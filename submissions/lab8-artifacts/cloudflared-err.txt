@@ -1,0 +1,45 @@
+2026-09-30T19:02:05Z INF Thank you for trying Cloudflare Tunnel. Doing so, without a Cloudflare account, is a quick way to experiment and try it out. However, be aware that these account-less Tunnels have no uptime guarantee, are subject to the Cloudflare Online Services Terms of Use (https://www.cloudflare.com/website-terms/), and Cloudflare reserves the right to investigate your use of Tunnels for violations of such terms. If you intend to use Tunnels in production you should use a pre-created named tunnel by following: https://developers.cloudflare.com/cloudflare-one/connections/connect-apps
+2026-09-30T19:02:05Z INF Requesting new quick Tunnel on trycloudflare.com...
+2026-09-30T19:02:09Z INF +--------------------------------------------------------------------------------------------+
+2026-09-30T19:02:09Z INF |  Your quick Tunnel has been created! Visit it at (it may take some time to be reachable):  |
+2026-09-30T19:02:09Z INF |  https://turtle-associated-roller-suddenly.trycloudflare.com                               |
+2026-09-30T19:02:09Z INF +--------------------------------------------------------------------------------------------+
+2026-09-30T19:02:09Z INF Cannot determine default configuration path. No file [config.yml config.yaml] in [~/.cloudflared ~/.cloudflare-warp ~/cloudflare-warp]
+2026-09-30T19:02:09Z INF Version 2026.9.3 (Checksum f096265ec2fcbe9bb6e2d64268db167ced3fcbb83d894bdb9e2fcdb26f2ea7e2)
+2026-09-30T19:02:09Z INF GOOS: windows, GOVersion: go1.26.8, GoArch: amd64
+2026-09-30T19:02:09Z INF Settings: map[ha-connections:1 no-autoupdate:true protocol:quic url:http://127.0.0.1:8080]
+2026-09-30T19:02:09Z INF cloudflared will not automatically update on Windows systems.
+2026-09-30T19:02:09Z INF Generated Connector ID: 7040ebcf-ba84-47c6-8cc5-117a97d2c7ee
+2026-09-30T19:02:09Z INF Initial protocol quic
+2026-09-30T19:02:09Z INF ICMP proxy will use 10.8.1.2 as source for IPv4
+2026-09-30T19:02:09Z INF ICMP proxy will use fd58:baa6:dead::1 in zone AmneziaVPN as source for IPv6
+2026-09-30T19:02:10Z INF cloudflared does not support loading the system root certificate pool on Windows. Please use --origin-ca-pool <PATH> to specify the path to the certificate pool
+2026-09-30T19:02:10Z INF ICMP proxy will use 10.8.1.2 as source for IPv4
+2026-09-30T19:02:10Z INF Tunnel connection curve preferences: [X25519MLKEM768 CurveID(65074) CurveP256] connIndex=0 event=0 ip=198.41.200.43
+2026-09-30T19:02:10Z INF ICMP proxy will use fd58:baa6:dead::1 in zone AmneziaVPN as source for IPv6
+2026-09-30T19:02:10Z INF Starting metrics server on 127.0.0.1:20241/metrics
+2026-09-30T19:02:10Z INF Registered tunnel connection connIndex=0 connection=3f622e3a-4ece-4e4d-86bb-cdad607fab65 event=0 ip=198.41.200.43 location=hel01 protocol=quic
+2026-09-30T19:02:19Z INF +----------------------------------------------------------------------------------------------------+
+2026-09-30T19:02:19Z INF |                                      CONNECTIVITY PRE-CHECKS                                       |
+2026-09-30T19:02:19Z INF +----------------------------------------------------------------------------------------------------+
+2026-09-30T19:02:19Z INF |  COMPONENT         TARGET                     STATUS  DETAILS                                      |
+2026-09-30T19:02:19Z INF |  DNS Resolution    region1.v2.argotunnel.com  PASS    DNS Resolved successfully                    |
+2026-09-30T19:02:19Z INF |  DNS Resolution    region2.v2.argotunnel.com  PASS    DNS Resolved successfully                    |
+2026-09-30T19:02:19Z INF |  UDP Connectivity  region1.v2.argotunnel.com  PASS    QUIC connection successful                   |
+2026-09-30T19:02:19Z INF |  UDP Connectivity  region2.v2.argotunnel.com  FAIL    QUIC connection failed                       |
+2026-09-30T19:02:19Z INF |  TCP Connectivity  region1.v2.argotunnel.com  PASS    HTTP/2 connection successful                 |
+2026-09-30T19:02:19Z INF |  TCP Connectivity  region2.v2.argotunnel.com  FAIL    HTTP/2 connection is blocked or unreachable  |
+2026-09-30T19:02:19Z INF |  Cloudflare API    api.cloudflare.com:443     PASS    API is reachable                             |
+2026-09-30T19:02:19Z INF |  ERROR: Allow outbound QUIC traffic on port 7844 or use HTTP2.                                     |
+2026-09-30T19:02:19Z INF |  ERROR: Allow outbound TCP on port 7844.                                                           |
+2026-09-30T19:02:19Z INF |                                                                                                    |
+2026-09-30T19:02:19Z INF |  SUMMARY: Environment has critical failures. cloudflared may not be able to establish a tunnel.    |
+2026-09-30T19:02:19Z INF +----------------------------------------------------------------------------------------------------+
+2026-09-30T19:02:19Z INF precheck component="DNS Resolution" details="DNS Resolved successfully" run_id=65ba68c4-fae7-40b4-b13a-1da9d3735a42 status=pass target=region1.v2.argotunnel.com
+2026-09-30T19:02:19Z INF precheck component="DNS Resolution" details="DNS Resolved successfully" run_id=65ba68c4-fae7-40b4-b13a-1da9d3735a42 status=pass target=region2.v2.argotunnel.com
+2026-09-30T19:02:19Z INF precheck component="UDP Connectivity" details="QUIC connection successful" run_id=65ba68c4-fae7-40b4-b13a-1da9d3735a42 status=pass target=region1.v2.argotunnel.com
+2026-09-30T19:02:19Z INF precheck component="UDP Connectivity" details="QUIC connection failed" run_id=65ba68c4-fae7-40b4-b13a-1da9d3735a42 status=fail target=region2.v2.argotunnel.com
+2026-09-30T19:02:19Z INF precheck component="TCP Connectivity" details="HTTP/2 connection successful" run_id=65ba68c4-fae7-40b4-b13a-1da9d3735a42 status=pass target=region1.v2.argotunnel.com
+2026-09-30T19:02:19Z INF precheck component="TCP Connectivity" details="HTTP/2 connection is blocked or unreachable" run_id=65ba68c4-fae7-40b4-b13a-1da9d3735a42 status=fail target=region2.v2.argotunnel.com
+2026-09-30T19:02:19Z INF precheck component="Cloudflare API" details="API is reachable" run_id=65ba68c4-fae7-40b4-b13a-1da9d3735a42 status=pass target=api.cloudflare.com:443
+2026-09-30T19:02:19Z INF precheck complete hard_fail=true run_id=65ba68c4-fae7-40b4-b13a-1da9d3735a42

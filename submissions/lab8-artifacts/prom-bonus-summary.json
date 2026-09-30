@@ -1,0 +1,8 @@
+{
+  "note": "QuickNotes has no latency histogram; request_rate used as internal traffic proxy. Error ratio from status counters.",
+  "rounds": 30,
+  "request_rate_avg": 0.29037955603258436,
+  "error_ratio_avg": 0.0,
+  "error_ratio_max": 0.0,
+  "finished_at": "2026-09-30T19:34:59.920926+00:00"
+}
