@@ -39,5 +39,5 @@ jobs:
           push: true
           platforms: linux/amd64
           tags: |
-            ghcr.io/${{ github.repository }}/quicknotes:${{ steps.version.outputs.version }}
-            ghcr.io/${{ github.repository }}/quicknotes:latest
+            ghcr.io/rslwqr/devops-intro/quicknotes:${{ steps.version.outputs.version }}
+            ghcr.io/rslwqr/devops-intro/quicknotes:latest
