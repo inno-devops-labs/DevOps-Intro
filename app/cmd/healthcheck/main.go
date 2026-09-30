@@ -1,12 +1,14 @@
 package main
 
 import (
+	"golang.org/x/text/language"
 	"net/http"
 	"os"
 	"time"
 )
 
 func main() {
+	_, _ = language.Parse("en-US")
 	client := http.Client{
 		Timeout: 2 * time.Second,
 	}
