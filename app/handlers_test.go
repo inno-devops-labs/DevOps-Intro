@@ -131,3 +131,12 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	}
 }
 
+func TestSecurityHeaders_XContentTypeOptions(t *testing.T) {
+	srv := newTestServer(t)
+
+	rec := do(t, srv, http.MethodGet, "/health", nil)
+
+	if got := rec.Header().Get("X-Content-Type-Options"); got != "nosniff" {
+		t.Errorf("X-Content-Type-Options = %q, want %q", got, "nosniff")
+	}
+}
