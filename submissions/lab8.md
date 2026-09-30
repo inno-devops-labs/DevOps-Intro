@@ -217,4 +217,5 @@ separate application health from end-to-end reachability.
 - [x] Grafana dashboard screenshot with visible traffic.
 - [x] Deliberate `Inactive` to `Pending` to `Firing` alert evidence.
 - [ ] Optional 30-minute two-region external probe.
-- [ ] Signed commits, upstream pull request, and Moodle submission.
+- [x] Signed implementation commit published on `feature/lab8`.
+- [ ] Upstream pull request and Moodle submission.
