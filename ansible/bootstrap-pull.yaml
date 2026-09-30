@@ -1,0 +1,73 @@
+---
+- name: Bootstrap ansible-pull GitOps loop inside the VM
+  hosts: quicknotes
+  become: true
+  gather_facts: false
+
+  vars:
+    ansible_pull_repo: "https://github.com/ariiagaf/DevOps-Intro.git"
+    ansible_pull_branch: "feature/lab7"
+    ansible_pull_interval: "5min"
+    ansible_pull_on_boot: "1min"
+    ansible_pull_workdir: /var/lib/ansible-pull
+    ansible_pull_local_inventory: /etc/ansible/local-inventory.ini
+
+  tasks:
+    - name: Install ansible and git inside VM
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Ensure ansible-pull workdir exists
+      ansible.builtin.file:
+        path: "{{ ansible_pull_workdir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Ensure /etc/ansible exists
+      ansible.builtin.file:
+        path: /etc/ansible
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Install local inventory for ansible-pull
+      ansible.builtin.copy:
+        src: files/local-inventory.ini
+        dest: "{{ ansible_pull_local_inventory }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Render ansible-pull.service
+      ansible.builtin.template:
+        src: ansible-pull.service.j2
+        dest: /etc/systemd/system/ansible-pull.service
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Render ansible-pull.timer
+      ansible.builtin.template:
+        src: ansible-pull.timer.j2
+        dest: /etc/systemd/system/ansible-pull.timer
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Reload systemd daemon
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Enable and start ansible-pull.timer
+      ansible.builtin.systemd:
+        name: ansible-pull.timer
+        enabled: true
+        state: started

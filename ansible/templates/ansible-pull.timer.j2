@@ -1,0 +1,11 @@
+[Unit]
+Description=Timer for ansible-pull QuickNotes convergence
+Requires=ansible-pull.service
+
+[Timer]
+OnBootSec={{ ansible_pull_on_boot }}
+OnUnitActiveSec={{ ansible_pull_interval }}
+Unit=ansible-pull.service
+
+[Install]
+WantedBy=timers.target

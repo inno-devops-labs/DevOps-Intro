@@ -1,0 +1,16 @@
+[Unit]
+Description=Run ansible-pull to converge QuickNotes from Git
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/var/lib/ansible-pull
+Environment=HOME=/root
+ExecStart=/usr/bin/ansible-pull \
+    -U {{ ansible_pull_repo }} \
+    -C {{ ansible_pull_branch }} \
+    -i /etc/ansible/local-inventory.ini \
+    -d /var/lib/ansible-pull \
+    ansible/playbook.yaml
