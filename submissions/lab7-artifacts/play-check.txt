@@ -1,0 +1,33 @@
+[WARNING]: Ansible is being run in a world writable directory
+(/vagrant/ansible), ignoring it as an ansible.cfg source. For more information
+see
+https://docs.ansible.com/ansible/devel/reference_appendices/config.html#cfg-in-
+world-writable-dir
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Create system user quicknotes] *******************************************
+changed: [quicknotes-vm]
+
+TASK [Ensure data directory] ***************************************************
+[WARNING]: failed to look up user quicknotes. Create user up to this point in
+real play
+[WARNING]: failed to look up group quicknotes. Create group up to this point in
+real play
+changed: [quicknotes-vm]
+
+TASK [Install QuickNotes binary] ***********************************************
+changed: [quicknotes-vm]
+
+TASK [Install seed.json] *******************************************************
+changed: [quicknotes-vm]
+
+TASK [Render systemd unit] *****************************************************
+changed: [quicknotes-vm]
+
+TASK [Enable and start quicknotes] *********************************************
+fatal: [quicknotes-vm]: FAILED! => {"changed": false, "msg": "Could not find the requested service quicknotes: host"}
+
+PLAY RECAP *********************************************************************
+quicknotes-vm              : ok=5    changed=5    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
+

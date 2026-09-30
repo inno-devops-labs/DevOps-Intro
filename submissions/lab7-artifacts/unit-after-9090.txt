@@ -1,0 +1,3 @@
+Environment=ADDR=:9090
+Environment=DATA_PATH=/var/lib/quicknotes/notes.json
+Environment=SEED_PATH=/var/lib/quicknotes/seed.json

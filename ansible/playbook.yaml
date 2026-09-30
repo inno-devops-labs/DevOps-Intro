@@ -1,0 +1,141 @@
+---
+# Lab 7 — Deploy QuickNotes to the Lab 5 Vagrant VM (idempotent)
+- name: Deploy QuickNotes
+  hosts: lab5
+  become: true
+  gather_facts: false
+
+  vars:
+    quicknotes_user: quicknotes
+    quicknotes_group: quicknotes
+    quicknotes_data_dir: /var/lib/quicknotes
+    quicknotes_bin: /usr/local/bin/quicknotes
+    listen_addr: ":8080"
+    data_path: /var/lib/quicknotes/notes.json
+    seed_path: /var/lib/quicknotes/seed.json
+    restart_sec: 7
+    # Bonus — ansible-pull GitOps loop
+    ansible_pull_repo_url: "https://github.com/Telman3000/DevOps-Intro.git"
+    ansible_pull_branch: "feature/lab7"
+    ansible_pull_inventory: /etc/ansible/pull-inventory.ini
+    ansible_pull_workdir: /var/lib/ansible-pull
+
+  handlers:
+    - name: restart quicknotes
+      ansible.builtin.systemd:
+        name: quicknotes
+        state: restarted
+        daemon_reload: true
+
+    - name: reload ansible-pull timer
+      ansible.builtin.systemd:
+        name: ansible-pull.timer
+        state: restarted
+        daemon_reload: true
+        enabled: true
+
+  tasks:
+    - name: Create system user quicknotes
+      ansible.builtin.user:
+        name: "{{ quicknotes_user }}"
+        system: true
+        shell: /usr/sbin/nologin
+        home: "{{ quicknotes_data_dir }}"
+        create_home: false
+        state: present
+
+    - name: Ensure data directory
+      ansible.builtin.file:
+        path: "{{ quicknotes_data_dir }}"
+        state: directory
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        mode: "0750"
+
+    - name: Install QuickNotes binary
+      ansible.builtin.copy:
+        src: files/quicknotes
+        dest: "{{ quicknotes_bin }}"
+        owner: root
+        group: root
+        mode: "0755"
+      notify: restart quicknotes
+
+    - name: Install seed.json
+      ansible.builtin.copy:
+        src: files/seed.json
+        dest: "{{ seed_path }}"
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        mode: "0640"
+
+    - name: Render systemd unit
+      ansible.builtin.template:
+        src: templates/quicknotes.service.j2
+        dest: /etc/systemd/system/quicknotes.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify: restart quicknotes
+
+    - name: Enable and start quicknotes
+      ansible.builtin.systemd:
+        name: quicknotes
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    # ── Bonus: ansible-pull timer (tag: pull) ──
+    - name: Install git for ansible-pull
+      ansible.builtin.apt:
+        name: git
+        state: present
+        update_cache: true
+      tags: [pull]
+
+    - name: Ensure ansible-pull workdir
+      ansible.builtin.file:
+        path: "{{ ansible_pull_workdir }}"
+        state: directory
+        mode: "0755"
+      tags: [pull]
+
+    - name: Ensure /etc/ansible for pull inventory
+      ansible.builtin.file:
+        path: /etc/ansible
+        state: directory
+        mode: "0755"
+      tags: [pull]
+
+    - name: Install local pull inventory
+      ansible.builtin.copy:
+        src: files/inventory.pull.ini
+        dest: "{{ ansible_pull_inventory }}"
+        owner: root
+        group: root
+        mode: "0644"
+      tags: [pull]
+
+    - name: Render ansible-pull.service
+      ansible.builtin.template:
+        src: templates/ansible-pull.service.j2
+        dest: /etc/systemd/system/ansible-pull.service
+        mode: "0644"
+      notify: reload ansible-pull timer
+      tags: [pull]
+
+    - name: Render ansible-pull.timer
+      ansible.builtin.template:
+        src: templates/ansible-pull.timer.j2
+        dest: /etc/systemd/system/ansible-pull.timer
+        mode: "0644"
+      notify: reload ansible-pull timer
+      tags: [pull]
+
+    - name: Enable and start ansible-pull.timer
+      ansible.builtin.systemd:
+        name: ansible-pull.timer
+        enabled: true
+        state: started
+        daemon_reload: true
+      tags: [pull]

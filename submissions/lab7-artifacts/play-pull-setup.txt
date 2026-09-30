@@ -1,0 +1,48 @@
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Install git for ansible-pull] ********************************************
+Thursday 24 September 2026  12:34:28 +0000 (0:00:00.158)       0:00:00.158 **** 
+ok: [quicknotes-vm]
+
+TASK [Ensure ansible-pull workdir] *********************************************
+Thursday 24 September 2026  12:34:44 +0000 (0:00:15.977)       0:00:16.136 **** 
+ok: [quicknotes-vm]
+
+TASK [Ensure /etc/ansible for pull inventory] **********************************
+Thursday 24 September 2026  12:34:48 +0000 (0:00:03.458)       0:00:19.595 **** 
+changed: [quicknotes-vm]
+
+TASK [Install local pull inventory] ********************************************
+Thursday 24 September 2026  12:34:50 +0000 (0:00:01.951)       0:00:21.547 **** 
+changed: [quicknotes-vm]
+
+TASK [Render ansible-pull.service] *********************************************
+Thursday 24 September 2026  12:34:54 +0000 (0:00:04.461)       0:00:26.009 **** 
+changed: [quicknotes-vm]
+
+TASK [Render ansible-pull.timer] ***********************************************
+Thursday 24 September 2026  12:34:58 +0000 (0:00:04.172)       0:00:30.181 **** 
+changed: [quicknotes-vm]
+
+TASK [Enable and start ansible-pull.timer] *************************************
+Thursday 24 September 2026  12:35:03 +0000 (0:00:04.283)       0:00:34.464 **** 
+changed: [quicknotes-vm]
+
+RUNNING HANDLER [reload ansible-pull timer] ************************************
+Thursday 24 September 2026  12:35:13 +0000 (0:00:09.879)       0:00:44.343 **** 
+changed: [quicknotes-vm]
+
+PLAY RECAP *********************************************************************
+quicknotes-vm              : ok=8    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+Thursday 24 September 2026  12:35:20 +0000 (0:00:06.913)       0:00:51.257 **** 
+=============================================================================== 
+Install git for ansible-pull ------------------------------------------- 15.98s
+Enable and start ansible-pull.timer ------------------------------------- 9.88s
+reload ansible-pull timer ----------------------------------------------- 6.91s
+Install local pull inventory -------------------------------------------- 4.46s
+Render ansible-pull.timer ----------------------------------------------- 4.28s
+Render ansible-pull.service --------------------------------------------- 4.17s
+Ensure ansible-pull workdir --------------------------------------------- 3.46s
+Ensure /etc/ansible for pull inventory ---------------------------------- 1.95s

@@ -1,0 +1,38 @@
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Create system user quicknotes] *******************************************
+Thursday 24 September 2026  12:26:43 +0000 (0:00:00.173)       0:00:00.173 **** 
+ok: [quicknotes-vm]
+
+TASK [Ensure data directory] ***************************************************
+Thursday 24 September 2026  12:26:48 +0000 (0:00:04.730)       0:00:04.903 **** 
+ok: [quicknotes-vm]
+
+TASK [Install QuickNotes binary] ***********************************************
+Thursday 24 September 2026  12:26:50 +0000 (0:00:02.676)       0:00:07.580 **** 
+ok: [quicknotes-vm]
+
+TASK [Install seed.json] *******************************************************
+Thursday 24 September 2026  12:26:56 +0000 (0:00:05.604)       0:00:13.184 **** 
+ok: [quicknotes-vm]
+
+TASK [Render systemd unit] *****************************************************
+Thursday 24 September 2026  12:26:59 +0000 (0:00:03.315)       0:00:16.500 **** 
+ok: [quicknotes-vm]
+
+TASK [Enable and start quicknotes] *********************************************
+Thursday 24 September 2026  12:27:03 +0000 (0:00:03.693)       0:00:20.193 **** 
+ok: [quicknotes-vm]
+
+PLAY RECAP *********************************************************************
+quicknotes-vm              : ok=6    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+Thursday 24 September 2026  12:27:09 +0000 (0:00:06.379)       0:00:26.574 **** 
+=============================================================================== 
+Enable and start quicknotes --------------------------------------------- 6.38s
+Install QuickNotes binary ----------------------------------------------- 5.60s
+Create system user quicknotes ------------------------------------------- 4.73s
+Render systemd unit ----------------------------------------------------- 3.69s
+Install seed.json ------------------------------------------------------- 3.32s
+Ensure data directory --------------------------------------------------- 2.68s

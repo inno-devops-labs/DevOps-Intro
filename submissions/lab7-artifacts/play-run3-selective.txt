@@ -1,0 +1,43 @@
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Create system user quicknotes] *******************************************
+Thursday 24 September 2026  12:28:26 +0000 (0:00:00.102)       0:00:00.102 **** 
+ok: [quicknotes-vm]
+
+TASK [Ensure data directory] ***************************************************
+Thursday 24 September 2026  12:28:28 +0000 (0:00:02.641)       0:00:02.743 **** 
+ok: [quicknotes-vm]
+
+TASK [Install QuickNotes binary] ***********************************************
+Thursday 24 September 2026  12:28:31 +0000 (0:00:02.717)       0:00:05.460 **** 
+ok: [quicknotes-vm]
+
+TASK [Install seed.json] *******************************************************
+Thursday 24 September 2026  12:28:35 +0000 (0:00:03.417)       0:00:08.878 **** 
+ok: [quicknotes-vm]
+
+TASK [Render systemd unit] *****************************************************
+Thursday 24 September 2026  12:28:38 +0000 (0:00:03.382)       0:00:12.260 **** 
+changed: [quicknotes-vm]
+
+TASK [Enable and start quicknotes] *********************************************
+Thursday 24 September 2026  12:28:42 +0000 (0:00:04.462)       0:00:16.723 **** 
+ok: [quicknotes-vm]
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+Thursday 24 September 2026  12:28:47 +0000 (0:00:04.988)       0:00:21.714 **** 
+changed: [quicknotes-vm]
+
+PLAY RECAP *********************************************************************
+quicknotes-vm              : ok=7    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+Thursday 24 September 2026  12:28:52 +0000 (0:00:04.514)       0:00:26.229 **** 
+=============================================================================== 
+Enable and start quicknotes --------------------------------------------- 4.99s
+restart quicknotes ------------------------------------------------------ 4.52s
+Render systemd unit ----------------------------------------------------- 4.46s
+Install QuickNotes binary ----------------------------------------------- 3.42s
+Install seed.json ------------------------------------------------------- 3.38s
+Ensure data directory --------------------------------------------------- 2.72s
+Create system user quicknotes ------------------------------------------- 2.64s

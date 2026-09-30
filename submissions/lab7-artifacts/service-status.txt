@@ -1,0 +1,12 @@
+● quicknotes.service - QuickNotes API
+     Loaded: loaded (/etc/systemd/system/quicknotes.service; enabled; preset: enabled)
+     Active: active (running) since Thu 2026-09-24 12:26:29 UTC; 4s ago
+   Main PID: 3754 (quicknotes)
+      Tasks: 6 (limit: 1056)
+     Memory: 1.3M (peak: 1.5M)
+        CPU: 107ms
+     CGroup: /system.slice/quicknotes.service
+             └─3754 /usr/local/bin/quicknotes
+
+Sep 24 12:26:29 quicknotes-vm systemd[1]: Started quicknotes.service - QuickNotes API.
+Sep 24 12:26:29 quicknotes-vm quicknotes[3754]: 2026/09/24 12:26:29 quicknotes listening on :8080 (notes loaded: 4)

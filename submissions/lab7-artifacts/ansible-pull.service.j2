@@ -1,0 +1,15 @@
+[Unit]
+Description=ansible-pull QuickNotes converge
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/var/lib/ansible-pull
+# Clone URL must be HTTPS reachable from the VM (public fork).
+ExecStart=/usr/bin/ansible-pull -o -d /var/lib/ansible-pull/repo -U {{ ansible_pull_repo_url }} -C {{ ansible_pull_branch }} -i {{ ansible_pull_inventory }} ansible/playbook.yaml
+Nice=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,55 @@
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Create system user quicknotes] *******************************************
+Thursday 24 September 2026  12:28:56 +0000 (0:00:00.050)       0:00:00.050 **** 
+ok: [quicknotes-vm]
+
+TASK [Ensure data directory] ***************************************************
+Thursday 24 September 2026  12:28:59 +0000 (0:00:03.145)       0:00:03.196 **** 
+ok: [quicknotes-vm]
+
+TASK [Install QuickNotes binary] ***********************************************
+Thursday 24 September 2026  12:29:02 +0000 (0:00:02.902)       0:00:06.099 **** 
+ok: [quicknotes-vm]
+
+TASK [Install seed.json] *******************************************************
+Thursday 24 September 2026  12:29:06 +0000 (0:00:03.835)       0:00:09.935 **** 
+ok: [quicknotes-vm]
+
+TASK [Render systemd unit] *****************************************************
+Thursday 24 September 2026  12:29:09 +0000 (0:00:03.024)       0:00:12.960 **** 
+--- before: /etc/systemd/system/quicknotes.service
++++ after: /home/vagrant/.ansible/tmp/ansible-local-4451uyon8fnp/tmp8_98d9ko/quicknotes.service.j2
+@@ -8,7 +8,7 @@
+ User=quicknotes
+ Group=quicknotes
+ WorkingDirectory=/var/lib/quicknotes
+-Environment=ADDR=:9090
++Environment=ADDR=:8081
+ Environment=DATA_PATH=/var/lib/quicknotes/notes.json
+ Environment=SEED_PATH=/var/lib/quicknotes/seed.json
+ ExecStart=/usr/local/bin/quicknotes
+
+changed: [quicknotes-vm]
+
+TASK [Enable and start quicknotes] *********************************************
+Thursday 24 September 2026  12:29:16 +0000 (0:00:07.359)       0:00:20.320 **** 
+ok: [quicknotes-vm]
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+Thursday 24 September 2026  12:29:22 +0000 (0:00:05.684)       0:00:26.004 **** 
+changed: [quicknotes-vm]
+
+PLAY RECAP *********************************************************************
+quicknotes-vm              : ok=7    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+Thursday 24 September 2026  12:29:28 +0000 (0:00:05.791)       0:00:31.796 **** 
+=============================================================================== 
+Render systemd unit ----------------------------------------------------- 7.36s
+restart quicknotes ------------------------------------------------------ 5.79s
+Enable and start quicknotes --------------------------------------------- 5.68s
+Install QuickNotes binary ----------------------------------------------- 3.84s
+Create system user quicknotes ------------------------------------------- 3.15s
+Install seed.json ------------------------------------------------------- 3.02s
+Ensure data directory --------------------------------------------------- 2.90s
