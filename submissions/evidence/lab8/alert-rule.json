@@ -1,0 +1,35 @@
+{
+  "state": "firing",
+  "name": "QuickNotesHighErrorRate",
+  "query": "sum(rate(quicknotes_http_responses_by_code_total{code=~\"[45]..\"}[2m])) / clamp_min(sum(rate(quicknotes_http_responses_by_code_total[2m])), 0.001) > 0.05",
+  "duration": 300,
+  "keepFiringFor": 0,
+  "labels": {
+    "severity": "page"
+  },
+  "annotations": {
+    "description": "More than 5% of QuickNotes responses have been 4xx or 5xx for five minutes.",
+    "runbook_url": "https://github.com/sonder314/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md",
+    "summary": "QuickNotes error ratio is above 5%"
+  },
+  "alerts": [
+    {
+      "labels": {
+        "alertname": "QuickNotesHighErrorRate",
+        "severity": "page"
+      },
+      "annotations": {
+        "description": "More than 5% of QuickNotes responses have been 4xx or 5xx for five minutes.",
+        "runbook_url": "https://github.com/sonder314/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md",
+        "summary": "QuickNotes error ratio is above 5%"
+      },
+      "state": "firing",
+      "activeAt": "2026-09-30T06:36:12.464142167Z",
+      "value": "3.0293159609120524e-01"
+    }
+  ],
+  "health": "ok",
+  "evaluationTime": 0.001447007,
+  "lastEvaluation": "2026-09-30T06:42:12.466918915Z",
+  "type": "alerting"
+}

@@ -1,0 +1,10 @@
+{
+  "title": "QuickNotes Golden Signals",
+  "uid": "quicknotes-golden-signals",
+  "panels": [
+    "Latency — request-rate proxy",
+    "Traffic",
+    "Errors",
+    "Saturation — stored notes"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "data": {
+    "resultType": "vector",
+    "result": [
+      {
+        "metric": {
+          "__name__": "up",
+          "instance": "quicknotes:8080",
+          "job": "quicknotes"
+        },
+        "value": [
+          1790749696.063,
+          "1"
+        ]
+      }
+    ]
+  }
+}
