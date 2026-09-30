@@ -1,0 +1,17 @@
+Runtime command: cd wasm/moscow-time && spin up --listen 127.0.0.1:3100
+Port 3000 was already occupied by an unrelated Docker proxy; Spin reported: Error: 127.0.0.1:3000 is already in use.
+Verification: curl -si http://127.0.0.1:3100/time
+HTTP/1.1 200 OK
+content-type: application/json
+{"unix":1790796513,"iso":"2026-09-30T22:28:33+03:00","hour_minute":"22:28"}
+Python verification: JSON valid; unix numeric and equal to ISO epoch; UTC offset +03:00; hour_minute matched ISO time; response within 5 seconds of host clock.
+
+Controlled -buildmode=c-shared experiment:
+Temporarily removed only -buildmode=c-shared from the scaffold build command.
+spin build exited 0: Finished building all Spin components.
+spin up --listen 127.0.0.1:3100 served the route. curl -si http://127.0.0.1:3100/time returned HTTP/1.1 200 OK, content-type: application/json, and:
+{"unix":1790796597,"iso":"2026-09-30T22:29:57+03:00","hour_minute":"22:29"}
+Thus with Spin 3.6.3 and TinyGo 0.42.0, removing this flag did not cause the HTTP 500 suggested by the assignment. The generated template still uses the flag and is retained for reproducibility.
+Time-zone probe: tinygo build -target=wasip1 -no-debug -o /tmp/lab12-timezone-probe.wasm /tmp/lab12-timezone-probe.go && wasmtime run /tmp/lab12-timezone-probe.wasm
+Output: zone=UTC error=unknown time zone Europe/Moscow
+Restored configuration: git diff --exit-code -- wasm/moscow-time/spin.toml succeeded; spin build succeeded; HTTP 200 /time returned {"unix":1790796670,"iso":"2026-09-30T22:31:10+03:00","hour_minute":"22:31"}.

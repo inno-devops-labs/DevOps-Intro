@@ -1,0 +1,16 @@
+Command: nix build .#docker (Nix dockerTools.buildImage; no docker build/BuildKit)
+Host output: /nix/store/3pryk3sg49c9iqmd2nba1a1if8xazqq3-docker-image-quicknotes-nix.tar.gz
+Host command: sha256sum result
+Host SHA-256: 44747a7363fb1ab155ffdcaf368cda6ea93e834d3d90e0fd5e1a821ab5ca0550
+Tarball size: 5,578,791 bytes
+Loaded image: quicknotes-nix:lab11
+Loaded image size: 14,138,797 bytes
+Config: User=65532:65532, Entrypoint=["/bin/quicknotes"], ExposedPorts={"8080/tcp":{}}
+Runtime: container 5dee7899337d85d98cff0ed895dfdd069af45fd2fcc21028f9d8b1109fa67500 on host port 28083; GET /health -> HTTP/1.1 200 OK, {"notes":0,"status":"ok"}.
+Independent OCI build: pending.
+Independent environment: fresh official nixos/nix container, separate /nix store. Repository copied into container to preserve Git-flake source semantics and avoid libgit2 owner mismatch on a read-only bind mount.
+Container command: nix --extra-experimental-features "nix-command flakes" build .#docker --no-link --print-out-paths; sha256sum "$OUT"
+Container output: /nix/store/3pryk3sg49c9iqmd2nba1a1if8xazqq3-docker-image-quicknotes-nix.tar.gz
+Container SHA-256: 44747a7363fb1ab155ffdcaf368cda6ea93e834d3d90e0fd5e1a821ab5ca0550
+MATCH = yes
+A path:/repo build initially produced 8835c7011e2c14a12a3f7c05d07d7376639f3d29b94636b78459cf06659b36cc because the path flake used different source store paths. The accepted comparison uses the same Git flake URI in both environments.

@@ -1,0 +1,7 @@
+Release tag: v0.1.1
+Tagged commit: e0745d0a9d7691a826e10c1def019a45ad283d84
+Tag signature: Good git signature for billboard163rus@gmail.com, ED25519 key SHA256:Acrm9WJAVNML9xkwQ9n5pPrUp7EzdKyz/GG+jn8NSnw
+GitHub Actions run ID: 36334925479
+Run URL: https://github.com/SanyaLikeIT/DevOps-Intro/actions/runs/36334925479
+Run conclusion: success
+Image: ghcr.io/sanyalikeit/devops-intro/quicknotes:v0.1.1

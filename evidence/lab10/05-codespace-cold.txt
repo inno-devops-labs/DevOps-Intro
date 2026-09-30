@@ -1,0 +1,27 @@
+Three independent Codespace stop/manual-start cycles.
+Timing starts immediately before the GitHub REST start POST and ends at the first public /health HTTP 200.
+The public URL request while stopped did not start the Codespace.
+
+Cycle 1:
+  confirmed stopped state: Shutdown
+  stopped URL: HTTP 404, curl exit 0, 6.041646 s
+  manual start UTC: 2026-09-27T17:10:29.187777+00:00
+  first public health 200 UTC: 2026-09-27T17:11:18.200471+00:00
+  manual start to public health: 49.013 s
+  port visibility restored: True
+
+Cycle 2:
+  confirmed stopped state: Shutdown
+  stopped URL: HTTP 404, curl exit 0, 11.126035 s
+  manual start UTC: 2026-09-27T17:12:15.200150+00:00
+  first public health 200 UTC: 2026-09-27T17:13:52.902152+00:00
+  manual start to public health: 97.702 s
+  port visibility restored: True
+
+Cycle 3:
+  confirmed stopped state: Shutdown
+  stopped URL: HTTP 404, curl exit 0, 1.349386 s
+  manual start UTC: 2026-09-27T17:14:45.495215+00:00
+  first public health 200 UTC: 2026-09-27T17:17:44.932299+00:00
+  manual start to public health: 179.437 s
+  port visibility restored: True

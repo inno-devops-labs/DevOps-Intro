@@ -1,0 +1,13 @@
+Wasmtime: 49.0.1 (46c23a87d 2026-09-24); TinyGo: 0.42.0 (Go 1.27.1, LLVM 22.1.4).
+Source: wasm-cli/main.go; no Spin SDK.
+Build: cd wasm-cli && tinygo build -o main.wasm -target=wasi -no-debug ./main.go
+Run: wasmtime run --env REQUEST_METHOD=GET --env PATH_INFO=/time wasm-cli/main.wasm
+Validated output: {"unix":1790797360,"iso":"2026-09-30T22:42:40+03:00","hour_minute":"22:42"}
+Module size: 188934 bytes; du -h: 188K
+Cold method: ten independent fresh wasmtime run subprocess invocations timed with time.perf_counter from launch to process exit; every exit and JSON verified; no prewarm.
+Samples (ms): 6.348, 4.814, 6.554, 6.435, 5.657, 5.572, 5.849, 5.516, 4.728, 6.502
+Count: 10; p50 median: 5.753 ms; p95 nearest rank: 6.554 ms
+Spin component size: 383835 bytes; standalone CLI size: 188934 bytes; difference: 194901 bytes; CLI/Spin ratio: 0.492.
+Spin cold HTTP server start p50: 34.858 ms (7 restarts); standalone fresh wasmtime run p50: 5.753 ms (10 invocations).
+These times are different execution models: Spin starts a persistent HTTP server with wasi-http routing, whereas each standalone CLI call starts a new Wasmtime process, reads environment variables and writes stdout. The CLI is not an HTTP server.
+Bare Spin module check: wasmtime run wasm/moscow-time/main.wasm exited 0 with empty stdout and did not expose an HTTP listener. A bare run supplied no HTTP request to its registered handler.

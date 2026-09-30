@@ -1,0 +1,10 @@
+Docker warm benchmark; image quicknotes:lab6, sha256:d55f30efdb6d97d1782581fb7f0d546cc1778715e46311872506597ab743b99b; container lab12-baseline on 127.0.0.1:3101.
+Command: hyperfine --warmup 5 --runs 50 --export-json /tmp/lab12-docker-warm.json "curl -fsS -o /dev/null http://127.0.0.1:3101/health"
+Measured command includes curl process and hyperfine shell overhead.
+Samples (ms): 5.733344, 5.844855, 4.717586, 7.082546, 6.351148, 7.655145, 4.783091, 5.234896, 6.933128, 5.925375, 7.504893, 5.955345, 5.460514, 4.694674, 5.185605, 5.511724, 5.325301, 6.162727, 9.725804, 5.908407, 4.330938, 6.177380, 5.823553, 8.271741, 5.964560, 5.738649, 5.962735, 7.496253, 7.082065, 4.637543, 5.008533, 8.080536, 7.441363, 5.213592, 5.788688, 6.838910, 5.709237, 5.697865, 4.401293, 5.100281, 4.499960, 5.290256, 4.345376, 5.697754, 4.659087, 5.672424, 6.054724, 5.261020, 4.958756, 5.812563
+Count: 50; p50 median: 5.735996 ms; p95 nearest rank: 8.080536 ms
+
+Docker cold start: container absent -> docker run -d --name lab12-docker-cold-N -p 127.0.0.1:3101:8080 quicknotes:lab6 -> first valid HTTP 200 /health; monotonic perf_counter, existing local image, seven full container creates.
+Snap Docker/AppArmor denied Docker stop signals. After each measured response, the test container PID was signaled via sudo aa-exec -p unconfined -- kill -TERM PID, then docker rm removed the exited container. Cleanup was outside the measured interval.
+Samples (ms): 381.049, 365.818, 367.445, 416.318, 328.492, 320.437, 374.593
+Count: 7; p50 median: 367.445 ms

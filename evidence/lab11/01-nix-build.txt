@@ -1,0 +1,13 @@
+Nix: Determinate Nix 3.22.5 / Nix 2.35.2
+nixpkgs: nixos-25.11, b6018f87da91d19d0ab4cf979885689b469cdd41
+Go in pinned nixpkgs: 1.25.10
+Command: nix build .#quicknotes
+Result: /nix/store/9nn6n320azpj7qx6xhi7c2b67dgw17fv-quicknotes-0.1.0
+Binary: ELF 64-bit LSB executable, x86-64, statically linked, stripped
+CGO_ENABLED: 0
+vendorHash: null; app/go.mod has no external modules. Initial fakeHash build failed with: "go: no dependencies to vendor" and "vendor folder is empty, please set 'vendorHash = null;' in your expression".
+Runtime command: ADDR=127.0.0.1:18080 DATA_PATH=/tmp/lab11-notes.json SEED_PATH=/tmp/lab11-no-seed.json ./result/bin/quicknotes
+GET http://127.0.0.1:18080/health: HTTP/1.1 200 OK; {"notes":0,"status":"ok"}
+Port 8080 was already occupied on the host, so direct binary verification used 18080.
+DevShell: go1.25.10 linux/amd64; gopls v0.20.0; golangci-lint 2.6.2.
+Tests in Nix devShell: go test ./... -> quicknotes ok; quicknotes/cmd/healthcheck has no test files.

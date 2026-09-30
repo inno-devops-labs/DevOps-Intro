@@ -1,0 +1,14 @@
+Environment: Ubuntu 24.04.5 LTS, Linux 7.0.0-34-generic, Intel Core i7-12650H, 16 logical CPUs, 15 GiB RAM.
+Go: go1.27.1 linux/amd64
+Spin: 3.6.3 (88d51cf 2026-04-09)
+TinyGo: 0.42.0 linux/amd64 (Go 1.27.1, LLVM 22.1.4)
+Hyperfine: 1.18.0
+Wasmtime: 49.0.1 (46c23a87d 2026-09-24)
+Docker: 29.8.1
+Spin Go SDK: github.com/spinframework/spin-go-sdk/v2 v2.2.1 (scaffold go.mod)
+Scaffold: spin new -t http-go moscow-time --accept-defaults (Spin v3.6.3 templates)
+Build: cd wasm/moscow-time && spin build
+Build output: Building component moscow-time with `tinygo build -target=wasip1 -buildmode=c-shared -no-debug -o main.wasm .`; Finished building all Spin components
+Build warnings: LLVM reported wasm32-unknown-wasip1 vs wasm32-unknown-wasi target triples for four SDK cgo snippets; build exited 0.
+Artifact: wasm/moscow-time/main.wasm
+Artifact size: 383835 bytes; du -h: 376K

@@ -1,0 +1,54 @@
+name: Nix reproducibility
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-a:
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: DeterminateSystems/nix-installer-action@3138316df39ed29be04236d7ffc686fa525866aa # v23
+      - run: nix build .#docker
+      - id: digest
+        run: |
+          digest="$(sha256sum result | cut -d ' ' -f1)"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+          echo "build-a digest: $digest"
+
+  build-b:
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.digest.outputs.digest }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: DeterminateSystems/nix-installer-action@3138316df39ed29be04236d7ffc686fa525866aa # v23
+      - run: nix build .#docker
+      - id: digest
+        run: |
+          digest="$(sha256sum result | cut -d ' ' -f1)"
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+          echo "build-b digest: $digest"
+
+  compare:
+    needs: [build-a, build-b]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compare image tarballs
+        env:
+          DIGEST_A: ${{ needs.build-a.outputs.digest }}
+          DIGEST_B: ${{ needs.build-b.outputs.digest }}
+        run: |
+          echo "build-a: $DIGEST_A"
+          echo "build-b: $DIGEST_B"
+          if [ "$DIGEST_A" != "$DIGEST_B" ]; then
+            echo "Image tarball digests differ" >&2
+            exit 1
+          fi
+          echo "Image tarball digests match"

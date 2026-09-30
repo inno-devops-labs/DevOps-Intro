@@ -1,0 +1,6 @@
+WASM: stat -c %s wasm/moscow-time/main.wasm
+WASM bytes: 383835; KiB: 374.839; du -h: 376K
+Docker: docker image inspect quicknotes:lab6 --format '{{.Size}}'
+Docker image bytes: 14345326; MiB: 13.681
+Docker image ID: sha256:d55f30efdb6d97d1782581fb7f0d546cc1778715e46311872506597ab743b99b
+Docker image / WASM file byte ratio: 37.374

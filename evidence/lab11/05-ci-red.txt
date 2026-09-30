@@ -1,0 +1,7 @@
+RED commit: 460d2ad11f0486d420148992b1a7c25fe0648b06
+Run ID: 36759194462
+Run URL: https://github.com/SanyaLikeIT/DevOps-Intro/actions/runs/36759194462
+build-a: success; digest 4ccc6fe265b5a9ebeb7ff157de3b7c9179bcb5a53d26d8f625f5c147d4727063
+build-b: success; digest c39cab19e396ea4f96c91830c013b1594c291be1f4efdf7fb8252225ad1c290f
+compare: failure; "Image tarball digests differ"
+Mechanism: dockerTools.buildImage created="now" embedded each runner's build timestamp. build-b waited 90 seconds before its independent Nix build. The comparison used the actual SHA-256 of each built tarball.

@@ -1,0 +1,9 @@
+Spin 3.6.3 warm benchmark; server: spin up --listen 127.0.0.1:3100
+Command: hyperfine --warmup 5 --runs 50 --export-json /tmp/lab12-spin-warm.json "curl -fsS -o /dev/null http://127.0.0.1:3100/time"
+Measured command includes curl process and hyperfine shell overhead. Hyperfine warned the command is shorter than 5 ms on some runs; the same benchmark shape is used for Docker.
+Samples (ms): 8.653341, 7.910330, 8.707489, 6.140182, 7.521912, 8.732577, 8.898376, 7.290831, 9.004448, 6.240445, 7.241017, 5.788935, 5.737056, 4.374070, 4.703916, 7.496274, 8.032628, 8.371276, 6.654476, 7.780329, 8.346004, 9.413489, 5.300311, 6.357263, 5.069308, 5.876969, 8.023644, 8.710940, 11.699065, 10.494119, 9.495702, 9.929534, 9.312826, 5.076594, 6.075116, 5.132619, 4.536483, 9.464372, 8.935819, 10.133506, 9.827402, 5.505660, 5.347520, 6.117049, 4.324057, 5.972296, 5.511583, 6.347145, 6.339629, 4.006056
+Count: 50; p50 median: 7.265924 ms; p95 nearest rank: 10.133506 ms
+
+Spin cold start: runtime stopped -> spin up --from wasm/moscow-time/spin.toml --listen 127.0.0.1:3100 -> first valid HTTP 200 /time; monotonic perf_counter, existing prebuilt module, seven full restarts.
+Samples (ms): 34.155, 34.666, 34.852, 34.858, 35.506, 35.154, 35.303
+Count: 7; p50 median: 34.858 ms
