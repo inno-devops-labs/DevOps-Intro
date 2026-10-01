@@ -1,0 +1,18 @@
+groups:
+  - name: quicknotes
+    rules:
+      # Symptom alert: the share of requests users see fail. The `for: 5m` is what
+      # keeps a single 4xx burst from paging anyone -- the ratio has to stay above
+      # the threshold for five consecutive evaluations' worth of time.
+      - alert: QuickNotesHighErrorRate
+        expr: |
+          sum(rate(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+            /
+          sum(rate(quicknotes_http_responses_by_code_total[5m]))
+            > 0.05
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: QuickNotes error ratio above 5% for 5 minutes
+          runbook: docs/runbook/high-error-rate.md
