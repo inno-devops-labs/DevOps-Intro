@@ -7,14 +7,29 @@ import (
 	"sort"
 	"strconv"
 	"sync/atomic"
+	"time"
 )
 
+var requestDurationBounds = [...]struct {
+	label   string
+	seconds float64
+}{
+	{"0.0001", 0.0001}, {"0.0005", 0.0005},
+	{"0.001", 0.001}, {"0.0025", 0.0025},
+	{"0.005", 0.005}, {"0.01", 0.01}, {"0.025", 0.025},
+	{"0.05", 0.05}, {"0.1", 0.1}, {"0.25", 0.25},
+	{"0.5", 0.5}, {"1", 1}, {"2.5", 2.5}, {"5", 5},
+}
+
 type Server struct {
-	store          *Store
-	notesCreated   atomic.Uint64
-	notesDeleted   atomic.Uint64
-	requestsTotal  atomic.Uint64
-	requestsByCode map[int]*atomic.Uint64
+	store            *Store
+	notesCreated     atomic.Uint64
+	notesDeleted     atomic.Uint64
+	requestsTotal    atomic.Uint64
+	requestsByCode   map[int]*atomic.Uint64
+	durationBuckets  [len(requestDurationBounds)]atomic.Uint64
+	durationSumNanos atomic.Uint64
+	durationCount    atomic.Uint64
 }
 
 func NewServer(store *Store) *Server {
@@ -49,11 +64,20 @@ func (sw *statusWriter) WriteHeader(code int) {
 
 func (s *Server) wrap(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
 		sw := &statusWriter{ResponseWriter: w, code: 200}
 		h(sw, r)
+		elapsed := time.Since(start)
 		s.requestsTotal.Add(1)
 		if c, ok := s.requestsByCode[sw.code]; ok {
 			c.Add(1)
+		}
+		s.durationSumNanos.Add(uint64(elapsed.Nanoseconds()))
+		s.durationCount.Add(1)
+		for i, bound := range requestDurationBounds {
+			if elapsed.Seconds() <= bound.seconds {
+				s.durationBuckets[i].Add(1)
+			}
 		}
 	}
 }
@@ -90,6 +114,16 @@ func (s *Server) handleMetrics(w http.ResponseWriter, r *http.Request) {
 	for _, code := range codes {
 		_, _ = w.Write([]byte(byCodeName + `{code="` + strconv.Itoa(code) + `"} ` + strconv.FormatUint(s.requestsByCode[code].Load(), 10) + "\n"))
 	}
+
+	const durationName = "quicknotes_http_request_duration_seconds"
+	_, _ = w.Write([]byte("# HELP " + durationName + " HTTP request duration in seconds.\n"))
+	_, _ = w.Write([]byte("# TYPE " + durationName + " histogram\n"))
+	for i, bound := range requestDurationBounds {
+		_, _ = w.Write([]byte(durationName + `_bucket{le="` + bound.label + `"} ` + strconv.FormatUint(s.durationBuckets[i].Load(), 10) + "\n"))
+	}
+	_, _ = w.Write([]byte(durationName + `_bucket{le="+Inf"} ` + strconv.FormatUint(s.durationCount.Load(), 10) + "\n"))
+	_, _ = w.Write([]byte(durationName + "_sum " + strconv.FormatFloat(float64(s.durationSumNanos.Load())/1e9, 'f', 9, 64) + "\n"))
+	_, _ = w.Write([]byte(durationName + "_count " + strconv.FormatUint(s.durationCount.Load(), 10) + "\n"))
 }
 
 func (s *Server) handleListNotes(w http.ResponseWriter, r *http.Request) {

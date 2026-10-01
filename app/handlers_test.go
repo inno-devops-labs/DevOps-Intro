@@ -123,6 +123,7 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	for _, want := range []string{
 		"# TYPE quicknotes_notes_total gauge",
 		"# TYPE quicknotes_http_requests_total counter",
+		"# TYPE quicknotes_http_request_duration_seconds histogram",
 		"quicknotes_notes_created_total 1",
 	} {
 		if !strings.Contains(body, want) {
