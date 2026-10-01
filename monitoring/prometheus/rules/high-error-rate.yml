@@ -1,0 +1,22 @@
+# One alert: a symptom users feel, gated on a sustained breach.
+
+groups:
+  - name: quicknotes-golden-signals
+    rules:
+      - alert: QuickNotesHighErrorRate
+        expr: |
+          sum(rate(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+            /
+          sum(rate(quicknotes_http_requests_total[5m]))
+            > 0.05
+        for: 5m
+        labels:
+          severity: page
+          service: quicknotes
+        annotations:
+          summary: "QuickNotes is failing more than 5% of requests"
+          description: >-
+            The share of 4xx and 5xx responses has been above 5% for 5 minutes.
+            Current value: {{ $value | humanizePercentage }}.
+          runbook: docs/runbook/high-error-rate.md
+          runbook_url: https://github.com/aniksel/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md

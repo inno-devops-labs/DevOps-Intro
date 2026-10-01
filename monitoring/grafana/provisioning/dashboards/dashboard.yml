@@ -1,0 +1,17 @@
+# Tells Grafana where to look for dashboard JSON on startup. The path is
+# inside the Grafana container, and compose.yaml mounts
+# monitoring/grafana/dashboards there.
+
+apiVersion: 1
+
+providers:
+  - name: quicknotes
+    orgId: 1
+    folder: QuickNotes
+    type: file
+    disableDeletion: true
+    allowUiUpdates: false
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false

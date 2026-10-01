@@ -1,0 +1,17 @@
+# Prometheus configuration for the QuickNotes Compose stack.
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+scrape_configs:
+  # One job. The target is the Compose service name, which Docker's embedded
+  # DNS resolves inside the Compose network, plus the port the app listens on
+  # inside its container. The default metrics path /metrics is what the app
+  # serves, so it is not overridden here.
+  - job_name: quicknotes
+    static_configs:
+      - targets: ["quicknotes:8080"]

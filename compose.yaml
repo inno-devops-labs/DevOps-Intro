@@ -1,0 +1,67 @@
+services:
+  quicknotes:
+    build: ./app
+    image: quicknotes:lab6
+    ports:
+      # Defaults to 8080, overridable when that port is already taken.
+      - "${HOST_PORT:-8080}:8080"
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/seed.json"
+    volumes:
+      - quicknotes-data:/data
+    healthcheck:
+      test: ["CMD", "/healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+
+    # Hardening. The image already covers two of the six defaults: it runs as
+    # UID 65532 and its base is scratch, so there is no shell and no package
+    # manager to abuse. The rest are enforced by the runtime.
+    cap_drop:
+      - ALL                       # QuickNotes needs no Linux capability at all
+    read_only: true               # the root filesystem is immutable
+    tmpfs:
+      - /tmp                      # the only writable path outside the volume
+    security_opt:
+      - no-new-privileges:true    # no setuid binary can raise privileges
+
+  prometheus:
+    image: prom/prometheus:v3.13.3
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/rules:/etc/prometheus/rules:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    # The Lab 6 healthcheck pays off here: Prometheus starts only once
+    # QuickNotes reports healthy, so the first scrape is never a wasted one.
+    depends_on:
+      quicknotes:
+        condition: service_healthy
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:13.2.3
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    environment:
+      # No credential is committed. Compose refuses to start if the password
+      # is not supplied from the environment.
+      GF_SECURITY_ADMIN_USER: "${GF_ADMIN_USER:-quicknotes}"
+      GF_SECURITY_ADMIN_PASSWORD: "${GF_ADMIN_PASSWORD:?set GF_ADMIN_PASSWORD before starting the stack}"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  quicknotes-data:
+  prometheus-data:

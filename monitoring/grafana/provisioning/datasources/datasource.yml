@@ -1,0 +1,15 @@
+# Auto-provisions Prometheus as the default data source. The URL is the
+# Compose service name, so Grafana finds it on the Compose network.
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    uid: quicknotes-prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      timeInterval: 15s
