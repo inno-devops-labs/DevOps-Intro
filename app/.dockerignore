@@ -1,0 +1,5 @@
+.git
+data/
+quicknotes
+*.test
+Dockerfile*

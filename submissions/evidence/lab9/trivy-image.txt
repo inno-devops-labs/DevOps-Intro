@@ -1,0 +1,4 @@
+
+quicknotes:lab6 (debian 12.15)
+==============================
+Total: 0 (HIGH: 0, CRITICAL: 0)

@@ -54,6 +54,41 @@ func TestHealth_ReportsCount(t *testing.T) {
 	}
 }
 
+func TestSecurityHeaders_AreAppliedToEveryResponse(t *testing.T) {
+	srv := newTestServer(t)
+	tests := []struct {
+		name   string
+		target string
+		status int
+	}{
+		{name: "API root", target: "/", status: http.StatusOK},
+		{name: "registered route", target: "/health", status: http.StatusOK},
+		{name: "router generated 404", target: "/not-found", status: http.StatusNotFound},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rec := do(t, srv, http.MethodGet, tt.target, nil)
+			if rec.Code != tt.status {
+				t.Fatalf("status: got %d, want %d", rec.Code, tt.status)
+			}
+
+			wantHeaders := map[string]string{
+				"Cache-Control":          "no-store",
+				"Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'; base-uri 'none'",
+				"Referrer-Policy":         "no-referrer",
+				"X-Content-Type-Options":  "nosniff",
+				"X-Frame-Options":         "DENY",
+			}
+			for name, want := range wantHeaders {
+				if got := rec.Header().Get(name); got != want {
+					t.Errorf("%s: got %q, want %q", name, got, want)
+				}
+			}
+		})
+	}
+}
+
 func TestCreateNote_RoundTrip(t *testing.T) {
 	srv := newTestServer(t)
 	rec := do(t, srv, http.MethodPost, "/notes", map[string]string{
@@ -130,4 +165,3 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 		}
 	}
 }
-
