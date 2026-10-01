@@ -1,0 +1,9 @@
+# {{ ansible_managed }}
+[Unit]
+Description=ansible-pull: converge QuickNotes from Git
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ansible-pull -U {{ pull_repo_url }} -C {{ pull_branch }} -d {{ pull_checkout_dir }} -i {{ pull_inventory }} ansible/playbook.yaml
