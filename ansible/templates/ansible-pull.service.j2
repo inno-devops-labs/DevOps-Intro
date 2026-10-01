@@ -1,0 +1,12 @@
+[Unit]
+Description=Ansible Pull QuickNotes convergence
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ansible-pull \
+  -U {{ ansible_pull_repo_url }} \
+  -C {{ ansible_pull_branch }} \
+  -i {{ ansible_pull_inventory_path }} \
+  ansible/playbook.yaml

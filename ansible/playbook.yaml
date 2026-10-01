@@ -1,0 +1,151 @@
+---
+- name: Deploy QuickNotes
+  hosts: quicknotes
+  become: true
+  gather_facts: false
+
+  vars:
+    quicknotes_user: quicknotes
+    quicknotes_group: quicknotes
+
+    data_dir: /var/lib/quicknotes
+    data_path: /var/lib/quicknotes/notes.json
+    seed_path: /var/lib/quicknotes/seed.json
+
+    binary_path: /usr/local/bin/quicknotes
+    listen_addr: ":8080"
+    restart_backoff: "3s"
+
+    ansible_pull_repo_url: "https://github.com/Kriss221/DevOps-Intro.git"
+    ansible_pull_branch: "feature/lab7"
+    ansible_pull_inventory_path: "/etc/ansible/quicknotes-local.ini"
+
+  tasks:
+    - name: Create QuickNotes system group
+      ansible.builtin.group:
+        name: "{{ quicknotes_group }}"
+        system: true
+        state: present
+
+    - name: Create QuickNotes system user
+      ansible.builtin.user:
+        name: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        system: true
+        create_home: false
+        home: /nonexistent
+        shell: /usr/sbin/nologin
+        state: present
+
+    - name: Ensure QuickNotes data directory exists
+      ansible.builtin.file:
+        path: "{{ data_dir }}"
+        state: directory
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        mode: "0750"
+
+    - name: Copy QuickNotes binary
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/files/quicknotes"
+        dest: "{{ binary_path }}"
+        owner: root
+        group: root
+        mode: "0755"
+      notify: restart quicknotes
+
+    - name: Copy seed data
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/files/seed.json"
+        dest: "{{ seed_path }}"
+        owner: "{{ quicknotes_user }}"
+        group: "{{ quicknotes_group }}"
+        mode: "0640"
+
+    - name: Render QuickNotes systemd unit
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/templates/quicknotes.service.j2"
+        dest: /etc/systemd/system/quicknotes.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify:
+        - reload systemd
+        - restart quicknotes
+
+    - name: Apply pending QuickNotes handlers
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start QuickNotes
+      ansible.builtin.systemd:
+        name: quicknotes
+        enabled: true
+        state: started
+      when: not ansible_check_mode
+
+    # ---- Bonus: ansible-pull GitOps loop ----
+
+    - name: Install Ansible and Git for ansible-pull
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Ensure Ansible configuration directory exists
+      ansible.builtin.file:
+        path: /etc/ansible
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Install local ansible-pull inventory
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/files/local-inventory.ini"
+        dest: "{{ ansible_pull_inventory_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Install ansible-pull service
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/templates/ansible-pull.service.j2"
+        dest: /etc/systemd/system/ansible-pull.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify: reload systemd
+
+    - name: Install ansible-pull timer
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/templates/ansible-pull.timer.j2"
+        dest: /etc/systemd/system/ansible-pull.timer
+        owner: root
+        group: root
+        mode: "0644"
+      notify: reload systemd
+
+    - name: Apply pending ansible-pull handlers
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start ansible-pull timer
+      ansible.builtin.systemd:
+        name: ansible-pull.timer
+        enabled: true
+        state: started
+      when: not ansible_check_mode
+
+  handlers:
+    - name: reload systemd
+      ansible.builtin.systemd:
+        daemon_reload: true
+      when: not ansible_check_mode
+
+    - name: restart quicknotes
+      ansible.builtin.systemd:
+        name: quicknotes
+        state: restarted
+      when: not ansible_check_mode
