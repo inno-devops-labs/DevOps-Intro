@@ -1,0 +1,13 @@
+[Unit]
+Description=Converge this host from Git with ansible-pull
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ansible-pull \
+    -U {{ pull_repo_url }} \
+    -C {{ pull_branch }} \
+    -d {{ pull_checkout_dir }} \
+    -i {{ pull_inventory_path }} \
+    ansible/playbook.yaml

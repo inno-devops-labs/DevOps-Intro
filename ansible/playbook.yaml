@@ -11,7 +11,7 @@
     quicknotes_listen_addr: ":8080"
     quicknotes_data_path: /var/lib/quicknotes/notes.json
     quicknotes_seed_path: /var/lib/quicknotes/seed.json
-    quicknotes_restart_sec: 2
+    quicknotes_restart_sec: 4
 
   tasks:
     - name: Create the quicknotes system user

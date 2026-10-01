@@ -1,0 +1,63 @@
+---
+# Installs the GitOps loop (Bonus). Run once from the host; afterwards the VM
+# reconciles itself from Git and needs no ansible-playbook from outside.
+- name: Install the ansible-pull loop
+  hosts: quicknotes
+  become: true
+  gather_facts: false
+
+  vars:
+    pull_repo_url: https://github.com/ovsvp/DevOps-Intro.git
+    pull_branch: feature/lab7
+    pull_checkout_dir: /var/lib/ansible-pull
+    pull_inventory_path: /etc/ansible/local-inventory.ini
+    pull_interval: 5min
+    pull_boot_delay: 1min
+
+  tasks:
+    - name: Install ansible and git
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        state: present
+        update_cache: true
+
+    - name: Ensure the inventory directory exists
+      ansible.builtin.file:
+        path: /etc/ansible
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Install the local inventory
+      ansible.builtin.copy:
+        src: files/local-inventory.ini
+        dest: "{{ pull_inventory_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Render the ansible-pull service unit
+      ansible.builtin.template:
+        src: templates/ansible-pull.service.j2
+        dest: /etc/systemd/system/ansible-pull.service
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Render the ansible-pull timer unit
+      ansible.builtin.template:
+        src: templates/ansible-pull.timer.j2
+        dest: /etc/systemd/system/ansible-pull.timer
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Enable and start the timer
+      ansible.builtin.systemd_service:
+        name: ansible-pull.timer
+        daemon_reload: true
+        enabled: true
+        state: started
