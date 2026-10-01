@@ -1,0 +1,9 @@
+[Unit]
+Description=Run ansible-pull every {{ pull_interval }}
+
+[Timer]
+OnBootSec={{ pull_boot_delay }}
+OnUnitActiveSec={{ pull_interval }}
+
+[Install]
+WantedBy=timers.target
