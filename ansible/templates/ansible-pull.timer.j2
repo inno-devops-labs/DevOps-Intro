@@ -1,0 +1,9 @@
+[Unit]
+Description=Run ansible-pull every 5 minutes (GitOps loop, Lab 7 bonus)
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+
+[Install]
+WantedBy=timers.target

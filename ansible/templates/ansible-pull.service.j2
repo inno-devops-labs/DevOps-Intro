@@ -1,0 +1,10 @@
+[Unit]
+Description=ansible-pull: converge QuickNotes from Git ({{ quicknotes_pull_branch }})
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# ansible-pull clones the repo into /root/.ansible-pull and runs the playbook
+# from there; the -i and playbook paths are relative to that checkout.
+ExecStart=/usr/bin/ansible-pull -U {{ quicknotes_pull_repo }} -C {{ quicknotes_pull_branch }} -i ansible/inventory-local.ini ansible/playbook.yaml

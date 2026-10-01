@@ -1,0 +1,19 @@
+[Unit]
+Description=QuickNotes service (deployed by Ansible, Lab 7)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=quicknotes
+Group=quicknotes
+WorkingDirectory={{ quicknotes_data_dir }}
+Environment=ADDR={{ quicknotes_addr }}
+Environment=DATA_PATH={{ quicknotes_data_file }}
+Environment=SEED_PATH={{ quicknotes_seed_file }}
+ExecStart={{ quicknotes_binary }}
+Restart=on-failure
+RestartSec={{ quicknotes_restart_sec }}
+
+[Install]
+WantedBy=multi-user.target
