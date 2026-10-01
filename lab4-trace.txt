@@ -1,0 +1,45 @@
+18:23:53.099539 IP6 ::1.38346 > ::1.8080: Flags [S], seq 1058742775, win 65476, options [mss 65476,sackOK,TS val 519296351 ecr 0,nop,wscale 10], length 0
+`.e..(.@....................................?.!..........0.........
+..._.......
+
+18:23:53.099551 IP6 ::1.8080 > ::1.38346: Flags [S.], seq 2332258965, ack 1058742776, win 65464, options [mss 65476,sackOK,TS val 2761310632 ecr 519296351,nop,wscale 10], length 0
+`.n..(.@......................................r.?.!......0.........
+..A...._...
+
+18:23:53.099561 IP6 ::1.38346 > ::1.8080: Flags [.], ack 1, win 64, options [nop,nop,TS val 519296351 ecr 2761310632], length 0
+`.e.. .@....................................?.!...r....@.(.....
+..._..A.
+18:23:53.099611 IP6 ::1.38346 > ::1.8080: Flags [P.], seq 1:175, ack 1, win 64, options [nop,nop,TS val 519296351 ecr 2761310632], length 174: HTTP: POST /notes HTTP/1.1
+`.e....@....................................?.!...r....@.......
+..._..A.POST /notes HTTP/1.1
+Host: localhost:8080
+User-Agent: curl/8.5.0
+Accept: */*
+Content-Type: application/json
+Content-Length: 39
+
+{"title":"trace me","body":"in flight"}
+18:23:53.099615 IP6 ::1.8080 > ::1.38346: Flags [.], ack 175, win 64, options [nop,nop,TS val 2761310632 ecr 519296351], length 0
+`.n.. .@......................................r.?."....@.(.....
+..A...._
+18:23:53.100065 IP6 ::1.8080 > ::1.38346: Flags [P.], seq 1:207, ack 175, win 64, options [nop,nop,TS val 2761310632 ecr 519296351], length 206: HTTP: HTTP/1.1 201 Created
+`.n....@......................................r.?."....@.......
+..A...._HTTP/1.1 201 Created
+Content-Type: application/json
+Date: Thu, 24 Sep 2026 18:23:53 GMT
+Content-Length: 93
+
+{"id":8,"title":"trace me","body":"in flight","created_at":"2026-09-24T18:23:53.099780751Z"}
+
+18:23:53.100075 IP6 ::1.38346 > ::1.8080: Flags [.], ack 207, win 64, options [nop,nop,TS val 519296351 ecr 2761310632], length 0
+`.e.. .@....................................?."...sd...@.(.....
+..._..A.
+18:23:53.100261 IP6 ::1.38346 > ::1.8080: Flags [F.], seq 175, ack 207, win 64, options [nop,nop,TS val 519296352 ecr 2761310632], length 0
+`.e.. .@....................................?."...sd...@.(.....
+...`..A.
+18:23:53.100344 IP6 ::1.8080 > ::1.38346: Flags [F.], seq 207, ack 176, win 64, options [nop,nop,TS val 2761310633 ecr 519296352], length 0
+`.n.. .@......................................sd?."....@.(.....
+..A....`
+18:23:53.100382 IP6 ::1.38346 > ::1.8080: Flags [.], ack 208, win 64, options [nop,nop,TS val 519296352 ecr 2761310633], length 0
+`.e.. .@....................................?."...se...@.(.....
+...`..A.
