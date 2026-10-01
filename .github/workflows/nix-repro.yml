@@ -1,0 +1,51 @@
+name: nix-repro
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-a:
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.d.outputs.digest }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: DeterminateSystems/nix-installer-action@3138316df39ed29be04236d7ffc686fa525866aa # v23
+      - name: Build OCI image
+        run: nix build .#docker
+      - name: Digest
+        id: d
+        run: echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  build-b:
+    runs-on: ubuntu-latest
+    outputs:
+      digest: ${{ steps.d.outputs.digest }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: DeterminateSystems/nix-installer-action@3138316df39ed29be04236d7ffc686fa525866aa # v23
+      - name: Build OCI image
+        run: nix build .#docker
+      - name: Digest
+        id: d
+        run: echo "digest=$(sha256sum result | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+
+  compare:
+    needs: [build-a, build-b]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compare digests
+        run: |
+          A='${{ needs.build-a.outputs.digest }}'
+          B='${{ needs.build-b.outputs.digest }}'
+          echo "build-a: $A"
+          echo "build-b: $B"
+          if [ "$A" != "$B" ]; then
+            echo "::error::Nix image digests differ — build is NOT reproducible"
+            exit 1
+          fi
+          echo "Reproducible: identical digest $A"
