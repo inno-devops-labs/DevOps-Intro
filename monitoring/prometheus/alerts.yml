@@ -1,0 +1,19 @@
+groups:
+  - name: quicknotes
+    interval: 30s
+    rules:
+      - alert: QuickNotesHighErrorRate
+        # error ratio = (4xx + 5xx rate) / (total rate), floored denominator
+        expr: |
+          (
+            sum(rate(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+            /
+            clamp_min(sum(rate(quicknotes_http_responses_by_code_total[5m])), 1)
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "QuickNotes error rate above 5% for 5 minutes"
+          description: "Error ratio (4xx + 5xx) has exceeded 5% sustained for 5 minutes. See runbook for triage."
+          runbook_url: "https://github.com/witch2256/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md"
