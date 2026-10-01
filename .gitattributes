@@ -1,0 +1,8 @@
+ansible/*.yaml text eol=lf
+ansible/*.ini text eol=lf
+ansible/*.Dockerfile text eol=lf
+ansible/files/*.service text eol=lf
+ansible/files/*.timer text eol=lf
+ansible/files/*.json text eol=lf
+ansible/templates/*.j2 text eol=lf
+ansible/files/quicknotes binary

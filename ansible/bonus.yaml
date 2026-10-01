@@ -1,0 +1,71 @@
+---
+- name: Install the ansible-pull reconciliation timer
+  hosts: quicknotes
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Install Git and the distribution Ansible package
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Create the ansible-pull working directory
+      ansible.builtin.file:
+        path: /var/lib/ansible-pull
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Create the local inventory directory
+      ansible.builtin.file:
+        path: /etc/ansible
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Install the local inventory
+      ansible.builtin.copy:
+        src: local-inventory.ini
+        dest: /etc/ansible/quicknotes-local.ini
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Install the ansible-pull service
+      ansible.builtin.copy:
+        src: files/ansible-pull.service
+        dest: /etc/systemd/system/ansible-pull.service
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload systemd
+
+    - name: Install the ansible-pull timer
+      ansible.builtin.copy:
+        src: files/ansible-pull.timer
+        dest: /etc/systemd/system/ansible-pull.timer
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Reload systemd
+
+    - name: Reload systemd before enabling the timer
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start the reconciliation timer
+      ansible.builtin.systemd_service:
+        name: ansible-pull.timer
+        enabled: true
+        state: started
+
+  handlers:
+    - name: Reload systemd
+      ansible.builtin.systemd_service:
+        daemon_reload: true

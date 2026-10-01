@@ -1,0 +1,78 @@
+---
+- name: Deploy QuickNotes to the Lab 5 VM
+  hosts: quicknotes
+  become: true
+  gather_facts: false
+  vars:
+    listen_addr: ":8080"
+    data_dir: /var/lib/quicknotes
+    data_path: /var/lib/quicknotes/notes-lab7.json
+    seed_path: /var/lib/quicknotes/seed.json
+    restart_sec: 5
+
+  tasks:
+    - name: Check whether the service account already exists
+      ansible.builtin.getent:
+        database: passwd
+        key: quicknotes
+        fail_key: false
+
+    - name: Ensure the dedicated system user exists
+      ansible.builtin.user:
+        name: quicknotes
+        system: true
+        create_home: false
+        home: /nonexistent
+        shell: /usr/sbin/nologin
+
+    - name: Ensure the data directory exists
+      ansible.builtin.file:
+        path: "{{ data_dir }}"
+        state: directory
+        owner: quicknotes
+        group: quicknotes
+        mode: "0750"
+      when: not ansible_check_mode or ansible_facts.getent_passwd.get('quicknotes') is not none
+
+    - name: Install the static QuickNotes binary
+      ansible.builtin.copy:
+        src: files/quicknotes
+        dest: /usr/local/bin/quicknotes
+        owner: root
+        group: root
+        mode: "0755"
+      notify: Restart quicknotes
+
+    - name: Install the seed data
+      ansible.builtin.copy:
+        src: files/seed.json
+        dest: "{{ seed_path }}"
+        owner: quicknotes
+        group: quicknotes
+        mode: "0640"
+      when: not ansible_check_mode or ansible_facts.getent_passwd.get('quicknotes') is not none
+
+    - name: Render the systemd service unit
+      ansible.builtin.template:
+        src: templates/quicknotes.service.j2
+        dest: /etc/systemd/system/quicknotes.service
+        owner: root
+        group: root
+        mode: "0644"
+      register: quicknotes_unit
+      notify: Restart quicknotes
+
+    - name: Enable and start QuickNotes
+      ansible.builtin.systemd_service:
+        name: quicknotes
+        daemon_reload: "{{ quicknotes_unit.changed }}"
+        enabled: true
+        state: started
+      when: not ansible_check_mode
+
+  handlers:
+    - name: Restart quicknotes
+      ansible.builtin.systemd_service:
+        name: quicknotes
+        state: restarted
+      when: not ansible_check_mode

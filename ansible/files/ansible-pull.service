@@ -1,0 +1,9 @@
+[Unit]
+Description=Reconcile QuickNotes from feature/lab7
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/var/lib/ansible-pull
+ExecStart=/usr/bin/ansible-pull -U https://github.com/4rni4ka/DevOps-Intro.git -C feature/lab7 -d /var/lib/ansible-pull/checkout -i /etc/ansible/quicknotes-local.ini ansible/playbook.yaml
