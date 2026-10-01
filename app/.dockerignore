@@ -1,0 +1,5 @@
+quicknotes
+Caddyfile
+*.pcap
+*.pem
+.DS_Store
