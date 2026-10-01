@@ -1,0 +1,4 @@
+active
+enabled
+[?1h=RestartUSec=4s[m
+[K[?1l>

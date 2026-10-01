@@ -1,0 +1,43 @@
+2026-10-01T10:29:55+00:00 quicknotes systemd[1]: Starting ansible-pull.service - Reconcile QuickNotes configuration from Git...
+2026-10-01T10:29:55+00:00 quicknotes python3[5013]: ansible-git Invoked with name=https://github.com/amiranabiullina/DevOps-Intro.git dest=/var/lib/ansible-pull/quicknotes version=feature/lab7 depth=1 repo=https://github.com/amiranabiullina/DevOps-Intro.git remote=origin force=False clone=True update=True verify_commit=False gpg_whitelist=[] accept_hostkey=False accept_newhostkey=False bare=False recursive=True single_branch=False track_submodules=False refspec=None reference=None key_file=None ssh_opts=None executable=None umask=None archive=None archive_prefix=None separate_git_dir=None
+2026-10-01T10:29:58+00:00 quicknotes python3[5073]: ansible-ansible.builtin.group Invoked with name=quicknotes system=True state=present force=False local=False non_unique=False gid=None
+2026-10-01T10:29:58+00:00 quicknotes python3[5098]: ansible-ansible.builtin.user Invoked with name=quicknotes group=quicknotes system=True shell=/usr/sbin/nologin home=/nonexistent create_home=False state=present non_unique=False force=False remove=False move_home=False append=False ssh_key_bits=0 ssh_key_type=rsa ssh_key_comment=ansible-generated on quicknotes update_password=always uid=None groups=None comment=None password=NOT_LOGGING_PARAMETER login_class=None password_expire_max=None password_expire_min=None password_expire_warn=None hidden=None seuser=None skeleton=None generate_ssh_key=None ssh_key_file=None ssh_key_passphrase=NOT_LOGGING_PARAMETER expires=None password_lock=None local=None profile=None authorization=None role=None umask=None
+2026-10-01T10:29:59+00:00 quicknotes python3[5125]: ansible-ansible.builtin.file Invoked with path=/var/lib/quicknotes state=directory owner=quicknotes group=quicknotes mode=0750 recurse=False force=False follow=True modification_time_format=%Y%m%d%H%M.%S access_time_format=%Y%m%d%H%M.%S unsafe_writes=False _original_basename=None _diff_peek=None src=None modification_time=None access_time=None seuser=None serole=None selevel=None setype=None attributes=None
+2026-10-01T10:29:59+00:00 quicknotes python3[5150]: ansible-ansible.legacy.stat Invoked with path=/usr/local/bin/quicknotes follow=False get_checksum=True checksum_algorithm=sha1 get_mime=True get_attributes=True
+2026-10-01T10:29:59+00:00 quicknotes python3[5160]: ansible-ansible.legacy.file Invoked with owner=root group=root mode=0755 dest=/usr/local/bin/quicknotes _original_basename=quicknotes recurse=False state=file path=/usr/local/bin/quicknotes force=False follow=True modification_time_format=%Y%m%d%H%M.%S access_time_format=%Y%m%d%H%M.%S unsafe_writes=False _diff_peek=None src=None modification_time=None access_time=None seuser=None serole=None selevel=None setype=None attributes=None
+2026-10-01T10:29:59+00:00 quicknotes python3[5185]: ansible-ansible.legacy.stat Invoked with path=/var/lib/quicknotes/seed.json follow=False get_checksum=True checksum_algorithm=sha1 get_mime=True get_attributes=True
+2026-10-01T10:29:59+00:00 quicknotes python3[5195]: ansible-ansible.legacy.file Invoked with owner=quicknotes group=quicknotes mode=0640 dest=/var/lib/quicknotes/seed.json _original_basename=seed.json recurse=False state=file path=/var/lib/quicknotes/seed.json force=False follow=True modification_time_format=%Y%m%d%H%M.%S access_time_format=%Y%m%d%H%M.%S unsafe_writes=False _diff_peek=None src=None modification_time=None access_time=None seuser=None serole=None selevel=None setype=None attributes=None
+2026-10-01T10:29:59+00:00 quicknotes python3[5220]: ansible-ansible.legacy.stat Invoked with path=/etc/systemd/system/quicknotes.service follow=False get_checksum=True checksum_algorithm=sha1 get_mime=True get_attributes=True
+2026-10-01T10:29:59+00:00 quicknotes python3[5234]: ansible-ansible.legacy.copy Invoked with src=/root/.ansible/tmp/ansible-tmp-1790850599.3338926-5201-92900880865226/source dest=/etc/systemd/system/quicknotes.service owner=root group=root mode=0644 follow=False _original_basename=quicknotes.service.j2 checksum=9ab49775de281c18104f8fb2991015a746218c65 backup=False force=True unsafe_writes=False content=NOT_LOGGING_PARAMETER validate=None directory_mode=None remote_src=None local_follow=None seuser=None serole=None selevel=None setype=None attributes=None
+2026-10-01T10:29:59+00:00 quicknotes python3[5259]: ansible-ansible.builtin.systemd_service Invoked with name=quicknotes.service daemon_reload=True enabled=True state=started daemon_reexec=False scope=system no_block=False force=None masked=None
+2026-10-01T10:29:59+00:00 quicknotes python3[5324]: ansible-ansible.builtin.systemd_service Invoked with name=quicknotes.service state=restarted daemon_reload=False daemon_reexec=False scope=system no_block=False enabled=None force=None masked=None
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: 127.0.0.1 | CHANGED => {
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]:     "after": "4732f83e7580521059d769469e835c3f80004090",
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]:     "before": "13f1555f7b125691474fd71979806af29d9c5cd1",
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]:     "changed": true,
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]:     "remote_url_changed": false
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: }
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: PLAY [Deploy QuickNotes] *******************************************************
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: TASK [Create QuickNotes system group] ******************************************
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: ok: [127.0.0.1]
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: TASK [Create QuickNotes system user] *******************************************
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: ok: [127.0.0.1]
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: TASK [Create QuickNotes data directory] ****************************************
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: ok: [127.0.0.1]
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: TASK [Copy QuickNotes binary] **************************************************
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: ok: [127.0.0.1]
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: TASK [Copy seed notes] *********************************************************
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: ok: [127.0.0.1]
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: TASK [Render QuickNotes systemd unit] ******************************************
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: changed: [127.0.0.1]
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: TASK [Enable and start QuickNotes] *********************************************
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: ok: [127.0.0.1]
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: RUNNING HANDLER [restart quicknotes] *******************************************
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: changed: [127.0.0.1]
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: PLAY RECAP *********************************************************************
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: 127.0.0.1                  : ok=8    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: Starting Ansible Pull at 2026-10-01 10:29:55
+2026-10-01T10:29:59+00:00 quicknotes ansible-pull[4987]: /usr/bin/ansible-pull -U https://github.com/amiranabiullina/DevOps-Intro.git -C feature/lab7 -i /etc/ansible/quicknotes-local.ini -d /var/lib/ansible-pull/quicknotes ansible/playbook.yaml
+2026-10-01T10:29:59+00:00 quicknotes systemd[1]: ansible-pull.service: Deactivated successfully.
+2026-10-01T10:29:59+00:00 quicknotes systemd[1]: Finished ansible-pull.service - Reconcile QuickNotes configuration from Git.
+2026-10-01T10:29:59+00:00 quicknotes systemd[1]: ansible-pull.service: Consumed 2.095s CPU time, 121.5M memory peak, 0B memory swap peak.

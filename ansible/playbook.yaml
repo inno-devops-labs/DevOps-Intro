@@ -1,0 +1,79 @@
+---
+- name: Deploy QuickNotes
+  hosts: quicknotes
+  become: true
+  gather_facts: false
+
+  vars:
+    service_user: quicknotes
+    binary_path: /usr/local/bin/quicknotes
+    data_dir: /var/lib/quicknotes
+    data_path: "{{ data_dir }}/notes.json"
+    seed_path: "{{ data_dir }}/seed.json"
+    listen_addr: ":8080"
+    restart_delay: 5
+
+  tasks:
+    - name: Create QuickNotes system group
+      ansible.builtin.group:
+        name: "{{ service_user }}"
+        system: true
+        state: present
+
+    - name: Create QuickNotes system user
+      ansible.builtin.user:
+        name: "{{ service_user }}"
+        group: "{{ service_user }}"
+        system: true
+        shell: /usr/sbin/nologin
+        home: /nonexistent
+        create_home: false
+        state: present
+
+    - name: Create QuickNotes data directory
+      ansible.builtin.file:
+        path: "{{ data_dir }}"
+        state: directory
+        owner: "{{ service_user }}"
+        group: "{{ service_user }}"
+        mode: "0750"
+
+    - name: Copy QuickNotes binary
+      ansible.builtin.copy:
+        src: files/quicknotes
+        dest: "{{ binary_path }}"
+        owner: root
+        group: root
+        mode: "0755"
+      notify: restart quicknotes
+
+    - name: Copy seed notes
+      ansible.builtin.copy:
+        src: files/seed.json
+        dest: "{{ seed_path }}"
+        owner: "{{ service_user }}"
+        group: "{{ service_user }}"
+        mode: "0640"
+
+    - name: Render QuickNotes systemd unit
+      ansible.builtin.template:
+        src: templates/quicknotes.service.j2
+        dest: /etc/systemd/system/quicknotes.service
+        owner: root
+        group: root
+        mode: "0644"
+      register: quicknotes_unit
+      notify: restart quicknotes
+
+    - name: Enable and start QuickNotes
+      ansible.builtin.systemd_service:
+        name: quicknotes.service
+        daemon_reload: "{{ quicknotes_unit.changed }}"
+        enabled: true
+        state: started
+
+  handlers:
+    - name: restart quicknotes
+      ansible.builtin.systemd_service:
+        name: quicknotes.service
+        state: restarted

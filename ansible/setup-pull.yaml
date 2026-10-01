@@ -1,0 +1,65 @@
+---
+- name: Configure the QuickNotes pull timer
+  hosts: quicknotes
+  become: true
+  gather_facts: false
+
+  vars:
+    pull_repo: "https://github.com/amiranabiullina/DevOps-Intro.git"
+    pull_branch: "feature/lab7"
+    pull_inventory: /etc/ansible/quicknotes-local.ini
+    pull_checkout: /var/lib/ansible-pull/quicknotes
+
+  tasks:
+    - name: Install Ansible and Git
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Create pull configuration and checkout parent directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      loop:
+        - /etc/ansible
+        - /var/lib/ansible-pull
+
+    - name: Install local inventory
+      ansible.builtin.copy:
+        src: files/local-inventory.ini
+        dest: "{{ pull_inventory }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Install ansible-pull service
+      ansible.builtin.template:
+        src: templates/ansible-pull.service.j2
+        dest: /etc/systemd/system/ansible-pull.service
+        owner: root
+        group: root
+        mode: "0644"
+      register: pull_service_unit
+
+    - name: Install ansible-pull timer
+      ansible.builtin.copy:
+        src: files/ansible-pull.timer
+        dest: /etc/systemd/system/ansible-pull.timer
+        owner: root
+        group: root
+        mode: "0644"
+      register: pull_timer_unit
+
+    - name: Enable and activate ansible-pull timer
+      ansible.builtin.systemd_service:
+        name: ansible-pull.timer
+        daemon_reload: "{{ pull_service_unit.changed or pull_timer_unit.changed }}"
+        enabled: true
+        state: "{{ 'restarted' if pull_timer_unit.changed else 'started' }}"

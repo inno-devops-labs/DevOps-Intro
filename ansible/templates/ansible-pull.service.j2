@@ -1,0 +1,11 @@
+[Unit]
+Description=Reconcile QuickNotes configuration from Git
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+Environment=GIT_TERMINAL_PROMPT=0
+Environment=ANSIBLE_NOCOLOR=1
+ExecStart=/usr/bin/ansible-pull -U {{ pull_repo }} -C {{ pull_branch }} -i {{ pull_inventory }} -d {{ pull_checkout }} ansible/playbook.yaml

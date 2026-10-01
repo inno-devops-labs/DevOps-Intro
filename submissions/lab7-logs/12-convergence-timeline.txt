@@ -1,0 +1,16 @@
+commit=4732f83e7580521059d769469e835c3f80004090
+committed_at=2026-10-01T13:26:16+03:00
+push_completed_at=2026-10-01T10:26:40Z
+observed_at=2026-10-01T10:27:17Z
+[?1h=RestartUSec=4s[m
+ActiveEnterTimestamp=Thu 2026-10-01 10:09:31 UTC[m
+[K[?1l>13f1555f7b125691474fd71979806af29d9c5cd1
+[?1h=Result=success[m
+ExecMainStatus=0[m
+[K[?1l>observed_at=2026-10-01T10:31:17Z
+[?1h=RestartUSec=5s[m
+ActiveEnterTimestamp=Thu 2026-10-01 10:29:59 UTC[m
+[K[?1l>4732f83e7580521059d769469e835c3f80004090
+[?1h=Result=success[m
+ExecMainStatus=0[m
+[K[?1l>

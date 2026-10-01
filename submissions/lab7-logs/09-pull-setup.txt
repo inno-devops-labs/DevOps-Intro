@@ -1,0 +1,24 @@
+
+PLAY [Configure the QuickNotes pull timer] *************************************
+
+TASK [Install Ansible and Git] *************************************************
+changed: [quicknotes_vm]
+
+TASK [Create pull configuration and checkout parent directories] ***************
+changed: [quicknotes_vm] => (item=/etc/ansible)
+changed: [quicknotes_vm] => (item=/var/lib/ansible-pull)
+
+TASK [Install local inventory] *************************************************
+changed: [quicknotes_vm]
+
+TASK [Install ansible-pull service] ********************************************
+changed: [quicknotes_vm]
+
+TASK [Install ansible-pull timer] **********************************************
+changed: [quicknotes_vm]
+
+TASK [Enable and activate ansible-pull timer] **********************************
+changed: [quicknotes_vm]
+
+PLAY RECAP *********************************************************************
+quicknotes_vm              : ok=6    changed=6    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0

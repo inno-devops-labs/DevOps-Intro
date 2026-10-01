@@ -1,0 +1,29 @@
+
+PLAY [Deploy QuickNotes] *******************************************************
+
+TASK [Create QuickNotes system group] ******************************************
+changed: [quicknotes_vm]
+
+TASK [Create QuickNotes system user] *******************************************
+changed: [quicknotes_vm]
+
+TASK [Create QuickNotes data directory] ****************************************
+changed: [quicknotes_vm]
+
+TASK [Copy QuickNotes binary] **************************************************
+changed: [quicknotes_vm]
+
+TASK [Copy seed notes] *********************************************************
+changed: [quicknotes_vm]
+
+TASK [Render QuickNotes systemd unit] ******************************************
+changed: [quicknotes_vm]
+
+TASK [Enable and start QuickNotes] *********************************************
+changed: [quicknotes_vm]
+
+RUNNING HANDLER [restart quicknotes] *******************************************
+changed: [quicknotes_vm]
+
+PLAY RECAP *********************************************************************
+quicknotes_vm              : ok=8    changed=8    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0

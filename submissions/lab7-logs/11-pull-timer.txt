@@ -1,0 +1,4 @@
+[0;4mNEXT                       [0m[0;4m [0m[0;4m    LEFT[0m[0;4m [0m[0;4mLAST                       [0m[0;4m [0m[0;4m PASSED[0m[0;4m [0m[0;4mUNIT              [0m[0;4m [0m[0;4mACTIVATES           [0m
+Thu 2026-10-01 10:29:54 UTC 4min 16s Thu 2026-10-01 10:24:54 UTC 43s ago ansible-pull.timer ansible-pull.service
+
+[0;1;39m1 timers listed.[0m
