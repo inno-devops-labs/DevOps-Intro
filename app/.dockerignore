@@ -1,0 +1,5 @@
+quicknotes
+data/
+Dockerfile
+.dockerignore
+*.md

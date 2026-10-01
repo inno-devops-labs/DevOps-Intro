@@ -1,0 +1,29 @@
+{
+  "uid": "quicknotes-golden",
+  "title": "QuickNotes - Golden Signals",
+  "schemaVersion": 39,
+  "refresh": "10s",
+  "time": { "from": "now-30m", "to": "now" },
+  "panels": [
+    { "id": 1, "type": "timeseries", "title": "Latency (scrape of /metrics, proxy)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] },
+      "targets": [ { "refId": "A", "expr": "scrape_duration_seconds{job=\"quicknotes\"}", "legendFormat": "scrape duration" } ] },
+    { "id": 2, "type": "timeseries", "title": "Traffic (requests/s)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] },
+      "targets": [ { "refId": "A", "expr": "sum(rate(quicknotes_http_requests_total[1m]))", "legendFormat": "req/s" } ] },
+    { "id": 3, "type": "timeseries", "title": "Errors (4xx + 5xx ratio)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "fieldConfig": { "defaults": { "unit": "percentunit" }, "overrides": [] },
+      "targets": [ { "refId": "A", "expr": "sum(rate(quicknotes_http_responses_by_code_total{code=~\"4..|5..\"}[1m])) / sum(rate(quicknotes_http_requests_total[1m]))", "legendFormat": "error ratio" } ] },
+    { "id": 4, "type": "timeseries", "title": "Saturation (notes stored)",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "fieldConfig": { "defaults": { "unit": "short" }, "overrides": [] },
+      "targets": [ { "refId": "A", "expr": "quicknotes_notes_total", "legendFormat": "notes" } ] }
+  ]
+}
