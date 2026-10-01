@@ -1,0 +1,50 @@
+# compose.yaml — Lab 6: QuickNotes with healthcheck + persistent volume
+# + the 6 security defaults from Lecture 6 (bonus).
+services:
+  quicknotes:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: quicknotes:lab6
+    container_name: quicknotes
+    restart: unless-stopped
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/app/seed.json"
+
+    volumes:
+      - quicknotes-data:/data
+
+    # ── Security defaults (1, 2 are in the Dockerfile) ────────
+    # 3. Drop ALL Linux capabilities. QuickNotes needs none: it does
+    #    not bind low ports, does not change UID, does not use raw sockets.
+    cap_drop:
+      - ALL
+
+    # 4. Read-only rootfs. The only writable path is the /data volume;
+    #    /tmp is provided as an in-memory tmpfs for incidental writes.
+    read_only: true
+    tmpfs:
+      - /tmp
+
+    # 5. Block setuid/setgid binaries from escalating privileges.
+    security_opt:
+      - no-new-privileges:true
+
+    healthcheck:
+      # distroless has no shell/curl/wget. Our own binary runs as the probe:
+      # `--healthcheck` does a local GET on /health and exits 0/1.
+      test: ["CMD", "/app/quicknotes", "--healthcheck"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  quicknotes-data:
+    name: quicknotes-data

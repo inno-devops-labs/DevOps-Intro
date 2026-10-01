@@ -3,15 +3,20 @@ package main
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 )
 
 func main() {
+	if len(os.Args) > 1 && os.Args[1] == "--healthcheck" {
+		os.Exit(runHealthcheck())
+	}
 	addr := envOrDefault("ADDR", ":8080")
 	dataPath := envOrDefault("DATA_PATH", "data/notes.json")
 	seedPath := envOrDefault("SEED_PATH", "seed.json")
@@ -83,3 +88,26 @@ func dirname(p string) string {
 	}
 	return "."
 }
+
+func runHealthcheck() int {
+	addr := envOrDefault("ADDR", ":8080")
+	// ADDR is typically ":8080" (bind on all interfaces). For a local probe
+	// we need an explicit host, so prefix 127.0.0.1.
+	if strings.HasPrefix(addr, ":") {
+		addr = "127.0.0.1" + addr
+	}
+	client := &http.Client{Timeout: 2 * time.Second}
+	resp, err := client.Get("http://" + addr + "/health")
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "healthcheck:", err)
+		return 1
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		fmt.Fprintln(os.Stderr, "healthcheck: status", resp.StatusCode)
+		return 1
+	}
+	return 0
+}
+
+
