@@ -1,0 +1,16 @@
+groups:
+  - name: quicknotes-alerts
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(quicknotes_http_responses_by_code_total{code=~"[45].."}[5m]))
+            /
+          sum(rate(quicknotes_http_responses_by_code_total[5m]))
+            > 0.05
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "QuickNotes error ratio above 5% sustained for 5m"
+          description: "amount of responses in the format 4XX/5XX is {{ $value | humanizePercentage }} over the last 5m."
+          runbook_url: "docs/runbook/high-error-rate.md"
