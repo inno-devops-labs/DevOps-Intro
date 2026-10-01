@@ -1,0 +1,75 @@
+---
+# Bonus: installs the ansible-pull GitOps loop inside the VM.
+#
+# Run once from the host. Afterwards the VM reconciles itself from the fork
+# every five minutes and playbook.yaml no longer needs to be pushed by hand.
+- name: Install the ansible-pull loop
+  hosts: quicknotes
+  become: true
+  gather_facts: false
+
+  vars:
+    pull_repo: https://github.com/aniksel/DevOps-Intro.git
+    pull_branch: feature/lab7
+    pull_dir: /var/lib/ansible-pull
+    pull_inventory: /etc/ansible/pull-inventory.ini
+    pull_playbook: ansible/playbook.yaml
+    pull_interval: 5min
+
+  tasks:
+    - name: Install ansible and git in the guest
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Ensure the checkout and inventory directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      loop:
+        - "{{ pull_dir }}"
+        - "{{ pull_inventory | dirname }}"
+
+    - name: Install the local inventory
+      ansible.builtin.copy:
+        src: files/pull-inventory.ini
+        dest: "{{ pull_inventory }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Render the ansible-pull service unit
+      ansible.builtin.template:
+        src: templates/ansible-pull.service.j2
+        dest: /etc/systemd/system/ansible-pull.service
+        owner: root
+        group: root
+        mode: "0644"
+      register: pull_service
+
+    - name: Render the ansible-pull timer unit
+      ansible.builtin.template:
+        src: templates/ansible-pull.timer.j2
+        dest: /etc/systemd/system/ansible-pull.timer
+        owner: root
+        group: root
+        mode: "0644"
+      register: pull_timer
+
+    - name: Reload systemd after a unit change
+      ansible.builtin.systemd:
+        daemon_reload: true
+      when: pull_service is changed or pull_timer is changed
+
+    - name: Enable and start the ansible-pull timer
+      ansible.builtin.systemd:
+        name: ansible-pull.timer
+        enabled: true
+        state: started

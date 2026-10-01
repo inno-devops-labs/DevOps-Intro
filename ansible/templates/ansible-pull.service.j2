@@ -1,0 +1,15 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=Converge this host from Git with ansible-pull
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ansible-pull \
+    --url {{ pull_repo }} \
+    --checkout {{ pull_branch }} \
+    --directory {{ pull_dir }} \
+    --inventory {{ pull_inventory }} \
+    {{ pull_playbook }}

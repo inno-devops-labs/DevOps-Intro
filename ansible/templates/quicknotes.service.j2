@@ -1,0 +1,22 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=QuickNotes HTTP service
+Documentation=https://github.com/inno-devops-labs/DevOps-Intro
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{ qn_user }}
+Group={{ qn_group }}
+WorkingDirectory={{ qn_data_dir }}
+Environment=ADDR={{ qn_listen_addr }}
+Environment=DATA_PATH={{ qn_data_path }}
+Environment=SEED_PATH={{ qn_seed_path }}
+ExecStart={{ qn_binary }}
+Restart=on-failure
+RestartSec={{ qn_restart_sec }}
+
+[Install]
+WantedBy=multi-user.target

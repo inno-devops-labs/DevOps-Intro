@@ -1,0 +1,13 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=Run ansible-pull every {{ pull_interval }}
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec={{ pull_interval }}
+AccuracySec=10s
+Unit=ansible-pull.service
+
+[Install]
+WantedBy=timers.target
