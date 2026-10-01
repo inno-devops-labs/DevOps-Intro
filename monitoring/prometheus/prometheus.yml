@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s
+
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+scrape_configs:
+  # Resolved by Compose DNS: "quicknotes" is the service name, 8080 the port it
+  # listens on inside the network (not the published host port).
+  - job_name: quicknotes
+    static_configs:
+      - targets:
+          - quicknotes:8080
