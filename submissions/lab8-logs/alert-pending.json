@@ -1,0 +1,59 @@
+{
+  "observed_at": "2026-10-01T11:06:49.904088+00:00",
+  "response": {
+    "status": "success",
+    "data": {
+      "groups": [
+        {
+          "name": "quicknotes",
+          "file": "/etc/prometheus/alerts.yml",
+          "rules": [
+            {
+              "state": "pending",
+              "name": "QuickNotesHighErrorRate",
+              "query": "(sum(rate(quicknotes_http_responses_by_code_total{code=~\"4..|5..\",job=\"quicknotes\"}[1m])) / sum(rate(quicknotes_http_requests_total{job=\"quicknotes\"}[1m]))) > 0.05",
+              "duration": 300,
+              "keepFiringFor": 0,
+              "labels": {
+                "service": "quicknotes",
+                "severity": "page"
+              },
+              "annotations": {
+                "description": "The 1-minute ratio of HTTP 4xx and 5xx responses has remained above 5% for 5 minutes.",
+                "runbook_path": "docs/runbook/high-error-rate.md",
+                "runbook_url": "https://github.com/amiranabiullina/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md",
+                "summary": "QuickNotes error ratio exceeds 5%"
+              },
+              "alerts": [
+                {
+                  "labels": {
+                    "alertname": "QuickNotesHighErrorRate",
+                    "service": "quicknotes",
+                    "severity": "page"
+                  },
+                  "annotations": {
+                    "description": "The 1-minute ratio of HTTP 4xx and 5xx responses has remained above 5% for 5 minutes.",
+                    "runbook_path": "docs/runbook/high-error-rate.md",
+                    "runbook_url": "https://github.com/amiranabiullina/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md",
+                    "summary": "QuickNotes error ratio exceeds 5%"
+                  },
+                  "state": "pending",
+                  "activeAt": "2026-10-01T11:06:42.464142167Z",
+                  "value": "2.5e-01"
+                }
+              ],
+              "health": "ok",
+              "evaluationTime": 0.001527125,
+              "lastEvaluation": "2026-10-01T11:06:42.481692341Z",
+              "type": "alerting"
+            }
+          ],
+          "interval": 15,
+          "limit": 0,
+          "evaluationTime": 0.001599542,
+          "lastEvaluation": "2026-10-01T11:06:42.481625258Z"
+        }
+      ]
+    }
+  }
+}

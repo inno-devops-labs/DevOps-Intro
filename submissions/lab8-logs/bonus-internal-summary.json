@@ -1,0 +1,13 @@
+{
+  "window_start_utc": "2026-10-01T12:27:09+00:00",
+  "window_end_utc": "2026-10-01T12:57:09+00:00",
+  "expected_probe_samples_approximately": 30,
+  "observed_probe_samples": 25,
+  "observed_failed_probes": 0,
+  "observed_failed_exporter_scrapes": 0,
+  "largest_gap_including_window_edges_seconds": 354.47,
+  "successful_latency_samples": 25,
+  "successful_probe_p50_ms": 2.4228,
+  "successful_probe_p95_ms": 3.1191,
+  "note": "Missing samples are not successful probes. Percentiles use successful probes only."
+}

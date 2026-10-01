@@ -1,0 +1,6 @@
+quicknotes
+data/
+.git
+.gitignore
+Dockerfile*
+README.md

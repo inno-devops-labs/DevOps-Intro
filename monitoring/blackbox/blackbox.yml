@@ -1,0 +1,10 @@
+modules:
+  quicknotes_health:
+    prober: http
+    timeout: 2s
+    http:
+      method: GET
+      valid_status_codes: [200]
+      follow_redirects: true
+      preferred_ip_protocol: ip4
+      ip_protocol_fallback: false

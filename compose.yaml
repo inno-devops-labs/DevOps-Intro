@@ -1,0 +1,86 @@
+services:
+  quicknotes:
+    build:
+      context: ./app
+    image: quicknotes:lab6
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: "/data/notes.json"
+      SEED_PATH: "/app/seed.json"
+    ports:
+      - "8080:8080"
+    volumes:
+      - quicknotes-data:/data
+    healthcheck:
+      test: ["CMD", "/app/healthcheck"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+
+  healthcheck:
+    image: curlimages/curl:8.12.1
+    depends_on:
+      - quicknotes
+    command:
+      - /bin/sh
+      - -c
+      - |
+        while true; do
+          curl -fsS http://quicknotes:8080/health || exit 1
+          sleep 30
+        done
+    restart: unless-stopped
+
+
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus:ro
+      - prometheus-data:/prometheus
+    depends_on:
+      quicknotes:
+        condition: service_healthy
+    restart: unless-stopped
+
+
+  grafana:
+    image: grafana/grafana:13.0.10
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:?Set GRAFANA_ADMIN_USER in .env}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD in .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+
+  blackbox:
+    image: prom/blackbox-exporter:v0.27.0
+    command:
+      - --config.file=/etc/blackbox_exporter/config.yml
+    volumes:
+      - ./monitoring/blackbox/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
+    depends_on:
+      quicknotes:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  grafana-data:
+  prometheus-data:
+  quicknotes-data:

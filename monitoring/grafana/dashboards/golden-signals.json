@@ -1,0 +1,269 @@
+{
+  "id": null,
+  "uid": "quicknotes-golden-signals",
+  "title": "QuickNotes \u2014 Golden Signals",
+  "tags": [
+    "quicknotes",
+    "lab8",
+    "sre"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Latency \u2014 request-rate proxy",
+      "description": "Lab-approved fallback: request rate, NOT request duration. QuickNotes exposes no duration histogram; p50/p95 are unavailable.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "quicknotes-prometheus"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "quicknotes-prometheus"
+          },
+          "expr": "sum(rate(quicknotes_http_requests_total{job=\"quicknotes\"}[1m]))",
+          "legendFormat": "Latency \u2014 request-rate proxy",
+          "range": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "min": 0,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "single"
+        },
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Traffic \u2014 requests per second",
+      "description": "Average request rate over 1 minute. Includes /health and /metrics.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "quicknotes-prometheus"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "quicknotes-prometheus"
+          },
+          "expr": "sum(rate(quicknotes_http_requests_total{job=\"quicknotes\"}[1m]))",
+          "legendFormat": "Traffic \u2014 requests per second",
+          "range": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "min": 0,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "single"
+        },
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Errors \u2014 4xx + 5xx ratio",
+      "description": "Error responses divided by all requests over 1 minute. Includes monitoring requests; undefined when total traffic is zero.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "quicknotes-prometheus"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "quicknotes-prometheus"
+          },
+          "expr": "sum(rate(quicknotes_http_responses_by_code_total{job=\"quicknotes\",code=~\"4..|5..\"}[1m])) / sum(rate(quicknotes_http_requests_total{job=\"quicknotes\"}[1m]))",
+          "legendFormat": "Errors \u2014 4xx + 5xx ratio",
+          "range": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "showPoints": "never",
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "max": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0.05
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "single"
+        },
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      }
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Saturation \u2014 stored notes proxy",
+      "description": "Current number of stored notes. A lab-approved load proxy, not a measurement of remaining storage capacity.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "quicknotes-prometheus"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "quicknotes-prometheus"
+          },
+          "expr": "sum(quicknotes_notes_total{job=\"quicknotes\"})",
+          "legendFormat": "Saturation \u2014 stored notes proxy",
+          "range": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "fillOpacity": 15,
+            "showPoints": "never",
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "tooltip": {
+          "mode": "single"
+        },
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      }
+    }
+  ]
+}
