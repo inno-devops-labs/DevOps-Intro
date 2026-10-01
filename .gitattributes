@@ -1,0 +1,2 @@
+provision/*.sh text eol=lf
+provision/*.service text eol=lf

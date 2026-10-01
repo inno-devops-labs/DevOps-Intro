@@ -1,0 +1,17 @@
+[Unit]
+Description=QuickNotes API
+After=network.target
+
+[Service]
+Type=simple
+User=vagrant
+Group=vagrant
+WorkingDirectory=/home/vagrant/quicknotes
+Environment=ADDR=:8080
+Environment=DATA_PATH=/var/lib/quicknotes/notes.json
+Environment=SEED_PATH=/home/vagrant/quicknotes/seed.json
+ExecStart=/usr/local/bin/quicknotes
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
