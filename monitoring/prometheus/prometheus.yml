@@ -1,0 +1,15 @@
+# Lab 8 Task 1.2 - Prometheus pulls QuickNotes over the Compose network.
+global:
+  scrape_interval: 15s        # spec: 15 s (design question b in section 2.5)
+
+rule_files:
+  - /etc/prometheus/rules/high-error-rate.yml   # Task 2 alert (section 3.1)
+
+scrape_configs:
+  # ONE job (spec 1.2.2). Target = Compose service name + container port
+  # (spec 1.2.3): DNS name "quicknotes" resolves inside the Compose network.
+  # Host port 8080 is irrelevant here - we scrape the internal network.
+  - job_name: quicknotes
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["quicknotes:8080"]

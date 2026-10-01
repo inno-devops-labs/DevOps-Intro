@@ -1,0 +1,26 @@
+# Lab 8 Task 2.1 - one good alert.
+# Error ratio = (4xx + 5xx per second) / (all requests per second),
+# both smoothed over 5m. Two sustained gates protect us from noise:
+#   1. rate() over [5m]  - a single 4xx burst is spread over 5 minutes
+#                          and cannot lift the average past 5% alone;
+#   2. for: 5m           - the ratio must STAY above 5% for 5 more
+#                          minutes before a human is paged.
+groups:
+  - name: quicknotes-high-error-rate
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+            /
+          sum(rate(quicknotes_http_requests_total[5m]))
+            > 0.05
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "QuickNotes error ratio above 5% for 5 minutes"
+          description: >-
+            Non-2xx responses (4xx+5xx) are {{ $value | humanizePercentage }}
+            of all traffic over the last 5 minutes (threshold: 5%,
+            sustained 5m). Users are visibly failing.
+          runbook_url: "https://github.com/NikolayTaran/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md"

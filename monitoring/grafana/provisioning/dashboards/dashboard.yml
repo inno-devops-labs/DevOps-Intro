@@ -1,0 +1,14 @@
+# Lab 8 Task 1.3.2 - where Grafana looks for dashboards on startup.
+apiVersion: 1
+
+providers:
+  - name: quicknotes
+    orgId: 1
+    folder: QuickNotes
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30     # re-read the JSON every 30 s
+    allowUiUpdates: true
+    options:
+      # MUST match where compose.yaml mounts golden-signals.json
+      path: /var/lib/grafana/dashboards

@@ -7,11 +7,19 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 )
 
 func main() {
+	// Healthcheck mode: distroless has no shell, no curl, no wget - the app
+	// binary itself is the only executable inside the image, so the container
+	// healthcheck (compose.yaml) runs `/quicknotes healthcheck`.
+	if len(os.Args) > 1 && os.Args[1] == "healthcheck" {
+		os.Exit(healthcheck())
+	}
+
 	addr := envOrDefault("ADDR", ":8080")
 	dataPath := envOrDefault("DATA_PATH", "data/notes.json")
 	seedPath := envOrDefault("SEED_PATH", "seed.json")
@@ -49,6 +57,35 @@ func main() {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Printf("shutdown: %v", err)
 	}
+}
+
+// healthcheck dials the local /health endpoint and exits 0 (healthy) or
+// 1 (unhealthy). Cheap and side-effect free: one request, 2 s timeout.
+func healthcheck() int {
+	addr := envOrDefault("ADDR", ":8080")
+	url := "http://" + loopbackHost(addr) + "/health"
+
+	client := &http.Client{Timeout: 2 * time.Second}
+	resp, err := client.Get(url)
+	if err != nil {
+		log.Printf("healthcheck: GET %s: %v", url, err)
+		return 1
+	}
+	defer func() { _ = resp.Body.Close() }()
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("healthcheck: GET %s: got %s", url, resp.Status)
+		return 1
+	}
+	return 0
+}
+
+// loopbackHost converts a listen address such as ":8080" or "0.0.0.0:8080"
+// into a loopback dial address for the self-healthcheck.
+func loopbackHost(addr string) string {
+	if i := strings.LastIndex(addr, ":"); i >= 0 {
+		return "127.0.0.1" + addr[i:]
+	}
+	return "127.0.0.1:" + addr
 }
 
 func envOrDefault(k, def string) string {

@@ -1,0 +1,116 @@
+# Lab 6 - QuickNotes: Task 2 (compose + healthcheck + persistent volume)
+# and the Bonus (6 container-security defaults from Lecture 6).
+# The hardening flags are marked BONUS so the report can reference them.
+#
+# Lab 8 extension: prometheus + grafana services (SRE & Monitoring).
+# Prometheus scrapes QuickNotes by its Compose service name (DNS inside
+# the Compose network); Grafana is provisioned from monitoring/ on startup.
+
+services:
+  quicknotes:
+    # Task 2.1: build from ./app and tag as quicknotes:lab6
+    build:
+      context: ./app
+    image: quicknotes:lab6
+    container_name: quicknotes-lab6
+
+    # Task 2.2: publish port 8080
+    ports:
+      - "8080:8080"
+
+    # Task 2.5: required env vars
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: /data/notes.json
+      SEED_PATH: /seed.json
+
+    # Task 2.3: named volume mounted at /data (notes.json lives here)
+    volumes:
+      - quicknotes-data:/data
+
+    # Task 2.4: healthcheck. Distroless has NO shell, no curl, no wget, so
+    # the strategy is "use a binary that is already in the image": the app
+    # binary itself has a `healthcheck` subcommand that dials /health and
+    # exits 0/1. Exec form (no shell involved).
+    healthcheck:
+      test: ["CMD", "/quicknotes", "healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+    # Task 2.6
+    restart: unless-stopped
+
+    # ---------------------------------------------------------------
+    # BONUS: the 6 security defaults from Lecture 6
+    # ---------------------------------------------------------------
+    # 1) USER nonroot (UID 65532)        -> set in app/Dockerfile
+    # 2) distroless base (no shell/apt)  -> set in app/Dockerfile
+    # 3) drop ALL Linux capabilities (QuickNotes needs none):
+    cap_drop:
+      - ALL
+    # 4) read-only root filesystem; /data (named volume) stays writable,
+    #    /tmp is the tmpfs safety net for anything that might need to write:
+    read_only: true
+    tmpfs:
+      - /tmp
+    # 5) no-new-privileges: forbids gaining extra privileges (setuid/setcap):
+    security_opt:
+      - no-new-privileges:true
+    # 6) image scanned by Trivy (run once for this lab; wired into CI in Lab 9).
+
+  # ---------------------------------------------------------------
+  # Lab 8 Task 1: Prometheus - pulls /metrics from QuickNotes
+  # ---------------------------------------------------------------
+  prometheus:
+    # Pinned real version, not :latest (spec 1.4.1)
+    image: prom/prometheus:v3.13.4
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/rules/high-error-rate.yml:/etc/prometheus/rules/high-error-rate.yml:ro
+    # Lab 6 healthcheck pays off here: Prometheus only starts once
+    # QuickNotes itself reports healthy (spec 1.4.1).
+    depends_on:
+      quicknotes:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------
+  # Lab 8 Task 1: Grafana - dashboards provisioned from files
+  # ---------------------------------------------------------------
+  grafana:
+    image: grafana/grafana:13.2.3
+    ports:
+      - "3000:3000"
+    environment:
+      # Non-default credentials (spec 1.4.2 / Common Pitfalls).
+      # For a real deployment these belong in a secrets manager.
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: quicknotes-3am
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      # The dashboard JSON must land on the provider's path (spec 1.3.2):
+      - ./monitoring/grafana/provisioning/dashboards/golden-signals.json:/var/lib/grafana/dashboards/golden-signals.json:ro
+    depends_on:
+      - prometheus
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  quicknotes-data:
+    # Fixed volume name - deterministic across `down`/`up` (no project prefix).
+    name: quicknotes-lab6-data
