@@ -1,0 +1,14 @@
+groups:
+  - name: quicknotes
+    rules:
+      - alert: HighErrorRate
+        expr: |
+          sum(rate(quicknotes_http_responses_by_code_total{code=~"4..|5.."}[5m]))
+          /
+          sum(rate(quicknotes_http_responses_by_code_total[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "QuickNotes 4xx/5xx error ratio above 5% for 5 minutes"
+          runbook: "https://github.com/Nik-ari-ai/DevOps-Intro/blob/feature/lab8/docs/runbook/high-error-rate.md"
