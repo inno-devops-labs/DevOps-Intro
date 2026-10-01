@@ -1,0 +1,39 @@
+---
+- name: Install ansible-pull GitOps loop
+  hosts: quicknotes
+  become: true
+  gather_facts: true
+  vars:
+    repo_url: https://github.com/Nik-ari-ai/DevOps-Intro.git
+    repo_branch: feature/lab7
+  tasks:
+    - name: Install ansible + git
+      ansible.builtin.apt:
+        name:
+          - ansible
+          - git
+        state: present
+        update_cache: true
+
+    - name: Render ansible-pull service
+      ansible.builtin.template:
+        src: templates/ansible-pull.service.j2
+        dest: /etc/systemd/system/ansible-pull.service
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Render ansible-pull timer
+      ansible.builtin.template:
+        src: templates/ansible-pull.timer.j2
+        dest: /etc/systemd/system/ansible-pull.timer
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Enable and start the timer
+      ansible.builtin.systemd_service:
+        name: ansible-pull.timer
+        enabled: true
+        state: started
+        daemon_reload: true

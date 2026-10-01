@@ -1,0 +1,12 @@
+[Unit]
+Description=ansible-pull GitOps convergence for QuickNotes
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/ansible-pull \
+  -U {{ repo_url }} \
+  -C {{ repo_branch }} \
+  -i ansible/inventory-local.ini \
+  ansible/playbook.yaml
