@@ -131,3 +131,20 @@ func TestMetrics_ExposesPrometheusFormat(t *testing.T) {
 	}
 }
 
+func TestSecurityHeaders_PresentOnAllRoutes(t *testing.T) {
+	srv := newTestServer(t)
+	want := map[string]string{
+		"X-Content-Type-Options":  "nosniff",
+		"X-Frame-Options":         "DENY",
+		"Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
+		"Referrer-Policy":         "no-referrer",
+	}
+	for _, target := range []string{"/health", "/notes"} {
+		rec := do(t, srv, http.MethodGet, target, nil)
+		for k, v := range want {
+			if got := rec.Header().Get(k); got != v {
+				t.Errorf("%s: header %s = %q, want %q", target, k, got, v)
+			}
+		}
+	}
+}

@@ -1,0 +1,26 @@
+
+Report Summary
+
+┌────────────────┬────────────┬───────────────────┐
+│     Target     │    Type    │ Misconfigurations │
+├────────────────┼────────────┼───────────────────┤
+│ app/Dockerfile │ dockerfile │         1         │
+└────────────────┴────────────┴───────────────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+
+app/Dockerfile (dockerfile)
+===========================
+Tests: 27 (SUCCESSES: 26, FAILURES: 1)
+Failures: 1 (UNKNOWN: 0, LOW: 1, MEDIUM: 0, HIGH: 0, CRITICAL: 0)
+
+DS-0026 (LOW): Add HEALTHCHECK instruction in your Dockerfile
+══════════════════════════════════════════════════════════════════════════════════════
+You should add HEALTHCHECK instruction in your docker container images to perform the health check on running containers.
+
+See https://avd.aquasec.com/misconfig/ds-0026
+──────────────────────────────────────────────────────────────────────────────────────
+
+
