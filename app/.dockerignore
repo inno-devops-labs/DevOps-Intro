@@ -1,0 +1,11 @@
+# Local run artifacts must not leak into the build context
+data/
+bin/
+tmp/
+
+# Repo housekeeping
+.git/
+*.md
+
+# Vagrant leftovers (if any ever appear under app/)
+.vagrant/

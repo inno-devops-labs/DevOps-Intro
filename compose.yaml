@@ -1,0 +1,62 @@
+# Lab 6 - QuickNotes: Task 2 (compose + healthcheck + persistent volume)
+# and the Bonus (6 container-security defaults from Lecture 6).
+# The hardening flags are marked BONUS so the report can reference them.
+
+services:
+  quicknotes:
+    # Task 2.1: build from ./app and tag as quicknotes:lab6
+    build:
+      context: ./app
+    image: quicknotes:lab6
+    container_name: quicknotes-lab6
+
+    # Task 2.2: publish port 8080
+    ports:
+      - "8080:8080"
+
+    # Task 2.5: required env vars
+    environment:
+      ADDR: ":8080"
+      DATA_PATH: /data/notes.json
+      SEED_PATH: /seed.json
+
+    # Task 2.3: named volume mounted at /data (notes.json lives here)
+    volumes:
+      - quicknotes-data:/data
+
+    # Task 2.4: healthcheck. Distroless has NO shell, no curl, no wget, so
+    # the strategy is "use a binary that is already in the image": the app
+    # binary itself has a `healthcheck` subcommand that dials /health and
+    # exits 0/1. Exec form (no shell involved).
+    healthcheck:
+      test: ["CMD", "/quicknotes", "healthcheck"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+    # Task 2.6
+    restart: unless-stopped
+
+    # ---------------------------------------------------------------
+    # BONUS: the 6 security defaults from Lecture 6
+    # ---------------------------------------------------------------
+    # 1) USER nonroot (UID 65532)        -> set in app/Dockerfile
+    # 2) distroless base (no shell/apt)  -> set in app/Dockerfile
+    # 3) drop ALL Linux capabilities (QuickNotes needs none):
+    cap_drop:
+      - ALL
+    # 4) read-only root filesystem; /data (named volume) stays writable,
+    #    /tmp is the tmpfs safety net for anything that might need to write:
+    read_only: true
+    tmpfs:
+      - /tmp
+    # 5) no-new-privileges: forbids gaining extra privileges (setuid/setcap):
+    security_opt:
+      - no-new-privileges:true
+    # 6) image scanned by Trivy (run once for this lab; wired into CI in Lab 9).
+
+volumes:
+  quicknotes-data:
+    # Fixed volume name - deterministic across `down`/`up` (no project prefix).
+    name: quicknotes-lab6-data
