@@ -1,0 +1,5 @@
+
+quicknotes:lab9 (debian 13.7)
+=============================
+Total: 0 (HIGH: 0, CRITICAL: 0)
+
