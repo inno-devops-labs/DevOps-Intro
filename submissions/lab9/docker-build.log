@@ -1,0 +1,103 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.36kB 0.0s done
+#1 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 ...
+
+#3 [auth] docker/dockerfile:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 resolve image config for docker-image://docker.io/docker/dockerfile:1
+#2 DONE 1.3s
+
+#4 docker-image://docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e
+#4 resolve docker.io/docker/dockerfile:1@sha256:4edf897a3ffa55b89f906fc8cc78afdb3f1834cc9c7083565e611a8a7d5fe99e done
+#4 CACHED
+
+#5 [internal] load metadata for gcr.io/distroless/static-debian12:nonroot
+#5 DONE 0.5s
+
+#6 [auth] library/golang:pull token for registry-1.docker.io
+#6 DONE 0.0s
+
+#7 [internal] load metadata for docker.io/library/golang:1.27.3-alpine
+#7 DONE 0.9s
+
+#8 [internal] load .dockerignore
+#8 transferring context: 100B done
+#8 DONE 0.0s
+
+#9 [internal] load build context
+#9 transferring context: 9.16kB done
+#9 DONE 0.0s
+
+#10 [builder 1/8] FROM docker.io/library/golang:1.27.3-alpine@sha256:b8c9b82affbbb82a020bbcf998dad2ba9516944ac7e883524642a481a9505e9c
+#10 resolve docker.io/library/golang:1.27.3-alpine@sha256:b8c9b82affbbb82a020bbcf998dad2ba9516944ac7e883524642a481a9505e9c done
+#10 extracting sha256:d3531b7a4f217bdc3426c57bcff84c170f086f456a39689d4a615c6d026c4be0 0.1s done
+#10 DONE 0.1s
+
+#11 [stage-1 1/6] FROM gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+#11 resolve gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+#11 resolve gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab 0.4s done
+#11 DONE 0.4s
+
+#10 [builder 1/8] FROM docker.io/library/golang:1.27.3-alpine@sha256:b8c9b82affbbb82a020bbcf998dad2ba9516944ac7e883524642a481a9505e9c
+#10 extracting sha256:fcdc05aad5cf439d58eff6bbe6e136d87af146e3b7442a5c64928da3ae1b86a3 0.0s done
+#10 extracting sha256:e2e7dba5c30798b9d70d746d9fb1606b744e5c3baa8015b51dad60cea99c045b
+#10 extracting sha256:e2e7dba5c30798b9d70d746d9fb1606b744e5c3baa8015b51dad60cea99c045b 249.1s done
+#10 DONE 249.3s
+
+#10 [builder 1/8] FROM docker.io/library/golang:1.27.3-alpine@sha256:b8c9b82affbbb82a020bbcf998dad2ba9516944ac7e883524642a481a9505e9c
+#10 extracting sha256:070112d392529aede516cb12dd04bbbf175fcab48c54121d76e09a5043ce92a1 done
+#10 extracting sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1 done
+#10 DONE 249.3s
+
+#12 [builder 2/8] WORKDIR /src
+#12 DONE 0.2s
+
+#13 [builder 3/8] COPY go.mod ./
+#13 DONE 0.0s
+
+#14 [builder 4/8] RUN go mod download
+#14 0.075 go: no module dependencies to download
+#14 DONE 0.1s
+
+#15 [builder 5/8] COPY . .
+#15 DONE 0.0s
+
+#16 [builder 6/8] RUN CGO_ENABLED=0 GOOS=linux     go build     -trimpath     -ldflags="-s -w"     -o /out/quicknotes     .
+#16 DONE 2.5s
+
+#17 [builder 7/8] RUN CGO_ENABLED=0 GOOS=linux     go build     -trimpath     -ldflags="-s -w"     -o /out/healthcheck     ./cmd/healthcheck
+#17 DONE 0.2s
+
+#18 [builder 8/8] RUN mkdir -p /out/data
+#18 DONE 0.1s
+
+#11 [stage-1 1/6] FROM gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
+#11 CACHED
+
+#19 [stage-1 2/6] COPY --from=builder /out/quicknotes /quicknotes
+#19 DONE 0.0s
+
+#20 [stage-1 3/6] COPY --from=builder /out/healthcheck /healthcheck
+#20 DONE 0.0s
+
+#21 [stage-1 4/6] COPY seed.json /seed.json
+#21 DONE 0.0s
+
+#22 [stage-1 5/6] COPY --from=builder --chown=65532:65532 /out/data /data
+#22 DONE 0.0s
+
+#23 exporting to image
+#23 exporting layers 0.1s done
+#23 exporting manifest sha256:2b87f14d366d66c8bd31dd376d45c39a4f51cfd3434dcd633eba98730bc4d80a done
+#23 exporting config sha256:11c8b0f4e2f77186ff2ee84dcfaf0857e6cf06dfa66c4bc6056e8875bd290a5f done
+#23 exporting attestation manifest sha256:fb04c7ff63c43f1b13e92698d3be0a9051d0ee2b56e99f99548f74c5d24a1660 done
+#23 exporting manifest list sha256:9828e2a4951538a9e2352ab64f46ff575feaf6885b549d04d5c6ccf57d335118 done
+#23 naming to docker.io/library/quicknotes:lab9 done
+#23 unpacking to docker.io/library/quicknotes:lab9 0.0s done
+#23 DONE 0.2s

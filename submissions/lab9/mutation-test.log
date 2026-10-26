@@ -1,0 +1,13 @@
+--- FAIL: TestSecurityHeaders_AllRoutes (0.00s)
+    --- FAIL: TestSecurityHeaders_AllRoutes/health (0.00s)
+        security_test.go:57: Referrer-Policy: got "", want "no-referrer"
+        security_test.go:57: Cache-Control: got "", want "no-store"
+        security_test.go:57: X-Content-Type-Options: got "", want "nosniff"
+        security_test.go:57: Cross-Origin-Resource-Policy: got "", want "same-origin"
+        security_test.go:57: Content-Security-Policy: got "", want "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'"
+        security_test.go:57: X-Frame-Options: got "", want "DENY"
+FAIL
+FAIL	quicknotes	0.002s
+?   	quicknotes/cmd/healthcheck	[no test files]
+FAIL
+mutation_test_exit=1

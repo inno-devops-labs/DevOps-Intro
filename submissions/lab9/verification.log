@@ -1,0 +1,4 @@
+PASS: 46 HIGH/CRITICAL occurrences have decisions (23 unique CVEs).
+PASS: 0 HIGH/CRITICAL after fixes; Dockerfile configuration finding fixed.
+PASS: 4 ZAP alert variants triaged; 0 non-informational alerts after fixes.
+PASS: dated acceptance, CycloneDX/image identity, Go versions, scan exits and mutation guard.

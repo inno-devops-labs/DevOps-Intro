@@ -1,0 +1,30 @@
+{
+  "SchemaVersion": 2,
+  "Trivy": {
+    "Version": "0.76.1"
+  },
+  "ReportID": "01a178b8-d4d2-7c60-bd70-5670c9bce1b9",
+  "CreatedAt": "2026-10-26T14:59:01.458812341Z",
+  "ArtifactID": "sha256:df9a5dfb1339b7c78b2a78c4b3e96804f80f54d283194780685f333cafd03b33",
+  "ArtifactName": "/repo",
+  "ArtifactType": "repository",
+  "Metadata": {
+    "RepoURL": "git@github.com:inno-devops-labs/DevOps-Intro.git",
+    "Branch": "feature/lab9",
+    "Commit": "018641ca642fb30a17a7de1f54825d468da2609b",
+    "CommitMsg": "feat(lab8): add monitoring dashboard and alert",
+    "Author": "AlisaRyba \u003cevdosenko.dds@gmail.com\u003e",
+    "Committer": "AlisaRyba \u003cevdosenko.dds@gmail.com\u003e"
+  },
+  "Results": [
+    {
+      "Target": "app/Dockerfile",
+      "Class": "config",
+      "Type": "dockerfile",
+      "MisconfSummary": {
+        "Successes": 27,
+        "Failures": 0
+      }
+    }
+  ]
+}

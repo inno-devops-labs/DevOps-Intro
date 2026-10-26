@@ -1,0 +1,56 @@
+go version go1.27.3 linux/arm64
+=== RUN   TestHealth_ReportsCount
+--- PASS: TestHealth_ReportsCount (0.00s)
+=== RUN   TestCreateNote_RoundTrip
+--- PASS: TestCreateNote_RoundTrip (0.00s)
+=== RUN   TestCreateNote_RejectsEmptyTitle
+--- PASS: TestCreateNote_RejectsEmptyTitle (0.00s)
+=== RUN   TestCreateNote_RejectsUnknownField
+--- PASS: TestCreateNote_RejectsUnknownField (0.00s)
+=== RUN   TestGetNote_NotFound
+--- PASS: TestGetNote_NotFound (0.00s)
+=== RUN   TestDeleteNote_RemovesAndReturns204
+--- PASS: TestDeleteNote_RemovesAndReturns204 (0.00s)
+=== RUN   TestMetrics_ExposesPrometheusFormat
+--- PASS: TestMetrics_ExposesPrometheusFormat (0.00s)
+=== RUN   TestSecurityHeaders_AllRoutes
+=== RUN   TestSecurityHeaders_AllRoutes/health
+=== RUN   TestSecurityHeaders_AllRoutes/head
+=== RUN   TestSecurityHeaders_AllRoutes/metrics
+=== RUN   TestSecurityHeaders_AllRoutes/list
+=== RUN   TestSecurityHeaders_AllRoutes/create
+=== RUN   TestSecurityHeaders_AllRoutes/get
+=== RUN   TestSecurityHeaders_AllRoutes/delete
+=== RUN   TestSecurityHeaders_AllRoutes/missing_note
+=== RUN   TestSecurityHeaders_AllRoutes/bad_id
+=== RUN   TestSecurityHeaders_AllRoutes/bad_JSON
+=== RUN   TestSecurityHeaders_AllRoutes/router_404
+=== RUN   TestSecurityHeaders_AllRoutes/router_405
+=== RUN   TestSecurityHeaders_AllRoutes/router_redirect
+--- PASS: TestSecurityHeaders_AllRoutes (0.01s)
+    --- PASS: TestSecurityHeaders_AllRoutes/health (0.00s)
+    --- PASS: TestSecurityHeaders_AllRoutes/head (0.00s)
+    --- PASS: TestSecurityHeaders_AllRoutes/metrics (0.00s)
+    --- PASS: TestSecurityHeaders_AllRoutes/list (0.00s)
+    --- PASS: TestSecurityHeaders_AllRoutes/create (0.00s)
+    --- PASS: TestSecurityHeaders_AllRoutes/get (0.00s)
+    --- PASS: TestSecurityHeaders_AllRoutes/delete (0.00s)
+    --- PASS: TestSecurityHeaders_AllRoutes/missing_note (0.00s)
+    --- PASS: TestSecurityHeaders_AllRoutes/bad_id (0.00s)
+    --- PASS: TestSecurityHeaders_AllRoutes/bad_JSON (0.00s)
+    --- PASS: TestSecurityHeaders_AllRoutes/router_404 (0.00s)
+    --- PASS: TestSecurityHeaders_AllRoutes/router_405 (0.00s)
+    --- PASS: TestSecurityHeaders_AllRoutes/router_redirect (0.00s)
+=== RUN   TestSecurityHeaders_SetBeforeNextHandler
+--- PASS: TestSecurityHeaders_SetBeforeNextHandler (0.00s)
+=== RUN   TestStore_CreateAndGet
+--- PASS: TestStore_CreateAndGet (0.00s)
+=== RUN   TestStore_NextIDIncrements
+--- PASS: TestStore_NextIDIncrements (0.00s)
+=== RUN   TestStore_Delete
+--- PASS: TestStore_Delete (0.00s)
+=== RUN   TestStore_PersistsAcrossReload
+--- PASS: TestStore_PersistsAcrossReload (0.00s)
+PASS
+ok  	quicknotes	1.020s
+?   	quicknotes/cmd/healthcheck	[no test files]

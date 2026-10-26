@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+Cache-Control: no-store
+Content-Security-Policy: default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'
+Content-Type: application/json
+Cross-Origin-Resource-Policy: same-origin
+Referrer-Policy: no-referrer
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+Date: Mon, 26 Oct 2026 14:54:40 GMT
+Content-Length: 26
+
+{"notes":4,"status":"ok"}

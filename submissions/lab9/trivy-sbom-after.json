@@ -1,0 +1,225 @@
+{
+  "SchemaVersion": 2,
+  "Trivy": {
+    "Version": "0.76.1"
+  },
+  "ReportID": "01a178b9-c240-7402-b6fa-2d4918d8e630",
+  "CreatedAt": "2026-10-26T15:00:02.240264341Z",
+  "ArtifactName": "/reports/quicknotes-after.sbom.cdx.json",
+  "ArtifactType": "cyclonedx",
+  "Metadata": {
+    "OS": {
+      "Family": "debian",
+      "Name": "12.15"
+    },
+    "ImageID": "sha256:11c8b0f4e2f77186ff2ee84dcfaf0857e6cf06dfa66c4bc6056e8875bd290a5f",
+    "DiffIDs": [
+      "sha256:114dde0fefebbca13165d0da9c500a66190e497a82a53dcaabc3172d630be1e9",
+      "sha256:345f53b2e2e1e07d6b1d9f2f6f200bd9a8ff67b62af248e3e24cade2fe5a427b",
+      "sha256:35b5ba6e08cdd034b8d1920f9c7203e5d66f258e1915f164a01de0af14f34710",
+      "sha256:4cde6b0bb6f50a5f255eef7b2a42162c661cf776b803225dcac9a659e396bb6b",
+      "sha256:4d049f83d9cf21d1f5cc0e11deaf36df02790d0e60c1a3829538fb4b61685368",
+      "sha256:5904c32f457c96a16c8c68f5ccdf518c8138cd9e5971de9ce6d564fc481af222",
+      "sha256:5dbe84d6defc471374615871e0d3f79d65c723d36086c63eb307a3bd8a25d914",
+      "sha256:6e7fbcf090d09b73a4aa85f9dce690d0ace73877c150b7c56955487b6e7a822a",
+      "sha256:6f1cdceb6a3146f0ccb986521156bef8a422cdbb0863396f7f751f575ba308f4",
+      "sha256:6fc9269a8b4d61cdd276e80d170e4caa1566efc1b9f42442fdad4f69836b3c4f",
+      "sha256:8fa10c0194df9b7c054c90dbe482585f768a54428fc90a5b78a0066a123b1bba",
+      "sha256:9ae91ba8e767256a9e0cef2f2a2fbefd7ee355146681c77132beac50a8a891d8",
+      "sha256:ad51d0769d16ba578106a177987dfe3d2e02c1668c852b795b2f6b024068242a",
+      "sha256:af5aa97ebe6ce1604747ec1e21af7136ded391bcabe4acef882e718a87c86bcc",
+      "sha256:bd3cdfae1d3fdd83a2231d608969b38b82349777c2fff9a7c12d54f8ac5c9b38",
+      "sha256:f71ab67bd72b7c6a232884960d38e8ad9e7e4cd7104dbc9159370b00f337a692"
+    ],
+    "RepoTags": [
+      "quicknotes:lab9"
+    ],
+    "Reference": "quicknotes:lab9"
+  },
+  "Results": [
+    {
+      "Target": "/reports/quicknotes-after.sbom.cdx.json (debian 12.15)",
+      "Class": "os-pkgs",
+      "Type": "debian",
+      "Packages": [
+        {
+          "ID": "base-files@12.4+deb12u15",
+          "Name": "base-files",
+          "Identifier": {
+            "PURL": "pkg:deb/debian/base-files@12.4%2Bdeb12u15?arch=arm64\u0026distro=debian-12.15",
+            "UID": "481accc1321b04fb",
+            "BOMRef": "pkg:deb/debian/base-files@12.4%2Bdeb12u15?arch=arm64\u0026distro=debian-12.15"
+          },
+          "Version": "12.4+deb12u15",
+          "Arch": "arm64",
+          "SrcName": "base-files",
+          "SrcVersion": "12.4+deb12u15",
+          "Licenses": [
+            "GPL-2.0-or-later"
+          ],
+          "Layer": {
+            "Digest": "sha256:f7c03e5221c3717bfa68250498f74132c03d9d7271f301c9b2a9cfc00fc6e231",
+            "DiffID": "sha256:6fc9269a8b4d61cdd276e80d170e4caa1566efc1b9f42442fdad4f69836b3c4f"
+          }
+        },
+        {
+          "ID": "ca-certificates@20250419~deb12u1",
+          "Name": "ca-certificates",
+          "Identifier": {
+            "PURL": "pkg:deb/debian/ca-certificates@20250419~deb12u1?arch=all\u0026distro=debian-12.15",
+            "UID": "9fdc4ea49fd142ab",
+            "BOMRef": "pkg:deb/debian/ca-certificates@20250419~deb12u1?arch=all\u0026distro=debian-12.15"
+          },
+          "Version": "20250419~deb12u1",
+          "Arch": "all",
+          "SrcName": "ca-certificates",
+          "SrcVersion": "20250419~deb12u1",
+          "Licenses": [
+            "GPL-2.0-or-later",
+            "GPL-2.0-only",
+            "MPL-2.0"
+          ],
+          "Layer": {
+            "Digest": "sha256:4db96f2c7ae9e90f3fd5e91cf947d19cced1d8a778d12923113f62c7fff3ec3e",
+            "DiffID": "sha256:5904c32f457c96a16c8c68f5ccdf518c8138cd9e5971de9ce6d564fc481af222"
+          }
+        },
+        {
+          "ID": "media-types@10.0.0",
+          "Name": "media-types",
+          "Identifier": {
+            "PURL": "pkg:deb/debian/media-types@10.0.0?arch=all\u0026distro=debian-12.15",
+            "UID": "1a9574334f3ab1fc",
+            "BOMRef": "pkg:deb/debian/media-types@10.0.0?arch=all\u0026distro=debian-12.15"
+          },
+          "Version": "10.0.0",
+          "Arch": "all",
+          "SrcName": "media-types",
+          "SrcVersion": "10.0.0",
+          "Licenses": [
+            "ad-hoc"
+          ],
+          "Layer": {
+            "Digest": "sha256:bf7a4185f01524837d19abde915ffde84e64368b250f5b5e9f6f75aea62a11d4",
+            "DiffID": "sha256:114dde0fefebbca13165d0da9c500a66190e497a82a53dcaabc3172d630be1e9"
+          }
+        },
+        {
+          "ID": "netbase@6.4",
+          "Name": "netbase",
+          "Identifier": {
+            "PURL": "pkg:deb/debian/netbase@6.4?arch=all\u0026distro=debian-12.15",
+            "UID": "e150f425f443b19",
+            "BOMRef": "pkg:deb/debian/netbase@6.4?arch=all\u0026distro=debian-12.15"
+          },
+          "Version": "6.4",
+          "Arch": "all",
+          "SrcName": "netbase",
+          "SrcVersion": "6.4",
+          "Licenses": [
+            "GPL-2.0-only"
+          ],
+          "Layer": {
+            "Digest": "sha256:990a9c434e5e0f11549a8d4a41a1991e621b04e30cd63269adbc97b1dc38fd7e",
+            "DiffID": "sha256:8fa10c0194df9b7c054c90dbe482585f768a54428fc90a5b78a0066a123b1bba"
+          }
+        },
+        {
+          "ID": "tzdata@2026b-0+deb12u1",
+          "Name": "tzdata",
+          "Identifier": {
+            "PURL": "pkg:deb/debian/tzdata@2026b-0%2Bdeb12u1?arch=all\u0026distro=debian-12.15",
+            "UID": "3516e02aafa5ee68",
+            "BOMRef": "pkg:deb/debian/tzdata@2026b-0%2Bdeb12u1?arch=all\u0026distro=debian-12.15"
+          },
+          "Version": "2026b-0+deb12u1",
+          "Arch": "all",
+          "SrcName": "tzdata",
+          "SrcVersion": "2026b",
+          "SrcRelease": "0+deb12u1",
+          "Licenses": [
+            "public-domain"
+          ],
+          "Layer": {
+            "Digest": "sha256:39dc083afc39bd8dc43d456fe7ff7d39292e593bb2769972c11bb2e5f9119386",
+            "DiffID": "sha256:35b5ba6e08cdd034b8d1920f9c7203e5d66f258e1915f164a01de0af14f34710"
+          }
+        }
+      ]
+    },
+    {
+      "Target": "healthcheck",
+      "Class": "lang-pkgs",
+      "Type": "gobinary",
+      "Packages": [
+        {
+          "ID": "quicknotes",
+          "Name": "quicknotes",
+          "Identifier": {
+            "PURL": "pkg:golang/quicknotes",
+            "UID": "962aef3297c9ac3f",
+            "BOMRef": "85d073a1-1191-4a29-a331-de8d2e5f36a8"
+          },
+          "DependsOn": [
+            "stdlib@v1.27.3"
+          ],
+          "Layer": {
+            "Digest": "sha256:e2d26b94d357eac76c64c3fd0e4b495253c722824ca81be8c9ee2f2af3f31dea",
+            "DiffID": "sha256:9ae91ba8e767256a9e0cef2f2a2fbefd7ee355146681c77132beac50a8a891d8"
+          }
+        },
+        {
+          "ID": "stdlib@v1.27.3",
+          "Name": "stdlib",
+          "Identifier": {
+            "PURL": "pkg:golang/stdlib@v1.27.3",
+            "UID": "7470242e783cd61b",
+            "BOMRef": "38be15bf-7874-4659-a394-28d9b313e9fb"
+          },
+          "Version": "v1.27.3",
+          "Layer": {
+            "Digest": "sha256:e2d26b94d357eac76c64c3fd0e4b495253c722824ca81be8c9ee2f2af3f31dea",
+            "DiffID": "sha256:9ae91ba8e767256a9e0cef2f2a2fbefd7ee355146681c77132beac50a8a891d8"
+          }
+        }
+      ]
+    },
+    {
+      "Target": "quicknotes",
+      "Class": "lang-pkgs",
+      "Type": "gobinary",
+      "Packages": [
+        {
+          "ID": "quicknotes",
+          "Name": "quicknotes",
+          "Identifier": {
+            "PURL": "pkg:golang/quicknotes",
+            "UID": "2f3ac2e856cf456",
+            "BOMRef": "4b22828e-55ac-4fa2-a062-b0c6a6d7fd22"
+          },
+          "DependsOn": [
+            "stdlib@v1.27.3"
+          ],
+          "Layer": {
+            "Digest": "sha256:2eb990524d2fbfdf43e11e6519621fa63ab347ac6b722a30f909f92bef3c5da2",
+            "DiffID": "sha256:5dbe84d6defc471374615871e0d3f79d65c723d36086c63eb307a3bd8a25d914"
+          }
+        },
+        {
+          "ID": "stdlib@v1.27.3",
+          "Name": "stdlib",
+          "Identifier": {
+            "PURL": "pkg:golang/stdlib@v1.27.3",
+            "UID": "71414d5da9135219",
+            "BOMRef": "38e9a0fb-61c8-441d-8ca4-5d4ecfb8dbeb"
+          },
+          "Version": "v1.27.3",
+          "Layer": {
+            "Digest": "sha256:2eb990524d2fbfdf43e11e6519621fa63ab347ac6b722a30f909f92bef3c5da2",
+            "DiffID": "sha256:5dbe84d6defc471374615871e0d3f79d65c723d36086c63eb307a3bd8a25d914"
+          }
+        }
+      ]
+    }
+  ]
+}

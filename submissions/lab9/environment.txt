@@ -1,0 +1,10 @@
+UTC=2026-10-26T14:54:40Z
+feature/lab9
+018641ca642fb30a17a7de1f54825d468da2609b
+Docker client=29.8.2 server=29.8.2
+Docker Compose version v5.6.0
+["aquasec/trivy:0.76.1"] arm64 ["aquasec/trivy@sha256:790fd66d1697395d8693d1acaa1ea702406a20f109b6fc7bac8db623eca6c06c"]
+["ghcr.io/zaproxy/zaproxy:2.17.0"] arm64 ["ghcr.io/zaproxy/zaproxy@sha256:030d3df57735dacbb83464854758e674dd9ad01d79d12a129a8e58b1fd384238"]
+["golang:1.27.3-alpine"] arm64 ["golang@sha256:b8c9b82affbbb82a020bbcf998dad2ba9516944ac7e883524642a481a9505e9c"]
+Lab9 image=sha256:9828e2a4951538a9e2352ab64f46ff575feaf6885b549d04d5c6ccf57d335118 health=healthy
+Compose configuration: PASS

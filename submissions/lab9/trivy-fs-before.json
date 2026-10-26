@@ -1,0 +1,38 @@
+{
+  "SchemaVersion": 2,
+  "Trivy": {
+    "Version": "0.76.1"
+  },
+  "ReportID": "01a178a5-2aa3-7877-b684-765e28b364e7",
+  "CreatedAt": "2026-10-26T14:37:32.707555335Z",
+  "ArtifactID": "sha256:df9a5dfb1339b7c78b2a78c4b3e96804f80f54d283194780685f333cafd03b33",
+  "ArtifactName": "/repo",
+  "ArtifactType": "repository",
+  "Metadata": {
+    "RepoURL": "git@github.com:inno-devops-labs/DevOps-Intro.git",
+    "Branch": "feature/lab9",
+    "Commit": "018641ca642fb30a17a7de1f54825d468da2609b",
+    "CommitMsg": "feat(lab8): add monitoring dashboard and alert",
+    "Author": "AlisaRyba \u003cevdosenko.dds@gmail.com\u003e",
+    "Committer": "AlisaRyba \u003cevdosenko.dds@gmail.com\u003e"
+  },
+  "Results": [
+    {
+      "Target": "app/go.mod",
+      "Class": "lang-pkgs",
+      "Type": "gomod",
+      "Packages": [
+        {
+          "ID": "quicknotes",
+          "Name": "quicknotes",
+          "Identifier": {
+            "PURL": "pkg:golang/quicknotes",
+            "UID": "a6115e78c0dc7386"
+          },
+          "Relationship": "root",
+          "AnalyzedBy": "gomod"
+        }
+      ]
+    }
+  ]
+}

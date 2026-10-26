@@ -1,0 +1,72 @@
+[
+    {
+        "Id": "sha256:82d79de8dccae2af3389c9a2c851a491909d42496d6c46390beb4fa6abffe1c0",
+        "RepoTags": [
+            "quicknotes:lab6"
+        ],
+        "RepoDigests": [
+            "quicknotes@sha256:82d79de8dccae2af3389c9a2c851a491909d42496d6c46390beb4fa6abffe1c0"
+        ],
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2026-10-20T18:01:36.074186885Z",
+        "Config": {
+            "User": "nonroot:nonroot",
+            "ExposedPorts": {
+                "8080/tcp": {}
+            },
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"
+            ],
+            "Entrypoint": [
+                "/quicknotes"
+            ],
+            "WorkingDir": "/",
+            "Labels": {
+                "com.docker.compose.project": "devops-intro",
+                "com.docker.compose.service": "quicknotes",
+                "com.docker.compose.version": "5.6.0"
+            }
+        },
+        "Architecture": "arm64",
+        "Os": "linux",
+        "Size": 21453206,
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:6fc9269a8b4d61cdd276e80d170e4caa1566efc1b9f42442fdad4f69836b3c4f",
+                "sha256:8fa10c0194df9b7c054c90dbe482585f768a54428fc90a5b78a0066a123b1bba",
+                "sha256:35b5ba6e08cdd034b8d1920f9c7203e5d66f258e1915f164a01de0af14f34710",
+                "sha256:114dde0fefebbca13165d0da9c500a66190e497a82a53dcaabc3172d630be1e9",
+                "sha256:4d049f83d9cf21d1f5cc0e11deaf36df02790d0e60c1a3829538fb4b61685368",
+                "sha256:af5aa97ebe6ce1604747ec1e21af7136ded391bcabe4acef882e718a87c86bcc",
+                "sha256:6f1cdceb6a3146f0ccb986521156bef8a422cdbb0863396f7f751f575ba308f4",
+                "sha256:bd3cdfae1d3fdd83a2231d608969b38b82349777c2fff9a7c12d54f8ac5c9b38",
+                "sha256:4cde6b0bb6f50a5f255eef7b2a42162c661cf776b803225dcac9a659e396bb6b",
+                "sha256:ad51d0769d16ba578106a177987dfe3d2e02c1668c852b795b2f6b024068242a",
+                "sha256:6e7fbcf090d09b73a4aa85f9dce690d0ace73877c150b7c56955487b6e7a822a",
+                "sha256:5904c32f457c96a16c8c68f5ccdf518c8138cd9e5971de9ce6d564fc481af222",
+                "sha256:9daeeff908b3f7264661b3c36f6de5369838af905b1a1234c75642c8d0c70a3d",
+                "sha256:98992d790c53df459b0d0231dfb0c8a778e54224926d0467503bd1ddd0233170",
+                "sha256:f71ab67bd72b7c6a232884960d38e8ad9e7e4cd7104dbc9159370b00f337a692",
+                "sha256:f3eb14a0e5bf9fb1752f97f8ae4cc731872fc05a2f4ec1ea5370a6f3eb280ae2"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2026-10-25T17:31:52.420301419Z"
+        },
+        "Descriptor": {
+            "mediaType": "application/vnd.oci.image.index.v1+json",
+            "digest": "sha256:82d79de8dccae2af3389c9a2c851a491909d42496d6c46390beb4fa6abffe1c0",
+            "size": 856
+        },
+        "Identity": {
+            "Build": [
+                {
+                    "Ref": "vcmovb9tsrsdui3zbq9hhankm",
+                    "CreatedAt": "2026-10-25T17:31:52.432842419Z"
+                }
+            ]
+        }
+    }
+]

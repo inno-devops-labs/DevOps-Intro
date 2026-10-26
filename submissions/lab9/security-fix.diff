@@ -1,0 +1,155 @@
+diff --git a/app/Dockerfile b/app/Dockerfile
+index 688dfa7..00695e4 100644
+--- a/app/Dockerfile
++++ b/app/Dockerfile
+@@ -3,7 +3,7 @@
+ # ------------------------------------------------------------
+ # Stage 1: build
+ # ------------------------------------------------------------
+-FROM golang:1.24-alpine AS builder
++FROM golang:1.27.3-alpine AS builder
+ 
+ WORKDIR /src
+ 
+@@ -50,4 +50,6 @@ USER nonroot:nonroot
+ 
+ EXPOSE 8080
+ 
++HEALTHCHECK --interval=5s --timeout=3s --start-period=2s --retries=5 CMD ["/healthcheck"]
++
+ ENTRYPOINT ["/quicknotes"]
+diff --git a/app/handlers.go b/app/handlers.go
+index c534979..5ffae3f 100644
+--- a/app/handlers.go
++++ b/app/handlers.go
+@@ -26,7 +26,7 @@ func NewServer(store *Store) *Server {
+ 	return &Server{store: store, requestsByCode: by}
+ }
+ 
+-func (s *Server) Routes() *http.ServeMux {
++func (s *Server) Routes() http.Handler {
+ 	mux := http.NewServeMux()
+ 	mux.HandleFunc("GET /health", s.wrap(s.handleHealth))
+ 	mux.HandleFunc("GET /metrics", s.wrap(s.handleMetrics))
+@@ -34,7 +34,8 @@ func (s *Server) Routes() *http.ServeMux {
+ 	mux.HandleFunc("POST /notes", s.wrap(s.handleCreateNote))
+ 	mux.HandleFunc("GET /notes/{id}", s.wrap(s.handleGetNote))
+ 	mux.HandleFunc("DELETE /notes/{id}", s.wrap(s.handleDeleteNote))
+-	return mux
++	// Wrap the router itself so redirects, 404s and 405s are protected too.
++	return securityHeaders(mux)
+ }
+ 
+ type statusWriter struct {
+diff --git a/app/security.go b/app/security.go
+new file mode 100644
+index 0000000..7c60eea
+--- /dev/null
++++ b/app/security.go
+@@ -0,0 +1,19 @@
++package main
++
++import "net/http"
++
++// securityHeaders is the outermost middleware for this JSON-only API.
++// Revisit CSP and CORP before adding a browser UI or cross-origin consumers.
++// HSTS is intentionally left to a TLS terminator, not this local HTTP server.
++func securityHeaders(next http.Handler) http.Handler {
++	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("X-Content-Type-Options", "nosniff")
++		w.Header().Set("Cross-Origin-Resource-Policy", "same-origin")
++		w.Header().Set("Content-Security-Policy", "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'")
++		w.Header().Set("X-Frame-Options", "DENY")
++		w.Header().Set("Referrer-Policy", "no-referrer")
++		// Responses may contain user notes; do not store them in shared caches.
++		w.Header().Set("Cache-Control", "no-store")
++		next.ServeHTTP(w, r)
++	})
++}
+diff --git a/app/security_test.go b/app/security_test.go
+new file mode 100644
+index 0000000..6b9b2d1
+--- /dev/null
++++ b/app/security_test.go
+@@ -0,0 +1,81 @@
++package main
++
++import (
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"testing"
++)
++
++func TestSecurityHeaders_AllRoutes(t *testing.T) {
++	tests := []struct {
++		name, method, path, body string
++		wantStatus               int
++	}{
++		{"health", "GET", "/health", "", http.StatusOK},
++		{"head", "HEAD", "/health", "", http.StatusOK},
++		{"metrics", "GET", "/metrics", "", http.StatusOK},
++		{"list", "GET", "/notes", "", http.StatusOK},
++		{"create", "POST", "/notes", `{"title":"new","body":"text"}`, http.StatusCreated},
++		{"get", "GET", "/notes/1", "", http.StatusOK},
++		{"delete", "DELETE", "/notes/1", "", http.StatusNoContent},
++		{"missing note", "GET", "/notes/999999", "", http.StatusNotFound},
++		{"bad id", "GET", "/notes/not-an-int", "", http.StatusBadRequest},
++		{"bad JSON", "POST", "/notes", "{invalid", http.StatusBadRequest},
++		{"router 404", "GET", "/does-not-exist", "", http.StatusNotFound},
++		{"router 405", "PUT", "/health", "", http.StatusMethodNotAllowed},
++		// Go releases differ in the canonical-path redirect status (301/307).
++		{"router redirect", "GET", "//notes", "", 0},
++	}
++	wantHeaders := map[string]string{
++		"X-Content-Type-Options":       "nosniff",
++		"Cross-Origin-Resource-Policy": "same-origin",
++		"Content-Security-Policy":      "default-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
++		"X-Frame-Options":              "DENY",
++		"Referrer-Policy":              "no-referrer",
++		"Cache-Control":                "no-store",
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			srv := newTestServer(t)
++			if _, err := srv.store.Create("existing", "fixture"); err != nil {
++				t.Fatal(err)
++			}
++			req := httptest.NewRequest(tt.method, tt.path, strings.NewReader(tt.body))
++			rec := httptest.NewRecorder()
++			// Test production wiring, not a manually wrapped test-only handler.
++			srv.Routes().ServeHTTP(rec, req)
++			if tt.wantStatus == 0 {
++				if (rec.Code != http.StatusMovedPermanently && rec.Code != http.StatusTemporaryRedirect) || rec.Header().Get("Location") != "/notes" {
++					t.Fatalf("expected canonical-path redirect, got %d to %q", rec.Code, rec.Header().Get("Location"))
++				}
++			} else if rec.Code != tt.wantStatus {
++				t.Fatalf("status: got %d, want %d: %s", rec.Code, tt.wantStatus, rec.Body.String())
++			}
++			for key, want := range wantHeaders {
++				if got := rec.Header().Get(key); got != want {
++					t.Errorf("%s: got %q, want %q", key, got, want)
++				}
++			}
++		})
++	}
++}
++
++func TestSecurityHeaders_SetBeforeNextHandler(t *testing.T) {
++	called := false
++	next := http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
++		called = true
++		if got := w.Header().Get("X-Content-Type-Options"); got != "nosniff" {
++			t.Errorf("header must be set before the handler writes: got %q", got)
++		}
++		w.WriteHeader(http.StatusInternalServerError)
++	})
++	rec := httptest.NewRecorder()
++	securityHeaders(next).ServeHTTP(rec, httptest.NewRequest("GET", "/", nil))
++	if !called || rec.Code != http.StatusInternalServerError {
++		t.Fatal("middleware must delegate without changing the handler status")
++	}
++	if got := rec.Result().Header.Get("X-Content-Type-Options"); got != "nosniff" {
++		t.Errorf("committed response lost the header: %q", got)
++	}
++}
