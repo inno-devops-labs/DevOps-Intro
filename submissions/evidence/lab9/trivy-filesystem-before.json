@@ -1,0 +1,38 @@
+{
+  "SchemaVersion": 2,
+  "Trivy": {
+    "Version": "0.71.1"
+  },
+  "ReportID": "01a1a619-5569-7e8e-992a-6f2d7ea46b62",
+  "CreatedAt": "2026-11-04T15:27:20.553954+05:00",
+  "ArtifactID": "sha256:c7eedfd8ea40c9f53be2dd40a6226a961db17b81ae3e828f0aa71db42e361e1e",
+  "ArtifactName": ".",
+  "ArtifactType": "repository",
+  "Metadata": {
+    "RepoURL": "https://github.com/inno-devops-labs/DevOps-Intro.git",
+    "Branch": "feature/lab9",
+    "Commit": "f9e20f68ca61f9de3de9e08a94c285a64ef123b0",
+    "CommitMsg": "Merge remote-tracking branch 'origin/main' into feature/lab9",
+    "Author": "Anastasiia Mikhelson \u003ca.mikhelson@innopolis.university\u003e",
+    "Committer": "Anastasiia Mikhelson \u003ca.mikhelson@innopolis.university\u003e"
+  },
+  "Results": [
+    {
+      "Target": "app/go.mod",
+      "Class": "lang-pkgs",
+      "Type": "gomod",
+      "Packages": [
+        {
+          "ID": "quicknotes",
+          "Name": "quicknotes",
+          "Identifier": {
+            "PURL": "pkg:golang/quicknotes",
+            "UID": "a6115e78c0dc7386"
+          },
+          "Relationship": "root",
+          "AnalyzedBy": "gomod"
+        }
+      ]
+    }
+  ]
+}

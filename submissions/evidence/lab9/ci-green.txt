@@ -1,0 +1,1638 @@
+test (1.23)	Set up job	﻿2026-11-04T10:38:01.8415544Z Current runner version: '2.338.2'
+test (1.23)	Set up job	2026-11-04T10:38:01.8442313Z ##[group]Runner Image Provisioner
+test (1.23)	Set up job	2026-11-04T10:38:01.8443304Z Hosted Compute Agent
+test (1.23)	Set up job	2026-11-04T10:38:01.8443942Z Version: 20261021.618
+test (1.23)	Set up job	2026-11-04T10:38:01.8444595Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+test (1.23)	Set up job	2026-11-04T10:38:01.8445381Z Build Date: 2026-10-21T00:45:21Z
+test (1.23)	Set up job	2026-11-04T10:38:01.8446103Z Worker ID: {519532cc-3b91-4b9f-af4c-b516dc63b2a6}
+test (1.23)	Set up job	2026-11-04T10:38:01.8446808Z Region: westcentralus
+test (1.23)	Set up job	2026-11-04T10:38:01.8447850Z Cloud: Azure
+test (1.23)	Set up job	2026-11-04T10:38:01.8448438Z ##[endgroup]
+test (1.23)	Set up job	2026-11-04T10:38:01.8450096Z ##[group]Operating System
+test (1.23)	Set up job	2026-11-04T10:38:01.8450808Z Ubuntu
+test (1.23)	Set up job	2026-11-04T10:38:01.8451368Z 24.04.5
+test (1.23)	Set up job	2026-11-04T10:38:01.8451965Z LTS
+test (1.23)	Set up job	2026-11-04T10:38:01.8452484Z ##[endgroup]
+test (1.23)	Set up job	2026-11-04T10:38:01.8453139Z ##[group]Runner Image
+test (1.23)	Set up job	2026-11-04T10:38:01.8453806Z Image: ubuntu-24.04
+test (1.23)	Set up job	2026-11-04T10:38:01.8454385Z Version: 20261025.353.1
+test (1.23)	Set up job	2026-11-04T10:38:01.8455517Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+test (1.23)	Set up job	2026-11-04T10:38:01.8457692Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+test (1.23)	Set up job	2026-11-04T10:38:01.8458787Z ##[endgroup]
+test (1.23)	Set up job	2026-11-04T10:38:01.8459968Z ##[group]GITHUB_TOKEN Permissions
+test (1.23)	Set up job	2026-11-04T10:38:01.8461915Z Contents: read
+test (1.23)	Set up job	2026-11-04T10:38:01.8462554Z Metadata: read
+test (1.23)	Set up job	2026-11-04T10:38:01.8463301Z ##[endgroup]
+test (1.23)	Set up job	2026-11-04T10:38:01.8465448Z Secret source: Actions
+test (1.23)	Set up job	2026-11-04T10:38:01.8466521Z Cache mode: write
+test (1.23)	Set up job	2026-11-04T10:38:01.8467584Z Prepare workflow directory
+test (1.23)	Set up job	2026-11-04T10:38:01.8927616Z Prepare all required actions
+test (1.23)	Set up job	2026-11-04T10:38:01.8977785Z Getting action download info
+test (1.23)	Set up job	2026-11-04T10:38:02.2064947Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+test (1.23)	Set up job	2026-11-04T10:38:02.3193561Z Download action repository 'actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e' (SHA:b7ad1dad31e06c5925ef5d2fc7ad053ef454303e)
+test (1.23)	Set up job	2026-11-04T10:38:02.9873021Z Complete job name: test (1.23)
+test (1.23)	Check out repository	﻿2026-11-04T10:38:03.0814107Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+test (1.23)	Check out repository	2026-11-04T10:38:03.0815327Z with:
+test (1.23)	Check out repository	2026-11-04T10:38:03.0815849Z   repository: 4rni4ka/DevOps-Intro
+test (1.23)	Check out repository	2026-11-04T10:38:03.0820222Z   token: ***
+test (1.23)	Check out repository	2026-11-04T10:38:03.0820723Z   ssh-strict: true
+test (1.23)	Check out repository	2026-11-04T10:38:03.0821205Z   ssh-user: git
+test (1.23)	Check out repository	2026-11-04T10:38:03.0821700Z   persist-credentials: true
+test (1.23)	Check out repository	2026-11-04T10:38:03.0822244Z   clean: true
+test (1.23)	Check out repository	2026-11-04T10:38:03.0822737Z   sparse-checkout-cone-mode: true
+test (1.23)	Check out repository	2026-11-04T10:38:03.0823315Z   fetch-depth: 1
+test (1.23)	Check out repository	2026-11-04T10:38:03.0823800Z   fetch-tags: false
+test (1.23)	Check out repository	2026-11-04T10:38:03.0824292Z   show-progress: true
+test (1.23)	Check out repository	2026-11-04T10:38:03.0824791Z   lfs: false
+test (1.23)	Check out repository	2026-11-04T10:38:03.0825250Z   submodules: false
+test (1.23)	Check out repository	2026-11-04T10:38:03.0825766Z   set-safe-directory: true
+test (1.23)	Check out repository	2026-11-04T10:38:03.0826335Z   allow-unsafe-pr-checkout: false
+test (1.23)	Check out repository	2026-11-04T10:38:03.0827341Z env:
+test (1.23)	Check out repository	2026-11-04T10:38:03.0827872Z   GOFLAGS: -buildvcs=false
+test (1.23)	Check out repository	2026-11-04T10:38:03.0828414Z ##[endgroup]
+test (1.23)	Check out repository	2026-11-04T10:38:03.4084733Z Syncing repository: 4rni4ka/DevOps-Intro
+test (1.23)	Check out repository	2026-11-04T10:38:03.4088076Z ##[group]Getting Git version info
+test (1.23)	Check out repository	2026-11-04T10:38:03.4088993Z Working directory is '/home/runner/work/DevOps-Intro/DevOps-Intro'
+test (1.23)	Check out repository	2026-11-04T10:38:03.4090113Z [command]/usr/bin/git version
+test (1.23)	Check out repository	2026-11-04T10:38:03.4194140Z git version 2.56.0
+test (1.23)	Check out repository	2026-11-04T10:38:03.4222940Z ##[endgroup]
+test (1.23)	Check out repository	2026-11-04T10:38:03.4235346Z Temporarily overriding HOME='/home/runner/work/_temp/9c85cfb7-fda5-4bc3-9119-dc3c23ea04d8' before making global git config changes
+test (1.23)	Check out repository	2026-11-04T10:38:03.4237368Z Adding repository directory to the temporary git global config as a safe directory
+test (1.23)	Check out repository	2026-11-04T10:38:03.4241599Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DevOps-Intro/DevOps-Intro
+test (1.23)	Check out repository	2026-11-04T10:38:03.4304174Z Deleting the contents of '/home/runner/work/DevOps-Intro/DevOps-Intro'
+test (1.23)	Check out repository	2026-11-04T10:38:03.4307706Z ##[group]Determining repository object format
+test (1.23)	Check out repository	2026-11-04T10:38:03.4309511Z ##[endgroup]
+test (1.23)	Check out repository	2026-11-04T10:38:03.4310269Z ##[group]Initializing the repository
+test (1.23)	Check out repository	2026-11-04T10:38:03.4315704Z [command]/usr/bin/git init /home/runner/work/DevOps-Intro/DevOps-Intro
+test (1.23)	Check out repository	2026-11-04T10:38:03.4472244Z hint: Using 'master' as the name for the initial branch. This default branch name
+test (1.23)	Check out repository	2026-11-04T10:38:03.4474263Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+test (1.23)	Check out repository	2026-11-04T10:38:03.4475897Z hint: to use in all of your new repositories, which will suppress this warning,
+test (1.23)	Check out repository	2026-11-04T10:38:03.4477484Z hint: call:
+test (1.23)	Check out repository	2026-11-04T10:38:03.4478163Z hint:
+test (1.23)	Check out repository	2026-11-04T10:38:03.4478998Z hint: 	git config --global init.defaultBranch <name>
+test (1.23)	Check out repository	2026-11-04T10:38:03.4480001Z hint:
+test (1.23)	Check out repository	2026-11-04T10:38:03.4480996Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+test (1.23)	Check out repository	2026-11-04T10:38:03.4482548Z hint: 'development'. The just-created branch can be renamed via this command:
+test (1.23)	Check out repository	2026-11-04T10:38:03.4483744Z hint:
+test (1.23)	Check out repository	2026-11-04T10:38:03.4484416Z hint: 	git branch -m <name>
+test (1.23)	Check out repository	2026-11-04T10:38:03.4485259Z hint:
+test (1.23)	Check out repository	2026-11-04T10:38:03.4486299Z hint: Disable this message with "git config set advice.defaultBranchName false"
+test (1.23)	Check out repository	2026-11-04T10:38:03.4503650Z Initialized empty Git repository in /home/runner/work/DevOps-Intro/DevOps-Intro/.git/
+test (1.23)	Check out repository	2026-11-04T10:38:03.4519531Z [command]/usr/bin/git remote add origin https://github.com/4rni4ka/DevOps-Intro
+test (1.23)	Check out repository	2026-11-04T10:38:03.4586927Z ##[endgroup]
+test (1.23)	Check out repository	2026-11-04T10:38:03.4588591Z ##[group]Disabling automatic garbage collection
+test (1.23)	Check out repository	2026-11-04T10:38:03.4591481Z [command]/usr/bin/git config --local gc.auto 0
+test (1.23)	Check out repository	2026-11-04T10:38:03.4641222Z ##[endgroup]
+test (1.23)	Check out repository	2026-11-04T10:38:03.4643460Z ##[group]Setting up auth
+test (1.23)	Check out repository	2026-11-04T10:38:03.4644898Z Removing SSH command configuration
+test (1.23)	Check out repository	2026-11-04T10:38:03.4646576Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test (1.23)	Check out repository	2026-11-04T10:38:03.4708127Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test (1.23)	Check out repository	2026-11-04T10:38:03.5154839Z Removing HTTP extra header
+test (1.23)	Check out repository	2026-11-04T10:38:03.5162680Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test (1.23)	Check out repository	2026-11-04T10:38:03.5221172Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test (1.23)	Check out repository	2026-11-04T10:38:03.5467372Z Removing includeIf entries pointing to credentials config files
+test (1.23)	Check out repository	2026-11-04T10:38:03.5473069Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test (1.23)	Check out repository	2026-11-04T10:38:03.5520313Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test (1.23)	Check out repository	2026-11-04T10:38:03.5778610Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-5ee9820b-30ce-4dae-a717-7a38870e4b03.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+test (1.23)	Check out repository	2026-11-04T10:38:03.5834475Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path /home/runner/work/_temp/git-credentials-5ee9820b-30ce-4dae-a717-7a38870e4b03.config
+test (1.23)	Check out repository	2026-11-04T10:38:03.5880942Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-5ee9820b-30ce-4dae-a717-7a38870e4b03.config
+test (1.23)	Check out repository	2026-11-04T10:38:03.5926286Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-5ee9820b-30ce-4dae-a717-7a38870e4b03.config
+test (1.23)	Check out repository	2026-11-04T10:38:03.5971701Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-5ee9820b-30ce-4dae-a717-7a38870e4b03.config
+test (1.23)	Check out repository	2026-11-04T10:38:03.6013945Z ##[endgroup]
+test (1.23)	Check out repository	2026-11-04T10:38:03.6014724Z ##[group]Fetching the repository
+test (1.23)	Check out repository	2026-11-04T10:38:03.6023513Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d83dc188a3542191f266ae7f4da090b8f3a5ffd1:refs/remotes/pull/3/merge
+test (1.23)	Check out repository	2026-11-04T10:38:04.1933016Z From https://github.com/4rni4ka/DevOps-Intro
+test (1.23)	Check out repository	2026-11-04T10:38:04.1934020Z  * [new ref]         d83dc188a3542191f266ae7f4da090b8f3a5ffd1 -> pull/3/merge
+test (1.23)	Check out repository	2026-11-04T10:38:04.1940388Z ##[endgroup]
+test (1.23)	Check out repository	2026-11-04T10:38:04.1941740Z ##[group]Determining the checkout info
+test (1.23)	Check out repository	2026-11-04T10:38:04.1943140Z ##[endgroup]
+test (1.23)	Check out repository	2026-11-04T10:38:04.1946966Z [command]/usr/bin/git sparse-checkout disable
+test (1.23)	Check out repository	2026-11-04T10:38:04.2019631Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+test (1.23)	Check out repository	2026-11-04T10:38:04.2067245Z ##[group]Checking out the ref
+test (1.23)	Check out repository	2026-11-04T10:38:04.2072729Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/3/merge
+test (1.23)	Check out repository	2026-11-04T10:38:04.2188751Z Note: switching to 'refs/remotes/pull/3/merge'.
+test (1.23)	Check out repository	2026-11-04T10:38:04.2189618Z 
+test (1.23)	Check out repository	2026-11-04T10:38:04.2190303Z You are in 'detached HEAD' state. You can look around, make experimental
+test (1.23)	Check out repository	2026-11-04T10:38:04.2191844Z changes and commit them, and you can discard any commits you make in this
+test (1.23)	Check out repository	2026-11-04T10:38:04.2193164Z state without impacting any branches by switching back to a branch.
+test (1.23)	Check out repository	2026-11-04T10:38:04.2193695Z 
+test (1.23)	Check out repository	2026-11-04T10:38:04.2194057Z If you want to create a new branch to retain commits you create, you may
+test (1.23)	Check out repository	2026-11-04T10:38:04.2194940Z do so (now or later) by using -c with the switch command. Example:
+test (1.23)	Check out repository	2026-11-04T10:38:04.2195438Z 
+test (1.23)	Check out repository	2026-11-04T10:38:04.2195667Z   git switch -c <new-branch-name>
+test (1.23)	Check out repository	2026-11-04T10:38:04.2196013Z 
+test (1.23)	Check out repository	2026-11-04T10:38:04.2196222Z Or undo this operation with:
+test (1.23)	Check out repository	2026-11-04T10:38:04.2196569Z 
+test (1.23)	Check out repository	2026-11-04T10:38:04.2196761Z   git switch -
+test (1.23)	Check out repository	2026-11-04T10:38:04.2197544Z 
+test (1.23)	Check out repository	2026-11-04T10:38:04.2197993Z Turn off this advice by setting config variable advice.detachedHead to false
+test (1.23)	Check out repository	2026-11-04T10:38:04.2198566Z 
+test (1.23)	Check out repository	2026-11-04T10:38:04.2199481Z HEAD is now at d83dc18 Merge 5794b4b3b03b83fc906098e72e6fc469cfeb3a15 into 92267d239d71d788b8000d9f6dbd37911284cea4
+test (1.23)	Check out repository	2026-11-04T10:38:04.2202994Z ##[endgroup]
+test (1.23)	Check out repository	2026-11-04T10:38:04.2261753Z [command]/usr/bin/git log -1 --format=%H
+test (1.23)	Check out repository	2026-11-04T10:38:04.2301981Z d83dc188a3542191f266ae7f4da090b8f3a5ffd1
+test (1.23)	Set up Go	﻿2026-11-04T10:38:04.2601328Z ##[group]Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+test (1.23)	Set up Go	2026-11-04T10:38:04.2602105Z with:
+test (1.23)	Set up Go	2026-11-04T10:38:04.2602506Z   go-version: 1.23
+test (1.23)	Set up Go	2026-11-04T10:38:04.2602930Z   cache: true
+test (1.23)	Set up Go	2026-11-04T10:38:04.2603371Z   cache-dependency-path: app/go.mod
+test (1.23)	Set up Go	2026-11-04T10:38:04.2603904Z   check-latest: false
+test (1.23)	Set up Go	2026-11-04T10:38:04.2607887Z   token: ***
+test (1.23)	Set up Go	2026-11-04T10:38:04.2608303Z env:
+test (1.23)	Set up Go	2026-11-04T10:38:04.2608708Z   GOFLAGS: -buildvcs=false
+test (1.23)	Set up Go	2026-11-04T10:38:04.2609176Z ##[endgroup]
+test (1.23)	Set up Go	2026-11-04T10:38:04.3939916Z Setup go version spec 1.23
+test (1.23)	Set up Go	2026-11-04T10:38:04.4016942Z Attempting to download 1.23...
+test (1.23)	Set up Go	2026-11-04T10:38:05.3649232Z matching 1.23...
+test (1.23)	Set up Go	2026-11-04T10:38:05.3670873Z Acquiring 1.23.12 from https://github.com/actions/go-versions/releases/download/1.23.12-16792118003/go-1.23.12-linux-x64.tar.gz
+test (1.23)	Set up Go	2026-11-04T10:38:06.0512245Z Extracting Go...
+test (1.23)	Set up Go	2026-11-04T10:38:06.0668099Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/b925a7f6-8313-4600-8e8b-c566630a78f3 -f /home/runner/work/_temp/b2e3d2ef-6536-4935-8c01-5011e71bf702
+test (1.23)	Set up Go	2026-11-04T10:38:07.7608693Z Successfully extracted go to /home/runner/work/_temp/b925a7f6-8313-4600-8e8b-c566630a78f3
+test (1.23)	Set up Go	2026-11-04T10:38:07.7609701Z Adding to the cache ...
+test (1.23)	Set up Go	2026-11-04T10:38:11.9376018Z Successfully cached go to /opt/hostedtoolcache/go/1.23.12/x64
+test (1.23)	Set up Go	2026-11-04T10:38:11.9377467Z Added go to the path
+test (1.23)	Set up Go	2026-11-04T10:38:11.9378667Z Successfully set up Go version 1.23
+test (1.23)	Set up Go	2026-11-04T10:38:11.9629684Z [command]/opt/hostedtoolcache/go/1.23.12/x64/bin/go env GOMODCACHE
+test (1.23)	Set up Go	2026-11-04T10:38:11.9684701Z [command]/opt/hostedtoolcache/go/1.23.12/x64/bin/go env GOCACHE
+test (1.23)	Set up Go	2026-11-04T10:38:11.9742107Z /home/runner/go/pkg/mod
+test (1.23)	Set up Go	2026-11-04T10:38:11.9761128Z /home/runner/.cache/go-build
+test (1.23)	Set up Go	2026-11-04T10:38:12.1511125Z Cache hit for: setup-go-Linux-x64-ubuntu24-go-1.23.12-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c
+test (1.23)	Set up Go	2026-11-04T10:38:13.2113451Z Received 18248397 of 18248397 (100.0%), 20.7 MBs/sec
+test (1.23)	Set up Go	2026-11-04T10:38:13.2114872Z Cache Size: ~17 MB (18248397 B)
+test (1.23)	Set up Go	2026-11-04T10:38:13.2143006Z [command]/usr/bin/tar -xf /home/runner/work/_temp/2ca006c3-c61c-4a18-b70d-7e28eb2415b8/cache.tzst -P -C /home/runner/work/DevOps-Intro/DevOps-Intro --use-compress-program unzstd
+test (1.23)	Set up Go	2026-11-04T10:38:13.3784694Z Cache restored successfully
+test (1.23)	Set up Go	2026-11-04T10:38:13.3799702Z Cache restored from key: setup-go-Linux-x64-ubuntu24-go-1.23.12-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c
+test (1.23)	Set up Go	2026-11-04T10:38:13.3824615Z go version go1.23.12 linux/amd64
+test (1.23)	Set up Go	2026-11-04T10:38:13.3824853Z 
+test (1.23)	Set up Go	2026-11-04T10:38:13.3825151Z ##[group]go env
+test (1.23)	Set up Go	2026-11-04T10:38:13.4010768Z GO111MODULE=''
+test (1.23)	Set up Go	2026-11-04T10:38:13.4011246Z GOARCH='amd64'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4011652Z GOBIN=''
+test (1.23)	Set up Go	2026-11-04T10:38:13.4012064Z GOCACHE='/home/runner/.cache/go-build'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4012602Z GOENV='/home/runner/.config/go/env'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4013061Z GOEXE=''
+test (1.23)	Set up Go	2026-11-04T10:38:13.4013418Z GOEXPERIMENT=''
+test (1.23)	Set up Go	2026-11-04T10:38:13.4013840Z GOFLAGS='-buildvcs=false'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4014276Z GOHOSTARCH='amd64'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4014703Z GOHOSTOS='linux'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4015088Z GOINSECURE=''
+test (1.23)	Set up Go	2026-11-04T10:38:13.4015474Z GOMODCACHE='/home/runner/go/pkg/mod'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4015934Z GONOPROXY=''
+test (1.23)	Set up Go	2026-11-04T10:38:13.4016274Z GONOSUMDB=''
+test (1.23)	Set up Go	2026-11-04T10:38:13.4016606Z GOOS='linux'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4016955Z GOPATH='/home/runner/go'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4017620Z GOPRIVATE=''
+test (1.23)	Set up Go	2026-11-04T10:38:13.4018072Z GOPROXY='https://proxy.golang.org,direct'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4018642Z GOROOT='/opt/hostedtoolcache/go/1.23.12/x64'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4019166Z GOSUMDB='sum.golang.org'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4019560Z GOTMPDIR=''
+test (1.23)	Set up Go	2026-11-04T10:38:13.4019932Z GOTOOLCHAIN='local'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4020501Z GOTOOLDIR='/opt/hostedtoolcache/go/1.23.12/x64/pkg/tool/linux_amd64'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4021171Z GOVCS=''
+test (1.23)	Set up Go	2026-11-04T10:38:13.4021532Z GOVERSION='go1.23.12'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4021910Z GODEBUG=''
+test (1.23)	Set up Go	2026-11-04T10:38:13.4022266Z GOTELEMETRY='local'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4022753Z GOTELEMETRYDIR='/home/runner/.config/go/telemetry'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4023658Z GCCGO='gccgo'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4023985Z GOAMD64='v1'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4024306Z AR='ar'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4024611Z CC='gcc'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4024906Z CXX='g++'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4025214Z CGO_ENABLED='1'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4025552Z GOMOD='/dev/null'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4025885Z GOWORK=''
+test (1.23)	Set up Go	2026-11-04T10:38:13.4026199Z CGO_CFLAGS='-O2 -g'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4026550Z CGO_CPPFLAGS=''
+test (1.23)	Set up Go	2026-11-04T10:38:13.4026895Z CGO_CXXFLAGS='-O2 -g'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4027505Z CGO_FFLAGS='-O2 -g'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4027875Z CGO_LDFLAGS='-O2 -g'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4028260Z PKG_CONFIG='pkg-config'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4029460Z GOGCCFLAGS='-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=0 -ffile-prefix-map=/tmp/go-build3074106408=/tmp/go-build -gno-record-gcc-switches'
+test (1.23)	Set up Go	2026-11-04T10:38:13.4030569Z 
+test (1.23)	Set up Go	2026-11-04T10:38:13.4031055Z ##[endgroup]
+test (1.23)	Test with race detector	﻿2026-11-04T10:38:13.4253440Z ##[group]Run go test -race -count=1 ./...
+test (1.23)	Test with race detector	2026-11-04T10:38:13.4253885Z ^[[36;1mgo test -race -count=1 ./...^[[0m
+test (1.23)	Test with race detector	2026-11-04T10:38:13.4280399Z shell: /usr/bin/bash -e {0}
+test (1.23)	Test with race detector	2026-11-04T10:38:13.4280688Z env:
+test (1.23)	Test with race detector	2026-11-04T10:38:13.4280897Z   GOFLAGS: -buildvcs=false
+test (1.23)	Test with race detector	2026-11-04T10:38:13.4281144Z   GOTOOLCHAIN: local
+test (1.23)	Test with race detector	2026-11-04T10:38:13.4281374Z ##[endgroup]
+test (1.23)	Test with race detector	2026-11-04T10:38:31.6741130Z ok  	quicknotes	1.024s
+test (1.23)	Post Set up Go	﻿2026-11-04T10:38:31.7261762Z Post job cleanup.
+test (1.23)	Post Set up Go	2026-11-04T10:38:31.8510264Z [command]/opt/hostedtoolcache/go/1.23.12/x64/bin/go env GOMODCACHE
+test (1.23)	Post Set up Go	2026-11-04T10:38:31.8557189Z [command]/opt/hostedtoolcache/go/1.23.12/x64/bin/go env GOCACHE
+test (1.23)	Post Set up Go	2026-11-04T10:38:31.8596640Z /home/runner/go/pkg/mod
+test (1.23)	Post Set up Go	2026-11-04T10:38:31.8619699Z /home/runner/.cache/go-build
+test (1.23)	Post Set up Go	2026-11-04T10:38:31.8626914Z [warning]Cache folder path is retrieved but doesn't exist on disk: /home/runner/go/pkg/mod
+test (1.23)	Post Set up Go	2026-11-04T10:38:31.8628974Z Cache hit occurred on the primary key setup-go-Linux-x64-ubuntu24-go-1.23.12-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c, not saving cache.
+test (1.23)	Post Check out repository	﻿2026-11-04T10:38:31.8838189Z Post job cleanup.
+test (1.23)	Post Check out repository	2026-11-04T10:38:31.9781573Z [command]/usr/bin/git version
+test (1.23)	Post Check out repository	2026-11-04T10:38:31.9834285Z git version 2.56.0
+test (1.23)	Post Check out repository	2026-11-04T10:38:31.9877846Z Temporarily overriding HOME='/home/runner/work/_temp/e7cd25ac-c8b5-44b2-b70b-cac36804de2b' before making global git config changes
+test (1.23)	Post Check out repository	2026-11-04T10:38:31.9878970Z Adding repository directory to the temporary git global config as a safe directory
+test (1.23)	Post Check out repository	2026-11-04T10:38:31.9883640Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DevOps-Intro/DevOps-Intro
+test (1.23)	Post Check out repository	2026-11-04T10:38:31.9920607Z Removing SSH command configuration
+test (1.23)	Post Check out repository	2026-11-04T10:38:31.9927650Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test (1.23)	Post Check out repository	2026-11-04T10:38:31.9969216Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.0234438Z Removing HTTP extra header
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.0242507Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.0306598Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.0695256Z Removing includeIf entries pointing to credentials config files
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.0696509Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.0743690Z includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.0745064Z includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.0746084Z includeif.gitdir:/github/workspace/.git.path
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.0746821Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.0759549Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.0813133Z /home/runner/work/_temp/git-credentials-5ee9820b-30ce-4dae-a717-7a38870e4b03.config
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.0827321Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-5ee9820b\-30ce\-4dae\-a717\-7a38870e4b03\.config
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.0919230Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.0965543Z /home/runner/work/_temp/git-credentials-5ee9820b-30ce-4dae-a717-7a38870e4b03.config
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.0978130Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-5ee9820b\-30ce\-4dae\-a717\-7a38870e4b03\.config
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.1024476Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.1061423Z /github/runner_temp/git-credentials-5ee9820b-30ce-4dae-a717-7a38870e4b03.config
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.1070467Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-5ee9820b\-30ce\-4dae\-a717\-7a38870e4b03\.config
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.1120240Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.1158267Z /github/runner_temp/git-credentials-5ee9820b-30ce-4dae-a717-7a38870e4b03.config
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.1165663Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-5ee9820b\-30ce\-4dae\-a717\-7a38870e4b03\.config
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.1214010Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test (1.23)	Post Check out repository	2026-11-04T10:38:32.1458609Z Removing credentials config '/home/runner/work/_temp/git-credentials-5ee9820b-30ce-4dae-a717-7a38870e4b03.config'
+test (1.23)	Complete job	﻿2026-11-04T10:38:32.1620662Z Cleaning up orphan processes
+lint	Set up job	﻿2026-11-04T10:38:02.2430070Z Current runner version: '2.338.2'
+lint	Set up job	2026-11-04T10:38:02.2456921Z ##[group]Runner Image Provisioner
+lint	Set up job	2026-11-04T10:38:02.2457847Z Hosted Compute Agent
+lint	Set up job	2026-11-04T10:38:02.2458510Z Version: 20261021.618
+lint	Set up job	2026-11-04T10:38:02.2459177Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+lint	Set up job	2026-11-04T10:38:02.2459917Z Build Date: 2026-10-21T00:45:21Z
+lint	Set up job	2026-11-04T10:38:02.2460669Z Worker ID: {b388f129-fca9-4722-ada2-ca3380730836}
+lint	Set up job	2026-11-04T10:38:02.2461427Z Region: westus
+lint	Set up job	2026-11-04T10:38:02.2461952Z Cloud: Azure
+lint	Set up job	2026-11-04T10:38:02.2462588Z ##[endgroup]
+lint	Set up job	2026-11-04T10:38:02.2464500Z ##[group]Operating System
+lint	Set up job	2026-11-04T10:38:02.2465306Z Ubuntu
+lint	Set up job	2026-11-04T10:38:02.2465893Z 24.04.5
+lint	Set up job	2026-11-04T10:38:02.2466402Z LTS
+lint	Set up job	2026-11-04T10:38:02.2466992Z ##[endgroup]
+lint	Set up job	2026-11-04T10:38:02.2467558Z ##[group]Runner Image
+lint	Set up job	2026-11-04T10:38:02.2468181Z Image: ubuntu-24.04
+lint	Set up job	2026-11-04T10:38:02.2468815Z Version: 20261025.353.1
+lint	Set up job	2026-11-04T10:38:02.2469909Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+lint	Set up job	2026-11-04T10:38:02.2471750Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+lint	Set up job	2026-11-04T10:38:02.2472766Z ##[endgroup]
+lint	Set up job	2026-11-04T10:38:02.2474219Z ##[group]GITHUB_TOKEN Permissions
+lint	Set up job	2026-11-04T10:38:02.2476154Z Contents: read
+lint	Set up job	2026-11-04T10:38:02.2476833Z Metadata: read
+lint	Set up job	2026-11-04T10:38:02.2477416Z ##[endgroup]
+lint	Set up job	2026-11-04T10:38:02.2479625Z Secret source: Actions
+lint	Set up job	2026-11-04T10:38:02.2480592Z Cache mode: write
+lint	Set up job	2026-11-04T10:38:02.2481383Z Prepare workflow directory
+lint	Set up job	2026-11-04T10:38:02.2893387Z Prepare all required actions
+lint	Set up job	2026-11-04T10:38:02.2943936Z Getting action download info
+lint	Set up job	2026-11-04T10:38:02.6628191Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+lint	Set up job	2026-11-04T10:38:02.7889994Z Download action repository 'actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e' (SHA:b7ad1dad31e06c5925ef5d2fc7ad053ef454303e)
+lint	Set up job	2026-11-04T10:38:03.1794933Z Download action repository 'golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a' (SHA:ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a)
+lint	Set up job	2026-11-04T10:38:03.7089742Z Complete job name: lint
+lint	Check out repository	﻿2026-11-04T10:38:03.8010349Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+lint	Check out repository	2026-11-04T10:38:03.8011527Z with:
+lint	Check out repository	2026-11-04T10:38:03.8012032Z   repository: 4rni4ka/DevOps-Intro
+lint	Check out repository	2026-11-04T10:38:03.8016600Z   token: ***
+lint	Check out repository	2026-11-04T10:38:03.8017086Z   ssh-strict: true
+lint	Check out repository	2026-11-04T10:38:03.8017549Z   ssh-user: git
+lint	Check out repository	2026-11-04T10:38:03.8018084Z   persist-credentials: true
+lint	Check out repository	2026-11-04T10:38:03.8018614Z   clean: true
+lint	Check out repository	2026-11-04T10:38:03.8019103Z   sparse-checkout-cone-mode: true
+lint	Check out repository	2026-11-04T10:38:03.8019672Z   fetch-depth: 1
+lint	Check out repository	2026-11-04T10:38:03.8020138Z   fetch-tags: false
+lint	Check out repository	2026-11-04T10:38:03.8020626Z   show-progress: true
+lint	Check out repository	2026-11-04T10:38:03.8021107Z   lfs: false
+lint	Check out repository	2026-11-04T10:38:03.8021555Z   submodules: false
+lint	Check out repository	2026-11-04T10:38:03.8022059Z   set-safe-directory: true
+lint	Check out repository	2026-11-04T10:38:03.8022600Z   allow-unsafe-pr-checkout: false
+lint	Check out repository	2026-11-04T10:38:03.8023623Z env:
+lint	Check out repository	2026-11-04T10:38:03.8024142Z   GOFLAGS: -buildvcs=false
+lint	Check out repository	2026-11-04T10:38:03.8024672Z ##[endgroup]
+lint	Check out repository	2026-11-04T10:38:04.1679105Z Syncing repository: 4rni4ka/DevOps-Intro
+lint	Check out repository	2026-11-04T10:38:04.1681804Z ##[group]Getting Git version info
+lint	Check out repository	2026-11-04T10:38:04.1682912Z Working directory is '/home/runner/work/DevOps-Intro/DevOps-Intro'
+lint	Check out repository	2026-11-04T10:38:04.1685238Z [command]/usr/bin/git version
+lint	Check out repository	2026-11-04T10:38:04.1819276Z git version 2.56.0
+lint	Check out repository	2026-11-04T10:38:04.1847844Z ##[endgroup]
+lint	Check out repository	2026-11-04T10:38:04.1860073Z Temporarily overriding HOME='/home/runner/work/_temp/dbb9e88d-48f8-436c-939b-dc946cb009de' before making global git config changes
+lint	Check out repository	2026-11-04T10:38:04.1862446Z Adding repository directory to the temporary git global config as a safe directory
+lint	Check out repository	2026-11-04T10:38:04.1869146Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DevOps-Intro/DevOps-Intro
+lint	Check out repository	2026-11-04T10:38:04.1930216Z Deleting the contents of '/home/runner/work/DevOps-Intro/DevOps-Intro'
+lint	Check out repository	2026-11-04T10:38:04.1934031Z ##[group]Determining repository object format
+lint	Check out repository	2026-11-04T10:38:04.1935851Z ##[endgroup]
+lint	Check out repository	2026-11-04T10:38:04.1936997Z ##[group]Initializing the repository
+lint	Check out repository	2026-11-04T10:38:04.1941213Z [command]/usr/bin/git init /home/runner/work/DevOps-Intro/DevOps-Intro
+lint	Check out repository	2026-11-04T10:38:04.2088734Z hint: Using 'master' as the name for the initial branch. This default branch name
+lint	Check out repository	2026-11-04T10:38:04.2091078Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+lint	Check out repository	2026-11-04T10:38:04.2093471Z hint: to use in all of your new repositories, which will suppress this warning,
+lint	Check out repository	2026-11-04T10:38:04.2095241Z hint: call:
+lint	Check out repository	2026-11-04T10:38:04.2096169Z hint:
+lint	Check out repository	2026-11-04T10:38:04.2097189Z hint: 	git config --global init.defaultBranch <name>
+lint	Check out repository	2026-11-04T10:38:04.2098457Z hint:
+lint	Check out repository	2026-11-04T10:38:04.2099653Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+lint	Check out repository	2026-11-04T10:38:04.2101729Z hint: 'development'. The just-created branch can be renamed via this command:
+lint	Check out repository	2026-11-04T10:38:04.2104975Z hint:
+lint	Check out repository	2026-11-04T10:38:04.2105948Z hint: 	git branch -m <name>
+lint	Check out repository	2026-11-04T10:38:04.2107088Z hint:
+lint	Check out repository	2026-11-04T10:38:04.2108488Z hint: Disable this message with "git config set advice.defaultBranchName false"
+lint	Check out repository	2026-11-04T10:38:04.2110945Z Initialized empty Git repository in /home/runner/work/DevOps-Intro/DevOps-Intro/.git/
+lint	Check out repository	2026-11-04T10:38:04.2127068Z [command]/usr/bin/git remote add origin https://github.com/4rni4ka/DevOps-Intro
+lint	Check out repository	2026-11-04T10:38:04.2202558Z ##[endgroup]
+lint	Check out repository	2026-11-04T10:38:04.2204907Z ##[group]Disabling automatic garbage collection
+lint	Check out repository	2026-11-04T10:38:04.2206765Z [command]/usr/bin/git config --local gc.auto 0
+lint	Check out repository	2026-11-04T10:38:04.2242911Z ##[endgroup]
+lint	Check out repository	2026-11-04T10:38:04.2244919Z ##[group]Setting up auth
+lint	Check out repository	2026-11-04T10:38:04.2245792Z Removing SSH command configuration
+lint	Check out repository	2026-11-04T10:38:04.2251645Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+lint	Check out repository	2026-11-04T10:38:04.2305092Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+lint	Check out repository	2026-11-04T10:38:04.2787468Z Removing HTTP extra header
+lint	Check out repository	2026-11-04T10:38:04.2794963Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+lint	Check out repository	2026-11-04T10:38:04.2842717Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+lint	Check out repository	2026-11-04T10:38:04.3106202Z Removing includeIf entries pointing to credentials config files
+lint	Check out repository	2026-11-04T10:38:04.3113932Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+lint	Check out repository	2026-11-04T10:38:04.3172787Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+lint	Check out repository	2026-11-04T10:38:04.3465111Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-818fabf7-f992-4efe-9c52-ad43083b2d07.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+lint	Check out repository	2026-11-04T10:38:04.3528805Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path /home/runner/work/_temp/git-credentials-818fabf7-f992-4efe-9c52-ad43083b2d07.config
+lint	Check out repository	2026-11-04T10:38:04.3582367Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-818fabf7-f992-4efe-9c52-ad43083b2d07.config
+lint	Check out repository	2026-11-04T10:38:04.3635173Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-818fabf7-f992-4efe-9c52-ad43083b2d07.config
+lint	Check out repository	2026-11-04T10:38:04.3704155Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-818fabf7-f992-4efe-9c52-ad43083b2d07.config
+lint	Check out repository	2026-11-04T10:38:04.3750801Z ##[endgroup]
+lint	Check out repository	2026-11-04T10:38:04.3752355Z ##[group]Fetching the repository
+lint	Check out repository	2026-11-04T10:38:04.3760513Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d83dc188a3542191f266ae7f4da090b8f3a5ffd1:refs/remotes/pull/3/merge
+lint	Check out repository	2026-11-04T10:38:04.8579392Z From https://github.com/4rni4ka/DevOps-Intro
+lint	Check out repository	2026-11-04T10:38:04.8580784Z  * [new ref]         d83dc188a3542191f266ae7f4da090b8f3a5ffd1 -> pull/3/merge
+lint	Check out repository	2026-11-04T10:38:04.8585333Z ##[endgroup]
+lint	Check out repository	2026-11-04T10:38:04.8586782Z ##[group]Determining the checkout info
+lint	Check out repository	2026-11-04T10:38:04.8587881Z ##[endgroup]
+lint	Check out repository	2026-11-04T10:38:04.8591397Z [command]/usr/bin/git sparse-checkout disable
+lint	Check out repository	2026-11-04T10:38:04.8666447Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+lint	Check out repository	2026-11-04T10:38:04.8721916Z ##[group]Checking out the ref
+lint	Check out repository	2026-11-04T10:38:04.8727078Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/3/merge
+lint	Check out repository	2026-11-04T10:38:04.8848006Z Note: switching to 'refs/remotes/pull/3/merge'.
+lint	Check out repository	2026-11-04T10:38:04.8849072Z 
+lint	Check out repository	2026-11-04T10:38:04.8849798Z You are in 'detached HEAD' state. You can look around, make experimental
+lint	Check out repository	2026-11-04T10:38:04.8851348Z changes and commit them, and you can discard any commits you make in this
+lint	Check out repository	2026-11-04T10:38:04.8852860Z state without impacting any branches by switching back to a branch.
+lint	Check out repository	2026-11-04T10:38:04.8854126Z 
+lint	Check out repository	2026-11-04T10:38:04.8854751Z If you want to create a new branch to retain commits you create, you may
+lint	Check out repository	2026-11-04T10:38:04.8856165Z do so (now or later) by using -c with the switch command. Example:
+lint	Check out repository	2026-11-04T10:38:04.8857031Z 
+lint	Check out repository	2026-11-04T10:38:04.8857414Z   git switch -c <new-branch-name>
+lint	Check out repository	2026-11-04T10:38:04.8858037Z 
+lint	Check out repository	2026-11-04T10:38:04.8858396Z Or undo this operation with:
+lint	Check out repository	2026-11-04T10:38:04.8858958Z 
+lint	Check out repository	2026-11-04T10:38:04.8859277Z   git switch -
+lint	Check out repository	2026-11-04T10:38:04.8859693Z 
+lint	Check out repository	2026-11-04T10:38:04.8860427Z Turn off this advice by setting config variable advice.detachedHead to false
+lint	Check out repository	2026-11-04T10:38:04.8861537Z 
+lint	Check out repository	2026-11-04T10:38:04.8862811Z HEAD is now at d83dc18 Merge 5794b4b3b03b83fc906098e72e6fc469cfeb3a15 into 92267d239d71d788b8000d9f6dbd37911284cea4
+lint	Check out repository	2026-11-04T10:38:04.8876713Z ##[endgroup]
+lint	Check out repository	2026-11-04T10:38:04.8938974Z [command]/usr/bin/git log -1 --format=%H
+lint	Check out repository	2026-11-04T10:38:04.8979061Z d83dc188a3542191f266ae7f4da090b8f3a5ffd1
+lint	Set up Go	﻿2026-11-04T10:38:04.9442162Z ##[group]Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+lint	Set up Go	2026-11-04T10:38:04.9444174Z with:
+lint	Set up Go	2026-11-04T10:38:04.9445136Z   go-version: 1.24
+lint	Set up Go	2026-11-04T10:38:04.9446215Z   cache: true
+lint	Set up Go	2026-11-04T10:38:04.9447290Z   cache-dependency-path: app/go.mod
+lint	Set up Go	2026-11-04T10:38:04.9448574Z   check-latest: false
+lint	Set up Go	2026-11-04T10:38:04.9459510Z   token: ***
+lint	Set up Go	2026-11-04T10:38:04.9460456Z env:
+lint	Set up Go	2026-11-04T10:38:04.9461384Z   GOFLAGS: -buildvcs=false
+lint	Set up Go	2026-11-04T10:38:04.9462476Z ##[endgroup]
+lint	Set up Go	2026-11-04T10:38:05.0716387Z Setup go version spec 1.24
+lint	Set up Go	2026-11-04T10:38:05.1067316Z Found in cache @ /opt/hostedtoolcache/go/1.24.13/x64
+lint	Set up Go	2026-11-04T10:38:05.1068938Z Added go to the path
+lint	Set up Go	2026-11-04T10:38:05.1070434Z Successfully set up Go version 1.24
+lint	Set up Go	2026-11-04T10:38:05.7768344Z [command]/opt/hostedtoolcache/go/1.24.13/x64/bin/go env GOMODCACHE
+lint	Set up Go	2026-11-04T10:38:05.7817872Z [command]/opt/hostedtoolcache/go/1.24.13/x64/bin/go env GOCACHE
+lint	Set up Go	2026-11-04T10:38:05.7859244Z /home/runner/go/pkg/mod
+lint	Set up Go	2026-11-04T10:38:05.7884298Z /home/runner/.cache/go-build
+lint	Set up Go	2026-11-04T10:38:06.0716502Z Cache hit for: setup-go-Linux-x64-ubuntu24-go-1.24.13-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c
+lint	Set up Go	2026-11-04T10:38:07.3191878Z Received 20759278 of 20759278 (100.0%), 20.7 MBs/sec
+lint	Set up Go	2026-11-04T10:38:07.3193001Z Cache Size: ~20 MB (20759278 B)
+lint	Set up Go	2026-11-04T10:38:07.3221780Z [command]/usr/bin/tar -xf /home/runner/work/_temp/36b248f0-4607-45f3-90e4-ea88234b69df/cache.tzst -P -C /home/runner/work/DevOps-Intro/DevOps-Intro --use-compress-program unzstd
+lint	Set up Go	2026-11-04T10:38:07.5383474Z Cache restored successfully
+lint	Set up Go	2026-11-04T10:38:07.5398034Z Cache restored from key: setup-go-Linux-x64-ubuntu24-go-1.24.13-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c
+lint	Set up Go	2026-11-04T10:38:07.5426440Z go version go1.24.13 linux/amd64
+lint	Set up Go	2026-11-04T10:38:07.5426844Z 
+lint	Set up Go	2026-11-04T10:38:07.5427320Z ##[group]go env
+lint	Set up Go	2026-11-04T10:38:07.6219305Z AR='ar'
+lint	Set up Go	2026-11-04T10:38:07.6219792Z CC='gcc'
+lint	Set up Go	2026-11-04T10:38:07.6220061Z CGO_CFLAGS='-O2 -g'
+lint	Set up Go	2026-11-04T10:38:07.6220357Z CGO_CPPFLAGS=''
+lint	Set up Go	2026-11-04T10:38:07.6220741Z CGO_CXXFLAGS='-O2 -g'
+lint	Set up Go	2026-11-04T10:38:07.6221054Z CGO_ENABLED='1'
+lint	Set up Go	2026-11-04T10:38:07.6221367Z CGO_FFLAGS='-O2 -g'
+lint	Set up Go	2026-11-04T10:38:07.6221685Z CGO_LDFLAGS='-O2 -g'
+lint	Set up Go	2026-11-04T10:38:07.6221953Z CXX='g++'
+lint	Set up Go	2026-11-04T10:38:07.6222212Z GCCGO='gccgo'
+lint	Set up Go	2026-11-04T10:38:07.6222472Z GO111MODULE=''
+lint	Set up Go	2026-11-04T10:38:07.6222719Z GOAMD64='v1'
+lint	Set up Go	2026-11-04T10:38:07.6222963Z GOARCH='amd64'
+lint	Set up Go	2026-11-04T10:38:07.6223608Z GOAUTH='netrc'
+lint	Set up Go	2026-11-04T10:38:07.6223882Z GOBIN=''
+lint	Set up Go	2026-11-04T10:38:07.6224150Z GOCACHE='/home/runner/.cache/go-build'
+lint	Set up Go	2026-11-04T10:38:07.6224510Z GOCACHEPROG=''
+lint	Set up Go	2026-11-04T10:38:07.6224760Z GODEBUG=''
+lint	Set up Go	2026-11-04T10:38:07.6225028Z GOENV='/home/runner/.config/go/env'
+lint	Set up Go	2026-11-04T10:38:07.6225362Z GOEXE=''
+lint	Set up Go	2026-11-04T10:38:07.6225695Z GOEXPERIMENT=''
+lint	Set up Go	2026-11-04T10:38:07.6225969Z GOFIPS140='off'
+lint	Set up Go	2026-11-04T10:38:07.6226297Z GOFLAGS='-buildvcs=false'
+lint	Set up Go	2026-11-04T10:38:07.6227193Z GOGCCFLAGS='-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=0 -ffile-prefix-map=/tmp/go-build2325124974=/tmp/go-build -gno-record-gcc-switches'
+lint	Set up Go	2026-11-04T10:38:07.6228058Z GOHOSTARCH='amd64'
+lint	Set up Go	2026-11-04T10:38:07.6228311Z GOHOSTOS='linux'
+lint	Set up Go	2026-11-04T10:38:07.6228544Z GOINSECURE=''
+lint	Set up Go	2026-11-04T10:38:07.6228769Z GOMOD='/dev/null'
+lint	Set up Go	2026-11-04T10:38:07.6229025Z GOMODCACHE='/home/runner/go/pkg/mod'
+lint	Set up Go	2026-11-04T10:38:07.6229316Z GONOPROXY=''
+lint	Set up Go	2026-11-04T10:38:07.6229533Z GONOSUMDB=''
+lint	Set up Go	2026-11-04T10:38:07.6229751Z GOOS='linux'
+lint	Set up Go	2026-11-04T10:38:07.6229974Z GOPATH='/home/runner/go'
+lint	Set up Go	2026-11-04T10:38:07.6230226Z GOPRIVATE=''
+lint	Set up Go	2026-11-04T10:38:07.6230791Z GOPROXY='https://proxy.golang.org,direct'
+lint	Set up Go	2026-11-04T10:38:07.6231181Z GOROOT='/opt/hostedtoolcache/go/1.24.13/x64'
+lint	Set up Go	2026-11-04T10:38:07.6231519Z GOSUMDB='sum.golang.org'
+lint	Set up Go	2026-11-04T10:38:07.6231792Z GOTELEMETRY='local'
+lint	Set up Go	2026-11-04T10:38:07.6232090Z GOTELEMETRYDIR='/home/runner/.config/go/telemetry'
+lint	Set up Go	2026-11-04T10:38:07.6232436Z GOTMPDIR=''
+lint	Set up Go	2026-11-04T10:38:07.6232654Z GOTOOLCHAIN='local'
+lint	Set up Go	2026-11-04T10:38:07.6233027Z GOTOOLDIR='/opt/hostedtoolcache/go/1.24.13/x64/pkg/tool/linux_amd64'
+lint	Set up Go	2026-11-04T10:38:07.6234223Z GOVCS=''
+lint	Set up Go	2026-11-04T10:38:07.6234454Z GOVERSION='go1.24.13'
+lint	Set up Go	2026-11-04T10:38:07.6234708Z GOWORK=''
+lint	Set up Go	2026-11-04T10:38:07.6234986Z PKG_CONFIG='pkg-config'
+lint	Set up Go	2026-11-04T10:38:07.6235161Z 
+lint	Set up Go	2026-11-04T10:38:07.6235558Z ##[endgroup]
+lint	Lint	﻿2026-11-04T10:38:07.6460692Z ##[group]Run golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a
+lint	Lint	2026-11-04T10:38:07.6461216Z with:
+lint	Lint	2026-11-04T10:38:07.6461435Z   version: v2.5.0
+lint	Lint	2026-11-04T10:38:07.6461666Z   working-directory: app
+lint	Lint	2026-11-04T10:38:07.6461915Z   install-mode: binary
+lint	Lint	2026-11-04T10:38:07.6462146Z   install-only: false
+lint	Lint	2026-11-04T10:38:07.6465437Z   github-token: ***
+lint	Lint	2026-11-04T10:38:07.6465685Z   verify: true
+lint	Lint	2026-11-04T10:38:07.6465911Z   only-new-issues: false
+lint	Lint	2026-11-04T10:38:07.6466186Z   skip-cache: false
+lint	Lint	2026-11-04T10:38:07.6466417Z   skip-save-cache: false
+lint	Lint	2026-11-04T10:38:07.6466670Z   cache-invalidation-interval: 7
+lint	Lint	2026-11-04T10:38:07.6466952Z   problem-matchers: false
+lint	Lint	2026-11-04T10:38:07.6467186Z env:
+lint	Lint	2026-11-04T10:38:07.6467386Z   GOFLAGS: -buildvcs=false
+lint	Lint	2026-11-04T10:38:07.6467622Z   GOTOOLCHAIN: local
+lint	Lint	2026-11-04T10:38:07.6467846Z ##[endgroup]
+lint	Lint	2026-11-04T10:38:07.7958250Z ##[group]Restore cache
+lint	Lint	2026-11-04T10:38:07.7962447Z Checking for go.mod: app/go.mod
+lint	Lint	2026-11-04T10:38:08.0506865Z Cache hit for: golangci-lint.cache-Linux-app-2965-970d59d4355dc16985f3574127dbb46c5b1b70c3
+lint	Lint	2026-11-04T10:38:08.7669505Z Received 189932 of 189932 (100.0%), 0.4 MBs/sec
+lint	Lint	2026-11-04T10:38:08.7670206Z Cache Size: ~0 MB (189932 B)
+lint	Lint	2026-11-04T10:38:08.7715967Z [command]/usr/bin/tar -xf /home/runner/work/_temp/15399de4-246e-44f8-b772-f7b22ceee30a/cache.tzst -P -C /home/runner/work/DevOps-Intro/DevOps-Intro --use-compress-program unzstd
+lint	Lint	2026-11-04T10:38:08.8382122Z Cache restored successfully
+lint	Lint	2026-11-04T10:38:08.8394825Z Restored cache for golangci-lint from key 'golangci-lint.cache-Linux-app-2965-970d59d4355dc16985f3574127dbb46c5b1b70c3' in 1042ms
+lint	Lint	2026-11-04T10:38:08.8396831Z ##[endgroup]
+lint	Lint	2026-11-04T10:38:08.8397759Z ##[group]Install
+lint	Lint	2026-11-04T10:38:08.8398440Z Finding needed golangci-lint version...
+lint	Lint	2026-11-04T10:38:08.8399187Z Installation mode: binary
+lint	Lint	2026-11-04T10:38:08.8399873Z Installing golangci-lint binary v2.5.0...
+lint	Lint	2026-11-04T10:38:08.8401347Z Downloading binary https://github.com/golangci/golangci-lint/releases/download/v2.5.0/golangci-lint-2.5.0-linux-amd64.tar.gz ...
+lint	Lint	2026-11-04T10:38:09.1242902Z [command]/usr/bin/tar xz --overwrite --warning=no-unknown-keyword --overwrite -C /home/runner -f /home/runner/work/_temp/e4dd5255-5db2-43ab-aac3-de43bc818694
+lint	Lint	2026-11-04T10:38:09.3700367Z Installed golangci-lint into /home/runner/golangci-lint-2.5.0-linux-amd64/golangci-lint in 530ms
+lint	Lint	2026-11-04T10:38:09.3705968Z ##[endgroup]
+lint	Lint	2026-11-04T10:38:09.3709924Z ##[group]run golangci-lint
+lint	Lint	2026-11-04T10:38:09.3715071Z Running [/home/runner/golangci-lint-2.5.0-linux-amd64/golangci-lint config path] in [/home/runner/work/DevOps-Intro/DevOps-Intro/app] ...
+lint	Lint	2026-11-04T10:38:09.4819261Z Running [/home/runner/golangci-lint-2.5.0-linux-amd64/golangci-lint config verify] in [/home/runner/work/DevOps-Intro/DevOps-Intro/app] ...
+lint	Lint	2026-11-04T10:38:09.7488889Z Running [/home/runner/golangci-lint-2.5.0-linux-amd64/golangci-lint run --path-mode=abs] in [/home/runner/work/DevOps-Intro/DevOps-Intro/app] ...
+lint	Lint	2026-11-04T10:38:15.2042444Z 0 issues.
+lint	Lint	2026-11-04T10:38:15.2042759Z 
+lint	Lint	2026-11-04T10:38:15.2042960Z golangci-lint found no issues
+lint	Lint	2026-11-04T10:38:15.2043851Z Ran golangci-lint in 5456ms
+lint	Lint	2026-11-04T10:38:15.2044374Z ##[endgroup]
+lint	Post Lint	﻿2026-11-04T10:38:15.2255863Z Post job cleanup.
+lint	Post Lint	2026-11-04T10:38:15.3962335Z Cache hit occurred on the primary key golangci-lint.cache-Linux-app-2965-970d59d4355dc16985f3574127dbb46c5b1b70c3, not saving cache.
+lint	Post Set up Go	﻿2026-11-04T10:38:15.4153787Z Post job cleanup.
+lint	Post Set up Go	2026-11-04T10:38:15.5500405Z [command]/opt/hostedtoolcache/go/1.24.13/x64/bin/go env GOMODCACHE
+lint	Post Set up Go	2026-11-04T10:38:15.5574428Z [command]/opt/hostedtoolcache/go/1.24.13/x64/bin/go env GOCACHE
+lint	Post Set up Go	2026-11-04T10:38:15.5602523Z /home/runner/go/pkg/mod
+lint	Post Set up Go	2026-11-04T10:38:15.5630060Z /home/runner/.cache/go-build
+lint	Post Set up Go	2026-11-04T10:38:15.5639954Z [warning]Cache folder path is retrieved but doesn't exist on disk: /home/runner/go/pkg/mod
+lint	Post Set up Go	2026-11-04T10:38:15.5641957Z Cache hit occurred on the primary key setup-go-Linux-x64-ubuntu24-go-1.24.13-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c, not saving cache.
+lint	Post Check out repository	﻿2026-11-04T10:38:15.5863586Z Post job cleanup.
+lint	Post Check out repository	2026-11-04T10:38:15.6862077Z [command]/usr/bin/git version
+lint	Post Check out repository	2026-11-04T10:38:15.6927246Z git version 2.56.0
+lint	Post Check out repository	2026-11-04T10:38:15.6968543Z Temporarily overriding HOME='/home/runner/work/_temp/8c9c9444-6c67-4638-9f26-3132d9f2b72c' before making global git config changes
+lint	Post Check out repository	2026-11-04T10:38:15.6975330Z Adding repository directory to the temporary git global config as a safe directory
+lint	Post Check out repository	2026-11-04T10:38:15.6976471Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DevOps-Intro/DevOps-Intro
+lint	Post Check out repository	2026-11-04T10:38:15.7033981Z Removing SSH command configuration
+lint	Post Check out repository	2026-11-04T10:38:15.7034876Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+lint	Post Check out repository	2026-11-04T10:38:15.7070461Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+lint	Post Check out repository	2026-11-04T10:38:15.7372187Z Removing HTTP extra header
+lint	Post Check out repository	2026-11-04T10:38:15.7373020Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+lint	Post Check out repository	2026-11-04T10:38:15.7430565Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+lint	Post Check out repository	2026-11-04T10:38:15.7760161Z Removing includeIf entries pointing to credentials config files
+lint	Post Check out repository	2026-11-04T10:38:15.7768966Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+lint	Post Check out repository	2026-11-04T10:38:15.7825440Z includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path
+lint	Post Check out repository	2026-11-04T10:38:15.7834966Z includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path
+lint	Post Check out repository	2026-11-04T10:38:15.7836143Z includeif.gitdir:/github/workspace/.git.path
+lint	Post Check out repository	2026-11-04T10:38:15.7836850Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+lint	Post Check out repository	2026-11-04T10:38:15.7846138Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path
+lint	Post Check out repository	2026-11-04T10:38:15.7894861Z /home/runner/work/_temp/git-credentials-818fabf7-f992-4efe-9c52-ad43083b2d07.config
+lint	Post Check out repository	2026-11-04T10:38:15.7908743Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-818fabf7\-f992\-4efe\-9c52\-ad43083b2d07\.config
+lint	Post Check out repository	2026-11-04T10:38:15.7995735Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path
+lint	Post Check out repository	2026-11-04T10:38:15.8019355Z /home/runner/work/_temp/git-credentials-818fabf7-f992-4efe-9c52-ad43083b2d07.config
+lint	Post Check out repository	2026-11-04T10:38:15.8046152Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-818fabf7\-f992\-4efe\-9c52\-ad43083b2d07\.config
+lint	Post Check out repository	2026-11-04T10:38:15.8116124Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+lint	Post Check out repository	2026-11-04T10:38:15.8158705Z /github/runner_temp/git-credentials-818fabf7-f992-4efe-9c52-ad43083b2d07.config
+lint	Post Check out repository	2026-11-04T10:38:15.8175095Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-818fabf7\-f992\-4efe\-9c52\-ad43083b2d07\.config
+lint	Post Check out repository	2026-11-04T10:38:15.8222481Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+lint	Post Check out repository	2026-11-04T10:38:15.8261694Z /github/runner_temp/git-credentials-818fabf7-f992-4efe-9c52-ad43083b2d07.config
+lint	Post Check out repository	2026-11-04T10:38:15.8275524Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-818fabf7\-f992\-4efe\-9c52\-ad43083b2d07\.config
+lint	Post Check out repository	2026-11-04T10:38:15.8334616Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+lint	Post Check out repository	2026-11-04T10:38:15.8599505Z Removing credentials config '/home/runner/work/_temp/git-credentials-818fabf7-f992-4efe-9c52-ad43083b2d07.config'
+lint	Complete job	﻿2026-11-04T10:38:15.8769257Z Cleaning up orphan processes
+test (1.24)	Set up job	﻿2026-11-04T10:38:01.9599632Z Current runner version: '2.338.2'
+test (1.24)	Set up job	2026-11-04T10:38:01.9625004Z ##[group]Runner Image Provisioner
+test (1.24)	Set up job	2026-11-04T10:38:01.9625817Z Hosted Compute Agent
+test (1.24)	Set up job	2026-11-04T10:38:01.9626462Z Version: 20261021.618
+test (1.24)	Set up job	2026-11-04T10:38:01.9627071Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+test (1.24)	Set up job	2026-11-04T10:38:01.9627740Z Build Date: 2026-10-21T00:45:21Z
+test (1.24)	Set up job	2026-11-04T10:38:01.9628353Z Worker ID: {1accd83e-6d4d-4825-8c1f-1bf1a00adb6f}
+test (1.24)	Set up job	2026-11-04T10:38:01.9628992Z Region: westus3
+test (1.24)	Set up job	2026-11-04T10:38:01.9629520Z Cloud: Azure
+test (1.24)	Set up job	2026-11-04T10:38:01.9629999Z ##[endgroup]
+test (1.24)	Set up job	2026-11-04T10:38:01.9631737Z ##[group]Operating System
+test (1.24)	Set up job	2026-11-04T10:38:01.9632422Z Ubuntu
+test (1.24)	Set up job	2026-11-04T10:38:01.9632907Z 24.04.5
+test (1.24)	Set up job	2026-11-04T10:38:01.9633405Z LTS
+test (1.24)	Set up job	2026-11-04T10:38:01.9633897Z ##[endgroup]
+test (1.24)	Set up job	2026-11-04T10:38:01.9634399Z ##[group]Runner Image
+test (1.24)	Set up job	2026-11-04T10:38:01.9634951Z Image: ubuntu-24.04
+test (1.24)	Set up job	2026-11-04T10:38:01.9635482Z Version: 20261025.353.1
+test (1.24)	Set up job	2026-11-04T10:38:01.9636463Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+test (1.24)	Set up job	2026-11-04T10:38:01.9638056Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+test (1.24)	Set up job	2026-11-04T10:38:01.9638929Z ##[endgroup]
+test (1.24)	Set up job	2026-11-04T10:38:01.9639927Z ##[group]GITHUB_TOKEN Permissions
+test (1.24)	Set up job	2026-11-04T10:38:01.9642227Z Contents: read
+test (1.24)	Set up job	2026-11-04T10:38:01.9642784Z Metadata: read
+test (1.24)	Set up job	2026-11-04T10:38:01.9643350Z ##[endgroup]
+test (1.24)	Set up job	2026-11-04T10:38:01.9645462Z Secret source: Actions
+test (1.24)	Set up job	2026-11-04T10:38:01.9646445Z Cache mode: write
+test (1.24)	Set up job	2026-11-04T10:38:01.9647066Z Prepare workflow directory
+test (1.24)	Set up job	2026-11-04T10:38:02.0030937Z Prepare all required actions
+test (1.24)	Set up job	2026-11-04T10:38:02.0079253Z Getting action download info
+test (1.24)	Set up job	2026-11-04T10:38:02.3106526Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+test (1.24)	Set up job	2026-11-04T10:38:02.4192363Z Download action repository 'actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e' (SHA:b7ad1dad31e06c5925ef5d2fc7ad053ef454303e)
+test (1.24)	Set up job	2026-11-04T10:38:03.0884404Z Complete job name: test (1.24)
+test (1.24)	Check out repository	﻿2026-11-04T10:38:03.1874924Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+test (1.24)	Check out repository	2026-11-04T10:38:03.1876151Z with:
+test (1.24)	Check out repository	2026-11-04T10:38:03.1876707Z   repository: 4rni4ka/DevOps-Intro
+test (1.24)	Check out repository	2026-11-04T10:38:03.1880945Z   token: ***
+test (1.24)	Check out repository	2026-11-04T10:38:03.1881641Z   ssh-strict: true
+test (1.24)	Check out repository	2026-11-04T10:38:03.1882176Z   ssh-user: git
+test (1.24)	Check out repository	2026-11-04T10:38:03.1882729Z   persist-credentials: true
+test (1.24)	Check out repository	2026-11-04T10:38:03.1883327Z   clean: true
+test (1.24)	Check out repository	2026-11-04T10:38:03.1883887Z   sparse-checkout-cone-mode: true
+test (1.24)	Check out repository	2026-11-04T10:38:03.1884533Z   fetch-depth: 1
+test (1.24)	Check out repository	2026-11-04T10:38:03.1885062Z   fetch-tags: false
+test (1.24)	Check out repository	2026-11-04T10:38:03.1885603Z   show-progress: true
+test (1.24)	Check out repository	2026-11-04T10:38:03.1886111Z   lfs: false
+test (1.24)	Check out repository	2026-11-04T10:38:03.1886610Z   submodules: false
+test (1.24)	Check out repository	2026-11-04T10:38:03.1887164Z   set-safe-directory: true
+test (1.24)	Check out repository	2026-11-04T10:38:03.1887753Z   allow-unsafe-pr-checkout: false
+test (1.24)	Check out repository	2026-11-04T10:38:03.1888593Z env:
+test (1.24)	Check out repository	2026-11-04T10:38:03.1889108Z   GOFLAGS: -buildvcs=false
+test (1.24)	Check out repository	2026-11-04T10:38:03.1889690Z ##[endgroup]
+test (1.24)	Check out repository	2026-11-04T10:38:03.4302195Z Syncing repository: 4rni4ka/DevOps-Intro
+test (1.24)	Check out repository	2026-11-04T10:38:03.4305903Z ##[group]Getting Git version info
+test (1.24)	Check out repository	2026-11-04T10:38:03.4307561Z Working directory is '/home/runner/work/DevOps-Intro/DevOps-Intro'
+test (1.24)	Check out repository	2026-11-04T10:38:03.4309812Z [command]/usr/bin/git version
+test (1.24)	Check out repository	2026-11-04T10:38:03.4378179Z git version 2.56.0
+test (1.24)	Check out repository	2026-11-04T10:38:03.4401261Z ##[endgroup]
+test (1.24)	Check out repository	2026-11-04T10:38:03.4417071Z Temporarily overriding HOME='/home/runner/work/_temp/f0dbac2e-c139-4c7d-9fd4-67eb2c88a228' before making global git config changes
+test (1.24)	Check out repository	2026-11-04T10:38:03.4420359Z Adding repository directory to the temporary git global config as a safe directory
+test (1.24)	Check out repository	2026-11-04T10:38:03.4423216Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DevOps-Intro/DevOps-Intro
+test (1.24)	Check out repository	2026-11-04T10:38:03.4467961Z Deleting the contents of '/home/runner/work/DevOps-Intro/DevOps-Intro'
+test (1.24)	Check out repository	2026-11-04T10:38:03.4471748Z ##[group]Determining repository object format
+test (1.24)	Check out repository	2026-11-04T10:38:03.4473939Z ##[endgroup]
+test (1.24)	Check out repository	2026-11-04T10:38:03.4475646Z ##[group]Initializing the repository
+test (1.24)	Check out repository	2026-11-04T10:38:03.4477567Z [command]/usr/bin/git init /home/runner/work/DevOps-Intro/DevOps-Intro
+test (1.24)	Check out repository	2026-11-04T10:38:03.4577418Z hint: Using 'master' as the name for the initial branch. This default branch name
+test (1.24)	Check out repository	2026-11-04T10:38:03.4580009Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+test (1.24)	Check out repository	2026-11-04T10:38:03.4582186Z hint: to use in all of your new repositories, which will suppress this warning,
+test (1.24)	Check out repository	2026-11-04T10:38:03.4589233Z hint: call:
+test (1.24)	Check out repository	2026-11-04T10:38:03.4599295Z hint:
+test (1.24)	Check out repository	2026-11-04T10:38:03.4600084Z hint: 	git config --global init.defaultBranch <name>
+test (1.24)	Check out repository	2026-11-04T10:38:03.4600824Z hint:
+test (1.24)	Check out repository	2026-11-04T10:38:03.4601695Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+test (1.24)	Check out repository	2026-11-04T10:38:03.4603488Z hint: 'development'. The just-created branch can be renamed via this command:
+test (1.24)	Check out repository	2026-11-04T10:38:03.4605168Z hint:
+test (1.24)	Check out repository	2026-11-04T10:38:03.4606100Z hint: 	git branch -m <name>
+test (1.24)	Check out repository	2026-11-04T10:38:03.4607157Z hint:
+test (1.24)	Check out repository	2026-11-04T10:38:03.4608578Z hint: Disable this message with "git config set advice.defaultBranchName false"
+test (1.24)	Check out repository	2026-11-04T10:38:03.4611043Z Initialized empty Git repository in /home/runner/work/DevOps-Intro/DevOps-Intro/.git/
+test (1.24)	Check out repository	2026-11-04T10:38:03.4615154Z [command]/usr/bin/git remote add origin https://github.com/4rni4ka/DevOps-Intro
+test (1.24)	Check out repository	2026-11-04T10:38:03.4639061Z ##[endgroup]
+test (1.24)	Check out repository	2026-11-04T10:38:03.4640796Z ##[group]Disabling automatic garbage collection
+test (1.24)	Check out repository	2026-11-04T10:38:03.4643226Z [command]/usr/bin/git config --local gc.auto 0
+test (1.24)	Check out repository	2026-11-04T10:38:03.4675535Z ##[endgroup]
+test (1.24)	Check out repository	2026-11-04T10:38:03.4678008Z ##[group]Setting up auth
+test (1.24)	Check out repository	2026-11-04T10:38:03.4679520Z Removing SSH command configuration
+test (1.24)	Check out repository	2026-11-04T10:38:03.4682646Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test (1.24)	Check out repository	2026-11-04T10:38:03.4719455Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test (1.24)	Check out repository	2026-11-04T10:38:03.5043200Z Removing HTTP extra header
+test (1.24)	Check out repository	2026-11-04T10:38:03.5047205Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test (1.24)	Check out repository	2026-11-04T10:38:03.5093780Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test (1.24)	Check out repository	2026-11-04T10:38:03.5299823Z Removing includeIf entries pointing to credentials config files
+test (1.24)	Check out repository	2026-11-04T10:38:03.5304793Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test (1.24)	Check out repository	2026-11-04T10:38:03.5337830Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test (1.24)	Check out repository	2026-11-04T10:38:03.5528550Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-0567e6e4-752a-471c-b716-7215265a30f2.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+test (1.24)	Check out repository	2026-11-04T10:38:03.5565509Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path /home/runner/work/_temp/git-credentials-0567e6e4-752a-471c-b716-7215265a30f2.config
+test (1.24)	Check out repository	2026-11-04T10:38:03.5597563Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-0567e6e4-752a-471c-b716-7215265a30f2.config
+test (1.24)	Check out repository	2026-11-04T10:38:03.5630150Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-0567e6e4-752a-471c-b716-7215265a30f2.config
+test (1.24)	Check out repository	2026-11-04T10:38:03.5662471Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-0567e6e4-752a-471c-b716-7215265a30f2.config
+test (1.24)	Check out repository	2026-11-04T10:38:03.5693132Z ##[endgroup]
+test (1.24)	Check out repository	2026-11-04T10:38:03.5694145Z ##[group]Fetching the repository
+test (1.24)	Check out repository	2026-11-04T10:38:03.5698943Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d83dc188a3542191f266ae7f4da090b8f3a5ffd1:refs/remotes/pull/3/merge
+test (1.24)	Check out repository	2026-11-04T10:38:04.1772231Z From https://github.com/4rni4ka/DevOps-Intro
+test (1.24)	Check out repository	2026-11-04T10:38:04.1774785Z  * [new ref]         d83dc188a3542191f266ae7f4da090b8f3a5ffd1 -> pull/3/merge
+test (1.24)	Check out repository	2026-11-04T10:38:04.1780240Z ##[endgroup]
+test (1.24)	Check out repository	2026-11-04T10:38:04.1782718Z ##[group]Determining the checkout info
+test (1.24)	Check out repository	2026-11-04T10:38:04.1785769Z ##[endgroup]
+test (1.24)	Check out repository	2026-11-04T10:38:04.1787323Z [command]/usr/bin/git sparse-checkout disable
+test (1.24)	Check out repository	2026-11-04T10:38:04.1839494Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+test (1.24)	Check out repository	2026-11-04T10:38:04.1875182Z ##[group]Checking out the ref
+test (1.24)	Check out repository	2026-11-04T10:38:04.1879875Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/3/merge
+test (1.24)	Check out repository	2026-11-04T10:38:04.1963005Z Note: switching to 'refs/remotes/pull/3/merge'.
+test (1.24)	Check out repository	2026-11-04T10:38:04.1964213Z 
+test (1.24)	Check out repository	2026-11-04T10:38:04.1965037Z You are in 'detached HEAD' state. You can look around, make experimental
+test (1.24)	Check out repository	2026-11-04T10:38:04.1966999Z changes and commit them, and you can discard any commits you make in this
+test (1.24)	Check out repository	2026-11-04T10:38:04.1969060Z state without impacting any branches by switching back to a branch.
+test (1.24)	Check out repository	2026-11-04T10:38:04.1970339Z 
+test (1.24)	Check out repository	2026-11-04T10:38:04.1971608Z If you want to create a new branch to retain commits you create, you may
+test (1.24)	Check out repository	2026-11-04T10:38:04.1973966Z do so (now or later) by using -c with the switch command. Example:
+test (1.24)	Check out repository	2026-11-04T10:38:04.1975296Z 
+test (1.24)	Check out repository	2026-11-04T10:38:04.1975859Z   git switch -c <new-branch-name>
+test (1.24)	Check out repository	2026-11-04T10:38:04.1976819Z 
+test (1.24)	Check out repository	2026-11-04T10:38:04.1977389Z Or undo this operation with:
+test (1.24)	Check out repository	2026-11-04T10:38:04.1978324Z 
+test (1.24)	Check out repository	2026-11-04T10:38:04.1978828Z   git switch -
+test (1.24)	Check out repository	2026-11-04T10:38:04.1979497Z 
+test (1.24)	Check out repository	2026-11-04T10:38:04.1980529Z Turn off this advice by setting config variable advice.detachedHead to false
+test (1.24)	Check out repository	2026-11-04T10:38:04.1982279Z 
+test (1.24)	Check out repository	2026-11-04T10:38:04.1983905Z HEAD is now at d83dc18 Merge 5794b4b3b03b83fc906098e72e6fc469cfeb3a15 into 92267d239d71d788b8000d9f6dbd37911284cea4
+test (1.24)	Check out repository	2026-11-04T10:38:04.1989010Z ##[endgroup]
+test (1.24)	Check out repository	2026-11-04T10:38:04.2017212Z [command]/usr/bin/git log -1 --format=%H
+test (1.24)	Check out repository	2026-11-04T10:38:04.2043414Z d83dc188a3542191f266ae7f4da090b8f3a5ffd1
+test (1.24)	Set up Go	﻿2026-11-04T10:38:04.2400588Z ##[group]Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+test (1.24)	Set up Go	2026-11-04T10:38:04.2402333Z with:
+test (1.24)	Set up Go	2026-11-04T10:38:04.2403162Z   go-version: 1.24
+test (1.24)	Set up Go	2026-11-04T10:38:04.2404061Z   cache: true
+test (1.24)	Set up Go	2026-11-04T10:38:04.2404997Z   cache-dependency-path: app/go.mod
+test (1.24)	Set up Go	2026-11-04T10:38:04.2406134Z   check-latest: false
+test (1.24)	Set up Go	2026-11-04T10:38:04.2415179Z   token: ***
+test (1.24)	Set up Go	2026-11-04T10:38:04.2416029Z env:
+test (1.24)	Set up Go	2026-11-04T10:38:04.2416873Z   GOFLAGS: -buildvcs=false
+test (1.24)	Set up Go	2026-11-04T10:38:04.2417871Z ##[endgroup]
+test (1.24)	Set up Go	2026-11-04T10:38:04.3607000Z Setup go version spec 1.24
+test (1.24)	Set up Go	2026-11-04T10:38:04.3764163Z Found in cache @ /opt/hostedtoolcache/go/1.24.13/x64
+test (1.24)	Set up Go	2026-11-04T10:38:04.3766474Z Added go to the path
+test (1.24)	Set up Go	2026-11-04T10:38:04.3767678Z Successfully set up Go version 1.24
+test (1.24)	Set up Go	2026-11-04T10:38:04.8750992Z [command]/opt/hostedtoolcache/go/1.24.13/x64/bin/go env GOMODCACHE
+test (1.24)	Set up Go	2026-11-04T10:38:04.8785288Z [command]/opt/hostedtoolcache/go/1.24.13/x64/bin/go env GOCACHE
+test (1.24)	Set up Go	2026-11-04T10:38:04.8811702Z /home/runner/go/pkg/mod
+test (1.24)	Set up Go	2026-11-04T10:38:04.8833643Z /home/runner/.cache/go-build
+test (1.24)	Set up Go	2026-11-04T10:38:05.1049268Z Cache hit for: setup-go-Linux-x64-ubuntu24-go-1.24.13-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c
+test (1.24)	Set up Go	2026-11-04T10:38:06.1292182Z Received 20759278 of 20759278 (100.0%), 24.9 MBs/sec
+test (1.24)	Set up Go	2026-11-04T10:38:06.1293110Z Cache Size: ~20 MB (20759278 B)
+test (1.24)	Set up Go	2026-11-04T10:38:06.1356078Z [command]/usr/bin/tar -xf /home/runner/work/_temp/69eecc04-5f1b-42f8-8162-e7c5269a503e/cache.tzst -P -C /home/runner/work/DevOps-Intro/DevOps-Intro --use-compress-program unzstd
+test (1.24)	Set up Go	2026-11-04T10:38:06.2810969Z Cache restored successfully
+test (1.24)	Set up Go	2026-11-04T10:38:06.2825244Z Cache restored from key: setup-go-Linux-x64-ubuntu24-go-1.24.13-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c
+test (1.24)	Set up Go	2026-11-04T10:38:06.2850603Z go version go1.24.13 linux/amd64
+test (1.24)	Set up Go	2026-11-04T10:38:06.2850898Z 
+test (1.24)	Set up Go	2026-11-04T10:38:06.2851610Z ##[group]go env
+test (1.24)	Set up Go	2026-11-04T10:38:06.3076548Z AR='ar'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3077369Z CC='gcc'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3077704Z CGO_CFLAGS='-O2 -g'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3077952Z CGO_CPPFLAGS=''
+test (1.24)	Set up Go	2026-11-04T10:38:06.3078206Z CGO_CXXFLAGS='-O2 -g'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3078442Z CGO_ENABLED='1'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3078661Z CGO_FFLAGS='-O2 -g'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3078948Z CGO_LDFLAGS='-O2 -g'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3079166Z CXX='g++'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3079365Z GCCGO='gccgo'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3079578Z GO111MODULE=''
+test (1.24)	Set up Go	2026-11-04T10:38:06.3079790Z GOAMD64='v1'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3080049Z GOARCH='amd64'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3080248Z GOAUTH='netrc'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3080451Z GOBIN=''
+test (1.24)	Set up Go	2026-11-04T10:38:06.3080676Z GOCACHE='/home/runner/.cache/go-build'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3080960Z GOCACHEPROG=''
+test (1.24)	Set up Go	2026-11-04T10:38:06.3081168Z GODEBUG=''
+test (1.24)	Set up Go	2026-11-04T10:38:06.3081680Z GOENV='/home/runner/.config/go/env'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3081977Z GOEXE=''
+test (1.24)	Set up Go	2026-11-04T10:38:06.3082177Z GOEXPERIMENT=''
+test (1.24)	Set up Go	2026-11-04T10:38:06.3082440Z GOFIPS140='off'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3082699Z GOFLAGS='-buildvcs=false'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3083457Z GOGCCFLAGS='-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=0 -ffile-prefix-map=/tmp/go-build2417157470=/tmp/go-build -gno-record-gcc-switches'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3084123Z GOHOSTARCH='amd64'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3084361Z GOHOSTOS='linux'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3084581Z GOINSECURE=''
+test (1.24)	Set up Go	2026-11-04T10:38:06.3084799Z GOMOD='/dev/null'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3085034Z GOMODCACHE='/home/runner/go/pkg/mod'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3085299Z GONOPROXY=''
+test (1.24)	Set up Go	2026-11-04T10:38:06.3085496Z GONOSUMDB=''
+test (1.24)	Set up Go	2026-11-04T10:38:06.3085696Z GOOS='linux'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3085901Z GOPATH='/home/runner/go'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3086132Z GOPRIVATE=''
+test (1.24)	Set up Go	2026-11-04T10:38:06.3086412Z GOPROXY='https://proxy.golang.org,direct'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3086754Z GOROOT='/opt/hostedtoolcache/go/1.24.13/x64'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3087105Z GOSUMDB='sum.golang.org'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3087372Z GOTELEMETRY='local'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3087639Z GOTELEMETRYDIR='/home/runner/.config/go/telemetry'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3087942Z GOTMPDIR=''
+test (1.24)	Set up Go	2026-11-04T10:38:06.3088156Z GOTOOLCHAIN='local'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3088488Z GOTOOLDIR='/opt/hostedtoolcache/go/1.24.13/x64/pkg/tool/linux_amd64'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3089090Z GOVCS=''
+test (1.24)	Set up Go	2026-11-04T10:38:06.3089294Z GOVERSION='go1.24.13'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3089519Z GOWORK=''
+test (1.24)	Set up Go	2026-11-04T10:38:06.3089765Z PKG_CONFIG='pkg-config'
+test (1.24)	Set up Go	2026-11-04T10:38:06.3089916Z 
+test (1.24)	Set up Go	2026-11-04T10:38:06.3090298Z ##[endgroup]
+test (1.24)	Test with race detector	﻿2026-11-04T10:38:06.3217363Z ##[group]Run go test -race -count=1 ./...
+test (1.24)	Test with race detector	2026-11-04T10:38:06.3217838Z ^[[36;1mgo test -race -count=1 ./...^[[0m
+test (1.24)	Test with race detector	2026-11-04T10:38:06.3237351Z shell: /usr/bin/bash -e {0}
+test (1.24)	Test with race detector	2026-11-04T10:38:06.3237682Z env:
+test (1.24)	Test with race detector	2026-11-04T10:38:06.3237897Z   GOFLAGS: -buildvcs=false
+test (1.24)	Test with race detector	2026-11-04T10:38:06.3238152Z   GOTOOLCHAIN: local
+test (1.24)	Test with race detector	2026-11-04T10:38:06.3238373Z ##[endgroup]
+test (1.24)	Test with race detector	2026-11-04T10:38:26.5716491Z ok  	quicknotes	1.020s
+test (1.24)	Post Set up Go	﻿2026-11-04T10:38:26.6158203Z Post job cleanup.
+test (1.24)	Post Set up Go	2026-11-04T10:38:26.7343102Z [command]/opt/hostedtoolcache/go/1.24.13/x64/bin/go env GOMODCACHE
+test (1.24)	Post Set up Go	2026-11-04T10:38:26.7405712Z [command]/opt/hostedtoolcache/go/1.24.13/x64/bin/go env GOCACHE
+test (1.24)	Post Set up Go	2026-11-04T10:38:26.7444690Z /home/runner/go/pkg/mod
+test (1.24)	Post Set up Go	2026-11-04T10:38:26.7467044Z /home/runner/.cache/go-build
+test (1.24)	Post Set up Go	2026-11-04T10:38:26.7474692Z [warning]Cache folder path is retrieved but doesn't exist on disk: /home/runner/go/pkg/mod
+test (1.24)	Post Set up Go	2026-11-04T10:38:26.7476139Z Cache hit occurred on the primary key setup-go-Linux-x64-ubuntu24-go-1.24.13-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c, not saving cache.
+test (1.24)	Post Check out repository	﻿2026-11-04T10:38:26.7651033Z Post job cleanup.
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.8568067Z [command]/usr/bin/git version
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.8610660Z git version 2.56.0
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.8648858Z Temporarily overriding HOME='/home/runner/work/_temp/2acecefd-3aff-4258-87ec-8398105d7943' before making global git config changes
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.8649994Z Adding repository directory to the temporary git global config as a safe directory
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.8656293Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DevOps-Intro/DevOps-Intro
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.8702576Z Removing SSH command configuration
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.8704669Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.8744526Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.8975006Z Removing HTTP extra header
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.8982591Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9019215Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9258580Z Removing includeIf entries pointing to credentials config files
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9267904Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9326545Z includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9327640Z includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9328467Z includeif.gitdir:/github/workspace/.git.path
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9329140Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9346091Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9371106Z /home/runner/work/_temp/git-credentials-0567e6e4-752a-471c-b716-7215265a30f2.config
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9389423Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-0567e6e4\-752a\-471c\-b716\-7215265a30f2\.config
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9456160Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9498718Z /home/runner/work/_temp/git-credentials-0567e6e4-752a-471c-b716-7215265a30f2.config
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9516091Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-0567e6e4\-752a\-471c\-b716\-7215265a30f2\.config
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9576162Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9602816Z /github/runner_temp/git-credentials-0567e6e4-752a-471c-b716-7215265a30f2.config
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9612420Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-0567e6e4\-752a\-471c\-b716\-7215265a30f2\.config
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9662681Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9694972Z /github/runner_temp/git-credentials-0567e6e4-752a-471c-b716-7215265a30f2.config
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9707423Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-0567e6e4\-752a\-471c\-b716\-7215265a30f2\.config
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9751426Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test (1.24)	Post Check out repository	2026-11-04T10:38:26.9944712Z Removing credentials config '/home/runner/work/_temp/git-credentials-0567e6e4-752a-471c-b716-7215265a30f2.config'
+test (1.24)	Complete job	﻿2026-11-04T10:38:27.0089551Z Cleaning up orphan processes
+govulncheck	Set up job	﻿2026-11-04T10:38:02.0416191Z Current runner version: '2.338.2'
+govulncheck	Set up job	2026-11-04T10:38:02.0440323Z ##[group]Runner Image Provisioner
+govulncheck	Set up job	2026-11-04T10:38:02.0441678Z Hosted Compute Agent
+govulncheck	Set up job	2026-11-04T10:38:02.0442290Z Version: 20261021.618
+govulncheck	Set up job	2026-11-04T10:38:02.0442913Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+govulncheck	Set up job	2026-11-04T10:38:02.0443609Z Build Date: 2026-10-21T00:45:21Z
+govulncheck	Set up job	2026-11-04T10:38:02.0444493Z Worker ID: {10eeb576-3b90-47d2-8a23-3650e588c6d4}
+govulncheck	Set up job	2026-11-04T10:38:02.0445350Z Region: westcentralus
+govulncheck	Set up job	2026-11-04T10:38:02.0445970Z Cloud: Azure
+govulncheck	Set up job	2026-11-04T10:38:02.0446497Z ##[endgroup]
+govulncheck	Set up job	2026-11-04T10:38:02.0447911Z ##[group]Operating System
+govulncheck	Set up job	2026-11-04T10:38:02.0448492Z Ubuntu
+govulncheck	Set up job	2026-11-04T10:38:02.0449015Z 24.04.5
+govulncheck	Set up job	2026-11-04T10:38:02.0449519Z LTS
+govulncheck	Set up job	2026-11-04T10:38:02.0449992Z ##[endgroup]
+govulncheck	Set up job	2026-11-04T10:38:02.0450552Z ##[group]Runner Image
+govulncheck	Set up job	2026-11-04T10:38:02.0451140Z Image: ubuntu-24.04
+govulncheck	Set up job	2026-11-04T10:38:02.0451694Z Version: 20261025.353.1
+govulncheck	Set up job	2026-11-04T10:38:02.0452781Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+govulncheck	Set up job	2026-11-04T10:38:02.0454793Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+govulncheck	Set up job	2026-11-04T10:38:02.0455716Z ##[endgroup]
+govulncheck	Set up job	2026-11-04T10:38:02.0456784Z ##[group]GITHUB_TOKEN Permissions
+govulncheck	Set up job	2026-11-04T10:38:02.0458774Z Contents: read
+govulncheck	Set up job	2026-11-04T10:38:02.0459358Z Metadata: read
+govulncheck	Set up job	2026-11-04T10:38:02.0459866Z ##[endgroup]
+govulncheck	Set up job	2026-11-04T10:38:02.0461689Z Secret source: Actions
+govulncheck	Set up job	2026-11-04T10:38:02.0462631Z Cache mode: write
+govulncheck	Set up job	2026-11-04T10:38:02.0463275Z Prepare workflow directory
+govulncheck	Set up job	2026-11-04T10:38:02.0832826Z Prepare all required actions
+govulncheck	Set up job	2026-11-04T10:38:02.0880854Z Getting action download info
+govulncheck	Set up job	2026-11-04T10:38:02.3638861Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+govulncheck	Set up job	2026-11-04T10:38:02.5722925Z Download action repository 'actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e' (SHA:b7ad1dad31e06c5925ef5d2fc7ad053ef454303e)
+govulncheck	Set up job	2026-11-04T10:38:03.2909469Z Complete job name: govulncheck
+govulncheck	Check out repository	﻿2026-11-04T10:38:03.3666848Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+govulncheck	Check out repository	2026-11-04T10:38:03.3667865Z with:
+govulncheck	Check out repository	2026-11-04T10:38:03.3668376Z   repository: 4rni4ka/DevOps-Intro
+govulncheck	Check out repository	2026-11-04T10:38:03.3672484Z   token: ***
+govulncheck	Check out repository	2026-11-04T10:38:03.3673007Z   ssh-strict: true
+govulncheck	Check out repository	2026-11-04T10:38:03.3673523Z   ssh-user: git
+govulncheck	Check out repository	2026-11-04T10:38:03.3674061Z   persist-credentials: true
+govulncheck	Check out repository	2026-11-04T10:38:03.3674789Z   clean: true
+govulncheck	Check out repository	2026-11-04T10:38:03.3675334Z   sparse-checkout-cone-mode: true
+govulncheck	Check out repository	2026-11-04T10:38:03.3675930Z   fetch-depth: 1
+govulncheck	Check out repository	2026-11-04T10:38:03.3676408Z   fetch-tags: false
+govulncheck	Check out repository	2026-11-04T10:38:03.3676945Z   show-progress: true
+govulncheck	Check out repository	2026-11-04T10:38:03.3677486Z   lfs: false
+govulncheck	Check out repository	2026-11-04T10:38:03.3677971Z   submodules: false
+govulncheck	Check out repository	2026-11-04T10:38:03.3678505Z   set-safe-directory: true
+govulncheck	Check out repository	2026-11-04T10:38:03.3679049Z   allow-unsafe-pr-checkout: false
+govulncheck	Check out repository	2026-11-04T10:38:03.3679797Z env:
+govulncheck	Check out repository	2026-11-04T10:38:03.3680305Z   GOFLAGS: -buildvcs=false
+govulncheck	Check out repository	2026-11-04T10:38:03.3680845Z ##[endgroup]
+govulncheck	Check out repository	2026-11-04T10:38:03.6078928Z Syncing repository: 4rni4ka/DevOps-Intro
+govulncheck	Check out repository	2026-11-04T10:38:03.6081670Z ##[group]Getting Git version info
+govulncheck	Check out repository	2026-11-04T10:38:03.6082775Z Working directory is '/home/runner/work/DevOps-Intro/DevOps-Intro'
+govulncheck	Check out repository	2026-11-04T10:38:03.6084443Z [command]/usr/bin/git version
+govulncheck	Check out repository	2026-11-04T10:38:03.6146201Z git version 2.56.0
+govulncheck	Check out repository	2026-11-04T10:38:03.6170180Z ##[endgroup]
+govulncheck	Check out repository	2026-11-04T10:38:03.6182472Z Temporarily overriding HOME='/home/runner/work/_temp/a2635427-7c19-42b0-b5ac-2ba706bead27' before making global git config changes
+govulncheck	Check out repository	2026-11-04T10:38:03.6185103Z Adding repository directory to the temporary git global config as a safe directory
+govulncheck	Check out repository	2026-11-04T10:38:03.6188444Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DevOps-Intro/DevOps-Intro
+govulncheck	Check out repository	2026-11-04T10:38:03.6231666Z Deleting the contents of '/home/runner/work/DevOps-Intro/DevOps-Intro'
+govulncheck	Check out repository	2026-11-04T10:38:03.6234643Z ##[group]Determining repository object format
+govulncheck	Check out repository	2026-11-04T10:38:03.6236238Z ##[endgroup]
+govulncheck	Check out repository	2026-11-04T10:38:03.6237584Z ##[group]Initializing the repository
+govulncheck	Check out repository	2026-11-04T10:38:03.6239932Z [command]/usr/bin/git init /home/runner/work/DevOps-Intro/DevOps-Intro
+govulncheck	Check out repository	2026-11-04T10:38:03.6337258Z hint: Using 'master' as the name for the initial branch. This default branch name
+govulncheck	Check out repository	2026-11-04T10:38:03.6339667Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+govulncheck	Check out repository	2026-11-04T10:38:03.6341011Z hint: to use in all of your new repositories, which will suppress this warning,
+govulncheck	Check out repository	2026-11-04T10:38:03.6342030Z hint: call:
+govulncheck	Check out repository	2026-11-04T10:38:03.6342647Z hint:
+govulncheck	Check out repository	2026-11-04T10:38:03.6343365Z hint: 	git config --global init.defaultBranch <name>
+govulncheck	Check out repository	2026-11-04T10:38:03.6344337Z hint:
+govulncheck	Check out repository	2026-11-04T10:38:03.6345146Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+govulncheck	Check out repository	2026-11-04T10:38:03.6346212Z hint: 'development'. The just-created branch can be renamed via this command:
+govulncheck	Check out repository	2026-11-04T10:38:03.6347148Z hint:
+govulncheck	Check out repository	2026-11-04T10:38:03.6347793Z hint: 	git branch -m <name>
+govulncheck	Check out repository	2026-11-04T10:38:03.6348490Z hint:
+govulncheck	Check out repository	2026-11-04T10:38:03.6349294Z hint: Disable this message with "git config set advice.defaultBranchName false"
+govulncheck	Check out repository	2026-11-04T10:38:03.6357749Z Initialized empty Git repository in /home/runner/work/DevOps-Intro/DevOps-Intro/.git/
+govulncheck	Check out repository	2026-11-04T10:38:03.6367476Z [command]/usr/bin/git remote add origin https://github.com/4rni4ka/DevOps-Intro
+govulncheck	Check out repository	2026-11-04T10:38:03.6413253Z ##[endgroup]
+govulncheck	Check out repository	2026-11-04T10:38:03.6414663Z ##[group]Disabling automatic garbage collection
+govulncheck	Check out repository	2026-11-04T10:38:03.6416942Z [command]/usr/bin/git config --local gc.auto 0
+govulncheck	Check out repository	2026-11-04T10:38:03.6450812Z ##[endgroup]
+govulncheck	Check out repository	2026-11-04T10:38:03.6452278Z ##[group]Setting up auth
+govulncheck	Check out repository	2026-11-04T10:38:03.6453016Z Removing SSH command configuration
+govulncheck	Check out repository	2026-11-04T10:38:03.6457910Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+govulncheck	Check out repository	2026-11-04T10:38:03.6491880Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+govulncheck	Check out repository	2026-11-04T10:38:03.6826675Z Removing HTTP extra header
+govulncheck	Check out repository	2026-11-04T10:38:03.6837213Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+govulncheck	Check out repository	2026-11-04T10:38:03.6875587Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+govulncheck	Check out repository	2026-11-04T10:38:03.7086652Z Removing includeIf entries pointing to credentials config files
+govulncheck	Check out repository	2026-11-04T10:38:03.7088421Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+govulncheck	Check out repository	2026-11-04T10:38:03.7120298Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+govulncheck	Check out repository	2026-11-04T10:38:03.7305353Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-3082b96e-675b-42a9-b048-d1fbde30fd93.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+govulncheck	Check out repository	2026-11-04T10:38:03.7341184Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path /home/runner/work/_temp/git-credentials-3082b96e-675b-42a9-b048-d1fbde30fd93.config
+govulncheck	Check out repository	2026-11-04T10:38:03.7374535Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-3082b96e-675b-42a9-b048-d1fbde30fd93.config
+govulncheck	Check out repository	2026-11-04T10:38:03.7407013Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-3082b96e-675b-42a9-b048-d1fbde30fd93.config
+govulncheck	Check out repository	2026-11-04T10:38:03.7437421Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-3082b96e-675b-42a9-b048-d1fbde30fd93.config
+govulncheck	Check out repository	2026-11-04T10:38:03.7467737Z ##[endgroup]
+govulncheck	Check out repository	2026-11-04T10:38:03.7468655Z ##[group]Fetching the repository
+govulncheck	Check out repository	2026-11-04T10:38:03.7473491Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d83dc188a3542191f266ae7f4da090b8f3a5ffd1:refs/remotes/pull/3/merge
+govulncheck	Check out repository	2026-11-04T10:38:04.3200290Z From https://github.com/4rni4ka/DevOps-Intro
+govulncheck	Check out repository	2026-11-04T10:38:04.3201637Z  * [new ref]         d83dc188a3542191f266ae7f4da090b8f3a5ffd1 -> pull/3/merge
+govulncheck	Check out repository	2026-11-04T10:38:04.3205233Z ##[endgroup]
+govulncheck	Check out repository	2026-11-04T10:38:04.3206417Z ##[group]Determining the checkout info
+govulncheck	Check out repository	2026-11-04T10:38:04.3207510Z ##[endgroup]
+govulncheck	Check out repository	2026-11-04T10:38:04.3210936Z [command]/usr/bin/git sparse-checkout disable
+govulncheck	Check out repository	2026-11-04T10:38:04.3262864Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+govulncheck	Check out repository	2026-11-04T10:38:04.3295677Z ##[group]Checking out the ref
+govulncheck	Check out repository	2026-11-04T10:38:04.3298508Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/3/merge
+govulncheck	Check out repository	2026-11-04T10:38:04.3387903Z Note: switching to 'refs/remotes/pull/3/merge'.
+govulncheck	Check out repository	2026-11-04T10:38:04.3388996Z 
+govulncheck	Check out repository	2026-11-04T10:38:04.3389782Z You are in 'detached HEAD' state. You can look around, make experimental
+govulncheck	Check out repository	2026-11-04T10:38:04.3391642Z changes and commit them, and you can discard any commits you make in this
+govulncheck	Check out repository	2026-11-04T10:38:04.3393500Z state without impacting any branches by switching back to a branch.
+govulncheck	Check out repository	2026-11-04T10:38:04.3394703Z 
+govulncheck	Check out repository	2026-11-04T10:38:04.3395528Z If you want to create a new branch to retain commits you create, you may
+govulncheck	Check out repository	2026-11-04T10:38:04.3397483Z do so (now or later) by using -c with the switch command. Example:
+govulncheck	Check out repository	2026-11-04T10:38:04.3398559Z 
+govulncheck	Check out repository	2026-11-04T10:38:04.3399052Z   git switch -c <new-branch-name>
+govulncheck	Check out repository	2026-11-04T10:38:04.3399815Z 
+govulncheck	Check out repository	2026-11-04T10:38:04.3400447Z Or undo this operation with:
+govulncheck	Check out repository	2026-11-04T10:38:04.3401192Z 
+govulncheck	Check out repository	2026-11-04T10:38:04.3401621Z   git switch -
+govulncheck	Check out repository	2026-11-04T10:38:04.3402055Z 
+govulncheck	Check out repository	2026-11-04T10:38:04.3402624Z Turn off this advice by setting config variable advice.detachedHead to false
+govulncheck	Check out repository	2026-11-04T10:38:04.3403543Z 
+govulncheck	Check out repository	2026-11-04T10:38:04.3404804Z HEAD is now at d83dc18 Merge 5794b4b3b03b83fc906098e72e6fc469cfeb3a15 into 92267d239d71d788b8000d9f6dbd37911284cea4
+govulncheck	Check out repository	2026-11-04T10:38:04.3408264Z ##[endgroup]
+govulncheck	Check out repository	2026-11-04T10:38:04.3439072Z [command]/usr/bin/git log -1 --format=%H
+govulncheck	Check out repository	2026-11-04T10:38:04.3465508Z d83dc188a3542191f266ae7f4da090b8f3a5ffd1
+govulncheck	Set up patched Go toolchain	﻿2026-11-04T10:38:04.3759344Z ##[group]Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:04.3760274Z with:
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:04.3760837Z   go-version: 1.27.3
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:04.3761503Z   cache: true
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:04.3762128Z   cache-dependency-path: app/go.mod
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:04.3762777Z   check-latest: false
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:04.3767382Z   token: ***
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:04.3768005Z env:
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:04.3768561Z   GOFLAGS: -buildvcs=false
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:04.3769159Z ##[endgroup]
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:04.4910706Z Setup go version spec 1.27.3
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:04.4929111Z Attempting to download 1.27.3...
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:05.4617117Z matching 1.27.3...
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:05.4648636Z Acquiring 1.27.3 from https://github.com/actions/go-versions/releases/download/1.27.3-39437817176/go-1.27.3-linux-x64.tar.gz
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:06.1074025Z Extracting Go...
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:06.1190613Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/f51358c7-e261-4d1a-bf7c-97b0440b7e5e -f /home/runner/work/_temp/6277bbe5-93f6-4a23-a76c-ed4004eff672
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:07.8291013Z Successfully extracted go to /home/runner/work/_temp/f51358c7-e261-4d1a-bf7c-97b0440b7e5e
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:07.8291724Z Adding to the cache ...
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:12.3218435Z Successfully cached go to /opt/hostedtoolcache/go/1.27.3/x64
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:12.3219273Z Added go to the path
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:12.3221597Z Successfully set up Go version 1.27.3
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:12.3419795Z [command]/opt/hostedtoolcache/go/1.27.3/x64/bin/go env GOMODCACHE
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:12.3457988Z [command]/opt/hostedtoolcache/go/1.27.3/x64/bin/go env GOCACHE
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:12.3492223Z /home/runner/go/pkg/mod
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:12.3507811Z /home/runner/.cache/go-build
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:12.5404817Z Cache hit for: setup-go-Linux-x64-ubuntu24-go-1.27.3-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.6359503Z Received 44610314 of 44610314 (100.0%), 49.8 MBs/sec
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.6361302Z Cache Size: ~43 MB (44610314 B)
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.6471371Z [command]/usr/bin/tar -xf /home/runner/work/_temp/f6180be0-049f-4c28-8857-0f22cf1b10b6/cache.tzst -P -C /home/runner/work/DevOps-Intro/DevOps-Intro --use-compress-program unzstd
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9308046Z Cache restored successfully
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9330920Z Cache restored from key: setup-go-Linux-x64-ubuntu24-go-1.27.3-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9357117Z go version go1.27.3 linux/amd64
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9357471Z 
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9357920Z ##[group]go env
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9472838Z AR='ar'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9473456Z CC='gcc'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9474269Z CGO_CFLAGS='-O2 -g'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9474784Z CGO_CPPFLAGS=''
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9475252Z CGO_CXXFLAGS='-O2 -g'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9475587Z CGO_ENABLED='1'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9475878Z CGO_FFLAGS='-O2 -g'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9476282Z CGO_LDFLAGS='-O2 -g'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9476692Z CXX='g++'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9477042Z GCCGO='gccgo'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9477388Z GO111MODULE=''
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9477697Z GOAMD64='v1'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9478058Z GOARCH='amd64'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9478374Z GOAUTH='netrc'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9478708Z GOBIN='/home/runner/go/bin'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9479075Z GOCACHE='/home/runner/.cache/go-build'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9479507Z GOCACHEPROG=''
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9479805Z GODEBUG=''
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9480110Z GOENV='/home/runner/.config/go/env'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9480466Z GOEXE=''
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9480779Z GOEXPERIMENT=''
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9481103Z GOFIPS140='off'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9481419Z GOFLAGS='-buildvcs=false'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9482233Z GOGCCFLAGS='-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=0 -ffile-prefix-map=/tmp/go-build2489158412=/tmp/go-build -gno-record-gcc-switches'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9482985Z GOHOSTARCH='amd64'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9483316Z GOHOSTOS='linux'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9483623Z GOINSECURE=''
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9483942Z GOMOD='/dev/null'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9484475Z GOMODCACHE='/home/runner/go/pkg/mod'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9485135Z GONOPROXY=''
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9485451Z GONOSUMDB=''
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9485731Z GOOS='linux'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9486124Z GOPACKAGESDRIVER=''
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9486423Z GOPATH='/home/runner/go'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9486767Z GOPRIVATE=''
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9487164Z GOPROXY='https://proxy.golang.org,direct'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9487616Z GOROOT='/opt/hostedtoolcache/go/1.27.3/x64'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9487990Z GOSUMDB='sum.golang.org'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9488377Z GOTELEMETRY='local'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9488785Z GOTELEMETRYDIR='/home/runner/.config/go/telemetry'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9489237Z GOTMPDIR=''
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9489543Z GOTOOLCHAIN='local'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9489951Z GOTOOLDIR='/opt/hostedtoolcache/go/1.27.3/x64/pkg/tool/linux_amd64'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9490424Z GOVCS=''
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9490863Z GOVERSION='go1.27.3'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9491184Z GOWORK=''
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9491498Z PKG_CONFIG='pkg-config'
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9491701Z 
+govulncheck	Set up patched Go toolchain	2026-11-04T10:38:13.9492117Z ##[endgroup]
+govulncheck	Install pinned scanner	﻿2026-11-04T10:38:13.9645248Z ##[group]Run go install golang.org/x/vuln/cmd/govulncheck@v1.9.0
+govulncheck	Install pinned scanner	2026-11-04T10:38:13.9646003Z ^[[36;1mgo install golang.org/x/vuln/cmd/govulncheck@v1.9.0^[[0m
+govulncheck	Install pinned scanner	2026-11-04T10:38:13.9666117Z shell: /usr/bin/bash -e {0}
+govulncheck	Install pinned scanner	2026-11-04T10:38:13.9666501Z env:
+govulncheck	Install pinned scanner	2026-11-04T10:38:13.9666985Z   GOFLAGS: -buildvcs=false
+govulncheck	Install pinned scanner	2026-11-04T10:38:13.9667316Z   GOTOOLCHAIN: local
+govulncheck	Install pinned scanner	2026-11-04T10:38:13.9667653Z ##[endgroup]
+govulncheck	Check reachable vulnerabilities	﻿2026-11-04T10:38:14.7814694Z ##[group]Run govulncheck ./...
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:38:14.7815136Z ^[[36;1mgovulncheck ./...^[[0m
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:38:14.7829973Z shell: /usr/bin/bash -e {0}
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:38:14.7830361Z env:
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:38:14.7830683Z   GOFLAGS: -buildvcs=false
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:38:14.7830997Z   GOTOOLCHAIN: local
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:38:14.7831380Z ##[endgroup]
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:38:16.4827140Z No vulnerabilities found.
+govulncheck	Post Set up patched Go toolchain	﻿2026-11-04T10:38:16.5177184Z Post job cleanup.
+govulncheck	Post Set up patched Go toolchain	2026-11-04T10:38:16.6331589Z [command]/opt/hostedtoolcache/go/1.27.3/x64/bin/go env GOMODCACHE
+govulncheck	Post Set up patched Go toolchain	2026-11-04T10:38:16.6407936Z [command]/opt/hostedtoolcache/go/1.27.3/x64/bin/go env GOCACHE
+govulncheck	Post Set up patched Go toolchain	2026-11-04T10:38:16.6434972Z /home/runner/go/pkg/mod
+govulncheck	Post Set up patched Go toolchain	2026-11-04T10:38:16.6457170Z /home/runner/.cache/go-build
+govulncheck	Post Set up patched Go toolchain	2026-11-04T10:38:16.6470929Z Cache hit occurred on the primary key setup-go-Linux-x64-ubuntu24-go-1.27.3-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c, not saving cache.
+govulncheck	Post Check out repository	﻿2026-11-04T10:38:16.6677869Z Post job cleanup.
+govulncheck	Post Check out repository	2026-11-04T10:38:16.7535906Z [command]/usr/bin/git version
+govulncheck	Post Check out repository	2026-11-04T10:38:16.7582954Z git version 2.56.0
+govulncheck	Post Check out repository	2026-11-04T10:38:16.7622719Z Temporarily overriding HOME='/home/runner/work/_temp/731e4760-e511-4e29-b710-2ed6d7e75ad4' before making global git config changes
+govulncheck	Post Check out repository	2026-11-04T10:38:16.7623768Z Adding repository directory to the temporary git global config as a safe directory
+govulncheck	Post Check out repository	2026-11-04T10:38:16.7629079Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DevOps-Intro/DevOps-Intro
+govulncheck	Post Check out repository	2026-11-04T10:38:16.7664106Z Removing SSH command configuration
+govulncheck	Post Check out repository	2026-11-04T10:38:16.7671154Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+govulncheck	Post Check out repository	2026-11-04T10:38:16.7704967Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+govulncheck	Post Check out repository	2026-11-04T10:38:16.7910928Z Removing HTTP extra header
+govulncheck	Post Check out repository	2026-11-04T10:38:16.7917575Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+govulncheck	Post Check out repository	2026-11-04T10:38:16.7950477Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8150909Z Removing includeIf entries pointing to credentials config files
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8160537Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8197625Z includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8206610Z includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8208092Z includeif.gitdir:/github/workspace/.git.path
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8209598Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8217444Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8244014Z /home/runner/work/_temp/git-credentials-3082b96e-675b-42a9-b048-d1fbde30fd93.config
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8254082Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-3082b96e\-675b\-42a9\-b048\-d1fbde30fd93\.config
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8302949Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8332518Z /home/runner/work/_temp/git-credentials-3082b96e-675b-42a9-b048-d1fbde30fd93.config
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8340633Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-3082b96e\-675b\-42a9\-b048\-d1fbde30fd93\.config
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8386741Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8411172Z /github/runner_temp/git-credentials-3082b96e-675b-42a9-b048-d1fbde30fd93.config
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8421009Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-3082b96e\-675b\-42a9\-b048\-d1fbde30fd93\.config
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8466591Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8490810Z /github/runner_temp/git-credentials-3082b96e-675b-42a9-b048-d1fbde30fd93.config
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8500679Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-3082b96e\-675b\-42a9\-b048\-d1fbde30fd93\.config
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8547472Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+govulncheck	Post Check out repository	2026-11-04T10:38:16.8836032Z Removing credentials config '/home/runner/work/_temp/git-credentials-3082b96e-675b-42a9-b048-d1fbde30fd93.config'
+govulncheck	Complete job	﻿2026-11-04T10:38:16.9000420Z Cleaning up orphan processes
+vet (1.24)	Set up job	﻿2026-11-04T10:38:01.5524248Z Current runner version: '2.338.2'
+vet (1.24)	Set up job	2026-11-04T10:38:01.5540818Z ##[group]Runner Image Provisioner
+vet (1.24)	Set up job	2026-11-04T10:38:01.5541588Z Hosted Compute Agent
+vet (1.24)	Set up job	2026-11-04T10:38:01.5541989Z Version: 20261021.618
+vet (1.24)	Set up job	2026-11-04T10:38:01.5542427Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+vet (1.24)	Set up job	2026-11-04T10:38:01.5542948Z Build Date: 2026-10-21T00:45:21Z
+vet (1.24)	Set up job	2026-11-04T10:38:01.5543413Z Worker ID: {e24bf5ed-89a4-4f38-b353-ca6faa082a5e}
+vet (1.24)	Set up job	2026-11-04T10:38:01.5543903Z Region: centralus
+vet (1.24)	Set up job	2026-11-04T10:38:01.5544351Z Cloud: Azure
+vet (1.24)	Set up job	2026-11-04T10:38:01.5544716Z ##[endgroup]
+vet (1.24)	Set up job	2026-11-04T10:38:01.5545665Z ##[group]Operating System
+vet (1.24)	Set up job	2026-11-04T10:38:01.5546085Z Ubuntu
+vet (1.24)	Set up job	2026-11-04T10:38:01.5546454Z 24.04.5
+vet (1.24)	Set up job	2026-11-04T10:38:01.5546806Z LTS
+vet (1.24)	Set up job	2026-11-04T10:38:01.5547146Z ##[endgroup]
+vet (1.24)	Set up job	2026-11-04T10:38:01.5547561Z ##[group]Runner Image
+vet (1.24)	Set up job	2026-11-04T10:38:01.5547964Z Image: ubuntu-24.04
+vet (1.24)	Set up job	2026-11-04T10:38:01.5548350Z Version: 20261025.353.1
+vet (1.24)	Set up job	2026-11-04T10:38:01.5549073Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+vet (1.24)	Set up job	2026-11-04T10:38:01.5550568Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+vet (1.24)	Set up job	2026-11-04T10:38:01.5551211Z ##[endgroup]
+vet (1.24)	Set up job	2026-11-04T10:38:01.5552032Z ##[group]GITHUB_TOKEN Permissions
+vet (1.24)	Set up job	2026-11-04T10:38:01.5553521Z Contents: read
+vet (1.24)	Set up job	2026-11-04T10:38:01.5553954Z Metadata: read
+vet (1.24)	Set up job	2026-11-04T10:38:01.5554370Z ##[endgroup]
+vet (1.24)	Set up job	2026-11-04T10:38:01.5555720Z Secret source: Actions
+vet (1.24)	Set up job	2026-11-04T10:38:01.5556348Z Cache mode: write
+vet (1.24)	Set up job	2026-11-04T10:38:01.5556814Z Prepare workflow directory
+vet (1.24)	Set up job	2026-11-04T10:38:01.5841269Z Prepare all required actions
+vet (1.24)	Set up job	2026-11-04T10:38:01.5888221Z Getting action download info
+vet (1.24)	Set up job	2026-11-04T10:38:01.8562524Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+vet (1.24)	Set up job	2026-11-04T10:38:01.9370126Z Download action repository 'actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e' (SHA:b7ad1dad31e06c5925ef5d2fc7ad053ef454303e)
+vet (1.24)	Set up job	2026-11-04T10:38:02.4232556Z Complete job name: vet (1.24)
+vet (1.24)	Check out repository	﻿2026-11-04T10:38:02.4818116Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4818982Z with:
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4819650Z   repository: 4rni4ka/DevOps-Intro
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4822460Z   token: ***
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4822940Z   ssh-strict: true
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4823360Z   ssh-user: git
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4823788Z   persist-credentials: true
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4824261Z   clean: true
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4824746Z   sparse-checkout-cone-mode: true
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4825278Z   fetch-depth: 1
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4825639Z   fetch-tags: false
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4826003Z   show-progress: true
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4826376Z   lfs: false
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4826764Z   submodules: false
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4827202Z   set-safe-directory: true
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4827666Z   allow-unsafe-pr-checkout: false
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4828269Z env:
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4828823Z   GOFLAGS: -buildvcs=false
+vet (1.24)	Check out repository	2026-11-04T10:38:02.4829516Z ##[endgroup]
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7116481Z Syncing repository: 4rni4ka/DevOps-Intro
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7118547Z ##[group]Getting Git version info
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7119322Z Working directory is '/home/runner/work/DevOps-Intro/DevOps-Intro'
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7120768Z [command]/usr/bin/git version
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7169772Z git version 2.56.0
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7187952Z ##[endgroup]
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7194677Z Temporarily overriding HOME='/home/runner/work/_temp/a85a4452-0b14-43d0-aa0c-3bc44747ae50' before making global git config changes
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7196702Z Adding repository directory to the temporary git global config as a safe directory
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7199708Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DevOps-Intro/DevOps-Intro
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7234838Z Deleting the contents of '/home/runner/work/DevOps-Intro/DevOps-Intro'
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7237258Z ##[group]Determining repository object format
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7238205Z ##[endgroup]
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7239349Z ##[group]Initializing the repository
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7241515Z [command]/usr/bin/git init /home/runner/work/DevOps-Intro/DevOps-Intro
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7325525Z hint: Using 'master' as the name for the initial branch. This default branch name
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7326711Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7327976Z hint: to use in all of your new repositories, which will suppress this warning,
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7328822Z hint: call:
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7329624Z hint:
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7330719Z hint: 	git config --global init.defaultBranch <name>
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7331463Z hint:
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7332244Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7333158Z hint: 'development'. The just-created branch can be renamed via this command:
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7333873Z hint:
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7334354Z hint: 	git branch -m <name>
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7334839Z hint:
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7335595Z hint: Disable this message with "git config set advice.defaultBranchName false"
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7336836Z Initialized empty Git repository in /home/runner/work/DevOps-Intro/DevOps-Intro/.git/
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7346685Z [command]/usr/bin/git remote add origin https://github.com/4rni4ka/DevOps-Intro
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7377464Z ##[endgroup]
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7378271Z ##[group]Disabling automatic garbage collection
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7380834Z [command]/usr/bin/git config --local gc.auto 0
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7460508Z ##[endgroup]
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7463964Z ##[group]Setting up auth
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7464575Z Removing SSH command configuration
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7465383Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7467349Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7726037Z Removing HTTP extra header
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7730276Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7749930Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7912968Z Removing includeIf entries pointing to credentials config files
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7916883Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+vet (1.24)	Check out repository	2026-11-04T10:38:02.7946831Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+vet (1.24)	Check out repository	2026-11-04T10:38:02.8093501Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-3ebdd7b1-c068-4079-8340-f36731a59319.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+vet (1.24)	Check out repository	2026-11-04T10:38:02.8119374Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path /home/runner/work/_temp/git-credentials-3ebdd7b1-c068-4079-8340-f36731a59319.config
+vet (1.24)	Check out repository	2026-11-04T10:38:02.8142645Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-3ebdd7b1-c068-4079-8340-f36731a59319.config
+vet (1.24)	Check out repository	2026-11-04T10:38:02.8167013Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-3ebdd7b1-c068-4079-8340-f36731a59319.config
+vet (1.24)	Check out repository	2026-11-04T10:38:02.8191465Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-3ebdd7b1-c068-4079-8340-f36731a59319.config
+vet (1.24)	Check out repository	2026-11-04T10:38:02.8213921Z ##[endgroup]
+vet (1.24)	Check out repository	2026-11-04T10:38:02.8214576Z ##[group]Fetching the repository
+vet (1.24)	Check out repository	2026-11-04T10:38:02.8218109Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d83dc188a3542191f266ae7f4da090b8f3a5ffd1:refs/remotes/pull/3/merge
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2298351Z From https://github.com/4rni4ka/DevOps-Intro
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2300147Z  * [new ref]         d83dc188a3542191f266ae7f4da090b8f3a5ffd1 -> pull/3/merge
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2304492Z ##[endgroup]
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2306032Z ##[group]Determining the checkout info
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2307506Z ##[endgroup]
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2308437Z [command]/usr/bin/git sparse-checkout disable
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2358578Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2385515Z ##[group]Checking out the ref
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2387947Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/3/merge
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2453390Z Note: switching to 'refs/remotes/pull/3/merge'.
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2454787Z 
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2456149Z You are in 'detached HEAD' state. You can look around, make experimental
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2457758Z changes and commit them, and you can discard any commits you make in this
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2459080Z state without impacting any branches by switching back to a branch.
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2460159Z 
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2460699Z If you want to create a new branch to retain commits you create, you may
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2461986Z do so (now or later) by using -c with the switch command. Example:
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2462710Z 
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2463022Z   git switch -c <new-branch-name>
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2463512Z 
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2463793Z Or undo this operation with:
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2464284Z 
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2464535Z   git switch -
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2464928Z 
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2465562Z Turn off this advice by setting config variable advice.detachedHead to false
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2466338Z 
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2467226Z HEAD is now at d83dc18 Merge 5794b4b3b03b83fc906098e72e6fc469cfeb3a15 into 92267d239d71d788b8000d9f6dbd37911284cea4
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2470222Z ##[endgroup]
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2493095Z [command]/usr/bin/git log -1 --format=%H
+vet (1.24)	Check out repository	2026-11-04T10:38:03.2512267Z d83dc188a3542191f266ae7f4da090b8f3a5ffd1
+vet (1.24)	Set up Go	﻿2026-11-04T10:38:03.2765224Z ##[group]Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+vet (1.24)	Set up Go	2026-11-04T10:38:03.2766260Z with:
+vet (1.24)	Set up Go	2026-11-04T10:38:03.2766747Z   go-version: 1.24
+vet (1.24)	Set up Go	2026-11-04T10:38:03.2767254Z   cache: true
+vet (1.24)	Set up Go	2026-11-04T10:38:03.2767800Z   cache-dependency-path: app/go.mod
+vet (1.24)	Set up Go	2026-11-04T10:38:03.2768473Z   check-latest: false
+vet (1.24)	Set up Go	2026-11-04T10:38:03.2775024Z   token: ***
+vet (1.24)	Set up Go	2026-11-04T10:38:03.2775551Z env:
+vet (1.24)	Set up Go	2026-11-04T10:38:03.2776014Z   GOFLAGS: -buildvcs=false
+vet (1.24)	Set up Go	2026-11-04T10:38:03.2776575Z ##[endgroup]
+vet (1.24)	Set up Go	2026-11-04T10:38:03.3682764Z Setup go version spec 1.24
+vet (1.24)	Set up Go	2026-11-04T10:38:03.3728609Z Found in cache @ /opt/hostedtoolcache/go/1.24.13/x64
+vet (1.24)	Set up Go	2026-11-04T10:38:03.3729664Z Added go to the path
+vet (1.24)	Set up Go	2026-11-04T10:38:03.3730471Z Successfully set up Go version 1.24
+vet (1.24)	Set up Go	2026-11-04T10:38:03.4198193Z [command]/opt/hostedtoolcache/go/1.24.13/x64/bin/go env GOMODCACHE
+vet (1.24)	Set up Go	2026-11-04T10:38:03.4222877Z [command]/opt/hostedtoolcache/go/1.24.13/x64/bin/go env GOCACHE
+vet (1.24)	Set up Go	2026-11-04T10:38:03.4244891Z /home/runner/go/pkg/mod
+vet (1.24)	Set up Go	2026-11-04T10:38:03.4260569Z /home/runner/.cache/go-build
+vet (1.24)	Set up Go	2026-11-04T10:38:03.5980489Z Cache hit for: setup-go-Linux-x64-ubuntu24-go-1.24.13-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c
+vet (1.24)	Set up Go	2026-11-04T10:38:04.4014405Z Received 20759278 of 20759278 (100.0%), 32.0 MBs/sec
+vet (1.24)	Set up Go	2026-11-04T10:38:04.4015037Z Cache Size: ~20 MB (20759278 B)
+vet (1.24)	Set up Go	2026-11-04T10:38:04.4095621Z [command]/usr/bin/tar -xf /home/runner/work/_temp/ffa3a992-46e9-46ed-b7c1-bfa6c8fee844/cache.tzst -P -C /home/runner/work/DevOps-Intro/DevOps-Intro --use-compress-program unzstd
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5121202Z Cache restored successfully
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5131036Z Cache restored from key: setup-go-Linux-x64-ubuntu24-go-1.24.13-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5154610Z go version go1.24.13 linux/amd64
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5154965Z 
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5155770Z ##[group]go env
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5247819Z AR='ar'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5248624Z CC='gcc'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5249023Z CGO_CFLAGS='-O2 -g'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5249508Z CGO_CPPFLAGS=''
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5249894Z CGO_CXXFLAGS='-O2 -g'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5250194Z CGO_ENABLED='1'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5250562Z CGO_FFLAGS='-O2 -g'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5250860Z CGO_LDFLAGS='-O2 -g'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5251121Z CXX='g++'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5251411Z GCCGO='gccgo'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5251717Z GO111MODULE=''
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5252080Z GOAMD64='v1'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5252363Z GOARCH='amd64'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5252619Z GOAUTH='netrc'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5252905Z GOBIN=''
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5253249Z GOCACHE='/home/runner/.cache/go-build'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5253634Z GOCACHEPROG=''
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5253907Z GODEBUG=''
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5254176Z GOENV='/home/runner/.config/go/env'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5254571Z GOEXE=''
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5254877Z GOEXPERIMENT=''
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5255216Z GOFIPS140='off'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5255500Z GOFLAGS='-buildvcs=false'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5256323Z GOGCCFLAGS='-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=0 -ffile-prefix-map=/tmp/go-build3925809526=/tmp/go-build -gno-record-gcc-switches'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5257032Z GOHOSTARCH='amd64'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5257333Z GOHOSTOS='linux'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5257620Z GOINSECURE=''
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5257938Z GOMOD='/dev/null'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5258225Z GOMODCACHE='/home/runner/go/pkg/mod'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5258565Z GONOPROXY=''
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5258865Z GONOSUMDB=''
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5259435Z GOOS='linux'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5259817Z GOPATH='/home/runner/go'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5260148Z GOPRIVATE=''
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5260514Z GOPROXY='https://proxy.golang.org,direct'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5260997Z GOROOT='/opt/hostedtoolcache/go/1.24.13/x64'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5261390Z GOSUMDB='sum.golang.org'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5261719Z GOTELEMETRY='local'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5262124Z GOTELEMETRYDIR='/home/runner/.config/go/telemetry'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5262608Z GOTMPDIR=''
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5262923Z GOTOOLCHAIN='local'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5263350Z GOTOOLDIR='/opt/hostedtoolcache/go/1.24.13/x64/pkg/tool/linux_amd64'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5264125Z GOVCS=''
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5264475Z GOVERSION='go1.24.13'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5264812Z GOWORK=''
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5265097Z PKG_CONFIG='pkg-config'
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5265355Z 
+vet (1.24)	Set up Go	2026-11-04T10:38:04.5265892Z ##[endgroup]
+vet (1.24)	Vet	﻿2026-11-04T10:38:04.5371022Z ##[group]Run go vet ./...
+vet (1.24)	Vet	2026-11-04T10:38:04.5371435Z ^[[36;1mgo vet ./...^[[0m
+vet (1.24)	Vet	2026-11-04T10:38:04.5388050Z shell: /usr/bin/bash -e {0}
+vet (1.24)	Vet	2026-11-04T10:38:04.5388358Z env:
+vet (1.24)	Vet	2026-11-04T10:38:04.5388640Z   GOFLAGS: -buildvcs=false
+vet (1.24)	Vet	2026-11-04T10:38:04.5388943Z   GOTOOLCHAIN: local
+vet (1.24)	Vet	2026-11-04T10:38:04.5389344Z ##[endgroup]
+vet (1.24)	Post Set up Go	﻿2026-11-04T10:38:08.3540776Z Post job cleanup.
+vet (1.24)	Post Set up Go	2026-11-04T10:38:08.4391422Z [command]/opt/hostedtoolcache/go/1.24.13/x64/bin/go env GOMODCACHE
+vet (1.24)	Post Set up Go	2026-11-04T10:38:08.4421829Z [command]/opt/hostedtoolcache/go/1.24.13/x64/bin/go env GOCACHE
+vet (1.24)	Post Set up Go	2026-11-04T10:38:08.4450718Z /home/runner/go/pkg/mod
+vet (1.24)	Post Set up Go	2026-11-04T10:38:08.4466675Z /home/runner/.cache/go-build
+vet (1.24)	Post Set up Go	2026-11-04T10:38:08.4472591Z [warning]Cache folder path is retrieved but doesn't exist on disk: /home/runner/go/pkg/mod
+vet (1.24)	Post Set up Go	2026-11-04T10:38:08.4473897Z Cache hit occurred on the primary key setup-go-Linux-x64-ubuntu24-go-1.24.13-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c, not saving cache.
+vet (1.24)	Post Check out repository	﻿2026-11-04T10:38:08.4627153Z Post job cleanup.
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5269978Z [command]/usr/bin/git version
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5299280Z git version 2.56.0
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5322648Z Temporarily overriding HOME='/home/runner/work/_temp/8010d1cf-5284-4142-bf27-e55153bf04d0' before making global git config changes
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5323763Z Adding repository directory to the temporary git global config as a safe directory
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5325259Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DevOps-Intro/DevOps-Intro
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5348503Z Removing SSH command configuration
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5353521Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5378504Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5535498Z Removing HTTP extra header
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5538667Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5561983Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5716049Z Removing includeIf entries pointing to credentials config files
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5719439Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5737845Z includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5738852Z includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5739724Z includeif.gitdir:/github/workspace/.git.path
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5740327Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5743099Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5758080Z /home/runner/work/_temp/git-credentials-3ebdd7b1-c068-4079-8340-f36731a59319.config
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5764433Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-3ebdd7b1\-c068\-4079\-8340\-f36731a59319\.config
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5805556Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5824651Z /home/runner/work/_temp/git-credentials-3ebdd7b1-c068-4079-8340-f36731a59319.config
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5831380Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-3ebdd7b1\-c068\-4079\-8340\-f36731a59319\.config
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5865269Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5882467Z /github/runner_temp/git-credentials-3ebdd7b1-c068-4079-8340-f36731a59319.config
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5888635Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-3ebdd7b1\-c068\-4079\-8340\-f36731a59319\.config
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5916402Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5935037Z /github/runner_temp/git-credentials-3ebdd7b1-c068-4079-8340-f36731a59319.config
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5939624Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-3ebdd7b1\-c068\-4079\-8340\-f36731a59319\.config
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.5968250Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+vet (1.24)	Post Check out repository	2026-11-04T10:38:08.6105389Z Removing credentials config '/home/runner/work/_temp/git-credentials-3ebdd7b1-c068-4079-8340-f36731a59319.config'
+vet (1.24)	Complete job	﻿2026-11-04T10:38:08.6214658Z Cleaning up orphan processes
+vet (1.23)	Set up job	﻿2026-11-04T10:38:05.7775639Z Current runner version: '2.338.2'
+vet (1.23)	Set up job	2026-11-04T10:38:05.7812916Z ##[group]Runner Image Provisioner
+vet (1.23)	Set up job	2026-11-04T10:38:05.7814248Z Hosted Compute Agent
+vet (1.23)	Set up job	2026-11-04T10:38:05.7815242Z Version: 20261021.618
+vet (1.23)	Set up job	2026-11-04T10:38:05.7816251Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+vet (1.23)	Set up job	2026-11-04T10:38:05.7817474Z Build Date: 2026-10-21T00:45:21Z
+vet (1.23)	Set up job	2026-11-04T10:38:05.7818783Z Worker ID: {f93ee39d-b0f5-44e4-b935-3857e4db2e69}
+vet (1.23)	Set up job	2026-11-04T10:38:05.7820017Z Region: northcentralus
+vet (1.23)	Set up job	2026-11-04T10:38:05.7820997Z Cloud: Azure
+vet (1.23)	Set up job	2026-11-04T10:38:05.7822082Z ##[endgroup]
+vet (1.23)	Set up job	2026-11-04T10:38:05.7824251Z ##[group]Operating System
+vet (1.23)	Set up job	2026-11-04T10:38:05.7825462Z Ubuntu
+vet (1.23)	Set up job	2026-11-04T10:38:05.7826301Z 24.04.5
+vet (1.23)	Set up job	2026-11-04T10:38:05.7827070Z LTS
+vet (1.23)	Set up job	2026-11-04T10:38:05.7828023Z ##[endgroup]
+vet (1.23)	Set up job	2026-11-04T10:38:05.7828960Z ##[group]Runner Image
+vet (1.23)	Set up job	2026-11-04T10:38:05.7830139Z Image: ubuntu-24.04
+vet (1.23)	Set up job	2026-11-04T10:38:05.7831079Z Version: 20261025.353.1
+vet (1.23)	Set up job	2026-11-04T10:38:05.7833090Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+vet (1.23)	Set up job	2026-11-04T10:38:05.7836085Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+vet (1.23)	Set up job	2026-11-04T10:38:05.7837983Z ##[endgroup]
+vet (1.23)	Set up job	2026-11-04T10:38:05.7839677Z ##[group]GITHUB_TOKEN Permissions
+vet (1.23)	Set up job	2026-11-04T10:38:05.7842383Z Contents: read
+vet (1.23)	Set up job	2026-11-04T10:38:05.7843087Z Metadata: read
+vet (1.23)	Set up job	2026-11-04T10:38:05.7843738Z ##[endgroup]
+vet (1.23)	Set up job	2026-11-04T10:38:05.7846237Z Secret source: Actions
+vet (1.23)	Set up job	2026-11-04T10:38:05.7847304Z Cache mode: write
+vet (1.23)	Set up job	2026-11-04T10:38:05.7848388Z Prepare workflow directory
+vet (1.23)	Set up job	2026-11-04T10:38:05.8267125Z Prepare all required actions
+vet (1.23)	Set up job	2026-11-04T10:38:05.8315654Z Getting action download info
+vet (1.23)	Set up job	2026-11-04T10:38:06.0694852Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+vet (1.23)	Set up job	2026-11-04T10:38:06.1468409Z Download action repository 'actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e' (SHA:b7ad1dad31e06c5925ef5d2fc7ad053ef454303e)
+vet (1.23)	Set up job	2026-11-04T10:38:06.5358519Z Complete job name: vet (1.23)
+vet (1.23)	Check out repository	﻿2026-11-04T10:38:06.6209601Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6210678Z with:
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6211163Z   repository: 4rni4ka/DevOps-Intro
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6215440Z   token: ***
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6215906Z   ssh-strict: true
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6216375Z   ssh-user: git
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6216845Z   persist-credentials: true
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6217354Z   clean: true
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6217823Z   sparse-checkout-cone-mode: true
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6218361Z   fetch-depth: 1
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6218811Z   fetch-tags: false
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6219277Z   show-progress: true
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6219755Z   lfs: false
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6220189Z   submodules: false
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6220659Z   set-safe-directory: true
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6221183Z   allow-unsafe-pr-checkout: false
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6222025Z env:
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6222496Z   GOFLAGS: -buildvcs=false
+vet (1.23)	Check out repository	2026-11-04T10:38:06.6223004Z ##[endgroup]
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8409739Z Syncing repository: 4rni4ka/DevOps-Intro
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8413298Z ##[group]Getting Git version info
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8414707Z Working directory is '/home/runner/work/DevOps-Intro/DevOps-Intro'
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8416200Z [command]/usr/bin/git version
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8479186Z git version 2.56.0
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8507806Z ##[endgroup]
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8520640Z Temporarily overriding HOME='/home/runner/work/_temp/ef53a25f-dd28-4b53-85e3-ad6a41d02077' before making global git config changes
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8523757Z Adding repository directory to the temporary git global config as a safe directory
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8532842Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DevOps-Intro/DevOps-Intro
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8594609Z Deleting the contents of '/home/runner/work/DevOps-Intro/DevOps-Intro'
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8598420Z ##[group]Determining repository object format
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8600366Z ##[endgroup]
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8602196Z ##[group]Initializing the repository
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8605857Z [command]/usr/bin/git init /home/runner/work/DevOps-Intro/DevOps-Intro
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8741441Z hint: Using 'master' as the name for the initial branch. This default branch name
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8745332Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8747235Z hint: to use in all of your new repositories, which will suppress this warning,
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8748892Z hint: call:
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8749779Z hint:
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8750801Z hint: 	git config --global init.defaultBranch <name>
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8752406Z hint:
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8753682Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8755531Z hint: 'development'. The just-created branch can be renamed via this command:
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8757117Z hint:
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8758080Z hint: 	git branch -m <name>
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8759091Z hint:
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8760497Z hint: Disable this message with "git config set advice.defaultBranchName false"
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8763001Z Initialized empty Git repository in /home/runner/work/DevOps-Intro/DevOps-Intro/.git/
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8769593Z [command]/usr/bin/git remote add origin https://github.com/4rni4ka/DevOps-Intro
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8831441Z ##[endgroup]
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8833271Z ##[group]Disabling automatic garbage collection
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8835178Z [command]/usr/bin/git config --local gc.auto 0
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8883873Z ##[endgroup]
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8885700Z ##[group]Setting up auth
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8886876Z Removing SSH command configuration
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8894732Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+vet (1.23)	Check out repository	2026-11-04T10:38:06.8956265Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+vet (1.23)	Check out repository	2026-11-04T10:38:06.9365586Z Removing HTTP extra header
+vet (1.23)	Check out repository	2026-11-04T10:38:06.9375998Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+vet (1.23)	Check out repository	2026-11-04T10:38:06.9435706Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+vet (1.23)	Check out repository	2026-11-04T10:38:06.9698232Z Removing includeIf entries pointing to credentials config files
+vet (1.23)	Check out repository	2026-11-04T10:38:06.9705178Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+vet (1.23)	Check out repository	2026-11-04T10:38:06.9753747Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+vet (1.23)	Check out repository	2026-11-04T10:38:07.0030917Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-ac181ee0-46c1-4532-ae61-f92b5a73c8be.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+vet (1.23)	Check out repository	2026-11-04T10:38:07.0085185Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path /home/runner/work/_temp/git-credentials-ac181ee0-46c1-4532-ae61-f92b5a73c8be.config
+vet (1.23)	Check out repository	2026-11-04T10:38:07.0130878Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-ac181ee0-46c1-4532-ae61-f92b5a73c8be.config
+vet (1.23)	Check out repository	2026-11-04T10:38:07.0176950Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-ac181ee0-46c1-4532-ae61-f92b5a73c8be.config
+vet (1.23)	Check out repository	2026-11-04T10:38:07.0224024Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-ac181ee0-46c1-4532-ae61-f92b5a73c8be.config
+vet (1.23)	Check out repository	2026-11-04T10:38:07.0267053Z ##[endgroup]
+vet (1.23)	Check out repository	2026-11-04T10:38:07.0268175Z ##[group]Fetching the repository
+vet (1.23)	Check out repository	2026-11-04T10:38:07.0273851Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d83dc188a3542191f266ae7f4da090b8f3a5ffd1:refs/remotes/pull/3/merge
+vet (1.23)	Check out repository	2026-11-04T10:38:07.3845477Z From https://github.com/4rni4ka/DevOps-Intro
+vet (1.23)	Check out repository	2026-11-04T10:38:07.3847149Z  * [new ref]         d83dc188a3542191f266ae7f4da090b8f3a5ffd1 -> pull/3/merge
+vet (1.23)	Check out repository	2026-11-04T10:38:07.3851297Z ##[endgroup]
+vet (1.23)	Check out repository	2026-11-04T10:38:07.3853390Z ##[group]Determining the checkout info
+vet (1.23)	Check out repository	2026-11-04T10:38:07.3854969Z ##[endgroup]
+vet (1.23)	Check out repository	2026-11-04T10:38:07.3858991Z [command]/usr/bin/git sparse-checkout disable
+vet (1.23)	Check out repository	2026-11-04T10:38:07.3922524Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+vet (1.23)	Check out repository	2026-11-04T10:38:07.3968726Z ##[group]Checking out the ref
+vet (1.23)	Check out repository	2026-11-04T10:38:07.3972657Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/3/merge
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4082721Z Note: switching to 'refs/remotes/pull/3/merge'.
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4083351Z 
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4084039Z You are in 'detached HEAD' state. You can look around, make experimental
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4085708Z changes and commit them, and you can discard any commits you make in this
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4087423Z state without impacting any branches by switching back to a branch.
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4088397Z 
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4089066Z If you want to create a new branch to retain commits you create, you may
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4090533Z do so (now or later) by using -c with the switch command. Example:
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4091190Z 
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4091438Z   git switch -c <new-branch-name>
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4092135Z 
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4092523Z Or undo this operation with:
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4093127Z 
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4093491Z   git switch -
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4093937Z 
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4094690Z Turn off this advice by setting config variable advice.detachedHead to false
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4095436Z 
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4096170Z HEAD is now at d83dc18 Merge 5794b4b3b03b83fc906098e72e6fc469cfeb3a15 into 92267d239d71d788b8000d9f6dbd37911284cea4
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4098550Z ##[endgroup]
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4152778Z [command]/usr/bin/git log -1 --format=%H
+vet (1.23)	Check out repository	2026-11-04T10:38:07.4193530Z d83dc188a3542191f266ae7f4da090b8f3a5ffd1
+vet (1.23)	Set up Go	﻿2026-11-04T10:38:07.4512489Z ##[group]Run actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e
+vet (1.23)	Set up Go	2026-11-04T10:38:07.4513547Z with:
+vet (1.23)	Set up Go	2026-11-04T10:38:07.4514063Z   go-version: 1.23
+vet (1.23)	Set up Go	2026-11-04T10:38:07.4514594Z   cache: true
+vet (1.23)	Set up Go	2026-11-04T10:38:07.4515149Z   cache-dependency-path: app/go.mod
+vet (1.23)	Set up Go	2026-11-04T10:38:07.4515812Z   check-latest: false
+vet (1.23)	Set up Go	2026-11-04T10:38:07.4520546Z   token: ***
+vet (1.23)	Set up Go	2026-11-04T10:38:07.4521075Z env:
+vet (1.23)	Set up Go	2026-11-04T10:38:07.4521576Z   GOFLAGS: -buildvcs=false
+vet (1.23)	Set up Go	2026-11-04T10:38:07.4522418Z ##[endgroup]
+vet (1.23)	Set up Go	2026-11-04T10:38:07.5836230Z Setup go version spec 1.23
+vet (1.23)	Set up Go	2026-11-04T10:38:07.5890072Z Attempting to download 1.23...
+vet (1.23)	Set up Go	2026-11-04T10:38:08.1360812Z matching 1.23...
+vet (1.23)	Set up Go	2026-11-04T10:38:08.1413303Z Acquiring 1.23.12 from https://github.com/actions/go-versions/releases/download/1.23.12-16792118003/go-1.23.12-linux-x64.tar.gz
+vet (1.23)	Set up Go	2026-11-04T10:38:08.6487030Z Extracting Go...
+vet (1.23)	Set up Go	2026-11-04T10:38:08.6623254Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/681130e7-a388-4ef9-b469-4d4830c44a1e -f /home/runner/work/_temp/9f1914e9-6520-4103-937f-f0455e9fe563
+vet (1.23)	Set up Go	2026-11-04T10:38:10.4924633Z Successfully extracted go to /home/runner/work/_temp/681130e7-a388-4ef9-b469-4d4830c44a1e
+vet (1.23)	Set up Go	2026-11-04T10:38:10.4925486Z Adding to the cache ...
+vet (1.23)	Set up Go	2026-11-04T10:38:14.2549383Z Successfully cached go to /opt/hostedtoolcache/go/1.23.12/x64
+vet (1.23)	Set up Go	2026-11-04T10:38:14.2550694Z Added go to the path
+vet (1.23)	Set up Go	2026-11-04T10:38:14.2552325Z Successfully set up Go version 1.23
+vet (1.23)	Set up Go	2026-11-04T10:38:14.2794941Z [command]/opt/hostedtoolcache/go/1.23.12/x64/bin/go env GOMODCACHE
+vet (1.23)	Set up Go	2026-11-04T10:38:14.2848478Z [command]/opt/hostedtoolcache/go/1.23.12/x64/bin/go env GOCACHE
+vet (1.23)	Set up Go	2026-11-04T10:38:14.2905127Z /home/runner/go/pkg/mod
+vet (1.23)	Set up Go	2026-11-04T10:38:14.2924470Z /home/runner/.cache/go-build
+vet (1.23)	Set up Go	2026-11-04T10:38:14.4248561Z Cache hit for: setup-go-Linux-x64-ubuntu24-go-1.23.12-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c
+vet (1.23)	Set up Go	2026-11-04T10:38:15.1408100Z Received 18248397 of 18248397 (100.0%), 31.1 MBs/sec
+vet (1.23)	Set up Go	2026-11-04T10:38:15.1409408Z Cache Size: ~17 MB (18248397 B)
+vet (1.23)	Set up Go	2026-11-04T10:38:15.1431834Z [command]/usr/bin/tar -xf /home/runner/work/_temp/7a38108f-79a6-45db-87a8-1b775324512a/cache.tzst -P -C /home/runner/work/DevOps-Intro/DevOps-Intro --use-compress-program unzstd
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3175352Z Cache restored successfully
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3190770Z Cache restored from key: setup-go-Linux-x64-ubuntu24-go-1.23.12-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3214643Z go version go1.23.12 linux/amd64
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3214875Z 
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3215207Z ##[group]go env
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3358332Z GO111MODULE=''
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3358810Z GOARCH='amd64'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3359183Z GOBIN=''
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3359605Z GOCACHE='/home/runner/.cache/go-build'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3360143Z GOENV='/home/runner/.config/go/env'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3360614Z GOEXE=''
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3360977Z GOEXPERIMENT=''
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3361408Z GOFLAGS='-buildvcs=false'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3362006Z GOHOSTARCH='amd64'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3362414Z GOHOSTOS='linux'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3362768Z GOINSECURE=''
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3363128Z GOMODCACHE='/home/runner/go/pkg/mod'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3363557Z GONOPROXY=''
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3363862Z GONOSUMDB=''
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3364157Z GOOS='linux'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3364488Z GOPATH='/home/runner/go'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3364853Z GOPRIVATE=''
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3365291Z GOPROXY='https://proxy.golang.org,direct'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3365820Z GOROOT='/opt/hostedtoolcache/go/1.23.12/x64'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3366289Z GOSUMDB='sum.golang.org'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3366529Z GOTMPDIR=''
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3366743Z GOTOOLCHAIN='local'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3367094Z GOTOOLDIR='/opt/hostedtoolcache/go/1.23.12/x64/pkg/tool/linux_amd64'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3367480Z GOVCS=''
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3367690Z GOVERSION='go1.23.12'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3367920Z GODEBUG=''
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3368125Z GOTELEMETRY='local'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3368423Z GOTELEMETRYDIR='/home/runner/.config/go/telemetry'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3369107Z GCCGO='gccgo'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3369314Z GOAMD64='v1'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3369527Z AR='ar'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3369748Z CC='gcc'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3369942Z CXX='g++'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3370141Z CGO_ENABLED='1'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3370356Z GOMOD='/dev/null'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3370568Z GOWORK=''
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3370794Z CGO_CFLAGS='-O2 -g'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3371028Z CGO_CPPFLAGS=''
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3371248Z CGO_CXXFLAGS='-O2 -g'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3371478Z CGO_FFLAGS='-O2 -g'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3371945Z CGO_LDFLAGS='-O2 -g'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3372195Z PKG_CONFIG='pkg-config'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3372959Z GOGCCFLAGS='-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=0 -ffile-prefix-map=/tmp/go-build2760505549=/tmp/go-build -gno-record-gcc-switches'
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3373522Z 
+vet (1.23)	Set up Go	2026-11-04T10:38:15.3373881Z ##[endgroup]
+vet (1.23)	Vet	﻿2026-11-04T10:38:15.3596754Z ##[group]Run go vet ./...
+vet (1.23)	Vet	2026-11-04T10:38:15.3597145Z ^[[36;1mgo vet ./...^[[0m
+vet (1.23)	Vet	2026-11-04T10:38:15.3625984Z shell: /usr/bin/bash -e {0}
+vet (1.23)	Vet	2026-11-04T10:38:15.3626277Z env:
+vet (1.23)	Vet	2026-11-04T10:38:15.3626499Z   GOFLAGS: -buildvcs=false
+vet (1.23)	Vet	2026-11-04T10:38:15.3626760Z   GOTOOLCHAIN: local
+vet (1.23)	Vet	2026-11-04T10:38:15.3626993Z ##[endgroup]
+vet (1.23)	Post Set up Go	﻿2026-11-04T10:38:15.5784941Z Post job cleanup.
+vet (1.23)	Post Set up Go	2026-11-04T10:38:15.7002583Z [command]/opt/hostedtoolcache/go/1.23.12/x64/bin/go env GOMODCACHE
+vet (1.23)	Post Set up Go	2026-11-04T10:38:15.7059973Z [command]/opt/hostedtoolcache/go/1.23.12/x64/bin/go env GOCACHE
+vet (1.23)	Post Set up Go	2026-11-04T10:38:15.7097794Z /home/runner/go/pkg/mod
+vet (1.23)	Post Set up Go	2026-11-04T10:38:15.7123093Z /home/runner/.cache/go-build
+vet (1.23)	Post Set up Go	2026-11-04T10:38:15.7126286Z [warning]Cache folder path is retrieved but doesn't exist on disk: /home/runner/go/pkg/mod
+vet (1.23)	Post Set up Go	2026-11-04T10:38:15.7127894Z Cache hit occurred on the primary key setup-go-Linux-x64-ubuntu24-go-1.23.12-767fa014ef8c0e14cc280f2803232b9980746b01f9f66a01ab99db800fca5b1c, not saving cache.
+vet (1.23)	Post Check out repository	﻿2026-11-04T10:38:15.7408212Z Post job cleanup.
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.8344105Z [command]/usr/bin/git version
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.8392292Z git version 2.56.0
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.8430377Z Temporarily overriding HOME='/home/runner/work/_temp/ce3d148d-39f2-469b-a3f1-c66d01c966b4' before making global git config changes
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.8432319Z Adding repository directory to the temporary git global config as a safe directory
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.8436687Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DevOps-Intro/DevOps-Intro
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.8478130Z Removing SSH command configuration
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.8485922Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.8530449Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.8806823Z Removing HTTP extra header
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.8813954Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.8857447Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9148069Z Removing includeIf entries pointing to credentials config files
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9156792Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9201579Z includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9202902Z includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9203565Z includeif.gitdir:/github/workspace/.git.path
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9204505Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9213319Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9254009Z /home/runner/work/_temp/git-credentials-ac181ee0-46c1-4532-ae61-f92b5a73c8be.config
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9289067Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-ac181ee0\-46c1\-4532\-ae61\-f92b5a73c8be\.config
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9353821Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9383682Z /home/runner/work/_temp/git-credentials-ac181ee0-46c1-4532-ae61-f92b5a73c8be.config
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9395129Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-ac181ee0\-46c1\-4532\-ae61\-f92b5a73c8be\.config
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9445408Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9484859Z /github/runner_temp/git-credentials-ac181ee0-46c1-4532-ae61-f92b5a73c8be.config
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9492895Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-ac181ee0\-46c1\-4532\-ae61\-f92b5a73c8be\.config
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9543018Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9583849Z /github/runner_temp/git-credentials-ac181ee0-46c1-4532-ae61-f92b5a73c8be.config
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9590715Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-ac181ee0\-46c1\-4532\-ae61\-f92b5a73c8be\.config
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9642987Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+vet (1.23)	Post Check out repository	2026-11-04T10:38:15.9924524Z Removing credentials config '/home/runner/work/_temp/git-credentials-ac181ee0-46c1-4532-ae61-f92b5a73c8be.config'
+vet (1.23)	Complete job	﻿2026-11-04T10:38:16.0088090Z Cleaning up orphan processes
+ci-ok	Set up job	﻿2026-11-04T10:38:38.6748701Z Current runner version: '2.338.2'
+ci-ok	Set up job	2026-11-04T10:38:38.6769838Z ##[group]Runner Image Provisioner
+ci-ok	Set up job	2026-11-04T10:38:38.6770550Z Hosted Compute Agent
+ci-ok	Set up job	2026-11-04T10:38:38.6771140Z Version: 20261021.618
+ci-ok	Set up job	2026-11-04T10:38:38.6771706Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+ci-ok	Set up job	2026-11-04T10:38:38.6772337Z Build Date: 2026-10-21T00:45:21Z
+ci-ok	Set up job	2026-11-04T10:38:38.6772970Z Worker ID: {711822d7-de58-4e07-a785-0fc383aacfa9}
+ci-ok	Set up job	2026-11-04T10:38:38.6773542Z Region: westus3
+ci-ok	Set up job	2026-11-04T10:38:38.6774074Z Cloud: Azure
+ci-ok	Set up job	2026-11-04T10:38:38.6774570Z ##[endgroup]
+ci-ok	Set up job	2026-11-04T10:38:38.6775719Z ##[group]Operating System
+ci-ok	Set up job	2026-11-04T10:38:38.6776266Z Ubuntu
+ci-ok	Set up job	2026-11-04T10:38:38.6776720Z 24.04.5
+ci-ok	Set up job	2026-11-04T10:38:38.6777213Z LTS
+ci-ok	Set up job	2026-11-04T10:38:38.6777972Z ##[endgroup]
+ci-ok	Set up job	2026-11-04T10:38:38.6778440Z ##[group]Runner Image
+ci-ok	Set up job	2026-11-04T10:38:38.6779057Z Image: ubuntu-24.04
+ci-ok	Set up job	2026-11-04T10:38:38.6779551Z Version: 20261025.353.1
+ci-ok	Set up job	2026-11-04T10:38:38.6780512Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+ci-ok	Set up job	2026-11-04T10:38:38.6782018Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+ci-ok	Set up job	2026-11-04T10:38:38.6782915Z ##[endgroup]
+ci-ok	Set up job	2026-11-04T10:38:38.6783809Z ##[group]GITHUB_TOKEN Permissions
+ci-ok	Set up job	2026-11-04T10:38:38.6785412Z Contents: read
+ci-ok	Set up job	2026-11-04T10:38:38.6785936Z Metadata: read
+ci-ok	Set up job	2026-11-04T10:38:38.6786483Z ##[endgroup]
+ci-ok	Set up job	2026-11-04T10:38:38.6788428Z Secret source: Actions
+ci-ok	Set up job	2026-11-04T10:38:38.6789372Z Cache mode: write
+ci-ok	Set up job	2026-11-04T10:38:38.6789980Z Prepare workflow directory
+ci-ok	Set up job	2026-11-04T10:38:38.7100163Z Prepare all required actions
+ci-ok	Set up job	2026-11-04T10:38:38.7152157Z Complete job name: ci-ok
+ci-ok	Confirm all required jobs passed	﻿2026-11-04T10:38:38.7994770Z ##[group]Run test "$VET_RESULT" = success
+ci-ok	Confirm all required jobs passed	2026-11-04T10:38:38.7995457Z ^[[36;1mtest "$VET_RESULT" = success^[[0m
+ci-ok	Confirm all required jobs passed	2026-11-04T10:38:38.7996143Z ^[[36;1mtest "$TEST_RESULT" = success^[[0m
+ci-ok	Confirm all required jobs passed	2026-11-04T10:38:38.7996885Z ^[[36;1mtest "$LINT_RESULT" = success^[[0m
+ci-ok	Confirm all required jobs passed	2026-11-04T10:38:38.7997818Z ^[[36;1mtest "$VULN_RESULT" = success^[[0m
+ci-ok	Confirm all required jobs passed	2026-11-04T10:38:38.8149831Z shell: /usr/bin/bash -e {0}
+ci-ok	Confirm all required jobs passed	2026-11-04T10:38:38.8150714Z env:
+ci-ok	Confirm all required jobs passed	2026-11-04T10:38:38.8151240Z   GOFLAGS: -buildvcs=false
+ci-ok	Confirm all required jobs passed	2026-11-04T10:38:38.8151867Z   VET_RESULT: success
+ci-ok	Confirm all required jobs passed	2026-11-04T10:38:38.8152365Z   TEST_RESULT: success
+ci-ok	Confirm all required jobs passed	2026-11-04T10:38:38.8152881Z   LINT_RESULT: success
+ci-ok	Confirm all required jobs passed	2026-11-04T10:38:38.8153387Z   VULN_RESULT: success
+ci-ok	Confirm all required jobs passed	2026-11-04T10:38:38.8153899Z ##[endgroup]
+ci-ok	Complete job	﻿2026-11-04T10:38:38.8581645Z Cleaning up orphan processes

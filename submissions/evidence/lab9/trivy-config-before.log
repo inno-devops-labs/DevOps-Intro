@@ -1,0 +1,10 @@
+2026-11-04T15:26:06+05:00	INFO	[misconfig] Misconfiguration scanning is enabled
+2026-11-04T15:26:06+05:00	INFO	[checks-client] No downloadable checks were loaded as --skip-check-update is enabled, loading from existing cache...
+2026-11-04T15:26:06+05:00	ERROR	[misconfig] Falling back to embedded checks	err="failed to check cache: cache does not exist at \"C:\\\\Users\\\\user\\\\AppData\\\\Local\\\\trivy\\\\policy\\\\content\""
+2026-11-04T15:26:11+05:00	INFO	Detected config files	num=1
+
+📣 Notices:
+  - Version 0.76.1 of Trivy is now available, current version is 0.71.1
+
+To suppress version checks, run Trivy scans with the --skip-version-check flag
+

@@ -4,15 +4,21 @@ on:
   push:
     branches:
       - main
+      - feature/lab9
+      - feature/lab10
     paths:
       - "app/**"
-      - ".github/workflows/ci.yml"
+      - ".github/workflows/**"
+      - "submissions/lab9.md"
+      - "submissions/lab10.md"
   pull_request:
     branches:
       - main
     paths:
       - "app/**"
-      - ".github/workflows/ci.yml"
+      - ".github/workflows/**"
+      - "submissions/lab9.md"
+      - "submissions/lab10.md"
 
 permissions:
   contents: read
@@ -80,6 +86,26 @@ jobs:
           version: v2.5.0
           working-directory: app
 
+  govulncheck:
+    name: govulncheck
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up patched Go toolchain
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          # Go 1.24 is retained in compatibility jobs; it is EOL and has
+          # reachable standard-library vulnerabilities without 1.24 fixes.
+          go-version: "1.27.3"
+          cache: true
+          cache-dependency-path: app/go.mod
+      - name: Install pinned scanner
+        run: go install golang.org/x/vuln/cmd/govulncheck@v1.9.0
+      - name: Check reachable vulnerabilities
+        working-directory: app
+        run: govulncheck ./...
+
   ci-ok:
     name: ci-ok
     if: always()
@@ -87,6 +113,7 @@ jobs:
       - vet
       - test
       - lint
+      - govulncheck
     runs-on: ubuntu-24.04
     steps:
       - name: Confirm all required jobs passed
@@ -94,7 +121,9 @@ jobs:
           VET_RESULT: ${{ needs.vet.result }}
           TEST_RESULT: ${{ needs.test.result }}
           LINT_RESULT: ${{ needs.lint.result }}
+          VULN_RESULT: ${{ needs.govulncheck.result }}
         run: |
           test "$VET_RESULT" = success
           test "$TEST_RESULT" = success
           test "$LINT_RESULT" = success
+          test "$VULN_RESULT" = success
