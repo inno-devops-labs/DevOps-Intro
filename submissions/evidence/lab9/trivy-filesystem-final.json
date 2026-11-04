@@ -1,0 +1,38 @@
+{
+  "SchemaVersion": 2,
+  "Trivy": {
+    "Version": "0.71.1"
+  },
+  "ReportID": "01a1a64b-4761-7a67-88f1-0cfbec3f31b1",
+  "CreatedAt": "2026-11-04T16:21:53.7616818+05:00",
+  "ArtifactID": "sha256:3536c905bdf75d836ee68e8315bd73babe836f7680a5510ac6ab5bc32eae9400",
+  "ArtifactName": ".",
+  "ArtifactType": "repository",
+  "Metadata": {
+    "RepoURL": "https://github.com/4rni4ka/DevOps-Intro.git",
+    "Branch": "feature/lab9",
+    "Commit": "f8bc697a665031d79678f62dd5fe0ae983c573c4",
+    "CommitMsg": "docs(lab9): record the required security checks\n\nSigned-off-by: Anastasiia Mikhelson \u003ca.mikhelson@innopolis.university\u003e",
+    "Author": "Anastasiia Mikhelson \u003ca.mikhelson@innopolis.university\u003e",
+    "Committer": "Anastasiia Mikhelson \u003ca.mikhelson@innopolis.university\u003e"
+  },
+  "Results": [
+    {
+      "Target": "app/go.mod",
+      "Class": "lang-pkgs",
+      "Type": "gomod",
+      "Packages": [
+        {
+          "ID": "quicknotes",
+          "Name": "quicknotes",
+          "Identifier": {
+            "PURL": "pkg:golang/quicknotes",
+            "UID": "a6115e78c0dc7386"
+          },
+          "Relationship": "root",
+          "AnalyzedBy": "gomod"
+        }
+      ]
+    }
+  ]
+}

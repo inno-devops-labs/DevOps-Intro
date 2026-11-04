@@ -1,0 +1,6 @@
+2026-11-04T16:21:52+05:00	INFO	[vuln] Vulnerability scanning is enabled
+2026-11-04T16:21:52+05:00	INFO	[secret] Secret scanning is enabled
+2026-11-04T16:21:52+05:00	INFO	[secret] If your scanning is slow, please try '--scanners vuln' to disable secret scanning
+2026-11-04T16:21:52+05:00	INFO	[secret] Please see https://trivy.dev/docs/v0.71/guide/scanner/secret#recommendation for faster secret detection
+2026-11-04T16:21:53+05:00	INFO	Number of language-specific files	num=1
+2026-11-04T16:21:53+05:00	INFO	[gomod] Detecting vulnerabilities...

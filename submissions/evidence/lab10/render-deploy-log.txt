@@ -1,0 +1,17 @@
+Service: quicknotes-4rni4ka
+Plan: Free
+Region: Frankfurt (EU Central)
+Deployment: dep-dblh45oae00c73c83p90
+Image: ghcr.io/4rni4ka/devops-intro/quicknotes:v0.1.3
+Source: d9f6595
+Trigger: Deploy Hook
+Status: Deploy succeeded | Live
+Duration: 11.1 seconds
+Dashboard: https://dashboard.render.com/web/srv-dblgvft9el5s73d15alg/deploys/dep-dblh45oae00c73c83p90
+
+Displayed log timestamps: GMT+5
+04:08:10 PM ==> Starting service...
+04:08:10 PM ==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+04:08:14 PM [vrx7w] 2026/11/04 11:08:14 quicknotes listening on :10000 (notes loaded: 4)
+04:08:22 PM ==> Your service is live
+04:08:22 PM ==> Available at your primary URL https://quicknotes-4rni4ka.onrender.com

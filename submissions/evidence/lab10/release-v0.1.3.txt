@@ -1,0 +1,507 @@
+publish	Set up job	﻿2026-11-04T11:07:12.1853116Z Current runner version: '2.338.2'
+publish	Set up job	2026-11-04T11:07:12.1879288Z ##[group]Runner Image Provisioner
+publish	Set up job	2026-11-04T11:07:12.1880256Z Hosted Compute Agent
+publish	Set up job	2026-11-04T11:07:12.1880865Z Version: 20261021.618
+publish	Set up job	2026-11-04T11:07:12.1881851Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+publish	Set up job	2026-11-04T11:07:12.1882663Z Build Date: 2026-10-21T00:45:21Z
+publish	Set up job	2026-11-04T11:07:12.1883463Z Worker ID: {05fcfdab-b301-4f3c-a74d-2ea33b417d43}
+publish	Set up job	2026-11-04T11:07:12.1884199Z Region: westus
+publish	Set up job	2026-11-04T11:07:12.1884757Z Cloud: Azure
+publish	Set up job	2026-11-04T11:07:12.1885371Z ##[endgroup]
+publish	Set up job	2026-11-04T11:07:12.1886898Z ##[group]Operating System
+publish	Set up job	2026-11-04T11:07:12.1887690Z Ubuntu
+publish	Set up job	2026-11-04T11:07:12.1888305Z 24.04.5
+publish	Set up job	2026-11-04T11:07:12.1888816Z LTS
+publish	Set up job	2026-11-04T11:07:12.1889413Z ##[endgroup]
+publish	Set up job	2026-11-04T11:07:12.1890007Z ##[group]Runner Image
+publish	Set up job	2026-11-04T11:07:12.1890640Z Image: ubuntu-24.04
+publish	Set up job	2026-11-04T11:07:12.1891276Z Version: 20261025.353.1
+publish	Set up job	2026-11-04T11:07:12.1892633Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+publish	Set up job	2026-11-04T11:07:12.1894549Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+publish	Set up job	2026-11-04T11:07:12.1895611Z ##[endgroup]
+publish	Set up job	2026-11-04T11:07:12.1896817Z ##[group]GITHUB_TOKEN Permissions
+publish	Set up job	2026-11-04T11:07:12.1899454Z Contents: read
+publish	Set up job	2026-11-04T11:07:12.1900111Z Metadata: read
+publish	Set up job	2026-11-04T11:07:12.1900678Z Packages: write
+publish	Set up job	2026-11-04T11:07:12.1901569Z ##[endgroup]
+publish	Set up job	2026-11-04T11:07:12.1903685Z Secret source: Actions
+publish	Set up job	2026-11-04T11:07:12.1904819Z Cache mode: write
+publish	Set up job	2026-11-04T11:07:12.1905538Z Prepare workflow directory
+publish	Set up job	2026-11-04T11:07:12.2255335Z Prepare all required actions
+publish	Set up job	2026-11-04T11:07:12.2305448Z Getting action download info
+publish	Set up job	2026-11-04T11:07:12.6022374Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+publish	Set up job	2026-11-04T11:07:12.7938658Z Complete job name: publish
+publish	Check out tagged source	﻿2026-11-04T11:07:12.8954629Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+publish	Check out tagged source	2026-11-04T11:07:12.8955771Z with:
+publish	Check out tagged source	2026-11-04T11:07:12.8956215Z   fetch-depth: 0
+publish	Check out tagged source	2026-11-04T11:07:12.8956694Z   repository: 4rni4ka/DevOps-Intro
+publish	Check out tagged source	2026-11-04T11:07:12.8960545Z   token: ***
+publish	Check out tagged source	2026-11-04T11:07:12.8961004Z   ssh-strict: true
+publish	Check out tagged source	2026-11-04T11:07:12.8961655Z   ssh-user: git
+publish	Check out tagged source	2026-11-04T11:07:12.8962125Z   persist-credentials: true
+publish	Check out tagged source	2026-11-04T11:07:12.8962630Z   clean: true
+publish	Check out tagged source	2026-11-04T11:07:12.8963090Z   sparse-checkout-cone-mode: true
+publish	Check out tagged source	2026-11-04T11:07:12.8963633Z   fetch-tags: false
+publish	Check out tagged source	2026-11-04T11:07:12.8964092Z   show-progress: true
+publish	Check out tagged source	2026-11-04T11:07:12.8964546Z   lfs: false
+publish	Check out tagged source	2026-11-04T11:07:12.8964969Z   submodules: false
+publish	Check out tagged source	2026-11-04T11:07:12.8965423Z   set-safe-directory: true
+publish	Check out tagged source	2026-11-04T11:07:12.8965943Z   allow-unsafe-pr-checkout: false
+publish	Check out tagged source	2026-11-04T11:07:12.8966773Z ##[endgroup]
+publish	Check out tagged source	2026-11-04T11:07:13.1828446Z Syncing repository: 4rni4ka/DevOps-Intro
+publish	Check out tagged source	2026-11-04T11:07:13.1831744Z ##[group]Getting Git version info
+publish	Check out tagged source	2026-11-04T11:07:13.1833683Z Working directory is '/home/runner/work/DevOps-Intro/DevOps-Intro'
+publish	Check out tagged source	2026-11-04T11:07:13.1836431Z [command]/usr/bin/git version
+publish	Check out tagged source	2026-11-04T11:07:13.1913448Z git version 2.56.0
+publish	Check out tagged source	2026-11-04T11:07:13.1971140Z ##[endgroup]
+publish	Check out tagged source	2026-11-04T11:07:13.1982759Z Temporarily overriding HOME='/home/runner/work/_temp/c37e5e8c-44ae-4d2d-8d18-e1e35fc1463c' before making global git config changes
+publish	Check out tagged source	2026-11-04T11:07:13.1986745Z Adding repository directory to the temporary git global config as a safe directory
+publish	Check out tagged source	2026-11-04T11:07:13.1990777Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DevOps-Intro/DevOps-Intro
+publish	Check out tagged source	2026-11-04T11:07:13.2068124Z Deleting the contents of '/home/runner/work/DevOps-Intro/DevOps-Intro'
+publish	Check out tagged source	2026-11-04T11:07:13.2072203Z ##[group]Determining repository object format
+publish	Check out tagged source	2026-11-04T11:07:13.2074903Z ##[endgroup]
+publish	Check out tagged source	2026-11-04T11:07:13.2077018Z ##[group]Initializing the repository
+publish	Check out tagged source	2026-11-04T11:07:13.2079314Z [command]/usr/bin/git init /home/runner/work/DevOps-Intro/DevOps-Intro
+publish	Check out tagged source	2026-11-04T11:07:13.2177260Z hint: Using 'master' as the name for the initial branch. This default branch name
+publish	Check out tagged source	2026-11-04T11:07:13.2181669Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+publish	Check out tagged source	2026-11-04T11:07:13.2184960Z hint: to use in all of your new repositories, which will suppress this warning,
+publish	Check out tagged source	2026-11-04T11:07:13.2187581Z hint: call:
+publish	Check out tagged source	2026-11-04T11:07:13.2188718Z hint:
+publish	Check out tagged source	2026-11-04T11:07:13.2190110Z hint: 	git config --global init.defaultBranch <name>
+publish	Check out tagged source	2026-11-04T11:07:13.2192473Z hint:
+publish	Check out tagged source	2026-11-04T11:07:13.2194409Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+publish	Check out tagged source	2026-11-04T11:07:13.2197602Z hint: 'development'. The just-created branch can be renamed via this command:
+publish	Check out tagged source	2026-11-04T11:07:13.2200088Z hint:
+publish	Check out tagged source	2026-11-04T11:07:13.2201229Z hint: 	git branch -m <name>
+publish	Check out tagged source	2026-11-04T11:07:13.2202697Z hint:
+publish	Check out tagged source	2026-11-04T11:07:13.2204064Z hint: Disable this message with "git config set advice.defaultBranchName false"
+publish	Check out tagged source	2026-11-04T11:07:13.2207806Z Initialized empty Git repository in /home/runner/work/DevOps-Intro/DevOps-Intro/.git/
+publish	Check out tagged source	2026-11-04T11:07:13.2214273Z [command]/usr/bin/git remote add origin https://github.com/4rni4ka/DevOps-Intro
+publish	Check out tagged source	2026-11-04T11:07:13.2251956Z ##[endgroup]
+publish	Check out tagged source	2026-11-04T11:07:13.2254070Z ##[group]Disabling automatic garbage collection
+publish	Check out tagged source	2026-11-04T11:07:13.2255881Z [command]/usr/bin/git config --local gc.auto 0
+publish	Check out tagged source	2026-11-04T11:07:13.2297155Z ##[endgroup]
+publish	Check out tagged source	2026-11-04T11:07:13.2299510Z ##[group]Setting up auth
+publish	Check out tagged source	2026-11-04T11:07:13.2301269Z Removing SSH command configuration
+publish	Check out tagged source	2026-11-04T11:07:13.2303996Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+publish	Check out tagged source	2026-11-04T11:07:13.2348119Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+publish	Check out tagged source	2026-11-04T11:07:13.2877016Z Removing HTTP extra header
+publish	Check out tagged source	2026-11-04T11:07:13.2885320Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+publish	Check out tagged source	2026-11-04T11:07:13.2939950Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+publish	Check out tagged source	2026-11-04T11:07:13.3228727Z Removing includeIf entries pointing to credentials config files
+publish	Check out tagged source	2026-11-04T11:07:13.3235046Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+publish	Check out tagged source	2026-11-04T11:07:13.3282406Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+publish	Check out tagged source	2026-11-04T11:07:13.3537664Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-fd3cbd7c-2c6d-489f-bbd9-ed0240276438.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+publish	Check out tagged source	2026-11-04T11:07:13.3591285Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path /home/runner/work/_temp/git-credentials-fd3cbd7c-2c6d-489f-bbd9-ed0240276438.config
+publish	Check out tagged source	2026-11-04T11:07:13.3640198Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-fd3cbd7c-2c6d-489f-bbd9-ed0240276438.config
+publish	Check out tagged source	2026-11-04T11:07:13.3688014Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-fd3cbd7c-2c6d-489f-bbd9-ed0240276438.config
+publish	Check out tagged source	2026-11-04T11:07:13.3736598Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-fd3cbd7c-2c6d-489f-bbd9-ed0240276438.config
+publish	Check out tagged source	2026-11-04T11:07:13.3781195Z ##[endgroup]
+publish	Check out tagged source	2026-11-04T11:07:13.3783555Z ##[group]Fetching the repository
+publish	Check out tagged source	2026-11-04T11:07:13.3792033Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+publish	Check out tagged source	2026-11-04T11:07:14.0738855Z From https://github.com/4rni4ka/DevOps-Intro
+publish	Check out tagged source	2026-11-04T11:07:14.0741683Z  * [new branch]      feature/lab1          -> origin/feature/lab1
+publish	Check out tagged source	2026-11-04T11:07:14.0744444Z  * [new branch]      feature/lab10         -> origin/feature/lab10
+publish	Check out tagged source	2026-11-04T11:07:14.0746125Z  * [new branch]      feature/lab11         -> origin/feature/lab11
+publish	Check out tagged source	2026-11-04T11:07:14.0747938Z  * [new branch]      feature/lab12         -> origin/feature/lab12
+publish	Check out tagged source	2026-11-04T11:07:14.0749671Z  * [new branch]      feature/lab2          -> origin/feature/lab2
+publish	Check out tagged source	2026-11-04T11:07:14.0751092Z  * [new branch]      feature/lab3          -> origin/feature/lab3
+publish	Check out tagged source	2026-11-04T11:07:14.0752914Z  * [new branch]      feature/lab4          -> origin/feature/lab4
+publish	Check out tagged source	2026-11-04T11:07:14.0754349Z  * [new branch]      feature/lab5          -> origin/feature/lab5
+publish	Check out tagged source	2026-11-04T11:07:14.0755757Z  * [new branch]      feature/lab6          -> origin/feature/lab6
+publish	Check out tagged source	2026-11-04T11:07:14.0757175Z  * [new branch]      feature/lab7          -> origin/feature/lab7
+publish	Check out tagged source	2026-11-04T11:07:14.0758575Z  * [new branch]      feature/lab8          -> origin/feature/lab8
+publish	Check out tagged source	2026-11-04T11:07:14.0760053Z  * [new branch]      feature/lab9          -> origin/feature/lab9
+publish	Check out tagged source	2026-11-04T11:07:14.0762350Z  * [new branch]      lab3-docs-filter-demo -> origin/lab3-docs-filter-demo
+publish	Check out tagged source	2026-11-04T11:07:14.0763994Z  * [new branch]      main                  -> origin/main
+publish	Check out tagged source	2026-11-04T11:07:14.0765354Z  * [new tag]         v0.1.0                -> v0.1.0
+publish	Check out tagged source	2026-11-04T11:07:14.0766663Z  * [new tag]         v0.1.0-lab2-4rni4ka   -> v0.1.0-lab2-4rni4ka
+publish	Check out tagged source	2026-11-04T11:07:14.0767980Z  * [new tag]         v0.1.1                -> v0.1.1
+publish	Check out tagged source	2026-11-04T11:07:14.0769164Z  * [new tag]         v0.1.3                -> v0.1.3
+publish	Check out tagged source	2026-11-04T11:07:14.0772287Z [command]/usr/bin/git tag --list v0.1.3
+publish	Check out tagged source	2026-11-04T11:07:14.0793757Z v0.1.3
+publish	Check out tagged source	2026-11-04T11:07:14.0806857Z [command]/usr/bin/git rev-parse refs/tags/v0.1.3^{commit}
+publish	Check out tagged source	2026-11-04T11:07:14.0849250Z 6f9920dfa9a751d651396d1869bc29b6637c4d69
+publish	Check out tagged source	2026-11-04T11:07:14.0856431Z ##[endgroup]
+publish	Check out tagged source	2026-11-04T11:07:14.0858550Z ##[group]Determining the checkout info
+publish	Check out tagged source	2026-11-04T11:07:14.0862377Z ##[endgroup]
+publish	Check out tagged source	2026-11-04T11:07:14.0863907Z [command]/usr/bin/git sparse-checkout disable
+publish	Check out tagged source	2026-11-04T11:07:14.0932218Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+publish	Check out tagged source	2026-11-04T11:07:14.0979288Z ##[group]Checking out the ref
+publish	Check out tagged source	2026-11-04T11:07:14.0982575Z [command]/usr/bin/git checkout --progress --force refs/tags/v0.1.3
+publish	Check out tagged source	2026-11-04T11:07:14.1125890Z Note: switching to 'refs/tags/v0.1.3'.
+publish	Check out tagged source	2026-11-04T11:07:14.1127044Z
+publish	Check out tagged source	2026-11-04T11:07:14.1127996Z You are in 'detached HEAD' state. You can look around, make experimental
+publish	Check out tagged source	2026-11-04T11:07:14.1130310Z changes and commit them, and you can discard any commits you make in this
+publish	Check out tagged source	2026-11-04T11:07:14.1132865Z state without impacting any branches by switching back to a branch.
+publish	Check out tagged source	2026-11-04T11:07:14.1134109Z
+publish	Check out tagged source	2026-11-04T11:07:14.1135179Z If you want to create a new branch to retain commits you create, you may
+publish	Check out tagged source	2026-11-04T11:07:14.1137521Z do so (now or later) by using -c with the switch command. Example:
+publish	Check out tagged source	2026-11-04T11:07:14.1138609Z
+publish	Check out tagged source	2026-11-04T11:07:14.1139300Z   git switch -c <new-branch-name>
+publish	Check out tagged source	2026-11-04T11:07:14.1140364Z
+publish	Check out tagged source	2026-11-04T11:07:14.1141046Z Or undo this operation with:
+publish	Check out tagged source	2026-11-04T11:07:14.1142103Z
+publish	Check out tagged source	2026-11-04T11:07:14.1142587Z   git switch -
+publish	Check out tagged source	2026-11-04T11:07:14.1143178Z
+publish	Check out tagged source	2026-11-04T11:07:14.1144123Z Turn off this advice by setting config variable advice.detachedHead to false
+publish	Check out tagged source	2026-11-04T11:07:14.1145374Z
+publish	Check out tagged source	2026-11-04T11:07:14.1146341Z HEAD is now at 6f9920d feat(lab10): publish QuickNotes images and verify cloud delivery
+publish	Check out tagged source	2026-11-04T11:07:14.1150289Z ##[endgroup]
+publish	Check out tagged source	2026-11-04T11:07:14.1196592Z [command]/usr/bin/git log -1 --format=%H
+publish	Check out tagged source	2026-11-04T11:07:14.1237176Z 6f9920dfa9a751d651396d1869bc29b6637c4d69
+publish	Validate release version	﻿2026-11-04T11:07:14.1516585Z ##[group]Run [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+publish	Validate release version	2026-11-04T11:07:14.1518399Z ^[[36;1m[[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]^[[0m
+publish	Validate release version	2026-11-04T11:07:14.1520269Z ^[[36;1mecho "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}/quicknotes" >> "$GITHUB_ENV"^[[0m
+publish	Validate release version	2026-11-04T11:07:14.1548616Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+publish	Validate release version	2026-11-04T11:07:14.1550082Z ##[endgroup]
+publish	Test tagged source	﻿2026-11-04T11:07:14.1723715Z ##[group]Run docker run --rm -v "$PWD/app:/src" -w /src golang:1.27.3-alpine \
+publish	Test tagged source	2026-11-04T11:07:14.1725767Z ^[[36;1mdocker run --rm -v "$PWD/app:/src" -w /src golang:1.27.3-alpine \^[[0m
+publish	Test tagged source	2026-11-04T11:07:14.1727460Z ^[[36;1m  sh -ec 'go test -count=1 ./... && go vet ./...'^[[0m
+publish	Test tagged source	2026-11-04T11:07:14.1750302Z shell: /usr/bin/bash -e {0}
+publish	Test tagged source	2026-11-04T11:07:14.1751629Z env:
+publish	Test tagged source	2026-11-04T11:07:14.1752661Z   IMAGE: ghcr.io/4rni4ka/devops-intro/quicknotes
+publish	Test tagged source	2026-11-04T11:07:14.1753905Z ##[endgroup]
+publish	Test tagged source	2026-11-04T11:07:14.2627063Z Unable to find image 'golang:1.27.3-alpine' locally
+publish	Test tagged source	2026-11-04T11:07:15.1492886Z 1.27.3-alpine: Pulling from library/golang
+publish	Test tagged source	2026-11-04T11:07:15.4218626Z 7b229517ed22: Pulling fs layer
+publish	Test tagged source	2026-11-04T11:07:15.4219662Z c012d78a862f: Pulling fs layer
+publish	Test tagged source	2026-11-04T11:07:15.4221012Z 82e0bb27ae78: Pulling fs layer
+publish	Test tagged source	2026-11-04T11:07:15.4222006Z c8e3100880d8: Pulling fs layer
+publish	Test tagged source	2026-11-04T11:07:15.4222650Z 4f4fb700ef54: Pulling fs layer
+publish	Test tagged source	2026-11-04T11:07:15.4223060Z c8e3100880d8: Waiting
+publish	Test tagged source	2026-11-04T11:07:15.4223488Z 4f4fb700ef54: Waiting
+publish	Test tagged source	2026-11-04T11:07:15.6395685Z c012d78a862f: Verifying Checksum
+publish	Test tagged source	2026-11-04T11:07:15.6396847Z c012d78a862f: Download complete
+publish	Test tagged source	2026-11-04T11:07:15.6519769Z 7b229517ed22: Verifying Checksum
+publish	Test tagged source	2026-11-04T11:07:15.6520686Z 7b229517ed22: Download complete
+publish	Test tagged source	2026-11-04T11:07:15.7986470Z 7b229517ed22: Pull complete
+publish	Test tagged source	2026-11-04T11:07:15.8602643Z c8e3100880d8: Verifying Checksum
+publish	Test tagged source	2026-11-04T11:07:15.8603159Z c8e3100880d8: Download complete
+publish	Test tagged source	2026-11-04T11:07:15.8691802Z 4f4fb700ef54: Verifying Checksum
+publish	Test tagged source	2026-11-04T11:07:15.8692745Z 4f4fb700ef54: Download complete
+publish	Test tagged source	2026-11-04T11:07:15.8807099Z 82e0bb27ae78: Verifying Checksum
+publish	Test tagged source	2026-11-04T11:07:15.8807467Z 82e0bb27ae78: Download complete
+publish	Test tagged source	2026-11-04T11:07:15.9456445Z c012d78a862f: Pull complete
+publish	Test tagged source	2026-11-04T11:07:21.3533280Z 82e0bb27ae78: Pull complete
+publish	Test tagged source	2026-11-04T11:07:21.3632064Z c8e3100880d8: Pull complete
+publish	Test tagged source	2026-11-04T11:07:21.3733325Z 4f4fb700ef54: Pull complete
+publish	Test tagged source	2026-11-04T11:07:21.3779598Z Digest: sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb
+publish	Test tagged source	2026-11-04T11:07:21.3796599Z Status: Downloaded newer image for golang:1.27.3-alpine
+publish	Test tagged source	2026-11-04T11:07:38.0633770Z ok  	quicknotes	0.010s
+publish	Authenticate to GHCR	﻿2026-11-04T11:07:41.1614044Z ##[group]Run printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+publish	Authenticate to GHCR	2026-11-04T11:07:41.1614796Z ^[[36;1mprintf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin^[[0m
+publish	Authenticate to GHCR	2026-11-04T11:07:41.1635807Z shell: /usr/bin/bash -e {0}
+publish	Authenticate to GHCR	2026-11-04T11:07:41.1636107Z env:
+publish	Authenticate to GHCR	2026-11-04T11:07:41.1636377Z   IMAGE: ghcr.io/4rni4ka/devops-intro/quicknotes
+publish	Authenticate to GHCR	2026-11-04T11:07:41.1638951Z   GHCR_TOKEN: ***
+publish	Authenticate to GHCR	2026-11-04T11:07:41.1639173Z ##[endgroup]
+publish	Authenticate to GHCR	2026-11-04T11:07:41.6114635Z
+publish	Authenticate to GHCR	2026-11-04T11:07:41.6115518Z WARNING! Your credentials are stored unencrypted in '/home/runner/.docker/config.json'.
+publish	Authenticate to GHCR	2026-11-04T11:07:41.6116413Z Configure a credential helper to remove this warning. See
+publish	Authenticate to GHCR	2026-11-04T11:07:41.6116981Z Login Succeeded
+publish	Authenticate to GHCR	2026-11-04T11:07:41.6117432Z https://docs.docker.com/go/credential-store/
+publish	Authenticate to GHCR	2026-11-04T11:07:41.6132107Z
+publish	Build and publish version and latest	﻿2026-11-04T11:07:41.6170345Z ##[group]Run if docker manifest inspect "$IMAGE:$GITHUB_REF_NAME" >/tmp/manifest.json 2>/tmp/manifest.err; then
+publish	Build and publish version and latest	2026-11-04T11:07:41.6171179Z ^[[36;1mif docker manifest inspect "$IMAGE:$GITHUB_REF_NAME" >/tmp/manifest.json 2>/tmp/manifest.err; then^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6172159Z ^[[36;1m  docker pull "$IMAGE:$GITHUB_REF_NAME"^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6172796Z ^[[36;1m  REVISION=$(docker image inspect "$IMAGE:$GITHUB_REF_NAME" --format '{{index .Config.Labels "org.opencontainers.image.revision"}}')^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6173426Z ^[[36;1m  test "$REVISION" = "$GITHUB_SHA"^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6173771Z ^[[36;1m  docker tag "$IMAGE:$GITHUB_REF_NAME" "$IMAGE:latest"^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6174094Z ^[[36;1melse^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6174421Z ^[[36;1m  if ! grep -Eq 'manifest unknown|no such manifest' /tmp/manifest.err; then^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6174823Z ^[[36;1m    cat /tmp/manifest.err^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6175072Z ^[[36;1m    exit 1^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6175535Z ^[[36;1m  fi^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6175790Z ^[[36;1m  docker build --platform linux/amd64 \^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6176278Z ^[[36;1m    --label "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6176823Z ^[[36;1m    --label "org.opencontainers.image.revision=$GITHUB_SHA" \^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6177293Z ^[[36;1m    --label "org.opencontainers.image.version=$GITHUB_REF_NAME" \^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6177719Z ^[[36;1m    -t "$IMAGE:$GITHUB_REF_NAME" -t "$IMAGE:latest" app^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6178070Z ^[[36;1m  docker push "$IMAGE:$GITHUB_REF_NAME"^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6178361Z ^[[36;1mfi^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6178574Z ^[[36;1mdocker push "$IMAGE:latest"^[[0m
+publish	Build and publish version and latest	2026-11-04T11:07:41.6198584Z shell: /usr/bin/bash -e {0}
+publish	Build and publish version and latest	2026-11-04T11:07:41.6198847Z env:
+publish	Build and publish version and latest	2026-11-04T11:07:41.6199083Z   IMAGE: ghcr.io/4rni4ka/devops-intro/quicknotes
+publish	Build and publish version and latest	2026-11-04T11:07:41.6199391Z ##[endgroup]
+publish	Build and publish version and latest	2026-11-04T11:07:43.1506753Z #0 building with "default" instance using docker driver
+publish	Build and publish version and latest	2026-11-04T11:07:43.1507362Z
+publish	Build and publish version and latest	2026-11-04T11:07:43.1507557Z #1 [internal] load build definition from Dockerfile
+publish	Build and publish version and latest	2026-11-04T11:07:43.1508099Z #1 transferring dockerfile: 568B done
+publish	Build and publish version and latest	2026-11-04T11:07:43.1508436Z #1 DONE 0.0s
+publish	Build and publish version and latest	2026-11-04T11:07:43.1508587Z
+publish	Build and publish version and latest	2026-11-04T11:07:43.1508824Z #2 [internal] load metadata for docker.io/library/golang:1.27.3-alpine
+publish	Build and publish version and latest	2026-11-04T11:07:43.1509298Z #2 DONE 0.0s
+publish	Build and publish version and latest	2026-11-04T11:07:43.1509445Z
+publish	Build and publish version and latest	2026-11-04T11:07:43.1509696Z #3 [internal] load metadata for gcr.io/distroless/static-debian13:nonroot
+publish	Build and publish version and latest	2026-11-04T11:07:43.7230827Z #3 DONE 0.7s
+publish	Build and publish version and latest	2026-11-04T11:07:43.8463230Z
+publish	Build and publish version and latest	2026-11-04T11:07:43.8472295Z #4 [internal] load .dockerignore
+publish	Build and publish version and latest	2026-11-04T11:07:43.8472844Z #4 transferring context: 63B done
+publish	Build and publish version and latest	2026-11-04T11:07:43.8473440Z #4 DONE 0.0s
+publish	Build and publish version and latest	2026-11-04T11:07:43.8473652Z
+publish	Build and publish version and latest	2026-11-04T11:07:43.8473833Z #5 [internal] load build context
+publish	Build and publish version and latest	2026-11-04T11:07:43.8474186Z #5 transferring context: 20.10kB done
+publish	Build and publish version and latest	2026-11-04T11:07:43.8474472Z #5 DONE 0.0s
+publish	Build and publish version and latest	2026-11-04T11:07:43.8474594Z
+publish	Build and publish version and latest	2026-11-04T11:07:43.8474775Z #6 [builder 1/6] FROM docker.io/library/golang:1.27.3-alpine
+publish	Build and publish version and latest	2026-11-04T11:07:43.8475286Z #6 DONE 0.0s
+publish	Build and publish version and latest	2026-11-04T11:07:43.8475411Z
+publish	Build and publish version and latest	2026-11-04T11:07:43.8475513Z #7 [builder 2/6] WORKDIR /src
+publish	Build and publish version and latest	2026-11-04T11:07:43.8475754Z #7 DONE 0.0s
+publish	Build and publish version and latest	2026-11-04T11:07:43.8475864Z
+publish	Build and publish version and latest	2026-11-04T11:07:43.8475967Z #8 [builder 3/6] COPY go.mod ./
+publish	Build and publish version and latest	2026-11-04T11:07:43.8476361Z #8 DONE 0.0s
+publish	Build and publish version and latest	2026-11-04T11:07:43.8476483Z
+publish	Build and publish version and latest	2026-11-04T11:07:43.8477030Z #9 [stage-1 1/4] FROM gcr.io/distroless/static-debian13:nonroot@sha256:25ac8f0c3b2334a9eb05452266bd4697864a8c8ef0ef71e5e6480d7f92868329
+publish	Build and publish version and latest	2026-11-04T11:07:43.8478181Z #9 resolve gcr.io/distroless/static-debian13:nonroot@sha256:25ac8f0c3b2334a9eb05452266bd4697864a8c8ef0ef71e5e6480d7f92868329 done
+publish	Build and publish version and latest	2026-11-04T11:07:43.8479136Z #9 sha256:25ac8f0c3b2334a9eb05452266bd4697864a8c8ef0ef71e5e6480d7f92868329 1.79kB / 1.79kB done
+publish	Build and publish version and latest	2026-11-04T11:07:43.8480111Z #9 sha256:2cc7ee286bf3a9e6af5f71756d7fc8e22e23ce65fec9047d774511ffcef79fa8 0B / 124.53kB 0.1s
+publish	Build and publish version and latest	2026-11-04T11:07:43.8480909Z #9 sha256:c172f21841dff4c8cf45cde46589c1c2616cefe7e819965e92e6d3475c428aa0 0B / 12.68kB 0.1s
+publish	Build and publish version and latest	2026-11-04T11:07:43.8482729Z #9 sha256:fc4330146a1cc76e06ce6def693f5da42c16e2615be6f49e1ea5b6e249ff8262 0B / 290.16kB 0.1s
+publish	Build and publish version and latest	2026-11-04T11:07:43.8483603Z #9 sha256:336e53e9941facdb69b755e6fd2c63f5400abd3b1ba47bb17ebafc2b1547cebd 2.86kB / 2.86kB done
+publish	Build and publish version and latest	2026-11-04T11:07:44.0452080Z #9 ...
+publish	Build and publish version and latest	2026-11-04T11:07:44.0452549Z
+publish	Build and publish version and latest	2026-11-04T11:07:44.0452938Z #10 [builder 4/6] RUN go mod download
+publish	Build and publish version and latest	2026-11-04T11:07:44.0453644Z #10 0.124 go: no module dependencies to download
+publish	Build and publish version and latest	2026-11-04T11:07:44.0454371Z #10 DONE 0.1s
+publish	Build and publish version and latest	2026-11-04T11:07:44.0454698Z
+publish	Build and publish version and latest	2026-11-04T11:07:44.0454991Z #11 [builder 5/6] COPY . .
+publish	Build and publish version and latest	2026-11-04T11:07:44.0455491Z #11 DONE 0.0s
+publish	Build and publish version and latest	2026-11-04T11:07:44.0455811Z
+publish	Build and publish version and latest	2026-11-04T11:07:44.0456615Z #9 [stage-1 1/4] FROM gcr.io/distroless/static-debian13:nonroot@sha256:25ac8f0c3b2334a9eb05452266bd4697864a8c8ef0ef71e5e6480d7f92868329
+publish	Build and publish version and latest	2026-11-04T11:07:44.0458027Z #9 sha256:c172f21841dff4c8cf45cde46589c1c2616cefe7e819965e92e6d3475c428aa0 12.68kB / 12.68kB 0.3s done
+publish	Build and publish version and latest	2026-11-04T11:07:44.0459625Z #9 sha256:f4f17e11603e49e86e42e6c30ba3b6c37499ea233dc24b395fae18f5c1cf4444 2.94kB / 2.94kB done
+publish	Build and publish version and latest	2026-11-04T11:07:44.0460768Z #9 sha256:777e9d0975e474519f4f14ff87e547cbb8f9fff4cfc4f1a147ac81906880e503 0B / 257.71kB 0.3s
+publish	Build and publish version and latest	2026-11-04T11:07:44.1505416Z #9 extracting sha256:2cc7ee286bf3a9e6af5f71756d7fc8e22e23ce65fec9047d774511ffcef79fa8
+publish	Build and publish version and latest	2026-11-04T11:07:44.3093627Z #9 sha256:2cc7ee286bf3a9e6af5f71756d7fc8e22e23ce65fec9047d774511ffcef79fa8 124.53kB / 124.53kB 0.4s done
+publish	Build and publish version and latest	2026-11-04T11:07:44.3094958Z #9 extracting sha256:2cc7ee286bf3a9e6af5f71756d7fc8e22e23ce65fec9047d774511ffcef79fa8 done
+publish	Build and publish version and latest	2026-11-04T11:07:44.3096037Z #9 extracting sha256:c172f21841dff4c8cf45cde46589c1c2616cefe7e819965e92e6d3475c428aa0 done
+publish	Build and publish version and latest	2026-11-04T11:07:44.3097422Z #9 sha256:d6b1b89eccacc15c2420b2776d72c1dae334a00805ed9af54bf2f71e4d536f28 0B / 32.09kB 0.5s
+publish	Build and publish version and latest	2026-11-04T11:07:44.3098494Z #9 extracting sha256:fc4330146a1cc76e06ce6def693f5da42c16e2615be6f49e1ea5b6e249ff8262
+publish	Build and publish version and latest	2026-11-04T11:07:44.4452732Z #9 sha256:fc4330146a1cc76e06ce6def693f5da42c16e2615be6f49e1ea5b6e249ff8262 290.16kB / 290.16kB 0.6s done
+publish	Build and publish version and latest	2026-11-04T11:07:44.4454129Z #9 extracting sha256:fc4330146a1cc76e06ce6def693f5da42c16e2615be6f49e1ea5b6e249ff8262 0.1s done
+publish	Build and publish version and latest	2026-11-04T11:07:44.4455249Z #9 sha256:2780920e5dbfbe103d03a583ed75345306e572ec5a48cb10361f046767d9f29a 0B / 67B 0.7s
+publish	Build and publish version and latest	2026-11-04T11:07:44.5458387Z #9 sha256:777e9d0975e474519f4f14ff87e547cbb8f9fff4cfc4f1a147ac81906880e503 257.71kB / 257.71kB 0.7s done
+publish	Build and publish version and latest	2026-11-04T11:07:44.5459798Z #9 sha256:d6b1b89eccacc15c2420b2776d72c1dae334a00805ed9af54bf2f71e4d536f28 32.09kB / 32.09kB 0.7s done
+publish	Build and publish version and latest	2026-11-04T11:07:44.5461041Z #9 sha256:2780920e5dbfbe103d03a583ed75345306e572ec5a48cb10361f046767d9f29a 67B / 67B 0.8s done
+publish	Build and publish version and latest	2026-11-04T11:07:44.5462896Z #9 sha256:7c12895b777bcaa8ccae0605b4de635b68fc32d60fa08f421dc3818bf55ee212 0B / 188B 0.8s
+publish	Build and publish version and latest	2026-11-04T11:07:44.5464058Z #9 sha256:3214acf345c0cc6bbdb56b698a41ccdefc624a09d6beb0d38b5de0b2303ecaf4 0B / 123B 0.8s
+publish	Build and publish version and latest	2026-11-04T11:07:44.5465198Z #9 sha256:52630fc75a18675c530ed9eba5f55eca09b03e91bd5bc15307918bbc1a7e7296 0B / 162B 0.8s
+publish	Build and publish version and latest	2026-11-04T11:07:44.6478846Z #9 extracting sha256:777e9d0975e474519f4f14ff87e547cbb8f9fff4cfc4f1a147ac81906880e503 0.0s done
+publish	Build and publish version and latest	2026-11-04T11:07:44.7894912Z #9 sha256:7c12895b777bcaa8ccae0605b4de635b68fc32d60fa08f421dc3818bf55ee212 188B / 188B 0.9s done
+publish	Build and publish version and latest	2026-11-04T11:07:44.7896443Z #9 sha256:3214acf345c0cc6bbdb56b698a41ccdefc624a09d6beb0d38b5de0b2303ecaf4 123B / 123B 0.9s done
+publish	Build and publish version and latest	2026-11-04T11:07:44.7897806Z #9 sha256:52630fc75a18675c530ed9eba5f55eca09b03e91bd5bc15307918bbc1a7e7296 162B / 162B 1.0s done
+publish	Build and publish version and latest	2026-11-04T11:07:44.7899163Z #9 sha256:ebddc55facdc6b1f7e0f30816a5fc7cc62f38abdf76c0a8b0a0ce52085754795 0B / 311B 1.0s
+publish	Build and publish version and latest	2026-11-04T11:07:44.7900490Z #9 sha256:b839dfae01f66e15c6a8b63520557ed315bdfe036342fa7a0c537259f10d7a9a 0B / 351B 1.0s
+publish	Build and publish version and latest	2026-11-04T11:07:44.7901703Z #9 sha256:dd64bf2dd177757451a98fcdc999a339c35dee5d9872d8f4dc69c8f3c4dd0112 0B / 80B 1.0s
+publish	Build and publish version and latest	2026-11-04T11:07:44.7902863Z #9 extracting sha256:d6b1b89eccacc15c2420b2776d72c1dae334a00805ed9af54bf2f71e4d536f28
+publish	Build and publish version and latest	2026-11-04T11:07:44.9452803Z #9 sha256:ebddc55facdc6b1f7e0f30816a5fc7cc62f38abdf76c0a8b0a0ce52085754795 311B / 311B 1.2s done
+publish	Build and publish version and latest	2026-11-04T11:07:44.9455195Z #9 sha256:b839dfae01f66e15c6a8b63520557ed315bdfe036342fa7a0c537259f10d7a9a 351B / 351B 1.1s done
+publish	Build and publish version and latest	2026-11-04T11:07:44.9456743Z #9 sha256:dd64bf2dd177757451a98fcdc999a339c35dee5d9872d8f4dc69c8f3c4dd0112 80B / 80B 1.1s done
+publish	Build and publish version and latest	2026-11-04T11:07:44.9457939Z #9 extracting sha256:d6b1b89eccacc15c2420b2776d72c1dae334a00805ed9af54bf2f71e4d536f28 done
+publish	Build and publish version and latest	2026-11-04T11:07:44.9459083Z #9 extracting sha256:2780920e5dbfbe103d03a583ed75345306e572ec5a48cb10361f046767d9f29a done
+publish	Build and publish version and latest	2026-11-04T11:07:44.9460203Z #9 extracting sha256:7c12895b777bcaa8ccae0605b4de635b68fc32d60fa08f421dc3818bf55ee212 done
+publish	Build and publish version and latest	2026-11-04T11:07:44.9461307Z #9 extracting sha256:3214acf345c0cc6bbdb56b698a41ccdefc624a09d6beb0d38b5de0b2303ecaf4 done
+publish	Build and publish version and latest	2026-11-04T11:07:44.9462670Z #9 sha256:ec1b04bf2eb2122e86781f791b03ea0cf6588694e0f4a88245250224c186cdf0 0B / 142.00kB 1.2s
+publish	Build and publish version and latest	2026-11-04T11:07:45.3452540Z #9 sha256:ec1b04bf2eb2122e86781f791b03ea0cf6588694e0f4a88245250224c186cdf0 142.00kB / 142.00kB 1.5s done
+publish	Build and publish version and latest	2026-11-04T11:07:45.8080331Z #9 extracting sha256:52630fc75a18675c530ed9eba5f55eca09b03e91bd5bc15307918bbc1a7e7296
+publish	Build and publish version and latest	2026-11-04T11:07:45.9502338Z #9 extracting sha256:52630fc75a18675c530ed9eba5f55eca09b03e91bd5bc15307918bbc1a7e7296 done
+publish	Build and publish version and latest	2026-11-04T11:07:45.9503648Z #9 extracting sha256:dd64bf2dd177757451a98fcdc999a339c35dee5d9872d8f4dc69c8f3c4dd0112 done
+publish	Build and publish version and latest	2026-11-04T11:07:45.9506906Z #9 extracting sha256:b839dfae01f66e15c6a8b63520557ed315bdfe036342fa7a0c537259f10d7a9a done
+publish	Build and publish version and latest	2026-11-04T11:07:45.9508236Z #9 extracting sha256:ebddc55facdc6b1f7e0f30816a5fc7cc62f38abdf76c0a8b0a0ce52085754795 done
+publish	Build and publish version and latest	2026-11-04T11:07:45.9509582Z #9 extracting sha256:ec1b04bf2eb2122e86781f791b03ea0cf6588694e0f4a88245250224c186cdf0 done
+publish	Build and publish version and latest	2026-11-04T11:07:45.9510518Z #9 DONE 2.2s
+publish	Build and publish version and latest	2026-11-04T11:07:45.9510949Z
+publish	Build and publish version and latest	2026-11-04T11:07:45.9512008Z #12 [builder 6/6] RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/quicknotes .     && mkdir -p /out/data
+publish	Build and publish version and latest	2026-11-04T11:07:57.2982268Z #12 DONE 13.4s
+publish	Build and publish version and latest	2026-11-04T11:07:57.4931783Z
+publish	Build and publish version and latest	2026-11-04T11:07:57.4932875Z #13 [stage-1 2/4] COPY --from=builder /out/quicknotes /quicknotes
+publish	Build and publish version and latest	2026-11-04T11:07:57.4933687Z #13 DONE 0.0s
+publish	Build and publish version and latest	2026-11-04T11:07:57.4933979Z
+publish	Build and publish version and latest	2026-11-04T11:07:57.4934247Z #14 [stage-1 3/4] COPY --from=builder /src/seed.json /seed.json
+publish	Build and publish version and latest	2026-11-04T11:07:57.4934845Z #14 DONE 0.0s
+publish	Build and publish version and latest	2026-11-04T11:07:57.4935008Z
+publish	Build and publish version and latest	2026-11-04T11:07:57.4935284Z #15 [stage-1 4/4] COPY --from=builder --chown=65532:65532 /out/data /data
+publish	Build and publish version and latest	2026-11-04T11:07:57.4935820Z #15 DONE 0.0s
+publish	Build and publish version and latest	2026-11-04T11:07:57.4935983Z
+publish	Build and publish version and latest	2026-11-04T11:07:57.4936102Z #16 exporting to image
+publish	Build and publish version and latest	2026-11-04T11:07:57.4936414Z #16 exporting layers
+publish	Build and publish version and latest	2026-11-04T11:07:58.0085087Z #16 exporting layers 0.7s done
+publish	Build and publish version and latest	2026-11-04T11:07:58.0257196Z #16 writing image sha256:9efa1cbc1b8048bbf79edfeca37548fb7ca29b0c1d90734000dd78ced2fde216 done
+publish	Build and publish version and latest	2026-11-04T11:07:58.0258301Z #16 naming to ghcr.io/4rni4ka/devops-intro/quicknotes:v0.1.3 done
+publish	Build and publish version and latest	2026-11-04T11:07:58.0259067Z #16 naming to ghcr.io/4rni4ka/devops-intro/quicknotes:latest done
+publish	Build and publish version and latest	2026-11-04T11:07:58.0259691Z #16 DONE 0.7s
+publish	Build and publish version and latest	2026-11-04T11:07:58.0514558Z The push refers to repository [ghcr.io/4rni4ka/devops-intro/quicknotes]
+publish	Build and publish version and latest	2026-11-04T11:07:58.1668500Z 829ebdff3f1a: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1669126Z a359c776ab19: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1669829Z 01c40a60c1db: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1670301Z 0762a1f6557d: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1670864Z 187cfc6d1e3e: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1671353Z ad51d0769d16: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1672019Z 4cde6b0bb6f5: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1672524Z bd3cdfae1d3f: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1673036Z 6f1cdceb6a31: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1673580Z af5aa97ebe6c: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1674051Z 4d049f83d9cf: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1674538Z 275a30dd8ce9: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1675027Z b5764396d8d3: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1675536Z b64fe4bb89ff: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1676014Z 621c35e751a5: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1676480Z 9486261b5a13: Preparing
+publish	Build and publish version and latest	2026-11-04T11:07:58.1676875Z ad51d0769d16: Waiting
+publish	Build and publish version and latest	2026-11-04T11:07:58.1677695Z bd3cdfae1d3f: Waiting
+publish	Build and publish version and latest	2026-11-04T11:07:58.1678110Z 6f1cdceb6a31: Waiting
+publish	Build and publish version and latest	2026-11-04T11:07:58.1678449Z af5aa97ebe6c: Waiting
+publish	Build and publish version and latest	2026-11-04T11:07:58.1678781Z 4d049f83d9cf: Waiting
+publish	Build and publish version and latest	2026-11-04T11:07:58.1679103Z 275a30dd8ce9: Waiting
+publish	Build and publish version and latest	2026-11-04T11:07:58.1679431Z 4cde6b0bb6f5: Waiting
+publish	Build and publish version and latest	2026-11-04T11:07:58.1679789Z b5764396d8d3: Waiting
+publish	Build and publish version and latest	2026-11-04T11:07:58.1680122Z b64fe4bb89ff: Waiting
+publish	Build and publish version and latest	2026-11-04T11:07:58.1680503Z 621c35e751a5: Waiting
+publish	Build and publish version and latest	2026-11-04T11:07:58.1680838Z 9486261b5a13: Waiting
+publish	Build and publish version and latest	2026-11-04T11:07:59.5343071Z 187cfc6d1e3e: Pushed
+publish	Build and publish version and latest	2026-11-04T11:07:59.5521410Z 0762a1f6557d: Pushed
+publish	Build and publish version and latest	2026-11-04T11:07:59.6654582Z ad51d0769d16: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:07:59.6812646Z 4cde6b0bb6f5: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:07:59.7924074Z bd3cdfae1d3f: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:07:59.8114840Z 6f1cdceb6a31: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:07:59.9349215Z af5aa97ebe6c: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:07:59.9382176Z 4d049f83d9cf: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:07:59.9776067Z 829ebdff3f1a: Pushed
+publish	Build and publish version and latest	2026-11-04T11:08:00.0031750Z a359c776ab19: Pushed
+publish	Build and publish version and latest	2026-11-04T11:08:00.2686270Z 01c40a60c1db: Pushed
+publish	Build and publish version and latest	2026-11-04T11:08:01.1255026Z b5764396d8d3: Pushed
+publish	Build and publish version and latest	2026-11-04T11:08:01.1617195Z 275a30dd8ce9: Pushed
+publish	Build and publish version and latest	2026-11-04T11:08:01.2213741Z b64fe4bb89ff: Pushed
+publish	Build and publish version and latest	2026-11-04T11:08:01.4448106Z 9486261b5a13: Pushed
+publish	Build and publish version and latest	2026-11-04T11:08:01.4547592Z 621c35e751a5: Pushed
+publish	Build and publish version and latest	2026-11-04T11:08:03.6373369Z v0.1.3: digest: sha256:d9f659526c98b9b5e795e65b661764295a6dd5ff2b29a5fc196f63ff25705a64 size: 3646
+publish	Build and publish version and latest	2026-11-04T11:08:03.6596867Z The push refers to repository [ghcr.io/4rni4ka/devops-intro/quicknotes]
+publish	Build and publish version and latest	2026-11-04T11:08:03.7865576Z 829ebdff3f1a: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7866318Z a359c776ab19: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7866771Z 01c40a60c1db: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7867187Z 0762a1f6557d: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7867617Z 187cfc6d1e3e: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7867884Z ad51d0769d16: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7868140Z 4cde6b0bb6f5: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7868377Z bd3cdfae1d3f: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7868698Z 6f1cdceb6a31: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7869014Z af5aa97ebe6c: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7869233Z 4d049f83d9cf: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7869447Z 275a30dd8ce9: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7869659Z b5764396d8d3: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7869969Z b64fe4bb89ff: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7870234Z 621c35e751a5: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7870444Z 9486261b5a13: Preparing
+publish	Build and publish version and latest	2026-11-04T11:08:03.7870661Z 4cde6b0bb6f5: Waiting
+publish	Build and publish version and latest	2026-11-04T11:08:03.7870882Z bd3cdfae1d3f: Waiting
+publish	Build and publish version and latest	2026-11-04T11:08:03.7871200Z 6f1cdceb6a31: Waiting
+publish	Build and publish version and latest	2026-11-04T11:08:03.7871653Z af5aa97ebe6c: Waiting
+publish	Build and publish version and latest	2026-11-04T11:08:03.7871878Z 4d049f83d9cf: Waiting
+publish	Build and publish version and latest	2026-11-04T11:08:03.7872083Z 275a30dd8ce9: Waiting
+publish	Build and publish version and latest	2026-11-04T11:08:03.7872478Z b5764396d8d3: Waiting
+publish	Build and publish version and latest	2026-11-04T11:08:03.7872711Z b64fe4bb89ff: Waiting
+publish	Build and publish version and latest	2026-11-04T11:08:03.7872912Z 621c35e751a5: Waiting
+publish	Build and publish version and latest	2026-11-04T11:08:03.7873108Z 9486261b5a13: Waiting
+publish	Build and publish version and latest	2026-11-04T11:08:03.7873318Z ad51d0769d16: Waiting
+publish	Build and publish version and latest	2026-11-04T11:08:04.0913519Z 187cfc6d1e3e: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:04.0948053Z a359c776ab19: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:04.0982430Z 01c40a60c1db: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:04.1022009Z 0762a1f6557d: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:04.1069129Z 829ebdff3f1a: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:04.2189851Z bd3cdfae1d3f: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:04.2284368Z 4cde6b0bb6f5: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:04.2292659Z ad51d0769d16: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:04.2379120Z 6f1cdceb6a31: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:04.2407254Z af5aa97ebe6c: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:04.3506599Z 4d049f83d9cf: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:04.3509264Z 275a30dd8ce9: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:04.3553849Z b5764396d8d3: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:04.3707091Z b64fe4bb89ff: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:04.3795908Z 621c35e751a5: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:04.4753085Z 9486261b5a13: Layer already exists
+publish	Build and publish version and latest	2026-11-04T11:08:05.0074284Z latest: digest: sha256:d9f659526c98b9b5e795e65b661764295a6dd5ff2b29a5fc196f63ff25705a64 size: 3646
+publish	Verify anonymous clean pull	﻿2026-11-04T11:08:05.0136494Z ##[group]Run docker image rm "$IMAGE:$GITHUB_REF_NAME" "$IMAGE:latest"
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.0137029Z ^[[36;1mdocker image rm "$IMAGE:$GITHUB_REF_NAME" "$IMAGE:latest"^[[0m
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.0137418Z ^[[36;1mEMPTY_CONFIG=$(mktemp -d)^[[0m
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.0137786Z ^[[36;1mDOCKER_CONFIG="$EMPTY_CONFIG" docker pull "$IMAGE:$GITHUB_REF_NAME"^[[0m
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.0138318Z ^[[36;1mdocker image inspect "$IMAGE:$GITHUB_REF_NAME" --format '{{json .RepoDigests}}'^[[0m
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.0158495Z shell: /usr/bin/bash -e {0}
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.0158740Z env:
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.0158976Z   IMAGE: ghcr.io/4rni4ka/devops-intro/quicknotes
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.0159284Z ##[endgroup]
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.0345206Z Untagged: ghcr.io/4rni4ka/devops-intro/quicknotes:v0.1.3
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.0378774Z Untagged: ghcr.io/4rni4ka/devops-intro/quicknotes:latest
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.0379924Z Untagged: ghcr.io/4rni4ka/devops-intro/quicknotes@sha256:d9f659526c98b9b5e795e65b661764295a6dd5ff2b29a5fc196f63ff25705a64
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.0380857Z Deleted: sha256:9efa1cbc1b8048bbf79edfeca37548fb7ca29b0c1d90734000dd78ced2fde216
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6485177Z v0.1.3: Pulling from 4rni4ka/devops-intro/quicknotes
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6486327Z b84bc69f1cbd: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6497889Z 5b3013706a46: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6511545Z 08d5687b2bde: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6522081Z 451a64956ffd: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6535336Z 9d2753d762cc: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6546410Z 2780920e5dbf: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6556737Z 7c12895b777b: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6568186Z 3214acf345c0: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6579753Z 52630fc75a18: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6589561Z dd64bf2dd177: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6598898Z b839dfae01f6: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6608380Z 411e1c946a02: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6618563Z 0dab866abc12: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6628336Z a9f29031c4e3: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6640193Z 6740b73d1c77: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.6649708Z dd99966c08ef: Already exists
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.8609034Z Digest: sha256:d9f659526c98b9b5e795e65b661764295a6dd5ff2b29a5fc196f63ff25705a64
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.8619298Z Status: Downloaded newer image for ghcr.io/4rni4ka/devops-intro/quicknotes:v0.1.3
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.8626833Z ghcr.io/4rni4ka/devops-intro/quicknotes:v0.1.3
+publish	Verify anonymous clean pull	2026-11-04T11:08:05.8788214Z ["ghcr.io/4rni4ka/devops-intro/quicknotes@sha256:d9f659526c98b9b5e795e65b661764295a6dd5ff2b29a5fc196f63ff25705a64"]
+publish	Trigger Render deployment of this version	﻿2026-11-04T11:08:05.8839874Z ##[group]Run if [ -z "$RENDER_DEPLOY_HOOK" ]; then
+publish	Trigger Render deployment of this version	2026-11-04T11:08:05.8840288Z ^[[36;1mif [ -z "$RENDER_DEPLOY_HOOK" ]; then^[[0m
+publish	Trigger Render deployment of this version	2026-11-04T11:08:05.8840752Z ^[[36;1m  echo '::notice::Set RENDER_DEPLOY_HOOK after creating the Free image-backed service.'^[[0m
+publish	Trigger Render deployment of this version	2026-11-04T11:08:05.8841185Z ^[[36;1m  exit 0^[[0m
+publish	Trigger Render deployment of this version	2026-11-04T11:08:05.8841698Z ^[[36;1mfi^[[0m
+publish	Trigger Render deployment of this version	2026-11-04T11:08:05.8842144Z ^[[36;1mcurl --fail --silent --show-error --max-time 120 \^[[0m
+publish	Trigger Render deployment of this version	2026-11-04T11:08:05.8842590Z ^[[36;1m  --get --data-urlencode "imgURL=$IMAGE:$GITHUB_REF_NAME" \^[[0m
+publish	Trigger Render deployment of this version	2026-11-04T11:08:05.8843007Z ^[[36;1m  "$RENDER_DEPLOY_HOOK" > /tmp/render-deploy.json^[[0m
+publish	Trigger Render deployment of this version	2026-11-04T11:08:05.8843683Z ^[[36;1mpython3 -c 'import json; d=json.load(open("/tmp/render-deploy.json")); print("Render accepted deploy:", d.get("deploy", d).get("id", "queued"))'^[[0m
+publish	Trigger Render deployment of this version	2026-11-04T11:08:05.8863557Z shell: /usr/bin/bash -e {0}
+publish	Trigger Render deployment of this version	2026-11-04T11:08:05.8863808Z env:
+publish	Trigger Render deployment of this version	2026-11-04T11:08:05.8864040Z   IMAGE: ghcr.io/4rni4ka/devops-intro/quicknotes
+publish	Trigger Render deployment of this version	2026-11-04T11:08:05.8864629Z   RENDER_DEPLOY_HOOK: ***
+publish	Trigger Render deployment of this version	2026-11-04T11:08:05.8864881Z ##[endgroup]
+publish	Trigger Render deployment of this version	2026-11-04T11:08:07.7979336Z Render accepted deploy: dep-dblh45oae00c73c83p90
+publish	Post Check out tagged source	﻿2026-11-04T11:08:07.8151081Z Post job cleanup.
+publish	Post Check out tagged source	2026-11-04T11:08:07.9064499Z [command]/usr/bin/git version
+publish	Post Check out tagged source	2026-11-04T11:08:07.9115424Z git version 2.56.0
+publish	Post Check out tagged source	2026-11-04T11:08:07.9159759Z Temporarily overriding HOME='/home/runner/work/_temp/4668c018-dffe-4aac-b03b-bf212db81e6b' before making global git config changes
+publish	Post Check out tagged source	2026-11-04T11:08:07.9160793Z Adding repository directory to the temporary git global config as a safe directory
+publish	Post Check out tagged source	2026-11-04T11:08:07.9166077Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/DevOps-Intro/DevOps-Intro
+publish	Post Check out tagged source	2026-11-04T11:08:07.9205414Z Removing SSH command configuration
+publish	Post Check out tagged source	2026-11-04T11:08:07.9212941Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+publish	Post Check out tagged source	2026-11-04T11:08:07.9254630Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+publish	Post Check out tagged source	2026-11-04T11:08:07.9517318Z Removing HTTP extra header
+publish	Post Check out tagged source	2026-11-04T11:08:07.9523831Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+publish	Post Check out tagged source	2026-11-04T11:08:07.9566536Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+publish	Post Check out tagged source	2026-11-04T11:08:07.9844535Z Removing includeIf entries pointing to credentials config files
+publish	Post Check out tagged source	2026-11-04T11:08:07.9852700Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+publish	Post Check out tagged source	2026-11-04T11:08:07.9903019Z includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path
+publish	Post Check out tagged source	2026-11-04T11:08:07.9904184Z includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path
+publish	Post Check out tagged source	2026-11-04T11:08:07.9905179Z includeif.gitdir:/github/workspace/.git.path
+publish	Post Check out tagged source	2026-11-04T11:08:07.9906056Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+publish	Post Check out tagged source	2026-11-04T11:08:07.9914245Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path
+publish	Post Check out tagged source	2026-11-04T11:08:07.9956436Z /home/runner/work/_temp/git-credentials-fd3cbd7c-2c6d-489f-bbd9-ed0240276438.config
+publish	Post Check out tagged source	2026-11-04T11:08:07.9971207Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-fd3cbd7c\-2c6d\-489f\-bbd9\-ed0240276438\.config
+publish	Post Check out tagged source	2026-11-04T11:08:08.0029610Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path
+publish	Post Check out tagged source	2026-11-04T11:08:08.0088629Z /home/runner/work/_temp/git-credentials-fd3cbd7c-2c6d-489f-bbd9-ed0240276438.config
+publish	Post Check out tagged source	2026-11-04T11:08:08.0097916Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/DevOps-Intro/DevOps-Intro/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-fd3cbd7c\-2c6d\-489f\-bbd9\-ed0240276438\.config
+publish	Post Check out tagged source	2026-11-04T11:08:08.0155398Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+publish	Post Check out tagged source	2026-11-04T11:08:08.0194990Z /github/runner_temp/git-credentials-fd3cbd7c-2c6d-489f-bbd9-ed0240276438.config
+publish	Post Check out tagged source	2026-11-04T11:08:08.0206514Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-fd3cbd7c\-2c6d\-489f\-bbd9\-ed0240276438\.config
+publish	Post Check out tagged source	2026-11-04T11:08:08.0267662Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+publish	Post Check out tagged source	2026-11-04T11:08:08.0310084Z /github/runner_temp/git-credentials-fd3cbd7c-2c6d-489f-bbd9-ed0240276438.config
+publish	Post Check out tagged source	2026-11-04T11:08:08.0320693Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-fd3cbd7c\-2c6d\-489f\-bbd9\-ed0240276438\.config
+publish	Post Check out tagged source	2026-11-04T11:08:08.0377955Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+publish	Post Check out tagged source	2026-11-04T11:08:08.0652577Z Removing credentials config '/home/runner/work/_temp/git-credentials-fd3cbd7c-2c6d-489f-bbd9-ed0240276438.config'
+publish	Complete job	﻿2026-11-04T11:08:08.0822542Z Cleaning up orphan processes

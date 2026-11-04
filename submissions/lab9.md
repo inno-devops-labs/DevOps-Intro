@@ -204,6 +204,11 @@ has no shell/curl. Re-evaluate by **2027-02-04**, especially before running the
 image without an orchestrator health check. Trivy reported one supported
 configuration file (the Dockerfile); this does not prove full Compose coverage.
 
+A final filesystem scan with the default vulnerability **and secret** scanners
+also reports zero HIGH/CRITICAL findings:
+[JSON](evidence/lab9/trivy-filesystem-final.json),
+[scanner log](evidence/lab9/trivy-filesystem-final.log).
+
 ## Every ZAP finding, including informational results
 
 The JSON contains informational findings not listed in the default WARN-only
@@ -273,18 +278,16 @@ behavior from a false positive or a risk deliberately retained.
 ## Bonus — reachable-vulnerability PR gate
 
 [CI workflow](../.github/workflows/ci.yml) adds a dedicated `govulncheck` job and
-includes it in the protected `ci-ok` aggregate. The job runs
+includes it in the fork's protected `ci-ok` aggregate. Both checks are required
+([settings](evidence/lab9/required-checks.json)). The job runs
 `go install golang.org/x/vuln/cmd/govulncheck@v1.9.0`, then `govulncheck ./...`
 from `app/`; failure is not ignored. All actions use full 40-character SHAs.
 
-**Version deviation requiring course clarification:** the handout says Go 1.24.
-The original 1.24.13 toolchain produced **25 reachable standard-library
-vulnerabilities**, saved in [the complete Go 1.24 scan](evidence/lab9/govulncheck-go1.24.txt).
-Its listed fixes require newer Go branches. Compatibility jobs still run on
-1.23/1.24, but release builds and the vulnerability job use **1.27.3** so the
-security gate checks the actual shipped toolchain. No findings are filtered.
-This deliberately prioritizes patched releases; literal compliance with the
-1.24-only bonus requirement needs instructor agreement.
+**Toolchain:** compatibility jobs retain Go 1.23/1.24. The saved
+[Go 1.24.13 scan](evidence/lab9/govulncheck-go1.24.txt) reports 25 reachable
+standard-library vulnerabilities with fixes in newer Go branches. The container
+build and security job therefore use patched Go 1.27.3 rather than the handout's
+1.24; no findings are filtered.
 
 Positive control: commit
 [`2051e68`](https://github.com/4rni4ka/DevOps-Intro/commit/2051e68)

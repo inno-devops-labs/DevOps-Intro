@@ -1,0 +1,379 @@
+probe	Set up job	﻿2026-11-04T11:09:49.4389966Z Current runner version: '2.338.2'
+probe	Set up job	2026-11-04T11:09:49.4416302Z ##[group]Runner Image Provisioner
+probe	Set up job	2026-11-04T11:09:49.4417156Z Hosted Compute Agent
+probe	Set up job	2026-11-04T11:09:49.4417948Z Version: 20261021.618
+probe	Set up job	2026-11-04T11:09:49.4418541Z Commit: 21505ad2541d5be6135ed84fc33697146cf75b8e
+probe	Set up job	2026-11-04T11:09:49.4419195Z Build Date: 2026-10-21T00:45:21Z
+probe	Set up job	2026-11-04T11:09:49.4419897Z Worker ID: {aa48db23-fe53-4980-92d1-57c14d9eec0e}
+probe	Set up job	2026-11-04T11:09:49.4420541Z Region: eastus3
+probe	Set up job	2026-11-04T11:09:49.4421048Z Cloud: Azure
+probe	Set up job	2026-11-04T11:09:49.4421612Z ##[endgroup]
+probe	Set up job	2026-11-04T11:09:49.4423042Z ##[group]Operating System
+probe	Set up job	2026-11-04T11:09:49.4423693Z Ubuntu
+probe	Set up job	2026-11-04T11:09:49.4424164Z 24.04.5
+probe	Set up job	2026-11-04T11:09:49.4424634Z LTS
+probe	Set up job	2026-11-04T11:09:49.4425121Z ##[endgroup]
+probe	Set up job	2026-11-04T11:09:49.4425702Z ##[group]Runner Image
+probe	Set up job	2026-11-04T11:09:49.4426282Z Image: ubuntu-24.04
+probe	Set up job	2026-11-04T11:09:49.4426807Z Version: 20261025.353.1
+probe	Set up job	2026-11-04T11:09:49.4427911Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261025.353/images/ubuntu/Ubuntu2404-Readme.md
+probe	Set up job	2026-11-04T11:09:49.4429629Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261025.353
+probe	Set up job	2026-11-04T11:09:49.4430526Z ##[endgroup]
+probe	Set up job	2026-11-04T11:09:49.4431580Z ##[group]GITHUB_TOKEN Permissions
+probe	Set up job	2026-11-04T11:09:49.4433563Z Contents: read
+probe	Set up job	2026-11-04T11:09:49.4434121Z Metadata: read
+probe	Set up job	2026-11-04T11:09:49.4435129Z ##[endgroup]
+probe	Set up job	2026-11-04T11:09:49.4438017Z Secret source: Actions
+probe	Set up job	2026-11-04T11:09:49.4438906Z Cache mode: write
+probe	Set up job	2026-11-04T11:09:49.4439893Z Prepare workflow directory
+probe	Set up job	2026-11-04T11:09:49.4779326Z Prepare all required actions
+probe	Set up job	2026-11-04T11:09:49.4882490Z Complete job name: probe
+probe	Verify public endpoint and benchmark from a different machine	﻿2026-11-04T11:09:49.5892248Z ##[group]Run [[ "$TUNNEL_URL" =~ ^https://[a-z0-9-]+\.trycloudflare\.com$ ]]
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5893372Z ^[[36;1m[[ "$TUNNEL_URL" =~ ^https://[a-z0-9-]+\.trycloudflare\.com$ ]]^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5894158Z ^[[36;1msudo apt-get update -qq^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5894918Z ^[[36;1msudo apt-get install -y hyperfine^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5895615Z ^[[36;1mhyperfine --version^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5896492Z ^[[36;1mcurl --fail --silent --show-error --max-time 120 "$TUNNEL_URL/health" | tee health.json^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5897921Z ^[[36;1mpython3 -c 'import json; assert json.load(open("health.json"))["status"] == "ok"'^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5899020Z ^[[36;1mhyperfine --warmup 5 --runs 50 --export-json tunnel-remote.json \^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5900093Z ^[[36;1m  "curl --fail --silent --show-error --max-time 120 --output /dev/null $TUNNEL_URL/health"^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5900976Z ^[[36;1mif [ -n "$RENDER_URL" ]; then^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5901698Z ^[[36;1m  [[ "$RENDER_URL" =~ ^https://[a-z0-9-]+\.onrender\.com$ ]]^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5902886Z ^[[36;1m  curl --fail --silent --show-error --max-time 180 "$RENDER_URL/health" | tee render-health.json^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5904095Z ^[[36;1m  python3 -c 'import json; assert json.load(open("render-health.json"))["status"] == "ok"'^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5905172Z ^[[36;1m  hyperfine --warmup 5 --runs 50 --export-json render-remote.json \^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5906240Z ^[[36;1m    "curl --fail --silent --show-error --max-time 180 --output /dev/null $RENDER_URL/health"^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5907083Z ^[[36;1mfi^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5907733Z ^[[36;1mpython3 - <<'PY'^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5908356Z ^[[36;1mimport json, math, statistics^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5909109Z ^[[36;1mresult = json.load(open('tunnel-remote.json'))['results'][0]^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5910067Z ^[[36;1msamples = sorted(result['times'] if 'times' in result else^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5910979Z ^[[36;1m                 [x['time_wall_clock']['value'] for x in result['measurements']])^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5911946Z ^[[36;1mprint('p50 seconds:', statistics.median(samples))^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5913393Z ^[[36;1mprint('p95 seconds:', samples[math.ceil(0.95 * len(samples)) - 1])^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5914822Z ^[[36;1mprint('Raw hyperfine JSON:')^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5915541Z ^[[36;1mprint(open('tunnel-remote.json').read())^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5916488Z ^[[36;1mfrom pathlib import Path^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5917171Z ^[[36;1mif Path('render-remote.json').exists():^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5918169Z ^[[36;1m    result = json.load(open('render-remote.json'))['results'][0]^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5919028Z ^[[36;1m    samples = sorted(result['times'] if 'times' in result else^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5919955Z ^[[36;1m                     [x['time_wall_clock']['value'] for x in result['measurements']])^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5920850Z ^[[36;1m    print('Render p50 seconds:', statistics.median(samples))^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5921751Z ^[[36;1m    print('Render p95 seconds:', samples[math.ceil(0.95 * len(samples)) - 1])^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5922694Z ^[[36;1m    print('Raw Render hyperfine JSON:')^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5923411Z ^[[36;1m    print(open('render-remote.json').read())^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.5924079Z ^[[36;1mPY^[[0m
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.6225552Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.6226640Z env:
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.6227769Z   TUNNEL_URL: https://assured-opposed-leather-belief.trycloudflare.com
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.6228771Z   RENDER_URL: https://quicknotes-4rni4ka.onrender.com
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:49.6229460Z ##[endgroup]
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:54.6863940Z Reading package lists...
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:54.9310574Z Building dependency tree...
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:54.9315562Z Reading state information...
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.1665546Z The following NEW packages will be installed:
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.1679458Z   hyperfine
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.1883020Z 0 upgraded, 1 newly installed, 0 to remove and 16 not upgraded.
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.1884073Z Need to get 527 kB of archives.
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.1885059Z After this operation, 1346 kB of additional disk space will be used.
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.1885662Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.2454551Z Get:2 http://azure.archive.ubuntu.com/ubuntu noble/universe amd64 hyperfine amd64 1.18.0-2build1 [527 kB]
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.5741682Z Fetched 527 kB in 0s (4395 kB/s)
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.5955744Z Selecting previously unselected package hyperfine.
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.6134538Z (Reading database ...
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.6135538Z (Reading database ... 5%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.6136226Z (Reading database ... 10%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.6136874Z (Reading database ... 15%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.6137287Z (Reading database ... 20%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.6137981Z (Reading database ... 25%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.6138548Z (Reading database ... 30%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.6138928Z (Reading database ... 35%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.6139310Z (Reading database ... 40%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.6139753Z (Reading database ... 45%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.6140132Z (Reading database ... 50%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.6187966Z (Reading database ... 55%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.7303897Z (Reading database ... 60%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:55.9336210Z (Reading database ... 65%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:56.1234703Z (Reading database ... 70%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:56.3308545Z (Reading database ... 75%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:56.4705833Z (Reading database ... 80%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:56.6230605Z (Reading database ... 85%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:56.7208739Z (Reading database ... 90%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:56.8781387Z (Reading database ... 95%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:56.8782491Z (Reading database ... 100%
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:56.8783273Z (Reading database ... 215504 files and directories currently installed.)
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:56.8828167Z Preparing to unpack .../hyperfine_1.18.0-2build1_amd64.deb ...
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:56.8852614Z Unpacking hyperfine (1.18.0-2build1) ...
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:56.9265261Z Setting up hyperfine (1.18.0-2build1) ...
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:56.9298566Z Processing triggers for man-db (2.12.0-4build2) ...
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:56.9323643Z Not building database; man-db/auto-update is not 'true'.
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:57.5012704Z
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:57.5013672Z Running kernel seems to be up-to-date.
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:57.5014173Z
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:57.5014428Z No services need to be restarted.
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:57.5014760Z
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:57.5015090Z No containers need to be restarted.
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:57.5015766Z
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:57.5015966Z No user sessions are running outdated binaries.
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:57.5016243Z
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:57.5016508Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:58.6043365Z hyperfine 1.18.0
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:59.4272615Z {"notes":4,"status":"ok"}
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:09:59.4797424Z Benchmark 1: curl --fail --silent --show-error --max-time 120 --output /dev/null https://assured-opposed-leather-belief.trycloudflare.com/health
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:22.4262474Z
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:22.4263635Z   Warning: Statistical outliers were detected. Consider re-running this benchmark on a quiet system without any interferences from other programs. It might help to use the '--warmup' or '--prepare' options.
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:22.4364461Z   Time (mean ± σ):     417.0 ms ± 173.0 ms    [User: 24.9 ms, System: 4.7 ms]
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:22.4365469Z   Range (min … max):   311.6 ms … 1191.9 ms    50 runs
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:22.4366068Z
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:22.8052638Z {"notes":4,"status":"ok"}
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:22.8581785Z Benchmark 1: curl --fail --silent --show-error --max-time 180 --output /dev/null https://quicknotes-4rni4ka.onrender.com/health
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.6740528Z
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.6741987Z   Time (mean ± σ):     175.6 ms ±  58.7 ms    [User: 24.3 ms, System: 5.0 ms]
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.6744882Z   Warning: Statistical outliers were detected. Consider re-running this benchmark on a quiet system without any interferences from other programs. It might help to use the '--warmup' or '--prepare' options.
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.6747232Z   Range (min … max):   147.2 ms … 359.3 ms    50 runs
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7048101Z
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7049226Z p50 seconds: 0.32853693224
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7050237Z p95 seconds: 0.7929707677400001
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7050964Z Raw hyperfine JSON:
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7051700Z {
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7052708Z   "results": [
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7053252Z     {
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7054600Z       "command": "curl --fail --silent --show-error --max-time 120 --output /dev/null https://assured-opposed-leather-belief.trycloudflare.com/health",
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7055970Z       "mean": 0.4170072488200002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7056694Z       "stddev": 0.17300449783381966,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7057394Z       "median": 0.32853693224,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7058267Z       "user": 0.024864599999999997,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7058965Z       "system": 0.00470834,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7059571Z       "min": 0.31162134274000003,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7060186Z       "max": 1.1919176897400001,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7060820Z       "times": [
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7061302Z         0.32766666774000003,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7061835Z         0.39865555574,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7062316Z         0.52926466474,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7062747Z         0.54326433874,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7063317Z         0.33202224074000003,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7063822Z         0.31800559474,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7064317Z         0.39865644974000003,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7064807Z         0.44528360774000003,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7065282Z         0.31938745074,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7066438Z         0.32425687974,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7067030Z         0.33926909174000003,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7067814Z         0.34631255274,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7068430Z         0.31903393174,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7068931Z         0.31663795874,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7069503Z         0.33076514374,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7069954Z         0.33116506874,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7070396Z         0.31663209474,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7070964Z         0.53470130274,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7071419Z         0.31532515474,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7071900Z         0.33129510474,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7072392Z         0.32879693174,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7072843Z         0.51217442574,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7073333Z         0.49087171374,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7074007Z         0.31162134274000003,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7074543Z         0.32088920574,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7075061Z         0.32027954074,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7075497Z         0.31784414174000003,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7076413Z         0.32399240774,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7076898Z         0.59310024774,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7077364Z         0.32315657774,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7078116Z         0.7929707677400001,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7078619Z         0.7422794207400001,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7079144Z         1.1919176897400001,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7079678Z         0.82927361474,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7080205Z         0.46575420474,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7080775Z         0.48802736174,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7081231Z         0.32827693274,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7081741Z         0.31967248574,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7082251Z         0.31590686374,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7082678Z         0.32694100174,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7083218Z         0.32025643374,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7083666Z         0.34572780174,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7084204Z         0.5418562557400001,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7084832Z         0.32528646174,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7085294Z         0.32819525674,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7085894Z         0.64479823674,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7086415Z         0.32105398874,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7087014Z         0.32052241274,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7087718Z         0.32321301074000003,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7088215Z         0.31810484874
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7088738Z       ],
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7089164Z       "exit_codes": [
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7089636Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7090249Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7090667Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7091139Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7091526Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7091899Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7092399Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7092812Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7093381Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7093791Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7094427Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7094901Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7095357Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7095764Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7096191Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7096605Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7097082Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7097603Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7097960Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7098547Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7098963Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7099376Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7099734Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7100118Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7100531Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7100912Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7101336Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7101707Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7102077Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7102458Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7102805Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7103185Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7103622Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7103999Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7104409Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7104808Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7105245Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7105720Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7106139Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7106581Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7106972Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7107341Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7107877Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7108144Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7108396Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7108686Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7108999Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7109271Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7109528Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7109771Z         0
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7110199Z       ]
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7111001Z     }
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7111388Z   ]
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7111745Z }
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7112013Z
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7112146Z Render p50 seconds: 0.15612594674000002
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7112533Z Render p95 seconds: 0.34797424174
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7112929Z Raw Render hyperfine JSON:
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7113235Z {
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7113492Z   "results": [
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7113779Z     {
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7114710Z       "command": "curl --fail --silent --show-error --max-time 180 --output /dev/null https://quicknotes-4rni4ka.onrender.com/health",
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7115794Z       "mean": 0.17560103926000004,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7116351Z       "stddev": 0.05868348305371921,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7116867Z       "median": 0.15612594674000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7117651Z       "user": 0.0242765,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7118030Z       "system": 0.005008019999999999,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7118387Z       "min": 0.14716800374000003,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7118703Z       "max": 0.35931465674,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7118999Z       "times": [
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7119310Z         0.15194225574,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7119601Z         0.15190848674000001,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7119927Z         0.16354039274,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7120225Z         0.15333007074000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7120524Z         0.15092926474,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7120861Z         0.15397703974000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7121180Z         0.14828131174,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7121471Z         0.15814895774,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7121759Z         0.15838820974,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7122041Z         0.35097660274,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7122339Z         0.15489208774000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7122631Z         0.16086331374,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7122916Z         0.15143680174000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7123244Z         0.15991071774,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7123521Z         0.15801471674,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7123851Z         0.16194849274,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7124154Z         0.15584538374,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7124418Z         0.16085863174,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7124720Z         0.14837147474,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7124999Z         0.15189974674,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7125287Z         0.33866953874,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7125587Z         0.16066145574000001,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7125906Z         0.15304066274,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7126220Z         0.16326336174,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7126504Z         0.15335257574000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7126854Z         0.15587805374000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7127325Z         0.14935753674000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7127831Z         0.15670553174000001,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7128159Z         0.15322618674000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7128454Z         0.35931465674,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7128722Z         0.15114211774000003,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7129066Z         0.15158101874000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7129363Z         0.19255511674,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7129644Z         0.15308344074000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7129949Z         0.15812461774,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7130231Z         0.14716800374000003,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7130605Z         0.16121369974000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7130905Z         0.34602402274,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7131189Z         0.15747427574,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7131489Z         0.15611650974000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7131788Z         0.34797424174,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7132105Z         0.15613538374000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7132395Z         0.16452954174,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7132658Z         0.15606285674,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7132970Z         0.15326913774,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7133253Z         0.14802461974,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7133620Z         0.16317864674000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7133920Z         0.15119191174000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7134213Z         0.15676237174000002,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7134545Z         0.15950690774
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7134829Z       ],
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7234833Z       "exit_codes": [
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7235360Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7235543Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7235743Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7235918Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7236090Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7236263Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7236427Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7236597Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7236764Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7236939Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7237109Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7237276Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7237631Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7237844Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7238009Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7238181Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7238380Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7238548Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7238709Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7238882Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7239064Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7239232Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7239400Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7239566Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7240049Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7240230Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7240406Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7240578Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7240745Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7240916Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7241085Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7241255Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7241418Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7241590Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7241769Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7241939Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7242107Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7242277Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7242448Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7242621Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7242794Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7242977Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7243145Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7243310Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7243476Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7243647Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7243824Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7243989Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7244162Z         0,
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7244334Z         0
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7244518Z       ]
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7244697Z     }
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7244867Z   ]
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7245034Z }
+probe	Verify public endpoint and benchmark from a different machine	2026-11-04T11:10:32.7245133Z
+probe	Complete job	﻿2026-11-04T11:10:32.7398367Z Cleaning up orphan processes

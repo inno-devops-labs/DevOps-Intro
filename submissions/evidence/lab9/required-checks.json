@@ -1,0 +1,1 @@
+{"checks":[{"app_id":15368,"context":"ci-ok"},{"app_id":15368,"context":"govulncheck"}],"contexts":["ci-ok","govulncheck"],"strict":true}

@@ -1,0 +1,46 @@
+{
+  "url": "https://quicknotes-4rni4ka.onrender.com",
+  "started_utc": "2026-11-04T11:11:34.125639+00:00",
+  "warm": [
+    {
+      "status": 200,
+      "seconds": 0.5487285999988671,
+      "body": "{\"notes\":4,\"status\":\"ok\"}\n"
+    },
+    {
+      "status": 200,
+      "seconds": 0.3136510000040289,
+      "body": "{\"notes\":4,\"status\":\"ok\"}\n"
+    },
+    {
+      "status": 200,
+      "seconds": 0.31206110000493936,
+      "body": "{\"notes\":4,\"status\":\"ok\"}\n"
+    },
+    {
+      "status": 200,
+      "seconds": 0.3263433999964036,
+      "body": "{\"notes\":4,\"status\":\"ok\"}\n"
+    },
+    {
+      "status": 200,
+      "seconds": 0.5183002999983728,
+      "body": "{\"notes\":4,\"status\":\"ok\"}\n"
+    }
+  ],
+  "warm_p50_seconds": 0.3263433999964036,
+  "warm_p95_seconds": 0.5487285999988671,
+  "cold": [
+    {
+      "cycle": 1,
+      "created_note": {
+        "id": 5,
+        "title": "sleep-probe-d1c0a7a60ea6476096ad61c937945649",
+        "body": "disposable lab probe",
+        "created_at": "2026-11-04T11:11:37.454029678Z"
+      },
+      "idle_seconds": 1260,
+      "idle_started_utc": "2026-11-04T11:11:37.528645+00:00"
+    }
+  ]
+}

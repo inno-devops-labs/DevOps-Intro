@@ -72,11 +72,19 @@ def main():
         if created["status"] != 201:
             raise RuntimeError(f"Creating note failed: {created}")
         note = json.loads(created["body"])
-        observation = {"cycle": cycle, "created_note": note, "idle_seconds": args.idle_seconds}
+        observation = {
+            "cycle": cycle,
+            "created_note": note,
+            "idle_seconds": args.idle_seconds,
+            "idle_started_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
+        }
         result["cold"].append(observation)
         save(args.output, result)
         print(f"Cycle {cycle}: no requests for {args.idle_seconds} seconds", flush=True)
+        idle_started = time.perf_counter()
         time.sleep(args.idle_seconds)
+        observation["idle_elapsed_seconds"] = time.perf_counter() - idle_started
+        observation["wake_requested_utc"] = dt.datetime.now(dt.timezone.utc).isoformat()
         started = time.perf_counter()
         observation["first_response"] = request(args.url, "/health")
         current = observation["first_response"]

@@ -1,0 +1,5 @@
+2026-11-04T16:12:11+05:00	INFO	[vuln] Vulnerability scanning is enabled
+2026-11-04T16:12:22+05:00	INFO	Detected OS	family="debian" version="13.7"
+2026-11-04T16:12:22+05:00	INFO	[debian] Detecting vulnerabilities...	os_version="13" pkg_num=6
+2026-11-04T16:12:22+05:00	INFO	Number of language-specific files	num=1
+2026-11-04T16:12:22+05:00	INFO	[gobinary] Detecting vulnerabilities...

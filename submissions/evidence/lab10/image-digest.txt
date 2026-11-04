@@ -1,0 +1,1 @@
+["ghcr.io/4rni4ka/devops-intro/quicknotes@sha256:d9f659526c98b9b5e795e65b661764295a6dd5ff2b29a5fc196f63ff25705a64"]

@@ -1,165 +1,148 @@
-# Lab 10 — QuickNotes release and cloud deployment
+# Lab 10 — QuickNotes on GHCR, Render and Cloudflare Tunnel
 
-Date: 2026-11-04. Uses the updated Render version of Task 2 from upstream
-`bad2887`, including CI deploy hook and note-persistence checks. The fork includes
-the Lab 3 CI and Lab 9 hardened Lab 6 container prerequisites.
+Date: 2026-11-04. Uses the current Render version of Task 2, including a CI deploy
+hook and checking notes after spin-down. 0/3 idle/wake cycles are recorded; the remaining measurements are in progress.
 
-## Execution status
+## Task 1 — tagged CI publication
 
-| Requirement | Status |
-|---|---|
-| Tag-triggered GHCR release workflow, both tags, minimum permissions, SHA-pinned actions | Implemented; live release evidence pending below |
-| Public anonymous pull | Pending first publication and package visibility check |
-| Render Free service, explicit port, health check, CI deploy hook | Configuration prepared; blocked on Render sign-in |
-| Five warm requests, three 20+ minute idle/cold cycles, note loss after sleep | Not measured: needs a live Render service |
-| Quick tunnel | Public `/health` verified locally; 50 warm hyperfine samples captured |
-| Different-machine tunnel benchmark | Workflow prepared; remote run pending |
-| Design questions a–i and teardown | Answered / documented |
+[release.yml](../.github/workflows/release.yml) runs on a `v*` tag and validates
+`vMAJOR.MINOR.PATCH`. It tests QuickNotes, builds `linux/amd64` from `app/`, pushes
+version and latest tags, verifies an anonymous clean pull, then calls Render.
+Only the publishing job has `packages: write`; checkout has `contents: read`.
+Authentication uses the repository's `GITHUB_TOKEN`. The single third-party
+action is pinned to its full 40-character SHA. Existing version images are
+reused only if their revision label matches the tagged source; rerunning a
+release does not rebuild/overwrite its version image. `latest` remains mutable.
 
-Incomplete measurements are left explicit; no cold-start or note-loss values are
-inferred from documentation.
+- Signed release tag: [`v0.1.3`](https://github.com/4rni4ka/DevOps-Intro/tree/v0.1.3), on the fork's `main` commit `6f9920dfa9a751d651396d1869bc29b6637c4d69`.
+- Registry: `ghcr.io/4rni4ka/devops-intro/quicknotes:v0.1.3` and `ghcr.io/4rni4ka/devops-intro/quicknotes:latest`.
+- Digest: `sha256:d9f659526c98b9b5e795e65b661764295a6dd5ff2b29a5fc196f63ff25705a64`.
+- [Green release run](https://github.com/4rni4ka/DevOps-Intro/actions/runs/41818708980), [full log](evidence/lab10/release-v0.1.3.txt), [tag signature verification](evidence/lab10/tag-signature.txt).
+- [Clean anonymous pull from this machine](evidence/lab10/anonymous-pull.txt), using an empty Docker configuration. CI also removes both local tags and pulls the version with a new empty `DOCKER_CONFIG`; neither check relies on registry login credentials.
+- The final published image was also scanned with pinned Trivy 0.71.1: [JSON](evidence/lab10/trivy-release.json), [CycloneDX SBOM](evidence/lab10/quicknotes-release.cdx.json). No HIGH/CRITICAL findings were reported. Remote `linux/amd64` analysis avoids a Docker image-store export issue.
 
-## Task 1 — release pipeline
+**a)** `GITHUB_TOKEN` with package write access is sufficient for this repo's GHCR
+package. Use OIDC for an external cloud role: the provider checks issuer,
+audience and repository/ref claims, then issues short-lived credentials. This
+avoids storing a long-lived cloud key and limits trust to selected workflows.
 
-[release.yml](../.github/workflows/release.yml) runs on a `v*` tag, validates
-`vMAJOR.MINOR.PATCH`, verifies the tagged source is on `origin/main`, tests the
-app, builds `linux/amd64` from `app/`, and pushes:
+**b)** `latest` is a convenient default/discovery channel. Version tags provide
+named releases and rollback targets, but a registry can still overwrite a tag;
+the workflow guards reruns and the recorded digest is the strict content
+identity. Render's hook explicitly selects the new version.
 
-- `ghcr.io/4rni4ka/devops-intro/quicknotes:v0.1.1`
-- `ghcr.io/4rni4ka/devops-intro/quicknotes:latest`
+**c)** Least privilege limits the effect of a compromised action or build step.
+This publisher cannot use `contents: write` to alter source, Git tags or releases,
+or broadly modify repository resources as `write-all` would allow. It can still
+write packages, so image poisoning is within the remaining token's capabilities.
 
-Only the publishing job has `packages: write`; checkout needs `contents: read`.
-It authenticates with the repository-scoped `GITHUB_TOKEN`. The sole third-party
-action is pinned by a full 40-character SHA. Docker build/login/push use the
-runner's CLI directly. Source, revision and version OCI labels connect the image
-to the repository. The version tag is a release identifier and must never be
-reused; the recorded registry digest is the content identity.
+## Task 2 — Render Free and CI redeployment
 
-After pushing both tags, the workflow removes them locally and pulls the version
-with a new, empty `DOCKER_CONFIG`. This proves anonymous access rather than
-accidentally reusing cached registry credentials. On first publication GitHub
-may require changing package visibility to public before rerunning this step.
-Green run URL, tag signature, digest and clean-pull log will be added only after
-they exist.
+Public service: [https://quicknotes-4rni4ka.onrender.com](https://quicknotes-4rni4ka.onrender.com).
+Option A was used: Render accepted Free without a card, so Codespaces was not
+needed. [Configuration](../cloud/render.md): Existing Image, **Free**, Frankfurt,
+`PORT=10000`, `ADDR=:10000`, health check `/health`; image defaults provide
+`DATA_PATH=/data/notes.json` and `SEED_PATH=/seed.json`. No persistent disk is
+attached. The application was not changed for port discovery.
 
-**a)** `GITHUB_TOKEN` is enough for GHCR attached to this repository. OIDC is useful
-when Actions must authenticate to an external cloud role or identity system:
-the provider validates issuer, audience and repository/ref claims and exchanges
-them for short-lived credentials. This removes stored long-lived cloud keys and
-allows trust to be limited to selected repositories/environments. It does not
-automatically replace GHCR's package authorization.
+The service was created from v0.1.1, then **a new v0.1.3 tag** triggered the
+release workflow, published the image and redeployed Render through its hook.
+The hook is stored only as `RENDER_DEPLOY_HOOK` in Actions Secrets. The step
+URL-encodes `imgURL`, keeping the host/image path identical and changing the tag.
+An accepted hook is followed by observing the deployment live and testing JSON;
+hook acceptance alone is not treated as application readiness.
 
-**b)** `latest` is a convenient discovery/default channel for humans and demos.
-Version tags support repeatable deployments and rollback; consumers needing
-strict immutability should pin the digest because registries can also overwrite
-version tags unless policy prevents it. The Render hook selects the new version,
-not an ambiguous latest value.
+- Service ID: `srv-dblgvft9el5s73d15alg`.
+- Deployment: `dep-dblh45oae00c73c83p90`, **Live**, **v0.1.3**, trigger **Deploy Hook**, source `d9f6595`.
+- [Deployment screenshot](evidence/lab10/render-deploy.png) and [saved deploy log](evidence/lab10/render-deploy-log.txt).
+- Port log: `2026/11/04 11:08:14 quicknotes listening on :10000 (notes loaded: 4)`.
+- No `New primary port detected` restart occurred; the deployment took about 11.1 s.
+- [Verbose unauthenticated /health request](evidence/lab10/render-health.txt); `/notes` is also exercised by the persistence probe.
 
-**c)** Least privilege limits the damage from a compromised action or build step.
-The publishing token can read source and write packages, but cannot use
-`contents: write` to alter repository code/tags/releases or broadly modify other
-repository resources as `write-all` would allow. Package write remains a real
-capability: a compromised publisher could still poison a mutable image tag.
+### Warm and cold observations
 
-## Task 2 — Render
+[`measure.py`](../scripts/lab10/measure.py) made five immediate warm requests,
+then POSTed a uniquely named disposable note before each **21-minute no-traffic
+period**. Each wake records its first response, time until genuine QuickNotes
+JSON, and the complete notes list. The script compares both note ID and unique
+title to avoid mistaking a reseeded/reused ID for persistence.
 
-[cloud/render.md](../cloud/render.md) records the image source, **Free** instance,
-Frankfurt region, health path `/health`, `PORT=10000`, `ADDR=:10000`, and ephemeral
-`DATA_PATH=/data/notes.json`. The application code is not changed for port
-discovery. No paid plan or card is used.
+Five-request warm p50 from the Windows client:
+**0.326343 s**. Raw responses, timestamps, measured idle
+duration and note results: [render-measurements.json](evidence/lab10/render-measurements.json).
 
-Render is the intended option. The dashboard currently requires sign-in, so no
-service creation, live deployment, hook trigger, port log, `/health` curl, warm
-latency, cold latency or note-persistence result is claimed yet. If Render asks
-for a card after login, use the handout's Codespaces fallback instead.
+| Cycle | Actual idle time | First request | Until QuickNotes JSON ready | Note survived |
+|---|---:|---:|---:|---|
+| 1 | 1260 s scheduled | Waiting | Waiting | Waiting |
 
-The deploy-hook step reads `secrets.RENDER_DEPLOY_HOOK`, URL-encodes the versioned
-`imgURL`, and avoids printing the secret. The first image can be published
-before the service exists; a missing hook produces an explicit bootstrap notice.
-Task 2 additionally requires adding the hook secret and demonstrating a later
-tagged release actually redeploying the service.
+**d)** Both Render spin-down and Cloud Run scale-to-zero release idle capacity.
+Render Free prioritizes low-cost shared preview hosting; scheduling, image setup
+and process startup make its wake much slower than a tiny Go process alone.
+Cloud Run is optimized for request-driven autoscaling and offers startup controls
+and minimum instances. The observations above measure this service rather than
+assuming a platform-wide startup guarantee.
 
-[`scripts/lab10/measure.py`](../scripts/lab10/measure.py) records warm samples,
-then **three 21-minute no-traffic cycles**. It POSTs a uniquely named disposable
-note before each idle period and checks both ID and title after waking. It saves
-raw responses, first-response latency and time until genuine QuickNotes JSON is
-ready, so a Render HTML waiting page is not mistaken for a successful wake.
-Run with no external monitor/dashboard requests to the application:
+**e)** `PORT` tells the platform which listener to route to; Docker `EXPOSE` is
+metadata and does not bind a socket. `PORT=10000` and `ADDR=:10000` agree from the
+first boot. A mismatch can force port detection and an extra restart/deploy
+cycle, delaying rollout and repeating startup work. This deploy avoided it.
 
-```sh
-python scripts/lab10/measure.py render https://SERVICE.onrender.com --runs 5 --output submissions/evidence/lab10/render-measurements.json
-```
+**f)** Existing Image reuses the CI-built, scanned artifact and avoids a second
+build with potentially different tool/base inputs. Building from Git offers
+convenient setup and Render's build cache but can produce a different image.
+The digest identifies the exact artifact. Free's writable filesystem is
+ephemeral: spin-down discards runtime changes, and a new process seeds its notes
+file again. The observations above determine whether the probe note survived.
 
-**d)** Both Render spin-down and Cloud Run scale-to-zero release idle capacity,
-but their startup targets differ. Render Free is a low-cost shared preview tier:
-provisioning/scheduling, image setup and process startup can take about a minute.
-Cloud Run is designed for request-driven autoscaling, with startup optimizations
-and configurable minimum instances. A small Go process starting fast does not
-remove the hosting platform's scheduling and routing delay. Actual results must
-be measured rather than assuming either platform's marketing latency.
+## Bonus — same image via Cloudflare Tunnel
 
-**e)** `PORT` communicates the listener expected by the platform; Docker `EXPOSE`
-is image metadata, not a runtime instruction to bind or a guaranteed routing
-contract. Here `PORT=10000` and `ADDR=:10000` agree from the first boot. A mismatch
-can cause port detection and another restart/deploy cycle, lengthening rollout
-and introducing another cold start; its exact cost is not measured yet.
+[Tunnel configuration](../cloud/tunnel.md): cloudflared **2026.10.7**, HTTP/2,
+origin `http://127.0.0.1:8081`, public quick URL
+`https://assured-opposed-leather-belief.trycloudflare.com`.
+The local container runs the **same GHCR v0.1.3 digest** as Render:
+[image identity](evidence/lab10/image-digest.txt).
 
-**f)** An existing image reuses the CI-built, inspected artifact and avoids a
-second build with potentially different tools/base layers. Render building from
-Git simplifies setup and uses its build cache, but can produce a different
-artifact unless every input is pinned. Version tags need a recorded digest for
-strict identity. The expected note-loss mechanism is an ephemeral writable
-filesystem discarded on Free spin-down/redeploy; a new instance seeds its file
-again. The actual note result is still pending observation, not assumed.
-
-## Bonus — local origin through Cloudflare edge
-
-[cloud/tunnel.md](../cloud/tunnel.md) contains commands and versions. A quick
-tunnel exposes the locally rebuilt `quicknotes:lab9` image through
-`https://assured-opposed-leather-belief.trycloudflare.com`. `/health` returned
-`{"notes":4,"status":"ok"}` without credentials. This preliminary local image
-will be replaced by the public version-tagged GHCR image for the final same-image
-comparison.
-
-[hyperfine JSON](evidence/lab10/tunnel-local-hyperfine.json) and
-[summary](evidence/lab10/tunnel-local-hyperfine.txt): version 2.0.0, five warmups,
-50 measured requests, **p50 0.97791735 s**, **p95 1.4354554 s**. These were taken on
-the origin's Windows host and are labeled local; they do not satisfy the
-different-machine measurement requirement. The
-[public tunnel benchmark workflow](../.github/workflows/tunnel-probe.yml) runs
-the same test on a GitHub-hosted Ubuntu machine without GitHub authentication to
-the endpoint, and prints all raw timings in its log.
+The [independent-network benchmark](https://github.com/4rni4ka/DevOps-Intro/actions/runs/41818175008/attempts/2)
+used a GitHub-hosted Ubuntu runner, without authentication to either endpoint.
+Both `/health` responses were checked as QuickNotes JSON. Hyperfine **1.18.0**
+made five warmups and **50 measured requests per endpoint** from the same
+machine. [Runner log](evidence/lab10/tunnel-remote.txt),
+[tunnel timing JSON](evidence/lab10/tunnel-remote-hyperfine.json),
+[Render timing JSON](evidence/lab10/render-remote-hyperfine.json).
+Percentiles are median and nearest-rank p95; warmups are excluded. Curl process
+time includes DNS, connection/TLS and transfer, not only handler time.
 
 | Metric | Render | Cloudflare Tunnel |
 |---|---:|---:|
-| Warm p50 | Pending deployment | 0.97791735 s locally; independent run pending |
-| Warm p95 | Pending deployment | 1.4354554 s locally; independent run pending |
-| Cold start, 3 cycles | Pending deployment | N/A while local process is running |
-| Public URL stability | Stable service URL once created | Ephemeral; changes on restart |
-| Cost | Free plan only | Free quick tunnel |
+| Warm p50, same external runner | 0.156126 s | 0.328537 s |
+| Warm p95, same external runner | 0.347974 s | 0.792971 s |
+| Cold starts, Windows client | In progress | N/A while local process runs |
+| Public URL stability | Stable service URL | Ephemeral; changes on restart |
+| Cost | Free | Free quick tunnel |
 
-**g)** Render runs compute and the origin in its datacenter; Tunnel provides
-managed cloud ingress while the origin remains on the laptop. Both use cloud
-services, but only one outsources origin compute. Users care about availability,
-latency, durability and trust boundaries; a sleeping laptop or home connection
-still takes the tunneled API offline.
+A separate preliminary local-host control used hyperfine 2.0.0 (five warmups,
+50 runs): [JSON](evidence/lab10/tunnel-local-hyperfine.json),
+[summary](evidence/lab10/tunnel-local-hyperfine.txt). It used the earlier local
+Lab 9 build and is not substituted for the independent same-image comparison.
 
-**h)** Warm Render latency is largely client-to-region RTT/TLS and routing when
-the handler is tiny; a cold request adds platform wake time. Tunnel adds the
-client-to-Cloudflare edge path, the edge-to-home connection and the local origin.
-ISP upload, local network conditions and the laptop's load can dominate. The
-measured curl wall time also includes DNS/TLS/process startup, not just Go work.
+**g)** Render outsources origin compute to its datacenter. Tunnel provides cloud
+ingress while origin compute stays on the laptop. Both use cloud services;
+users mainly care about availability, latency and data durability. The laptop
+and its ISP remain failure points in the tunnel architecture.
 
-**i)** A managed named tunnel can be appropriate for home labs, on-prem services
-and authenticated review environments when origin availability, access control
-and network capacity are managed. An anonymous quick tunnel is useful for
-temporary demos. A personal laptop quick tunnel is unsuitable for an always-on,
-durable production notes service or sensitive unauthenticated data; no stable
-URL, origin redundancy or availability guarantee is provided.
+**h)** Warm Render latency mainly reflects client-to-region RTT/TLS and routing
+for this tiny API; a cold request adds wake time. Tunnel adds the client-to-edge
+path plus the edge-to-home connection, where ISP upload, local network and
+laptop load can dominate. The measured values also include curl startup.
 
-## Teardown and remaining evidence
+**i)** A managed named tunnel suits home labs, on-prem services and authenticated
+review environments when origin uptime, access control and network capacity are
+managed. An anonymous quick tunnel suits temporary demos. A personal laptop's
+quick tunnel is unsuitable for an always-on durable production notes service
+or sensitive unauthenticated data: no stable URL or origin redundancy exists.
 
-[cloud/teardown.md](../cloud/teardown.md) explains cleanup. Keep registry/tag
-evidence for grading. Render sign-in is the current missing input; the hook is
-to be stored directly in Actions Secrets, never pasted into this report. No
-Moodle submission for this incomplete Lab 10 is claimed.
+## Teardown
+
+[cloud/teardown.md](../cloud/teardown.md) records cleanup. Render remains on Free
+for grading; no paid upgrade or disk was selected. Quick-tunnel availability
+depends on the local client/container and ends when they stop.
