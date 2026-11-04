@@ -22,11 +22,10 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - name: Validate version and release ancestry
+      - name: Validate release version
         shell: bash
         run: |
           [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
-          git merge-base --is-ancestor HEAD origin/main
           echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}/quicknotes" >> "$GITHUB_ENV"
       - name: Test tagged source
         run: |

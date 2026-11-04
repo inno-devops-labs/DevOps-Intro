@@ -6,7 +6,7 @@
 |---|---|
 | Service | `quicknotes-4rni4ka` (or an available suffix) |
 | Source | Existing Image |
-| Image | `ghcr.io/4rni4ka/devops-intro/quicknotes:v0.1.0` |
+| Image | `ghcr.io/4rni4ka/devops-intro/quicknotes:v0.1.1` |
 | Instance | **Free**, explicitly override the preselected paid plan |
 | Region | Frankfurt |
 | Health check | `/health` |

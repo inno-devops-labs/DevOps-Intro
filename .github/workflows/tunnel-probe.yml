@@ -1,6 +1,9 @@
 name: Public tunnel benchmark
 
 on:
+  push:
+    branches: ["feature/lab10"]
+    paths: [".github/workflows/tunnel-probe.yml"]
   workflow_dispatch:
     inputs:
       url:
@@ -17,7 +20,7 @@ jobs:
     steps:
       - name: Verify public endpoint and benchmark from a different machine
         env:
-          TUNNEL_URL: ${{ inputs.url }}
+          TUNNEL_URL: ${{ inputs.url || vars.QUICK_TUNNEL_URL }}
         shell: bash
         run: |
           [[ "$TUNNEL_URL" =~ ^https://[a-z0-9-]+\.trycloudflare\.com$ ]]

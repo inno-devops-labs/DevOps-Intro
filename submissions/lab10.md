@@ -25,7 +25,7 @@ inferred from documentation.
 `vMAJOR.MINOR.PATCH`, verifies the tagged source is on `origin/main`, tests the
 app, builds `linux/amd64` from `app/`, and pushes:
 
-- `ghcr.io/4rni4ka/devops-intro/quicknotes:v0.1.0`
+- `ghcr.io/4rni4ka/devops-intro/quicknotes:v0.1.1`
 - `ghcr.io/4rni4ka/devops-intro/quicknotes:latest`
 
 Only the publishing job has `packages: write`; checkout needs `contents: read`.

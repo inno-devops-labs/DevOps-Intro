@@ -6,7 +6,7 @@ The client is pinned to **cloudflared 2026.10.7**. It was obtained from the
 Run the published image locally with disposable writable storage:
 
 ```sh
-docker run -d --name quicknotes-lab10 -p 127.0.0.1:8081:8080 ghcr.io/4rni4ka/devops-intro/quicknotes:v0.1.0
+docker run -d --name quicknotes-lab10 -p 127.0.0.1:8081:8080 ghcr.io/4rni4ka/devops-intro/quicknotes:v0.1.1
 cloudflared tunnel --url http://127.0.0.1:8081 --protocol http2 --no-autoupdate
 ```
 
