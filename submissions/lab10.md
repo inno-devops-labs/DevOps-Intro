@@ -1,7 +1,7 @@
 # Lab 10 — QuickNotes on GHCR, Render and Cloudflare Tunnel
 
 Date: 2026-11-04. Uses the current Render version of Task 2, including a CI deploy
-hook and checking notes after spin-down. 2/3 idle/wake cycles are recorded; the remaining measurements are in progress.
+hook and checking notes after spin-down. All three idle/wake cycles are recorded.
 
 ## Task 1 — tagged CI publication
 
@@ -75,7 +75,7 @@ duration and note results: [render-measurements.json](evidence/lab10/render-meas
 |---|---:|---:|---:|---|
 | 1 | 1260.011 s | 13.968635 s | 13.984340 s | False |
 | 2 | 1260.001 s | 12.621119 s | 12.621297 s | False |
-| 3 | 1260 s scheduled | Waiting | Waiting | Waiting |
+| 3 | 1260.000 s | 13.966436 s | 13.966703 s | False |
 
 **d)** Both Render spin-down and Cloud Run scale-to-zero release idle capacity.
 Render Free prioritizes low-cost shared preview hosting; scheduling, image setup
@@ -118,7 +118,7 @@ time includes DNS, connection/TLS and transfer, not only handler time.
 |---|---:|---:|
 | Warm p50, same external runner | 0.156126 s | 0.328537 s |
 | Warm p95, same external runner | 0.347974 s | 0.792971 s |
-| Cold starts, Windows client | 13.984 s, 12.621 s | N/A while local process runs |
+| Cold starts, Windows client | 13.984 s, 12.621 s, 13.967 s | N/A while local process runs |
 | Public URL stability | Stable service URL | Ephemeral; changes on restart |
 | Cost | Free | Free quick tunnel |
 
@@ -147,4 +147,6 @@ or sensitive unauthenticated data: no stable URL or origin redundancy exists.
 
 [cloud/teardown.md](../cloud/teardown.md) records cleanup. Render remains on Free
 for grading; no paid upgrade or disk was selected. Quick-tunnel availability
-depends on the local client/container and ends when they stop.
+depends on the local client/container. The quick-tunnel client was stopped
+after evidence capture. Local test-container removal is deferred while Docker
+Desktop is stopped; the cloud service remains available.

@@ -1,11 +1,11 @@
 * Host quicknotes-4rni4ka.onrender.com:443 was resolved.
 * IPv6: (none)
-* IPv4: 216.24.57.16, 216.24.57.18
-*   Trying 216.24.57.16:443...
+* IPv4: 216.24.57.18, 216.24.57.16
+*   Trying 216.24.57.18:443...
 * schannel: disabled automatic use of client certificate
 * ALPN: curl offers http/1.1
 * ALPN: server accepted http/1.1
-* Established connection to quicknotes-4rni4ka.onrender.com (216.24.57.16 port 443) from 10.77.44.9 port 51294
+* Established connection to quicknotes-4rni4ka.onrender.com (216.24.57.18 port 443) from 10.77.44.9 port 49368
 * using HTTP/1.x
 > GET /health HTTP/1.1
 
@@ -23,7 +23,7 @@
 * schannel: SSL/TLS connection renegotiated
 < HTTP/1.1 200 OK
 
-< Date: Wed, 04 Nov 2026 10:59:37 GMT
+< Date: Wed, 04 Nov 2026 12:16:29 GMT
 
 < Content-Type: application/json
 
@@ -37,7 +37,7 @@
 
 < referrer-policy: no-referrer
 
-< rndr-id: e60da1bb-9500-421b
+< rndr-id: a737111d-41b4-49ce
 
 < Server: cloudflare
 
@@ -51,12 +51,12 @@
 
 < cf-cache-status: DYNAMIC
 
-< CF-RAY: a5531c3f6c08141d-FRA
+< CF-RAY: a5538cd69b1871dc-FRA
 
 < alt-svc: h3=":443"; ma=86400
 
 <
 
-{ [37 bytes data]
+{ [32 bytes data]
 * Connection #0 to host quicknotes-4rni4ka.onrender.com:443 left intact
 {"notes":4,"status":"ok"}
