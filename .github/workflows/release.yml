@@ -1,0 +1,65 @@
+name: QuickNotes release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quicknotes-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Validate version and release ancestry
+        shell: bash
+        run: |
+          [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          git merge-base --is-ancestor HEAD origin/main
+          echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}/quicknotes" >> "$GITHUB_ENV"
+      - name: Test tagged source
+        run: |
+          docker run --rm -v "$PWD/app:/src" -w /src golang:1.27.3-alpine \
+            sh -ec 'go test -count=1 ./... && go vet ./...'
+      - name: Authenticate to GHCR
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+      - name: Build and publish version and latest
+        run: |
+          docker build --platform linux/amd64 \
+            --label "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
+            --label "org.opencontainers.image.revision=$GITHUB_SHA" \
+            --label "org.opencontainers.image.version=$GITHUB_REF_NAME" \
+            -t "$IMAGE:$GITHUB_REF_NAME" -t "$IMAGE:latest" app
+          docker push "$IMAGE:$GITHUB_REF_NAME"
+          docker push "$IMAGE:latest"
+      - name: Verify anonymous clean pull
+        run: |
+          docker image rm "$IMAGE:$GITHUB_REF_NAME" "$IMAGE:latest"
+          EMPTY_CONFIG=$(mktemp -d)
+          DOCKER_CONFIG="$EMPTY_CONFIG" docker pull "$IMAGE:$GITHUB_REF_NAME"
+          docker image inspect "$IMAGE:$GITHUB_REF_NAME" --format '{{json .RepoDigests}}'
+      - name: Trigger Render deployment of this version
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK" ]; then
+            echo '::notice::Set RENDER_DEPLOY_HOOK after creating the Free image-backed service.'
+            exit 0
+          fi
+          curl --fail --silent --show-error --max-time 120 \
+            --get --data-urlencode "imgURL=$IMAGE:$GITHUB_REF_NAME" \
+            "$RENDER_DEPLOY_HOOK" > /tmp/render-deploy.json
+          python3 -c 'import json; d=json.load(open("/tmp/render-deploy.json")); print("Render accepted deploy:", d.get("deploy", d).get("id", "queued"))'

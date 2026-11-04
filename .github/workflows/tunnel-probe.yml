@@ -1,0 +1,40 @@
+name: Public tunnel benchmark
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: HTTPS quick-tunnel URL
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Verify public endpoint and benchmark from a different machine
+        env:
+          TUNNEL_URL: ${{ inputs.url }}
+        shell: bash
+        run: |
+          [[ "$TUNNEL_URL" =~ ^https://[a-z0-9-]+\.trycloudflare\.com$ ]]
+          sudo apt-get update -qq
+          sudo apt-get install -y hyperfine
+          hyperfine --version
+          curl --fail --silent --show-error --max-time 120 "$TUNNEL_URL/health" | tee health.json
+          python3 -c 'import json; assert json.load(open("health.json"))["status"] == "ok"'
+          hyperfine --warmup 5 --runs 50 --export-json tunnel-remote.json \
+            "curl --fail --silent --show-error --max-time 120 --output /dev/null $TUNNEL_URL/health"
+          python3 - <<'PY'
+          import json, math, statistics
+          result = json.load(open('tunnel-remote.json'))['results'][0]
+          samples = sorted(result['times'] if 'times' in result else
+                           [x['time_wall_clock']['value'] for x in result['measurements']])
+          print('p50 seconds:', statistics.median(samples))
+          print('p95 seconds:', samples[math.ceil(0.95 * len(samples)) - 1])
+          print('Raw hyperfine JSON:')
+          print(open('tunnel-remote.json').read())
+          PY
