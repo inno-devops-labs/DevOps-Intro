@@ -4,15 +4,21 @@ on:
   push:
     branches:
       - main
+      - feature/lab9
+      - feature/lab10
     paths:
       - "app/**"
-      - ".github/workflows/ci.yml"
+      - ".github/workflows/**"
+      - "submissions/lab9.md"
+      - "submissions/lab10.md"
   pull_request:
     branches:
       - main
     paths:
       - "app/**"
-      - ".github/workflows/ci.yml"
+      - ".github/workflows/**"
+      - "submissions/lab9.md"
+      - "submissions/lab10.md"
 
 permissions:
   contents: read
