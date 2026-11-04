@@ -1,7 +1,7 @@
 # Lab 10 — QuickNotes on GHCR, Render and Cloudflare Tunnel
 
 Date: 2026-11-04. Uses the current Render version of Task 2, including a CI deploy
-hook and checking notes after spin-down. 0/3 idle/wake cycles are recorded; the remaining measurements are in progress.
+hook and checking notes after spin-down. 1/3 idle/wake cycles are recorded; the remaining measurements are in progress.
 
 ## Task 1 — tagged CI publication
 
@@ -73,7 +73,8 @@ duration and note results: [render-measurements.json](evidence/lab10/render-meas
 
 | Cycle | Actual idle time | First request | Until QuickNotes JSON ready | Note survived |
 |---|---:|---:|---:|---|
-| 1 | 1260 s scheduled | Waiting | Waiting | Waiting |
+| 1 | 1260.011 s | 13.968635 s | 13.984340 s | False |
+| 2 | 1260 s scheduled | Waiting | Waiting | Waiting |
 
 **d)** Both Render spin-down and Cloud Run scale-to-zero release idle capacity.
 Render Free prioritizes low-cost shared preview hosting; scheduling, image setup
@@ -116,7 +117,7 @@ time includes DNS, connection/TLS and transfer, not only handler time.
 |---|---:|---:|
 | Warm p50, same external runner | 0.156126 s | 0.328537 s |
 | Warm p95, same external runner | 0.347974 s | 0.792971 s |
-| Cold starts, Windows client | In progress | N/A while local process runs |
+| Cold starts, Windows client | 13.984 s | N/A while local process runs |
 | Public URL stability | Stable service URL | Ephemeral; changes on restart |
 | Cost | Free | Free quick tunnel |
 
