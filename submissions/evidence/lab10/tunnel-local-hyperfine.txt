@@ -1,0 +1,3 @@
+Benchmark 1: curl.exe --fail --silent --show-error --max-time 120 --output NUL https://assured-opposed-leather-belief.trycloudflare.com/health (50 runs)
+                mean     ±       σ          min     …     max
+  Wall Time    1.026 s   ±   0.151 s      0.853 s   …   1.525 s
