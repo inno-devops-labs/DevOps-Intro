@@ -1,0 +1,77 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 589B 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/golang:1.27.3-alpine
+#2 DONE 0.1s
+
+#3 [internal] load metadata for gcr.io/distroless/static-debian13:nonroot
+#3 DONE 1.3s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 66B 0.0s done
+#4 DONE 0.1s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [builder 1/6] FROM docker.io/library/golang:1.27.3-alpine@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb
+#6 resolve docker.io/library/golang:1.27.3-alpine@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb 0.1s done
+#6 ...
+
+#7 [stage-1 1/4] FROM gcr.io/distroless/static-debian13:nonroot@sha256:25ac8f0c3b2334a9eb05452266bd4697864a8c8ef0ef71e5e6480d7f92868329
+#7 resolve gcr.io/distroless/static-debian13:nonroot@sha256:25ac8f0c3b2334a9eb05452266bd4697864a8c8ef0ef71e5e6480d7f92868329 0.1s done
+#7 DONE 0.2s
+
+#6 [builder 1/6] FROM docker.io/library/golang:1.27.3-alpine@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb
+#6 ...
+
+#5 [internal] load build context
+#5 transferring context: 991B 0.0s done
+#5 DONE 0.2s
+
+#6 [builder 1/6] FROM docker.io/library/golang:1.27.3-alpine@sha256:d200d2dd76b03a99b52651fd1325aff7dcd35422c35c01bac56571b0507f3deb
+#6 DONE 0.7s
+
+#8 [builder 2/6] WORKDIR /src
+#8 DONE 0.4s
+
+#9 [builder 3/6] COPY go.mod ./
+#9 DONE 0.2s
+
+#10 [builder 4/6] RUN go mod download
+#10 0.919 go: no module dependencies to download
+#10 DONE 1.1s
+
+#11 [builder 5/6] COPY . .
+#11 DONE 0.3s
+
+#12 [builder 6/6] RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/quicknotes .     && mkdir -p /out/data
+#12 DONE 59.3s
+
+#7 [stage-1 1/4] FROM gcr.io/distroless/static-debian13:nonroot@sha256:25ac8f0c3b2334a9eb05452266bd4697864a8c8ef0ef71e5e6480d7f92868329
+#7 CACHED
+
+#13 [stage-1 2/4] COPY --from=builder /out/quicknotes /quicknotes
+#13 DONE 0.1s
+
+#14 [stage-1 3/4] COPY --from=builder /src/seed.json /seed.json
+#14 DONE 0.2s
+
+#15 [stage-1 4/4] COPY --from=builder --chown=65532:65532 /out/data /data
+#15 DONE 0.3s
+
+#16 exporting to image
+#16 exporting layers
+#16 exporting layers 1.6s done
+#16 exporting manifest sha256:7599eb802669d3cf05adc8f1be4b28fafb5ab97782d174f467ab18ecd741e5f8 0.1s done
+#16 exporting config sha256:18529a4f0ba8c3dd2823eedd27bea4009cf5ec54ddee267e93c1b5ae092f9084 0.1s done
+#16 exporting attestation manifest sha256:1252c884d99d9faf88e861ef10c441b3b5cc5f5fd75c93417d95d7f0065ffc8f 0.1s done
+#16 exporting manifest list sha256:af9faf0194df81051ba306dd2dcf736d950a2be754d6c051f06337bb2c3a83de
+#16 exporting manifest list sha256:af9faf0194df81051ba306dd2dcf736d950a2be754d6c051f06337bb2c3a83de 0.1s done
+#16 naming to docker.io/library/quicknotes:lab9 0.0s done
+#16 unpacking to docker.io/library/quicknotes:lab9
+#16 unpacking to docker.io/library/quicknotes:lab9 0.4s done
+#16 DONE 2.8s

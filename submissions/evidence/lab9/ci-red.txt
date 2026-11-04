@@ -1,0 +1,39 @@
+govulncheck	Check reachable vulnerabilities	﻿2026-11-04T10:35:36.8897202Z ##[group]Run govulncheck ./...
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:36.8897537Z ^[[36;1mgovulncheck ./...^[[0m
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:36.8918648Z shell: /usr/bin/bash -e {0}
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:36.8918910Z env:
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:36.8919106Z   GOFLAGS: -buildvcs=false
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:36.8919337Z   GOTOOLCHAIN: local
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:36.8919542Z ##[endgroup]
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8059178Z === Symbol Results ===
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8059591Z 
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8059882Z Vulnerability #1: GO-2022-1059
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8060676Z     Denial of service via crafted Accept-Language header in
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8061243Z     golang.org/x/text/language
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8061651Z   More info: https://pkg.go.dev/vuln/GO-2022-1059
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8062552Z   Module: golang.org/x/text
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8062909Z     Found in: golang.org/x/text@v0.3.7
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8063299Z     Fixed in: golang.org/x/text@v0.3.8
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8063654Z     Example traces found:
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8083962Z ##[error]      #1: vulnerability_demo.go:7:40: quicknotes.init#1 calls language.ParseAcceptLanguage
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8093007Z 
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8093348Z Your code is affected by 1 vulnerability from 1 module.
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8094063Z This scan also found 0 vulnerabilities in packages you import and 2
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8094889Z vulnerabilities in modules you require, but your code doesn't appear to call
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8095535Z these vulnerabilities.
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8095918Z Use '-show verbose' for more details.
+govulncheck	Check reachable vulnerabilities	2026-11-04T10:35:40.8764037Z ##[error]Process completed with exit code 3.
+ci-ok	Confirm all required jobs passed	﻿2026-11-04T10:35:59.9495456Z ##[group]Run test "$VET_RESULT" = success
+ci-ok	Confirm all required jobs passed	2026-11-04T10:35:59.9496365Z ^[[36;1mtest "$VET_RESULT" = success^[[0m
+ci-ok	Confirm all required jobs passed	2026-11-04T10:35:59.9497152Z ^[[36;1mtest "$TEST_RESULT" = success^[[0m
+ci-ok	Confirm all required jobs passed	2026-11-04T10:35:59.9498053Z ^[[36;1mtest "$LINT_RESULT" = success^[[0m
+ci-ok	Confirm all required jobs passed	2026-11-04T10:35:59.9498789Z ^[[36;1mtest "$VULN_RESULT" = success^[[0m
+ci-ok	Confirm all required jobs passed	2026-11-04T10:36:00.0241986Z shell: /usr/bin/bash -e {0}
+ci-ok	Confirm all required jobs passed	2026-11-04T10:36:00.0243800Z env:
+ci-ok	Confirm all required jobs passed	2026-11-04T10:36:00.0245703Z   GOFLAGS: -buildvcs=false
+ci-ok	Confirm all required jobs passed	2026-11-04T10:36:00.0247076Z   VET_RESULT: success
+ci-ok	Confirm all required jobs passed	2026-11-04T10:36:00.0247662Z   TEST_RESULT: success
+ci-ok	Confirm all required jobs passed	2026-11-04T10:36:00.0248927Z   LINT_RESULT: success
+ci-ok	Confirm all required jobs passed	2026-11-04T10:36:00.0249583Z   VULN_RESULT: failure
+ci-ok	Confirm all required jobs passed	2026-11-04T10:36:00.0250821Z ##[endgroup]
+ci-ok	Confirm all required jobs passed	2026-11-04T10:36:00.0820336Z ##[error]Process completed with exit code 1.

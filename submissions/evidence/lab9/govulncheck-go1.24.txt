@@ -1,0 +1,679 @@
+=== Symbol Results ===
+go: downloading golang.org/x/vuln v1.1.4
+go: downloading golang.org/x/telemetry v0.0.0-20240522233618-39ace7a40ae7
+go: downloading golang.org/x/tools v0.29.0
+go: downloading golang.org/x/mod v0.22.0
+go: downloading golang.org/x/sync v0.10.0
+
+Vulnerability #1: GO-2026-6809
+    Distrust compromised intermediate certificates in crypto/x509
+  More info: https://pkg.go.dev/vuln/GO-2026-6809
+  Standard library
+    Found in: crypto/x509@go1.24.13
+    Fixed in: crypto/x509@go1.26.10
+    Example traces found:
+      #1: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls x509.Certificate.Verify
+
+Vulnerability #2: GO-2026-6617
+    HTTP/2 server crash due to HPACK encoder race in net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6617
+  Standard library
+    Found in: net/http@go1.24.13
+    Fixed in: net/http@go1.26.9
+    Example traces found:
+      #1: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.CanonicalHeaderKey
+      #2: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.CanonicalHeaderKey
+      #3: main.go:68:25: quicknotes.checkHealth calls http.Client.Get
+      #4: main.go:68:25: quicknotes.checkHealth calls http.Client.Get
+      #5: handlers.go:31:16: quicknotes.Server.Routes calls http.ServeMux.HandleFunc
+      #6: handlers.go:31:16: quicknotes.Server.Routes calls http.ServeMux.HandleFunc
+      #7: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe
+      #8: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe
+      #9: main.go:57:24: quicknotes.main calls http.Server.Shutdown
+      #10: main.go:57:24: quicknotes.main calls http.Server.Shutdown
+      #11: main.go:72:2: quicknotes.checkHealth calls http.body.Close
+      #12: main.go:72:2: quicknotes.checkHealth calls http.body.Close
+      #13: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.body.Read
+      #14: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.body.Read
+      #15: main.go:72:2: quicknotes.checkHealth calls http.bodyEOFSignal.Close
+      #16: main.go:72:2: quicknotes.checkHealth calls http.bodyEOFSignal.Close
+      #17: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bodyEOFSignal.Read
+      #18: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bodyEOFSignal.Read
+      #19: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bufioFlushWriter.Write
+      #20: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bufioFlushWriter.Write
+      #21: main.go:72:2: quicknotes.checkHealth calls http.cancelTimerBody.Close
+      #22: main.go:72:2: quicknotes.checkHealth calls http.cancelTimerBody.Close
+      #23: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.cancelTimerBody.Read
+      #24: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.cancelTimerBody.Read
+      #25: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.checkConnErrorWriter.Write
+      #26: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.checkConnErrorWriter.Write
+      #27: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.chunkWriter.Write
+      #28: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.chunkWriter.Write
+      #29: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.connReader.Read
+      #30: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.connReader.Read
+      #31: main.go:72:2: quicknotes.checkHealth calls http.gzipReader.Close
+      #32: main.go:72:2: quicknotes.checkHealth calls http.gzipReader.Close
+      #33: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.gzipReader.Read
+      #34: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.gzipReader.Read
+      #35: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ConnectionError.Error
+      #36: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ConnectionError.Error
+      #37: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ErrCode.String
+      #38: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ErrCode.String
+      #39: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameHeader.String
+      #40: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameHeader.String
+      #41: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameType.String
+      #42: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameType.String
+      #43: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameWriteRequest.String
+      #44: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameWriteRequest.String
+      #45: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2GoAwayError.Error
+      #46: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2GoAwayError.Error
+      #47: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2Setting.String
+      #48: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2Setting.String
+      #49: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2SettingID.String
+      #50: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2SettingID.String
+      #51: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2StreamError.Error
+      #52: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2StreamError.Error
+      #53: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #54: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #55: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2chunkWriter.Write
+      #56: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2chunkWriter.Write
+      #57: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2connError.Error
+      #58: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2connError.Error
+      #59: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2duplicatePseudoHeaderError.Error
+      #60: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2duplicatePseudoHeaderError.Error
+      #61: main.go:72:2: quicknotes.checkHealth calls http.http2gzipReader.Close
+      #62: main.go:72:2: quicknotes.checkHealth calls http.http2gzipReader.Close
+      #63: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2gzipReader.Read
+      #64: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2gzipReader.Read
+      #65: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldNameError.Error
+      #66: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldNameError.Error
+      #67: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldValueError.Error
+      #68: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldValueError.Error
+      #69: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2pseudoHeaderError.Error
+      #70: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2pseudoHeaderError.Error
+      #71: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.Write
+      #72: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.Write
+      #73: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.WriteString
+      #74: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.WriteString
+      #75: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2stickyErrWriter.Write
+      #76: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2stickyErrWriter.Write
+      #77: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close
+      #78: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close
+      #79: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2transportResponseBody.Read
+      #80: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2transportResponseBody.Read
+      #81: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2writeData.String
+      #82: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2writeData.String
+      #83: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Read
+      #84: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Read
+      #85: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Write
+      #86: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Write
+      #87: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.onceCloseListener.Close
+      #88: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.onceCloseListener.Close
+      #89: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConn.Read
+      #90: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConn.Read
+      #91: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConnWriter.Write
+      #92: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConnWriter.Write
+      #93: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.readWriteCloserBody.Read
+      #94: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.readWriteCloserBody.Read
+      #95: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.response.Write
+      #96: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.response.Write
+      #97: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.transportReadFromServerError.Error
+      #98: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.transportReadFromServerError.Error
+
+Vulnerability #3: GO-2026-6613
+    HTTP/1 server connection desynchronization after 2xx CONNECT response in
+    net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6613
+  Standard library
+    Found in: net/http@go1.24.13
+    Fixed in: net/http@go1.26.9
+    Example traces found:
+      #1: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.CanonicalHeaderKey
+      #2: main.go:68:25: quicknotes.checkHealth calls http.Client.Get
+      #3: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close, which eventually calls http.Header.Del
+      #4: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close, which eventually calls http.Header.Get
+      #5: handlers.go:31:16: quicknotes.Server.Routes calls http.ServeMux.HandleFunc
+      #6: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe
+      #7: main.go:57:24: quicknotes.main calls http.Server.Shutdown
+      #8: main.go:72:2: quicknotes.checkHealth calls http.body.Close
+      #9: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.body.Read
+      #10: main.go:72:2: quicknotes.checkHealth calls http.bodyEOFSignal.Close
+      #11: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bodyEOFSignal.Read
+      #12: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close, which eventually calls http.bufioFlushWriter.Write
+      #13: main.go:72:2: quicknotes.checkHealth calls http.cancelTimerBody.Close
+      #14: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.cancelTimerBody.Read
+      #15: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close, which eventually calls http.checkConnErrorWriter.Write
+      #16: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close, which eventually calls http.chunkWriter.Write
+      #17: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.connReader.Read
+      #18: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close, which eventually calls http.expectContinueReader.Close
+      #19: main.go:72:2: quicknotes.checkHealth calls http.gzipReader.Close
+      #20: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.gzipReader.Read
+      #21: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Read
+      #22: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close, which eventually calls http.loggingConn.Write
+      #23: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.onceCloseListener.Close
+      #24: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConn.Read
+      #25: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close, which eventually calls http.persistConnWriter.Write
+      #26: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close, which eventually calls http.readTrackingBody.Close
+      #27: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.readWriteCloserBody.Read
+      #28: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close, which eventually calls http.response.Write
+      #29: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.transportReadFromServerError.Error
+
+Vulnerability #4: GO-2026-6612
+    Double flow control refund on HTTP/2 server streams in net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6612
+  Standard library
+    Found in: net/http@go1.24.13
+    Fixed in: net/http@go1.26.9
+    Example traces found:
+      #1: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.CanonicalHeaderKey
+      #2: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.CanonicalHeaderKey
+      #3: main.go:68:25: quicknotes.checkHealth calls http.Client.Get
+      #4: main.go:68:25: quicknotes.checkHealth calls http.Client.Get
+      #5: handlers.go:31:16: quicknotes.Server.Routes calls http.ServeMux.HandleFunc
+      #6: handlers.go:31:16: quicknotes.Server.Routes calls http.ServeMux.HandleFunc
+      #7: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe
+      #8: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe
+      #9: main.go:57:24: quicknotes.main calls http.Server.Shutdown
+      #10: main.go:57:24: quicknotes.main calls http.Server.Shutdown
+      #11: main.go:72:2: quicknotes.checkHealth calls http.body.Close
+      #12: main.go:72:2: quicknotes.checkHealth calls http.body.Close
+      #13: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.body.Read
+      #14: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.body.Read
+      #15: main.go:72:2: quicknotes.checkHealth calls http.bodyEOFSignal.Close
+      #16: main.go:72:2: quicknotes.checkHealth calls http.bodyEOFSignal.Close
+      #17: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bodyEOFSignal.Read
+      #18: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bodyEOFSignal.Read
+      #19: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bufioFlushWriter.Write
+      #20: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bufioFlushWriter.Write
+      #21: main.go:72:2: quicknotes.checkHealth calls http.cancelTimerBody.Close
+      #22: main.go:72:2: quicknotes.checkHealth calls http.cancelTimerBody.Close
+      #23: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.cancelTimerBody.Read
+      #24: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.cancelTimerBody.Read
+      #25: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.checkConnErrorWriter.Write
+      #26: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.checkConnErrorWriter.Write
+      #27: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.chunkWriter.Write
+      #28: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.chunkWriter.Write
+      #29: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.connReader.Read
+      #30: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.connReader.Read
+      #31: main.go:72:2: quicknotes.checkHealth calls http.gzipReader.Close
+      #32: main.go:72:2: quicknotes.checkHealth calls http.gzipReader.Close
+      #33: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.gzipReader.Read
+      #34: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.gzipReader.Read
+      #35: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ConnectionError.Error
+      #36: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ConnectionError.Error
+      #37: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ErrCode.String
+      #38: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ErrCode.String
+      #39: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameHeader.String
+      #40: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameHeader.String
+      #41: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameType.String
+      #42: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameType.String
+      #43: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameWriteRequest.String
+      #44: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameWriteRequest.String
+      #45: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2GoAwayError.Error
+      #46: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2GoAwayError.Error
+      #47: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2Setting.String
+      #48: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2Setting.String
+      #49: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2SettingID.String
+      #50: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2SettingID.String
+      #51: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2StreamError.Error
+      #52: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2StreamError.Error
+      #53: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #54: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #55: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2chunkWriter.Write
+      #56: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2chunkWriter.Write
+      #57: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2connError.Error
+      #58: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2connError.Error
+      #59: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2duplicatePseudoHeaderError.Error
+      #60: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2duplicatePseudoHeaderError.Error
+      #61: main.go:72:2: quicknotes.checkHealth calls http.http2gzipReader.Close
+      #62: main.go:72:2: quicknotes.checkHealth calls http.http2gzipReader.Close
+      #63: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2gzipReader.Read
+      #64: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2gzipReader.Read
+      #65: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldNameError.Error
+      #66: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldNameError.Error
+      #67: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldValueError.Error
+      #68: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldValueError.Error
+      #69: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2pseudoHeaderError.Error
+      #70: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2pseudoHeaderError.Error
+      #71: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.Write
+      #72: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.Write
+      #73: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.WriteString
+      #74: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.WriteString
+      #75: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2stickyErrWriter.Write
+      #76: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2stickyErrWriter.Write
+      #77: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close
+      #78: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close
+      #79: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2transportResponseBody.Read
+      #80: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2transportResponseBody.Read
+      #81: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2writeData.String
+      #82: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2writeData.String
+      #83: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Read
+      #84: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Read
+      #85: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Write
+      #86: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Write
+      #87: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.onceCloseListener.Close
+      #88: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.onceCloseListener.Close
+      #89: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConn.Read
+      #90: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConn.Read
+      #91: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConnWriter.Write
+      #92: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConnWriter.Write
+      #93: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.readWriteCloserBody.Read
+      #94: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.readWriteCloserBody.Read
+      #95: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.response.Write
+      #96: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.response.Write
+      #97: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.transportReadFromServerError.Error
+      #98: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.transportReadFromServerError.Error
+
+Vulnerability #5: GO-2026-6611
+    Excessive CPU consumption from repeated initial window changes in net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6611
+  Standard library
+    Found in: net/http@go1.24.13
+    Fixed in: net/http@go1.26.9
+    Example traces found:
+      #1: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.CanonicalHeaderKey
+      #2: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.CanonicalHeaderKey
+      #3: main.go:68:25: quicknotes.checkHealth calls http.Client.Get
+      #4: main.go:68:25: quicknotes.checkHealth calls http.Client.Get
+      #5: handlers.go:31:16: quicknotes.Server.Routes calls http.ServeMux.HandleFunc
+      #6: handlers.go:31:16: quicknotes.Server.Routes calls http.ServeMux.HandleFunc
+      #7: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe
+      #8: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe
+      #9: main.go:57:24: quicknotes.main calls http.Server.Shutdown
+      #10: main.go:57:24: quicknotes.main calls http.Server.Shutdown
+      #11: main.go:72:2: quicknotes.checkHealth calls http.body.Close
+      #12: main.go:72:2: quicknotes.checkHealth calls http.body.Close
+      #13: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.body.Read
+      #14: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.body.Read
+      #15: main.go:72:2: quicknotes.checkHealth calls http.bodyEOFSignal.Close
+      #16: main.go:72:2: quicknotes.checkHealth calls http.bodyEOFSignal.Close
+      #17: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bodyEOFSignal.Read
+      #18: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bodyEOFSignal.Read
+      #19: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bufioFlushWriter.Write
+      #20: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bufioFlushWriter.Write
+      #21: main.go:72:2: quicknotes.checkHealth calls http.cancelTimerBody.Close
+      #22: main.go:72:2: quicknotes.checkHealth calls http.cancelTimerBody.Close
+      #23: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.cancelTimerBody.Read
+      #24: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.cancelTimerBody.Read
+      #25: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.checkConnErrorWriter.Write
+      #26: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.checkConnErrorWriter.Write
+      #27: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.chunkWriter.Write
+      #28: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.chunkWriter.Write
+      #29: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.connReader.Read
+      #30: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.connReader.Read
+      #31: main.go:72:2: quicknotes.checkHealth calls http.gzipReader.Close
+      #32: main.go:72:2: quicknotes.checkHealth calls http.gzipReader.Close
+      #33: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.gzipReader.Read
+      #34: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.gzipReader.Read
+      #35: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ConnectionError.Error
+      #36: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ConnectionError.Error
+      #37: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ErrCode.String
+      #38: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ErrCode.String
+      #39: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameHeader.String
+      #40: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameHeader.String
+      #41: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameType.String
+      #42: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameType.String
+      #43: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameWriteRequest.String
+      #44: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameWriteRequest.String
+      #45: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2GoAwayError.Error
+      #46: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2GoAwayError.Error
+      #47: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2Setting.String
+      #48: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2Setting.String
+      #49: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2SettingID.String
+      #50: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2SettingID.String
+      #51: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2StreamError.Error
+      #52: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2StreamError.Error
+      #53: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #54: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #55: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2chunkWriter.Write
+      #56: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2chunkWriter.Write
+      #57: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2connError.Error
+      #58: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2connError.Error
+      #59: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2duplicatePseudoHeaderError.Error
+      #60: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2duplicatePseudoHeaderError.Error
+      #61: main.go:72:2: quicknotes.checkHealth calls http.http2gzipReader.Close
+      #62: main.go:72:2: quicknotes.checkHealth calls http.http2gzipReader.Close
+      #63: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2gzipReader.Read
+      #64: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2gzipReader.Read
+      #65: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldNameError.Error
+      #66: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldNameError.Error
+      #67: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldValueError.Error
+      #68: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldValueError.Error
+      #69: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2pseudoHeaderError.Error
+      #70: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2pseudoHeaderError.Error
+      #71: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.Write
+      #72: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.Write
+      #73: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.WriteString
+      #74: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.WriteString
+      #75: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2stickyErrWriter.Write
+      #76: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2stickyErrWriter.Write
+      #77: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close
+      #78: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close
+      #79: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2transportResponseBody.Read
+      #80: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2transportResponseBody.Read
+      #81: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2writeData.String
+      #82: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2writeData.String
+      #83: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Read
+      #84: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Read
+      #85: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Write
+      #86: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Write
+      #87: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.onceCloseListener.Close
+      #88: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.onceCloseListener.Close
+      #89: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConn.Read
+      #90: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConn.Read
+      #91: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConnWriter.Write
+      #92: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConnWriter.Write
+      #93: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.readWriteCloserBody.Read
+      #94: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.readWriteCloserBody.Read
+      #95: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.response.Write
+      #96: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.response.Write
+      #97: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.transportReadFromServerError.Error
+      #98: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.transportReadFromServerError.Error
+
+Vulnerability #6: GO-2026-6610
+    HTTP/2 transport accepts malformed framing-related headers in net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6610
+  Standard library
+    Found in: net/http@go1.24.13
+    Fixed in: net/http@go1.26.9
+    Example traces found:
+      #1: main.go:68:25: quicknotes.checkHealth calls http.Client.Get
+      #2: main.go:68:25: quicknotes.checkHealth calls http.Client.Get
+
+Vulnerability #7: GO-2026-6608
+    Memory limit bypass when parsing MIME headers in net/textproto,
+    mime/multipart
+  More info: https://pkg.go.dev/vuln/GO-2026-6608
+  Standard library
+    Found in: mime/multipart@go1.24.13
+    Fixed in: mime/multipart@go1.26.9
+    Example traces found:
+      #1: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls textproto.Reader.ReadMIMEHeader
+
+Vulnerability #8: GO-2026-6607
+    Reject malformed ECH outer extension references in crypto/tls
+  More info: https://pkg.go.dev/vuln/GO-2026-6607
+  Standard library
+    Found in: crypto/tls@go1.24.13
+    Fixed in: crypto/tls@go1.26.9
+    Example traces found:
+      #1: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls tls.Conn.HandshakeContext
+      #2: main.go:72:2: quicknotes.checkHealth calls http.body.Close, which eventually calls tls.Conn.Read
+      #3: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close, which eventually calls tls.Conn.Write
+      #4: main.go:68:25: quicknotes.checkHealth calls http.Client.Get, which eventually calls tls.Dialer.DialContext
+
+Vulnerability #9: GO-2026-6605
+    HTTP/1 client connection desynchronization after CONNECT rejection in
+    net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6605
+  Standard library
+    Found in: net/http@go1.24.13
+    Fixed in: net/http@go1.26.9
+    Example traces found:
+      #1: main.go:68:25: quicknotes.checkHealth calls http.Client.Get
+
+Vulnerability #10: GO-2026-6603
+    HTTP/2 server memory exhaustion due to Trailer headers in net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6603
+  Standard library
+    Found in: net/http@go1.24.13
+    Fixed in: net/http@go1.26.9
+    Example traces found:
+      #1: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.CanonicalHeaderKey
+      #2: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.CanonicalHeaderKey
+      #3: main.go:68:25: quicknotes.checkHealth calls http.Client.Get
+      #4: main.go:68:25: quicknotes.checkHealth calls http.Client.Get
+      #5: handlers.go:31:16: quicknotes.Server.Routes calls http.ServeMux.HandleFunc
+      #6: handlers.go:31:16: quicknotes.Server.Routes calls http.ServeMux.HandleFunc
+      #7: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe
+      #8: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe
+      #9: main.go:57:24: quicknotes.main calls http.Server.Shutdown
+      #10: main.go:57:24: quicknotes.main calls http.Server.Shutdown
+      #11: main.go:72:2: quicknotes.checkHealth calls http.body.Close
+      #12: main.go:72:2: quicknotes.checkHealth calls http.body.Close
+      #13: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.body.Read
+      #14: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.body.Read
+      #15: main.go:72:2: quicknotes.checkHealth calls http.bodyEOFSignal.Close
+      #16: main.go:72:2: quicknotes.checkHealth calls http.bodyEOFSignal.Close
+      #17: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bodyEOFSignal.Read
+      #18: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bodyEOFSignal.Read
+      #19: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bufioFlushWriter.Write
+      #20: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.bufioFlushWriter.Write
+      #21: main.go:72:2: quicknotes.checkHealth calls http.cancelTimerBody.Close
+      #22: main.go:72:2: quicknotes.checkHealth calls http.cancelTimerBody.Close
+      #23: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.cancelTimerBody.Read
+      #24: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.cancelTimerBody.Read
+      #25: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.checkConnErrorWriter.Write
+      #26: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.checkConnErrorWriter.Write
+      #27: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.chunkWriter.Write
+      #28: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.chunkWriter.Write
+      #29: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.connReader.Read
+      #30: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.connReader.Read
+      #31: main.go:72:2: quicknotes.checkHealth calls http.gzipReader.Close
+      #32: main.go:72:2: quicknotes.checkHealth calls http.gzipReader.Close
+      #33: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.gzipReader.Read
+      #34: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.gzipReader.Read
+      #35: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ConnectionError.Error
+      #36: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ConnectionError.Error
+      #37: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ErrCode.String
+      #38: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2ErrCode.String
+      #39: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameHeader.String
+      #40: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameHeader.String
+      #41: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameType.String
+      #42: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameType.String
+      #43: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameWriteRequest.String
+      #44: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2FrameWriteRequest.String
+      #45: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2GoAwayError.Error
+      #46: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2GoAwayError.Error
+      #47: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2Setting.String
+      #48: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2Setting.String
+      #49: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2SettingID.String
+      #50: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2SettingID.String
+      #51: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2StreamError.Error
+      #52: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2StreamError.Error
+      #53: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #54: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2bufferedWriterTimeoutWriter.Write
+      #55: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2chunkWriter.Write
+      #56: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2chunkWriter.Write
+      #57: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2connError.Error
+      #58: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2connError.Error
+      #59: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2duplicatePseudoHeaderError.Error
+      #60: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2duplicatePseudoHeaderError.Error
+      #61: main.go:72:2: quicknotes.checkHealth calls http.http2gzipReader.Close
+      #62: main.go:72:2: quicknotes.checkHealth calls http.http2gzipReader.Close
+      #63: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2gzipReader.Read
+      #64: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2gzipReader.Read
+      #65: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldNameError.Error
+      #66: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldNameError.Error
+      #67: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldValueError.Error
+      #68: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2headerFieldValueError.Error
+      #69: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2pseudoHeaderError.Error
+      #70: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2pseudoHeaderError.Error
+      #71: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.Write
+      #72: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.Write
+      #73: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.WriteString
+      #74: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2responseWriter.WriteString
+      #75: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2stickyErrWriter.Write
+      #76: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2stickyErrWriter.Write
+      #77: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close
+      #78: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close
+      #79: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2transportResponseBody.Read
+      #80: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.http2transportResponseBody.Read
+      #81: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2writeData.String
+      #82: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.http2writeData.String
+      #83: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Read
+      #84: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Read
+      #85: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Write
+      #86: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.loggingConn.Write
+      #87: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.onceCloseListener.Close
+      #88: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls http.onceCloseListener.Close
+      #89: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConn.Read
+      #90: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConn.Read
+      #91: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConnWriter.Write
+      #92: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.persistConnWriter.Write
+      #93: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.readWriteCloserBody.Read
+      #94: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.readWriteCloserBody.Read
+      #95: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.response.Write
+      #96: main.go:72:2: quicknotes.checkHealth calls tls.Conn.Close, which eventually calls http.response.Write
+      #97: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.transportReadFromServerError.Error
+      #98: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls http.transportReadFromServerError.Error
+
+Vulnerability #11: GO-2026-6218
+    Avoid quadratic complexity in resolvePath in net/url
+  More info: https://pkg.go.dev/vuln/GO-2026-6218
+  Standard library
+    Found in: net/url@go1.24.13
+    Fixed in: net/url@go1.25.13
+    Example traces found:
+      #1: main.go:68:25: quicknotes.checkHealth calls http.Client.Get, which eventually calls url.URL.Parse
+
+Vulnerability #12: GO-2026-6090
+    Limit handshake messages we are willing to accept post-handshake in
+    crypto/tls
+  More info: https://pkg.go.dev/vuln/GO-2026-6090
+  Standard library
+    Found in: crypto/tls@go1.24.13
+    Fixed in: crypto/tls@go1.25.13
+    Example traces found:
+      #1: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls tls.Conn.HandshakeContext
+      #2: main.go:72:2: quicknotes.checkHealth calls http.body.Close, which eventually calls tls.Conn.Read
+      #3: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close, which eventually calls tls.Conn.Write
+      #4: main.go:68:25: quicknotes.checkHealth calls http.Client.Get, which eventually calls tls.Dialer.DialContext
+
+Vulnerability #13: GO-2026-6089
+    Apply ReadHeaderTimeout when doing unencrypted HTTP/2 check in net/http
+  More info: https://pkg.go.dev/vuln/GO-2026-6089
+  Standard library
+    Found in: net/http@go1.24.13
+    Fixed in: net/http@go1.25.13
+    Example traces found:
+      #1: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe
+
+Vulnerability #14: GO-2026-5972
+    Enforce maximum recursion depth in encoding/asn1
+  More info: https://pkg.go.dev/vuln/GO-2026-5972
+  Standard library
+    Found in: encoding/asn1@go1.24.13
+    Fixed in: encoding/asn1@go1.25.13
+    Example traces found:
+      #1: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls asn1.Unmarshal
+
+Vulnerability #15: GO-2026-5856
+    Invoking Encrypted Client Hello privacy leak in crypto/tls
+  More info: https://pkg.go.dev/vuln/GO-2026-5856
+  Standard library
+    Found in: crypto/tls@go1.24.13
+    Fixed in: crypto/tls@go1.25.12
+    Example traces found:
+      #1: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls tls.Conn.HandshakeContext
+      #2: main.go:72:2: quicknotes.checkHealth calls http.body.Close, which eventually calls tls.Conn.Read
+      #3: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close, which eventually calls tls.Conn.Write
+      #4: main.go:68:25: quicknotes.checkHealth calls http.Client.Get, which eventually calls tls.Dialer.DialContext
+
+Vulnerability #16: GO-2026-5039
+    Arbitrary inputs are included in errors without any escaping in
+    net/textproto
+  More info: https://pkg.go.dev/vuln/GO-2026-5039
+  Standard library
+    Found in: net/textproto@go1.24.13
+    Fixed in: net/textproto@go1.25.11
+    Example traces found:
+      #1: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls textproto.Reader.ReadMIMEHeader
+
+Vulnerability #17: GO-2026-5037
+    Inefficient candidate hostname parsing in crypto/x509
+  More info: https://pkg.go.dev/vuln/GO-2026-5037
+  Standard library
+    Found in: crypto/x509@go1.24.13
+    Fixed in: crypto/x509@go1.25.11
+    Example traces found:
+      #1: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls x509.Certificate.Verify
+      #2: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls x509.Certificate.VerifyHostname
+      #3: main.go:28:13: quicknotes.main calls log.Fatalf, which eventually calls x509.HostnameError.Error
+
+Vulnerability #18: GO-2026-5026
+    Invoking failure to reject ASCII-only Punycode-encoded labels in
+    golang.org/x/net/idna
+  More info: https://pkg.go.dev/vuln/GO-2026-5026
+  Standard library
+    Found in: net/http@go1.24.13
+    Fixed in: net/http@go1.25.13
+    Example traces found:
+      #1: main.go:68:25: quicknotes.checkHealth calls http.Client.Get
+
+Vulnerability #19: GO-2026-4971
+    Panic in Dial and LookupPort when handling NUL byte on Windows in net
+  More info: https://pkg.go.dev/vuln/GO-2026-4971
+  Standard library
+    Found in: net@go1.24.13
+    Fixed in: net@go1.25.10
+    Example traces found:
+      #1: main.go:68:25: quicknotes.checkHealth calls http.Client.Get, which eventually calls net.Dialer.DialContext
+      #2: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe, which calls net.Listen
+
+Vulnerability #20: GO-2026-4947
+    Unexpected work during chain building in crypto/x509
+  More info: https://pkg.go.dev/vuln/GO-2026-4947
+  Standard library
+    Found in: crypto/x509@go1.24.13
+    Fixed in: crypto/x509@go1.25.9
+    Example traces found:
+      #1: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls x509.Certificate.Verify
+
+Vulnerability #21: GO-2026-4946
+    Inefficient policy validation in crypto/x509
+  More info: https://pkg.go.dev/vuln/GO-2026-4946
+  Standard library
+    Found in: crypto/x509@go1.24.13
+    Fixed in: crypto/x509@go1.25.9
+    Example traces found:
+      #1: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls x509.Certificate.Verify
+
+Vulnerability #22: GO-2026-4918
+    Infinite loop in HTTP/2 transport when given bad SETTINGS_MAX_FRAME_SIZE in
+    net/http/internal/http2 in golang.org/x/net
+  More info: https://pkg.go.dev/vuln/GO-2026-4918
+  Standard library
+    Found in: net/http@go1.24.13
+    Fixed in: net/http@go1.25.10
+    Example traces found:
+      #1: main.go:68:25: quicknotes.checkHealth calls http.Client.Get
+
+Vulnerability #23: GO-2026-4870
+    Unauthenticated TLS 1.3 KeyUpdate record can cause persistent connection
+    retention and DoS in crypto/tls
+  More info: https://pkg.go.dev/vuln/GO-2026-4870
+  Standard library
+    Found in: crypto/tls@go1.24.13
+    Fixed in: crypto/tls@go1.25.9
+    Example traces found:
+      #1: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls tls.Conn.HandshakeContext
+      #2: main.go:72:2: quicknotes.checkHealth calls http.body.Close, which eventually calls tls.Conn.Read
+      #3: main.go:72:2: quicknotes.checkHealth calls http.http2transportResponseBody.Close, which eventually calls tls.Conn.Write
+      #4: main.go:68:25: quicknotes.checkHealth calls http.Client.Get, which eventually calls tls.Dialer.DialContext
+
+Vulnerability #24: GO-2026-4602
+    FileInfo can escape from a Root in os
+  More info: https://pkg.go.dev/vuln/GO-2026-4602
+  Standard library
+    Found in: os@go1.24.13
+    Fixed in: os@go1.25.8
+    Example traces found:
+      #1: main.go:51:15: quicknotes.main calls signal.Notify, which eventually calls os.ReadDir
+
+Vulnerability #25: GO-2026-4601
+    Incorrect parsing of IPv6 host literals in net/url
+  More info: https://pkg.go.dev/vuln/GO-2026-4601
+  Standard library
+    Found in: net/url@go1.24.13
+    Fixed in: net/url@go1.25.8
+    Example traces found:
+      #1: main.go:68:25: quicknotes.checkHealth calls http.Client.Get, which eventually calls url.Parse
+      #2: main.go:45:31: quicknotes.main calls http.Server.ListenAndServe, which eventually calls url.ParseRequestURI
+      #3: main.go:68:25: quicknotes.checkHealth calls http.Client.Get, which eventually calls url.URL.Parse
+
+Your code is affected by 25 vulnerabilities from the Go standard library.
+This scan also found 6 vulnerabilities in packages you import and 12
+vulnerabilities in modules you require, but your code doesn't appear to call
+these vulnerabilities.
+Use '-show verbose' for more details.
