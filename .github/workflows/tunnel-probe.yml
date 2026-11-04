@@ -10,6 +10,10 @@ on:
         description: HTTPS quick-tunnel URL
         required: true
         type: string
+      render_url:
+        description: Optional Render URL for comparison from the same runner
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -21,6 +25,7 @@ jobs:
       - name: Verify public endpoint and benchmark from a different machine
         env:
           TUNNEL_URL: ${{ inputs.url || vars.QUICK_TUNNEL_URL }}
+          RENDER_URL: ${{ inputs.render_url || vars.RENDER_URL }}
         shell: bash
         run: |
           [[ "$TUNNEL_URL" =~ ^https://[a-z0-9-]+\.trycloudflare\.com$ ]]
@@ -31,6 +36,13 @@ jobs:
           python3 -c 'import json; assert json.load(open("health.json"))["status"] == "ok"'
           hyperfine --warmup 5 --runs 50 --export-json tunnel-remote.json \
             "curl --fail --silent --show-error --max-time 120 --output /dev/null $TUNNEL_URL/health"
+          if [ -n "$RENDER_URL" ]; then
+            [[ "$RENDER_URL" =~ ^https://[a-z0-9-]+\.onrender\.com$ ]]
+            curl --fail --silent --show-error --max-time 180 "$RENDER_URL/health" | tee render-health.json
+            python3 -c 'import json; assert json.load(open("render-health.json"))["status"] == "ok"'
+            hyperfine --warmup 5 --runs 50 --export-json render-remote.json \
+              "curl --fail --silent --show-error --max-time 180 --output /dev/null $RENDER_URL/health"
+          fi
           python3 - <<'PY'
           import json, math, statistics
           result = json.load(open('tunnel-remote.json'))['results'][0]
@@ -40,4 +52,13 @@ jobs:
           print('p95 seconds:', samples[math.ceil(0.95 * len(samples)) - 1])
           print('Raw hyperfine JSON:')
           print(open('tunnel-remote.json').read())
+          from pathlib import Path
+          if Path('render-remote.json').exists():
+              result = json.load(open('render-remote.json'))['results'][0]
+              samples = sorted(result['times'] if 'times' in result else
+                               [x['time_wall_clock']['value'] for x in result['measurements']])
+              print('Render p50 seconds:', statistics.median(samples))
+              print('Render p95 seconds:', samples[math.ceil(0.95 * len(samples)) - 1])
+              print('Raw Render hyperfine JSON:')
+              print(open('render-remote.json').read())
           PY

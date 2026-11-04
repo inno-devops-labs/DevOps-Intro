@@ -37,12 +37,23 @@ jobs:
         run: printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
       - name: Build and publish version and latest
         run: |
-          docker build --platform linux/amd64 \
-            --label "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
-            --label "org.opencontainers.image.revision=$GITHUB_SHA" \
-            --label "org.opencontainers.image.version=$GITHUB_REF_NAME" \
-            -t "$IMAGE:$GITHUB_REF_NAME" -t "$IMAGE:latest" app
-          docker push "$IMAGE:$GITHUB_REF_NAME"
+          if docker manifest inspect "$IMAGE:$GITHUB_REF_NAME" >/tmp/manifest.json 2>/tmp/manifest.err; then
+            docker pull "$IMAGE:$GITHUB_REF_NAME"
+            REVISION=$(docker image inspect "$IMAGE:$GITHUB_REF_NAME" --format '{{index .Config.Labels "org.opencontainers.image.revision"}}')
+            test "$REVISION" = "$GITHUB_SHA"
+            docker tag "$IMAGE:$GITHUB_REF_NAME" "$IMAGE:latest"
+          else
+            if ! grep -Eq 'manifest unknown|no such manifest' /tmp/manifest.err; then
+              cat /tmp/manifest.err
+              exit 1
+            fi
+            docker build --platform linux/amd64 \
+              --label "org.opencontainers.image.source=https://github.com/$GITHUB_REPOSITORY" \
+              --label "org.opencontainers.image.revision=$GITHUB_SHA" \
+              --label "org.opencontainers.image.version=$GITHUB_REF_NAME" \
+              -t "$IMAGE:$GITHUB_REF_NAME" -t "$IMAGE:latest" app
+            docker push "$IMAGE:$GITHUB_REF_NAME"
+          fi
           docker push "$IMAGE:latest"
       - name: Verify anonymous clean pull
         run: |
