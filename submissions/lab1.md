@@ -53,3 +53,29 @@ Date:   Sat Nov 21 09:18:17 2026 -0500
 Signed commits matter because "Anyone can put any name and email in git config - your commit history is unauthenticated by default".
 
 A signed commit shows who actually made the commit. 
+
+danielblakeman@Daniels-MacBook-Pro submissions % git commit --no-gpg-sign -s --allow-empty -m "test: unsigned commit (should fail)"
+[feature/lab1 f07ff82] test: unsigned commit (should fail)
+danielblakeman@Daniels-MacBook-Pro submissions % git push
+Enumerating objects: 1, done.
+Counting objects: 100% (1/1), done.
+Writing objects: 100% (1/1), 225 bytes | 225.00 KiB/s, done.
+Total 1 (delta 0), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: error: GH013: Repository rule violations found for refs/heads/feature/lab1.
+remote: Review all repository rules at https://github.com/danielblakeman15/DevOps-Intro/rules?ref=refs%2Fheads%2Ffeature%2Flab1
+remote: 
+remote: - Changes must be made through a pull request.
+remote: 
+remote: - Commits must have verified signatures.
+remote:   Found 1 violation:
+remote: 
+remote:   f07ff82a7850f4efe13ac2c16a7f47af4a3752c3
+remote: 
+To https://github.com/danielblakeman15/DevOps-Intro.git
+ ! [remote rejected] feature/lab1 -> feature/lab1 (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/danielblakeman15/DevOps-Intro.git'
+danielblakeman@Daniels-MacBook-Pro submissions % 
+
+![Verification Screenshot](rules_screenshot.png)
+
+Knight Capital would not have missed the 8th server with automated and reviewed deployments.
